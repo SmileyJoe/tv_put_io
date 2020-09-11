@@ -9,7 +9,9 @@ import androidx.core.content.ContextCompat;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -27,6 +29,8 @@ public class CardPresenter extends Presenter {
     private static final int CARD_HEIGHT = 176;
     private static int sSelectedBackgroundColor;
     private static int sDefaultBackgroundColor;
+    private static int sDefaultTextColor;
+    private static int sSelectedTextColor;
     private Drawable mDefaultCardImage;
 
     private static void updateCardBackgroundColor(ImageCardView view, boolean selected) {
@@ -35,10 +39,26 @@ public class CardPresenter extends Presenter {
         view.findViewById(R.id.info_field).setBackgroundColor(color);
     }
 
+    private static void updateTextColor(ImageCardView imageCardView, boolean selected) {
+        int color = selected ? sSelectedTextColor : sDefaultTextColor;
+        ViewGroup viewInfo = imageCardView.findViewById(R.id.info_field);
+
+        for(int i = 0; i < viewInfo.getChildCount(); i++){
+            View view = viewInfo.getChildAt(i);
+
+            if(view instanceof TextView){
+                ((TextView) view).setTextColor(color);
+            }
+        }
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         sDefaultBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.default_background);
         sSelectedBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.selected_background);
+        sSelectedTextColor = ContextCompat.getColor(parent.getContext(), R.color.text_selected);
+        sDefaultTextColor = ContextCompat.getColor(parent.getContext(), R.color.text_unselected);
+
         mDefaultCardImage = ContextCompat.getDrawable(parent.getContext(), R.drawable.movie);
 
         ImageCardView cardView =
@@ -46,6 +66,7 @@ public class CardPresenter extends Presenter {
                     @Override
                     public void setSelected(boolean selected) {
                         updateCardBackgroundColor(this, selected);
+                        updateTextColor(this, selected);
                         super.setSelected(selected);
                     }
                 };
@@ -53,6 +74,7 @@ public class CardPresenter extends Presenter {
         cardView.setFocusable(true);
         cardView.setFocusableInTouchMode(true);
         updateCardBackgroundColor(cardView, false);
+        updateTextColor(cardView, false);
         return new ViewHolder(cardView);
     }
 

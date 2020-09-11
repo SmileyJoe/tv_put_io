@@ -38,10 +38,12 @@ public class VideoAdapter extends FileAdapter {
         if(isSelected(position)){
             textTitle.setLines(textTitle.getLineCount());
             textTitle.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.fastlane_background));
+            textTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_selected));
             frameSelected.setVisibility(View.VISIBLE);
         } else {
             textTitle.setLines(2);
             textTitle.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.overlay));
+            textTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_unselected));
             frameSelected.setVisibility(View.GONE);
         }
 
