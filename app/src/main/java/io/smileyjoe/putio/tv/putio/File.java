@@ -54,6 +54,7 @@ public class File implements Parcelable {
     private boolean mIsWatched;
     private boolean mIsParent;
     private long mParentId;
+    private long mResumeTime;
 
     public File() {
     }
@@ -130,7 +131,24 @@ public class File implements Parcelable {
                 ", mIsWatched=" + mIsWatched +
                 ", mIsParent=" + mIsParent +
                 ", mParentId=" + mParentId +
+                ", mResumeTime=" + mResumeTime +
                 '}';
+    }
+
+    public long getResumeTime() {
+        return mResumeTime;
+    }
+
+    public void setResumeTime(long resumeTime) {
+        mResumeTime = resumeTime;
+    }
+
+    public String getResumeTimeFormatted(){
+        long hours = mResumeTime / 3600;
+        long minutes = (mResumeTime % 3600) / 60;
+        long seconds = mResumeTime % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     public long getParentId() {
@@ -208,6 +226,7 @@ public class File implements Parcelable {
         dest.writeByte(this.mIsWatched ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mIsParent ? (byte) 1 : (byte) 0);
         dest.writeLong(this.mParentId);
+        dest.writeLong(this.mResumeTime);
     }
 
     protected File(Parcel in) {
@@ -221,6 +240,7 @@ public class File implements Parcelable {
         this.mIsWatched = in.readByte() != 0;
         this.mIsParent = in.readByte() != 0;
         this.mParentId = in.readLong();
+        this.mResumeTime = in.readLong();
     }
 
     public static final Creator<File> CREATOR = new Creator<File>() {

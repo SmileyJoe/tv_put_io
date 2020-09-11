@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.leanback.app.VideoSupportFragment;
 import androidx.leanback.app.VideoSupportFragmentGlueHost;
 import androidx.leanback.media.MediaPlayerAdapter;
+import androidx.leanback.media.PlaybackGlue;
 import androidx.leanback.media.PlaybackTransportControlGlue;
 import androidx.leanback.widget.PlaybackControlsRow;
 
@@ -20,27 +22,30 @@ import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 public class PlaybackVideoFragment extends VideoSupportFragment {
 
     private PlaybackTransportControlGlue<MediaPlayerAdapter> mTransportControlGlue;
+    private File mFile;
+    private boolean mShouldResume;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final File file =
-                (File) getActivity().getIntent().getParcelableExtra(PlaybackActivity.EXTRA_FILE);
+        mFile = getActivity().getIntent().getParcelableExtra(PlaybackActivity.EXTRA_FILE);
+        mShouldResume = getActivity().getIntent().getBooleanExtra(PlaybackActivity.EXTRA_SHOULD_RESUME, false);
 
-        VideoSupportFragmentGlueHost glueHost =
-                new VideoSupportFragmentGlueHost(PlaybackVideoFragment.this);
+        VideoSupportFragmentGlueHost glueHost = new VideoSupportFragmentGlueHost(PlaybackVideoFragment.this);
 
         MediaPlayerAdapter playerAdapter = new MediaPlayerAdapter(getContext());
         playerAdapter.setRepeatAction(PlaybackControlsRow.RepeatAction.INDEX_NONE);
 
         mTransportControlGlue = new PlaybackTransportControlGlue<>(getContext(), playerAdapter);
         mTransportControlGlue.setHost(glueHost);
-        mTransportControlGlue.setTitle(file.getName());
-        mTransportControlGlue.setSubtitle(file.getName());
+        mTransportControlGlue.setTitle(mFile.getName());
+        mTransportControlGlue.setSubtitle(mFile.getName());
         mTransportControlGlue.playWhenPrepared();
         mTransportControlGlue.setSeekEnabled(true);
-        playerAdapter.setDataSource(file.getStreamUri());
+        mTransportControlGlue.addPlayerCallback(new PlayerCallback());
+
+        playerAdapter.setDataSource(mFile.getStreamUri());
     }
 
     @Override
@@ -55,6 +60,19 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         getSurfaceView().setKeepScreenOn(false);
         if (mTransportControlGlue != null) {
             mTransportControlGlue.pause();
+        }
+    }
+
+    private class PlayerCallback extends PlaybackGlue.PlayerCallback{
+        @Override
+        public void onPreparedStateChanged(PlaybackGlue glue) {
+            super.onPreparedStateChanged(glue);
+
+            if(mShouldResume){
+                mTransportControlGlue.seekTo(mFile.getResumeTime()*1000);
+                // we only want to do this after the first load //
+                mShouldResume = false;
+            }
         }
     }
 }

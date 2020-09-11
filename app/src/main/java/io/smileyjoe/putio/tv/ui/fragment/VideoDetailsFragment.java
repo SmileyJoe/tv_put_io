@@ -33,9 +33,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
+import io.smileyjoe.putio.tv.putio.Putio;
+import io.smileyjoe.putio.tv.putio.Response;
 import io.smileyjoe.putio.tv.ui.viewholder.CardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.R;
@@ -53,11 +56,13 @@ public class VideoDetailsFragment extends DetailsFragment {
         void onWatchClicked(File file);
         void onConvertClicked(File file);
         void onRelatedClicked(File file, ArrayList<File> relatedVideos);
+        void onResumeClick(File file);
     }
 
     private enum ActionOption{
         WATCH(1, R.string.action_watch),
-        CONVERT(2, R.string.action_convert);
+        RESUME(2, R.string.action_resume),
+        CONVERT(3, R.string.action_convert);
 
         private long mId;
         private @StringRes int mTitleResId;
@@ -97,6 +102,8 @@ public class VideoDetailsFragment extends DetailsFragment {
     private ArrayObjectAdapter mAdapter;
     private ClassPresenterSelector mPresenterSelector;
 
+    private ArrayObjectAdapter mActionAdapter;
+
     private DetailsFragmentBackgroundController mDetailsBackground;
 
     private Listener mListener;
@@ -107,22 +114,33 @@ public class VideoDetailsFragment extends DetailsFragment {
 
         mDetailsBackground = new DetailsFragmentBackgroundController(this);
 
-        mFile = getActivity().getIntent().getParcelableExtra(DetailsActivity.VIDEO);
-        mRelatedVideos = getActivity().getIntent().getParcelableArrayListExtra(DetailsActivity.RELATED_VIDEOS);
+        handleIntent();
 
         if (mFile != null) {
+            if(mFile.getResumeTime() <= 0) {
+                Putio.getResumeTime(getContext(), mFile.getId(), new OnResumeResponse());
+            }
             mPresenterSelector = new ClassPresenterSelector();
             mAdapter = new ArrayObjectAdapter(mPresenterSelector);
-            setupDetailsOverviewRow();
-            setupDetailsOverviewRowPresenter();
-            setupRelatedVideoListRow();
             setAdapter(mAdapter);
+            populate();
             initializeBackground(mFile);
             setOnItemViewClickedListener(new OnRelatedItemClick());
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
         }
+    }
+
+    private void populate(){
+        setupDetailsOverviewRow();
+        setupDetailsOverviewRowPresenter();
+        setupRelatedVideoListRow();
+    }
+
+    public void handleIntent(){
+        mFile = getActivity().getIntent().getParcelableExtra(DetailsActivity.VIDEO);
+        mRelatedVideos = getActivity().getIntent().getParcelableArrayListExtra(DetailsActivity.RELATED_VIDEOS);
     }
 
     @Override
@@ -166,14 +184,31 @@ public class VideoDetailsFragment extends DetailsFragment {
     }
 
     private void addActions(DetailsOverviewRow row){
-        ArrayObjectAdapter actionAdapter = new ArrayObjectAdapter();
+        mActionAdapter = new ArrayObjectAdapter();
 
         for(ActionOption option:ActionOption.values()){
-            Action action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
-            actionAdapter.add(action);
+            Action action = null;
+
+            switch (option){
+                case WATCH:
+                    action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
+                    break;
+                case RESUME:
+                    if(mFile.getResumeTime() > 0) {
+                        action = new Action(option.getId(), getResources().getString(option.getTitleResId()), mFile.getResumeTimeFormatted());
+                    }
+                    break;
+                case CONVERT:
+                    action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
+                    break;
+            }
+
+            if(action != null) {
+                mActionAdapter.add(action);
+            }
         }
 
-        row.setActionsAdapter(actionAdapter);
+        row.setActionsAdapter(mActionAdapter);
     }
 
     private void setupDetailsOverviewRowPresenter() {
@@ -210,6 +245,26 @@ public class VideoDetailsFragment extends DetailsFragment {
         return Math.round((float) dp * density);
     }
 
+    private class OnResumeResponse extends Response{
+        @Override
+        public void onSuccess(JsonObject result) {
+            try {
+                long resumeTime = result.get("start_from").getAsLong();
+                mFile.setResumeTime(resumeTime);
+            } catch (UnsupportedOperationException | NullPointerException e){
+                mFile.setResumeTime(0);
+            }
+
+            if(mFile.getResumeTime() > 0){
+                int currentRange = mActionAdapter.size() - 1;
+                Action action = new Action(ActionOption.RESUME.getId(), getResources().getString(ActionOption.RESUME.getTitleResId()), mFile.getResumeTimeFormatted());
+
+                mActionAdapter.add(action);
+                mActionAdapter.notifyItemRangeChanged(currentRange, currentRange + 1);
+            }
+        }
+    }
+
     private class OnActionClicked implements OnActionClickedListener{
         @Override
         public void onActionClicked(Action action) {
@@ -224,6 +279,11 @@ public class VideoDetailsFragment extends DetailsFragment {
                 case CONVERT:
                     if(mListener != null){
                         mListener.onConvertClicked(mFile);
+                    }
+                    break;
+                case RESUME:
+                    if(mListener != null){
+                        mListener.onResumeClick(mFile);
                     }
                     break;
             }

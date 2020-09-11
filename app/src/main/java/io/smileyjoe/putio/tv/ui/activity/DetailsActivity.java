@@ -58,4 +58,9 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     public void onRelatedClicked(File file, ArrayList<File> relatedVideos) {
         startActivity(getIntent(getBaseContext(), file, relatedVideos));
     }
+
+    @Override
+    public void onResumeClick(File file) {
+        startActivity(PlaybackActivity.getIntent(getBaseContext(), file, true));
+    }
 }

@@ -21,4 +21,5 @@
     <string name="text_back">Back</string>
     <string name="action_watch">Watch</string>
     <string name="action_convert">Convert</string>
+    <string name="action_resume">Resume</string>
 </resources>
