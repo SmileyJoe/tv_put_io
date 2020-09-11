@@ -27,6 +27,8 @@ import androidx.leanback.widget.Row;
 import androidx.leanback.widget.RowPresenter;
 import androidx.core.content.ContextCompat;
 
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -120,6 +122,8 @@ public class VideoDetailsFragment extends DetailsFragment {
             if(mFile.getResumeTime() <= 0) {
                 Putio.getResumeTime(getContext(), mFile.getId(), new OnResumeResponse());
             }
+
+            getConversionStatus();
             mPresenterSelector = new ClassPresenterSelector();
             mAdapter = new ArrayObjectAdapter(mPresenterSelector);
             setAdapter(mAdapter);
@@ -129,6 +133,12 @@ public class VideoDetailsFragment extends DetailsFragment {
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
+        }
+    }
+
+    private void getConversionStatus(){
+        if(!mFile.isConverted()){
+            Putio.getConversionStatus(getContext(), mFile.getId(), new OnConvertResponse());
         }
     }
 
@@ -199,7 +209,9 @@ public class VideoDetailsFragment extends DetailsFragment {
                     }
                     break;
                 case CONVERT:
-                    action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
+                    if(!mFile.isConverted()) {
+                        action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
+                    }
                     break;
             }
 
@@ -240,9 +252,58 @@ public class VideoDetailsFragment extends DetailsFragment {
         }
     }
 
+    public void conversionStarted(){
+        getConversionStatus();
+    }
+
     private int convertDpToPixel(Context context, int dp) {
         float density = context.getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);
+    }
+
+    private class OnConvertResponse extends Response{
+        @Override
+        public void onSuccess(JsonObject result) {
+            int percentDone = -1;
+
+            try {
+                percentDone = result.get("mp4").getAsJsonObject().get("percent_done").getAsInt();
+            } catch (UnsupportedOperationException | NullPointerException e){
+
+            }
+
+            if(percentDone >= 0) {
+                Action action = null;
+                int position = 0;
+
+                for (int i = 0; i < mActionAdapter.size(); i++) {
+                    action = (Action) mActionAdapter.get(i);
+
+                    if (action.getId() == ActionOption.CONVERT.getId()) {
+                        position = i;
+                        break;
+                    }
+                }
+
+                if (action != null) {
+                    if (percentDone < 100) {
+                        action.setLabel2(percentDone + "%");
+                        mActionAdapter.notifyItemRangeChanged(position, position);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getConversionStatus();
+                            }
+                        }, 1000);
+                    } else {
+                        mActionAdapter.remove(action);
+                        mActionAdapter.notifyItemRangeChanged(position, position);
+                        mFile.setConverted(true);
+                    }
+                }
+            }
+        }
     }
 
     private class OnResumeResponse extends Response{

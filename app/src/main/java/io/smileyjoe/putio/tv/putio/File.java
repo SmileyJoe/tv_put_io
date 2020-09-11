@@ -51,10 +51,12 @@ public class File implements Parcelable {
     private String mScreenShot;
     private String mDownloadUrl;
     private Uri mStreamUri;
+    private Uri mStreamUriMp4;
     private boolean mIsWatched;
     private boolean mIsParent;
     private long mParentId;
     private long mResumeTime;
+    private boolean mIsConverted;
 
     public File() {
     }
@@ -119,22 +121,6 @@ public class File implements Parcelable {
         mDownloadUrl = downloadUrl;
     }
 
-    @Override
-    public String toString() {
-        return "File{" +
-                "mId=" + mId +
-                ", mName='" + mName + '\'' +
-                ", mFileType=" + mFileType +
-                ", mScreenShot='" + mScreenShot + '\'' +
-                ", mDownloadUrl='" + mDownloadUrl + '\'' +
-                ", mStreamUri=" + mStreamUri +
-                ", mIsWatched=" + mIsWatched +
-                ", mIsParent=" + mIsParent +
-                ", mParentId=" + mParentId +
-                ", mResumeTime=" + mResumeTime +
-                '}';
-    }
-
     public long getResumeTime() {
         return mResumeTime;
     }
@@ -167,11 +153,32 @@ public class File implements Parcelable {
         mIsParent = parent;
     }
 
+    public Uri getStreamUriMp4() {
+        return mStreamUriMp4;
+    }
+
+    public void setStreamUriMp4(Uri streamUriMp4) {
+        mStreamUriMp4 = streamUriMp4;
+    }
+
+    public void setStreamUriMp4(String url){
+        setStreamUriMp4(Uri.parse(url));
+    }
+
+    public boolean isConverted() {
+        return mIsConverted;
+    }
+
+    public void setConverted(boolean converted) {
+        mIsConverted = converted;
+    }
+
     public static File fromApi(JsonObject fileJson){
         File file = new File();
         file.setName(fileJson.get("name").getAsString());
         file.setId(fileJson.get("id").getAsLong());
         file.setFileType(fileJson.get("file_type").getAsString());
+        file.setConverted(fileJson.get("is_mp4_available").getAsBoolean());
 
         try {
             file.setParentId(fileJson.get("parent_id").getAsLong());
@@ -197,6 +204,14 @@ public class File implements Parcelable {
             // do nothing //
         }
 
+        try{
+            file.setStreamUriMp4(fileJson.get("mp4_stream_url").getAsString());
+        } catch (UnsupportedOperationException | NullPointerException e){
+            // do nothing //
+        }
+
+        Log.d("PutThings", "mp4: " + file.isConverted() + " : " + file.getName() + " : " + file.getStreamUriMp4());
+
         return file;
     }
 
@@ -208,6 +223,24 @@ public class File implements Parcelable {
         }
 
         return files;
+    }
+
+    @Override
+    public String toString() {
+        return "File{" +
+                "mId=" + mId +
+                ", mName='" + mName + '\'' +
+                ", mFileType=" + mFileType +
+                ", mScreenShot='" + mScreenShot + '\'' +
+                ", mDownloadUrl='" + mDownloadUrl + '\'' +
+                ", mStreamUri=" + mStreamUri +
+                ", mStreamUriMp4=" + mStreamUriMp4 +
+                ", mIsWatched=" + mIsWatched +
+                ", mIsParent=" + mIsParent +
+                ", mParentId=" + mParentId +
+                ", mResumeTime=" + mResumeTime +
+                ", mIsConverted=" + mIsConverted +
+                '}';
     }
 
     @Override
@@ -223,10 +256,12 @@ public class File implements Parcelable {
         dest.writeString(this.mScreenShot);
         dest.writeString(this.mDownloadUrl);
         dest.writeParcelable(this.mStreamUri, flags);
+        dest.writeParcelable(this.mStreamUriMp4, flags);
         dest.writeByte(this.mIsWatched ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mIsParent ? (byte) 1 : (byte) 0);
         dest.writeLong(this.mParentId);
         dest.writeLong(this.mResumeTime);
+        dest.writeByte(this.mIsConverted ? (byte) 1 : (byte) 0);
     }
 
     protected File(Parcel in) {
@@ -237,10 +272,12 @@ public class File implements Parcelable {
         this.mScreenShot = in.readString();
         this.mDownloadUrl = in.readString();
         this.mStreamUri = in.readParcelable(Uri.class.getClassLoader());
+        this.mStreamUriMp4 = in.readParcelable(Uri.class.getClassLoader());
         this.mIsWatched = in.readByte() != 0;
         this.mIsParent = in.readByte() != 0;
         this.mParentId = in.readLong();
         this.mResumeTime = in.readLong();
+        this.mIsConverted = in.readByte() != 0;
     }
 
     public static final Creator<File> CREATOR = new Creator<File>() {

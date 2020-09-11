@@ -18,6 +18,7 @@ public class Putio {
     private static final String FILES = "/files/list";
     private static final String DOWNLOAD_URL = "/files/{id}/url";
     private static final String RESUME_TIME = "/files/{id}/start-from";
+    private static final String CONVERT = "/files/{id}/mp4";
 
     public static void getFiles(Context context, Response response){
         getFiles(context, NO_PARENT, response);
@@ -27,7 +28,7 @@ public class Putio {
         String url = BASE + FILES;
 
         if(parentId != NO_PARENT){
-            url += "?parent_id=" + parentId + "&stream_url=true";
+            url += "?parent_id=" + parentId + "&stream_url=true&mp4_stream_url=true";
         }
 
         execute(context, url, response);
@@ -39,6 +40,26 @@ public class Putio {
         url = url.replace("{id}", Long.toString(id));
 
         execute(context, url, response);
+    }
+
+    public static void getConversionStatus(Context context, long id, Response response){
+        String url = BASE + CONVERT;
+        url = url.replace("{id}", Long.toString(id));
+        execute(context, url, response);
+    }
+
+    public static void convertFile(Context context, long id, Response response){
+        String url = BASE + CONVERT;
+        url = url.replace("{id}", Long.toString(id));
+
+        Ion.with(context)
+                .load(url)
+                .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
+                .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
+                .setHeader("Authorization", "Bearer " + BuildConfig.PUTIO_AUTH_TOKEN)
+                .setJsonObjectBody(new JsonObject())
+                .asJsonObject()
+                .setCallback(response);
     }
 
     public static void getDownloadUrl(Context context, long id, Response response){

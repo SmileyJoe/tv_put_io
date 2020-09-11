@@ -45,7 +45,11 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         mTransportControlGlue.setSeekEnabled(true);
         mTransportControlGlue.addPlayerCallback(new PlayerCallback());
 
-        playerAdapter.setDataSource(mFile.getStreamUri());
+        if(mFile.getStreamUriMp4() != null){
+            playerAdapter.setDataSource(mFile.getStreamUriMp4());
+        } else {
+            playerAdapter.setDataSource(mFile.getStreamUri());
+        }
     }
 
     @Override

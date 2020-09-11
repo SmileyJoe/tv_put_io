@@ -4,10 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.putio.Putio;
+import io.smileyjoe.putio.tv.putio.Response;
 import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
 import io.smileyjoe.putio.tv.putio.File;
 
@@ -51,7 +56,7 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
 
     @Override
     public void onConvertClicked(File file) {
-        // todo: convert to mp4 //
+        Putio.convertFile(getBaseContext(), file.getId(), new OnConvertResponse());
     }
 
     @Override
@@ -62,5 +67,16 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     @Override
     public void onResumeClick(File file) {
         startActivity(PlaybackActivity.getIntent(getBaseContext(), file, true));
+    }
+
+    private class OnConvertResponse extends Response{
+        @Override
+        public void onSuccess(JsonObject result) {
+            Log.d("PutThings", "Converted");
+
+            // todo: this isn't working correctly //
+            VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
+            detailsFragment.conversionStarted();
+        }
     }
 }
