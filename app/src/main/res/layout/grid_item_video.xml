@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/image_poster"
+        android:layout_width="@dimen/file_grid_col_width"
+        android:layout_height="@dimen/file_grid_col_height"
+        android:scaleType="centerCrop"/>
+
+    <FrameLayout
+        android:id="@+id/frame_selected"
+        android:layout_width="@dimen/file_grid_col_width"
+        android:layout_height="@dimen/file_grid_col_height"
+        android:background="@color/overlay_selected"
+        android:visibility="gone"/>
+
+    <FrameLayout
+        android:id="@+id/frame_watched"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:background="@drawable/bg_watched">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_watched_24"
+            android:padding="3dp"
+            android:tint="@color/icon_tint"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_alignParentBottom="true"
+        android:background="@color/overlay"
+        android:padding="10dp"
+        android:maxLines="2"/>
+
+</RelativeLayout>
