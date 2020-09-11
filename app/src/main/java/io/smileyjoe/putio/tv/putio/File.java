@@ -53,6 +53,7 @@ public class File implements Parcelable {
     private Uri mStreamUri;
     private boolean mIsWatched;
     private boolean mIsParent;
+    private long mParentId;
 
     public File() {
     }
@@ -128,7 +129,16 @@ public class File implements Parcelable {
                 ", mStreamUri=" + mStreamUri +
                 ", mIsWatched=" + mIsWatched +
                 ", mIsParent=" + mIsParent +
+                ", mParentId=" + mParentId +
                 '}';
+    }
+
+    public long getParentId() {
+        return mParentId;
+    }
+
+    public void setParentId(long parentId) {
+        mParentId = parentId;
     }
 
     public boolean isParent() {
@@ -144,6 +154,12 @@ public class File implements Parcelable {
         file.setName(fileJson.get("name").getAsString());
         file.setId(fileJson.get("id").getAsLong());
         file.setFileType(fileJson.get("file_type").getAsString());
+
+        try {
+            file.setParentId(fileJson.get("parent_id").getAsLong());
+        } catch (UnsupportedOperationException e){
+            file.setParentId(-1);
+        }
 
         try{
             String firstAccessedAt = fileJson.get("first_accessed_at").getAsString();
@@ -191,6 +207,7 @@ public class File implements Parcelable {
         dest.writeParcelable(this.mStreamUri, flags);
         dest.writeByte(this.mIsWatched ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mIsParent ? (byte) 1 : (byte) 0);
+        dest.writeLong(this.mParentId);
     }
 
     protected File(Parcel in) {
@@ -203,6 +220,7 @@ public class File implements Parcelable {
         this.mStreamUri = in.readParcelable(Uri.class.getClassLoader());
         this.mIsWatched = in.readByte() != 0;
         this.mIsParent = in.readByte() != 0;
+        this.mParentId = in.readLong();
     }
 
     public static final Creator<File> CREATOR = new Creator<File>() {

@@ -19,4 +19,6 @@
     <string name="text_no_folders">No Folders</string>
     <string name="text_no_videos">No Videos</string>
     <string name="text_back">Back</string>
+    <string name="action_watch">Watch</string>
+    <string name="action_convert">Convert</string>
 </resources>

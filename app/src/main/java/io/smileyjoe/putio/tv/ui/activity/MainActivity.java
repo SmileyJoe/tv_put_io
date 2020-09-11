@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
+import io.smileyjoe.putio.tv.DetailsActivity;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.putio.File;
 import io.smileyjoe.putio.tv.putio.Putio;
@@ -80,7 +81,8 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
 
     @Override
     public void onVideoClicked(File file) {
-        startActivity(PlaybackActivity.getIntent(getBaseContext(), file));
+//        startActivity(PlaybackActivity.getIntent(getBaseContext(), file));
+        startActivity(DetailsActivity.getIntent(getBaseContext(), file));
     }
 
     private void populate(ArrayList<File> files){
