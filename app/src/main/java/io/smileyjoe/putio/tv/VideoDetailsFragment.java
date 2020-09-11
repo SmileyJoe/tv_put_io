@@ -38,6 +38,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class VideoDetailsFragment extends DetailsFragment {
     public interface Listener{
         void onWatchClicked(File file);
         void onConvertClicked(File file);
+        void onRelatedClicked(File file, ArrayList<File> relatedVideos);
     }
 
     private enum ActionOption{
@@ -93,6 +95,7 @@ public class VideoDetailsFragment extends DetailsFragment {
     private static final int NUM_COLS = 10;
 
     private File mFile;
+    private ArrayList<File> mRelatedVideos;
 
     private ArrayObjectAdapter mAdapter;
     private ClassPresenterSelector mPresenterSelector;
@@ -108,15 +111,17 @@ public class VideoDetailsFragment extends DetailsFragment {
         mDetailsBackground = new DetailsFragmentBackgroundController(this);
 
         mFile = getActivity().getIntent().getParcelableExtra(DetailsActivity.VIDEO);
+        mRelatedVideos = getActivity().getIntent().getParcelableArrayListExtra(DetailsActivity.RELATED_VIDEOS);
+
         if (mFile != null) {
             mPresenterSelector = new ClassPresenterSelector();
             mAdapter = new ArrayObjectAdapter(mPresenterSelector);
             setupDetailsOverviewRow();
             setupDetailsOverviewRowPresenter();
-//            setupRelatedMovieListRow();
+            setupRelatedVideoListRow();
             setAdapter(mAdapter);
             initializeBackground(mFile);
-            setOnItemViewClickedListener(new ItemViewClickedListener());
+            setOnItemViewClickedListener(new OnRelatedItemClick());
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
@@ -163,30 +168,6 @@ public class VideoDetailsFragment extends DetailsFragment {
                 .into(new OnThumbLoaded(width, height, row));
     }
 
-    private class OnBackgroundLoaded extends SimpleTarget<Bitmap>{
-        @Override
-        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-            mDetailsBackground.setCoverBitmap(resource);
-            mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
-        }
-    }
-
-    private class OnThumbLoaded extends SimpleTarget<GlideDrawable>{
-
-        private DetailsOverviewRow mRow;
-
-        public OnThumbLoaded(int width, int height, DetailsOverviewRow row) {
-            super(width, height);
-            mRow = row;
-        }
-
-        @Override
-        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-            mRow.setImageDrawable(resource);
-            mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
-        }
-    }
-
     private void addActions(DetailsOverviewRow row){
         ArrayObjectAdapter actionAdapter = new ArrayObjectAdapter();
 
@@ -214,6 +195,24 @@ public class VideoDetailsFragment extends DetailsFragment {
         mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
     }
 
+    private void setupRelatedVideoListRow() {
+        if(mRelatedVideos != null && !mRelatedVideos.isEmpty()) {
+            ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
+            for (File file:mRelatedVideos) {
+                listRowAdapter.add(file);
+            }
+
+            HeaderItem header = new HeaderItem(0, getString(R.string.related_videos));
+            mAdapter.add(new ListRow(header, listRowAdapter));
+            mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
+        }
+    }
+
+    private int convertDpToPixel(Context context, int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
+    }
+
     private class OnActionClicked implements OnActionClickedListener{
         @Override
         public void onActionClicked(Action action) {
@@ -234,27 +233,7 @@ public class VideoDetailsFragment extends DetailsFragment {
         }
     }
 
-//    private void setupRelatedMovieListRow() {
-//        String subcategories[] = {getString(R.string.related_movies)};
-//        List<Movie> list = MovieList.getList();
-//
-//        Collections.shuffle(list);
-//        ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-//        for (int j = 0; j < NUM_COLS; j++) {
-//            listRowAdapter.add(list.get(j % 5));
-//        }
-//
-//        HeaderItem header = new HeaderItem(0, subcategories[0]);
-//        mAdapter.add(new ListRow(header, listRowAdapter));
-//        mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
-//    }
-
-    private int convertDpToPixel(Context context, int dp) {
-        float density = context.getResources().getDisplayMetrics().density;
-        return Math.round((float) dp * density);
-    }
-
-    private final class ItemViewClickedListener implements OnItemViewClickedListener {
+    private class OnRelatedItemClick implements OnItemViewClickedListener {
         @Override
         public void onItemClicked(
                 Presenter.ViewHolder itemViewHolder,
@@ -262,18 +241,33 @@ public class VideoDetailsFragment extends DetailsFragment {
                 RowPresenter.ViewHolder rowViewHolder,
                 Row row) {
 
-            if (item instanceof Movie) {
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra(getResources().getString(R.string.movie), mFile);
-
-                Bundle bundle =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                getActivity(),
-                                ((ImageCardView) itemViewHolder.view).getMainImageView(),
-                                DetailsActivity.SHARED_ELEMENT_NAME)
-                                .toBundle();
-                getActivity().startActivity(intent, bundle);
+            if(mListener != null && item instanceof File){
+                mListener.onRelatedClicked((File) item, mRelatedVideos);
             }
+        }
+    }
+
+    private class OnBackgroundLoaded extends SimpleTarget<Bitmap>{
+        @Override
+        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+            mDetailsBackground.setCoverBitmap(resource);
+            mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
+        }
+    }
+
+    private class OnThumbLoaded extends SimpleTarget<GlideDrawable>{
+
+        private DetailsOverviewRow mRow;
+
+        public OnThumbLoaded(int width, int height, DetailsOverviewRow row) {
+            super(width, height);
+            mRow = row;
+        }
+
+        @Override
+        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+            mRow.setImageDrawable(resource);
+            mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
         }
     }
 }

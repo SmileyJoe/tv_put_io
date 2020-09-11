@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.util.ArrayList;
+
 import io.smileyjoe.putio.tv.putio.File;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 
@@ -14,11 +16,20 @@ import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 public class DetailsActivity extends Activity implements VideoDetailsFragment.Listener{
     public static final String SHARED_ELEMENT_NAME = "hero";
     public static final String VIDEO = "video";
+    public static final String RELATED_VIDEOS = "related_videos";
 
     public static Intent getIntent(Context context, File video){
+        return getIntent(context, video, null);
+    }
+
+    public static Intent getIntent(Context context, File video, ArrayList<File> relatedVideos){
         Intent intent = new Intent(context, DetailsActivity.class);
 
         intent.putExtra(VIDEO, video);
+
+        if(relatedVideos != null && !relatedVideos.isEmpty()){
+            intent.putExtra(RELATED_VIDEOS, relatedVideos);
+        }
 
         return intent;
     }
@@ -40,5 +51,10 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     @Override
     public void onConvertClicked(File file) {
         // todo: convert to mp4 //
+    }
+
+    @Override
+    public void onRelatedClicked(File file, ArrayList<File> relatedVideos) {
+        startActivity(getIntent(getBaseContext(), file, relatedVideos));
     }
 }

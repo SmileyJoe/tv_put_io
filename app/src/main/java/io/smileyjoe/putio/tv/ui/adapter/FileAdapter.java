@@ -40,6 +40,10 @@ public abstract class FileAdapter extends BaseAdapter {
         mFiles = files;
     }
 
+    public ArrayList<File> getFiles() {
+        return mFiles;
+    }
+
     public void setSelectedPosition(int selectedPosition) {
         mSelectedPosition = selectedPosition;
     }

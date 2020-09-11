@@ -23,7 +23,7 @@ import io.smileyjoe.putio.tv.ui.adapter.VideoAdapter;
 public class VideoListFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener{
 
     public interface Listener{
-        void onVideoClicked(File file);
+        void onVideoClicked(File file, ArrayList<File> relatedVideos);
     }
 
     private GridView mGridVideos;
@@ -60,7 +60,7 @@ public class VideoListFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if(mListener != null){
-            mListener.onVideoClicked(mVideoAdapter.getItem(position));
+            mListener.onVideoClicked(mVideoAdapter.getItem(position), mVideoAdapter.getFiles());
         }
     }
 

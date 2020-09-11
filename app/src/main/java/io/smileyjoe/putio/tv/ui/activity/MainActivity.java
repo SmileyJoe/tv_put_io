@@ -80,9 +80,9 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
     }
 
     @Override
-    public void onVideoClicked(File file) {
+    public void onVideoClicked(File file, ArrayList<File> relatedVideos) {
 //        startActivity(PlaybackActivity.getIntent(getBaseContext(), file));
-        startActivity(DetailsActivity.getIntent(getBaseContext(), file));
+        startActivity(DetailsActivity.getIntent(getBaseContext(), file, relatedVideos));
     }
 
     private void populate(ArrayList<File> files){
