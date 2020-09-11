@@ -1,17 +1,9 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.FrameLayout;
-import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.gson.JsonArray;
@@ -19,14 +11,10 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
-import io.smileyjoe.putio.tv.DetailsActivity;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.putio.File;
 import io.smileyjoe.putio.tv.putio.Putio;
 import io.smileyjoe.putio.tv.putio.Response;
-import io.smileyjoe.putio.tv.ui.adapter.FileSelectedListener;
-import io.smileyjoe.putio.tv.ui.adapter.FolderAdapter;
-import io.smileyjoe.putio.tv.ui.adapter.VideoAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.util.FileUtils;

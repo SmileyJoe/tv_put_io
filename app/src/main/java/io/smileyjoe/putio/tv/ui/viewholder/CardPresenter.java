@@ -1,4 +1,4 @@
-package io.smileyjoe.putio.tv;
+package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.graphics.drawable.Drawable;
 
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 
+import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.putio.File;
 
 /*

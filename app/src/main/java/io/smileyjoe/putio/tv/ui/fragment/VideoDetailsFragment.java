@@ -1,4 +1,4 @@
-package io.smileyjoe.putio.tv;
+package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +18,6 @@ import androidx.leanback.widget.DetailsOverviewRow;
 import androidx.leanback.widget.FullWidthDetailsOverviewRowPresenter;
 import androidx.leanback.widget.FullWidthDetailsOverviewSharedElementHelper;
 import androidx.leanback.widget.HeaderItem;
-import androidx.leanback.widget.ImageCardView;
 import androidx.leanback.widget.ListRow;
 import androidx.leanback.widget.ListRowPresenter;
 import androidx.leanback.widget.OnActionClickedListener;
@@ -26,12 +25,9 @@ import androidx.leanback.widget.OnItemViewClickedListener;
 import androidx.leanback.widget.Presenter;
 import androidx.leanback.widget.Row;
 import androidx.leanback.widget.RowPresenter;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -39,12 +35,13 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
+import io.smileyjoe.putio.tv.ui.viewholder.CardPresenter;
+import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
+import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.ui.activity.DetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
-import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.

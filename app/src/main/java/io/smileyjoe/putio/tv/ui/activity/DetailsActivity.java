@@ -1,4 +1,4 @@
-package io.smileyjoe.putio.tv;
+package io.smileyjoe.putio.tv.ui.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,13 +7,14 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 
+import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
 import io.smileyjoe.putio.tv.putio.File;
-import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 
 /*
  * Details activity class that loads LeanbackDetailsFragment class
  */
-public class DetailsActivity extends Activity implements VideoDetailsFragment.Listener{
+public class DetailsActivity extends Activity implements VideoDetailsFragment.Listener {
     public static final String SHARED_ELEMENT_NAME = "hero";
     public static final String VIDEO = "video";
     public static final String RELATED_VIDEOS = "related_videos";

@@ -1,4 +1,4 @@
-package io.smileyjoe.putio.tv;
+package io.smileyjoe.putio.tv.ui.viewholder;
 
 import androidx.leanback.widget.AbstractDetailsDescriptionPresenter;
 

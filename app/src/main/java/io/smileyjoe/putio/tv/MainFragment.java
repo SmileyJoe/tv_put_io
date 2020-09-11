@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.smileyjoe.putio.tv.ui.activity.DetailsActivity;
+import io.smileyjoe.putio.tv.ui.viewholder.CardPresenter;
+
 public class MainFragment extends BrowseFragment {
     private static final String TAG = "MainFragment";
 
