@@ -120,7 +120,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
         if (mFile != null) {
             if(mFile.getResumeTime() <= 0) {
-                Putio.getResumeTime(getContext(), mFile.getId(), new OnResumeResponse());
+                getResumeTime();
             }
 
             getConversionStatus();
@@ -134,6 +134,10 @@ public class VideoDetailsFragment extends DetailsFragment {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
         }
+    }
+
+    private void getResumeTime(){
+        Putio.getResumeTime(getContext(), mFile.getId(), new OnResumeResponse());
     }
 
     private void getConversionStatus(){
@@ -160,6 +164,12 @@ public class VideoDetailsFragment extends DetailsFragment {
         if(getActivity() instanceof Listener){
             mListener = (Listener) getActivity();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getResumeTime();
     }
 
     private void initializeBackground(File file) {
@@ -261,6 +271,23 @@ public class VideoDetailsFragment extends DetailsFragment {
         return Math.round((float) dp * density);
     }
 
+    private Action getAction(ActionOption option){
+        for (int i = 0; i < mActionAdapter.size(); i++) {
+            Action action = (Action) mActionAdapter.get(i);
+
+            if (action.getId() == option.getId()) {
+                return action;
+            }
+        }
+
+        return null;
+    }
+
+    private void updateActions(Action action){
+        int position = mActionAdapter.indexOf(action);
+        mActionAdapter.notifyItemRangeChanged(position, position);
+    }
+
     private class OnConvertResponse extends Response{
         @Override
         public void onSuccess(JsonObject result) {
@@ -273,22 +300,12 @@ public class VideoDetailsFragment extends DetailsFragment {
             }
 
             if(percentDone >= 0) {
-                Action action = null;
-                int position = 0;
-
-                for (int i = 0; i < mActionAdapter.size(); i++) {
-                    action = (Action) mActionAdapter.get(i);
-
-                    if (action.getId() == ActionOption.CONVERT.getId()) {
-                        position = i;
-                        break;
-                    }
-                }
+                Action action = getAction(ActionOption.CONVERT);
 
                 if (action != null) {
                     if (percentDone < 100) {
                         action.setLabel2(percentDone + "%");
-                        mActionAdapter.notifyItemRangeChanged(position, position);
+                        updateActions(action);
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -298,7 +315,7 @@ public class VideoDetailsFragment extends DetailsFragment {
                         }, 1000);
                     } else {
                         mActionAdapter.remove(action);
-                        mActionAdapter.notifyItemRangeChanged(position, position);
+                        updateActions(action);
                         mFile.setConverted(true);
                     }
                 }
@@ -317,11 +334,18 @@ public class VideoDetailsFragment extends DetailsFragment {
             }
 
             if(mFile.getResumeTime() > 0){
-                int currentRange = mActionAdapter.size() - 1;
-                Action action = new Action(ActionOption.RESUME.getId(), getResources().getString(ActionOption.RESUME.getTitleResId()), mFile.getResumeTimeFormatted());
+                Action action = getAction(ActionOption.RESUME);
 
-                mActionAdapter.add(action);
-                mActionAdapter.notifyItemRangeChanged(currentRange, currentRange + 1);
+                if(action == null) {
+                    int currentRange = mActionAdapter.size() - 1;
+                    action = new Action(ActionOption.RESUME.getId(), getResources().getString(ActionOption.RESUME.getTitleResId()), mFile.getResumeTimeFormatted());
+
+                    mActionAdapter.add(action);
+                    mActionAdapter.notifyItemRangeChanged(currentRange, currentRange + 1);
+                } else {
+                    action.setLabel2(mFile.getResumeTimeFormatted());
+                    updateActions(action);
+                }
             }
         }
     }

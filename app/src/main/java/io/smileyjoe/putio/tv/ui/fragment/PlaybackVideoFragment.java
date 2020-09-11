@@ -14,6 +14,7 @@ import androidx.leanback.media.PlaybackTransportControlGlue;
 import androidx.leanback.widget.PlaybackControlsRow;
 
 import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.putio.Putio;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 
 /**
@@ -54,14 +55,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        getSurfaceView().setKeepScreenOn(true);
         super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getSurfaceView().setKeepScreenOn(false);
         if (mTransportControlGlue != null) {
             mTransportControlGlue.pause();
         }
@@ -76,6 +75,21 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
                 mTransportControlGlue.seekTo(mFile.getResumeTime()*1000);
                 // we only want to do this after the first load //
                 mShouldResume = false;
+            }
+        }
+
+        @Override
+        public void onPlayStateChanged(PlaybackGlue glue) {
+            super.onPlayStateChanged(glue);
+
+            if(getSurfaceView() != null) {
+                if (mTransportControlGlue.isPlaying()) {
+                    getSurfaceView().setKeepScreenOn(true);
+                } else {
+                    getSurfaceView().setKeepScreenOn(false);
+
+                    Putio.setResumeTime(getContext(), mFile.getId(), mTransportControlGlue.getCurrentPosition()/1000, null);
+                }
             }
         }
     }

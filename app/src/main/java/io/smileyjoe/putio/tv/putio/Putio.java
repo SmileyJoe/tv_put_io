@@ -42,6 +42,23 @@ public class Putio {
         execute(context, url, response);
     }
 
+    public static void setResumeTime(Context context, long id, long seconds, Response response){
+        String url = BASE + RESUME_TIME;
+        url = url.replace("{id}", Long.toString(id));
+
+        JsonObject body = new JsonObject();
+        body.addProperty("time", seconds);
+
+        Ion.with(context)
+                .load(url)
+                .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
+                .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
+                .setHeader("Authorization", "Bearer " + BuildConfig.PUTIO_AUTH_TOKEN)
+                .setJsonObjectBody(body)
+                .asJsonObject()
+                .setCallback(response);
+    }
+
     public static void getConversionStatus(Context context, long id, Response response){
         String url = BASE + CONVERT;
         url = url.replace("{id}", Long.toString(id));
