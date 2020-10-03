@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.ui.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,10 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.FolderListViewHolder;
 
-public class FolderListAdapter  extends RecyclerView.Adapter<FolderListViewHolder>{
+public class FolderListAdapter extends RecyclerView.Adapter<FolderListViewHolder> {
 
-    public interface Listener extends FolderListViewHolder.Listener{}
+    public interface Listener extends FolderListViewHolder.Listener {
+    }
 
     private ArrayList<Video> mVideos;
     private Context mContext;
@@ -57,7 +57,7 @@ public class FolderListAdapter  extends RecyclerView.Adapter<FolderListViewHolde
         return mVideos.size();
     }
 
-    public Video getItem(int position){
+    public Video getItem(int position) {
         return mVideos.get(position);
     }
 }

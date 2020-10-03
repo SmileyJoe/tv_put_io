@@ -1,17 +1,13 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.graphics.drawable.Drawable;
-
-import androidx.leanback.widget.ImageCardView;
-import androidx.leanback.widget.Presenter;
-import androidx.core.content.ContextCompat;
-
-import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.leanback.widget.ImageCardView;
+import androidx.leanback.widget.Presenter;
 
 import com.bumptech.glide.Glide;
 
@@ -43,10 +39,10 @@ public class CardPresenter extends Presenter {
         int color = selected ? sSelectedTextColor : sDefaultTextColor;
         ViewGroup viewInfo = imageCardView.findViewById(R.id.info_field);
 
-        for(int i = 0; i < viewInfo.getChildCount(); i++){
+        for (int i = 0; i < viewInfo.getChildCount(); i++) {
             View view = viewInfo.getChildAt(i);
 
-            if(view instanceof TextView){
+            if (view instanceof TextView) {
                 ((TextView) view).setTextColor(color);
             }
         }

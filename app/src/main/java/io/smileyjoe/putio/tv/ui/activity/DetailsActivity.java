@@ -11,9 +11,9 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
 
 /*
@@ -24,16 +24,16 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     public static final String VIDEO = "video";
     public static final String RELATED_VIDEOS = "related_videos";
 
-    public static Intent getIntent(Context context, Video video){
+    public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, null);
     }
 
-    public static Intent getIntent(Context context, Video video, ArrayList<Video> relatedVideos){
+    public static Intent getIntent(Context context, Video video, ArrayList<Video> relatedVideos) {
         Intent intent = new Intent(context, DetailsActivity.class);
 
         intent.putExtra(VIDEO, video);
 
-        if(relatedVideos != null && !relatedVideos.isEmpty()){
+        if (relatedVideos != null && !relatedVideos.isEmpty()) {
             intent.putExtra(RELATED_VIDEOS, relatedVideos);
         }
 
@@ -69,7 +69,7 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
         startActivity(PlaybackActivity.getIntent(getBaseContext(), video, true));
     }
 
-    private class OnConvertResponse extends Response{
+    private class OnConvertResponse extends Response {
         @Override
         public void onSuccess(JsonObject result) {
             Log.d("PutThings", "Converted");

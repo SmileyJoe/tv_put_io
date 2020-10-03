@@ -16,13 +16,12 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.adapter.FileSelectedListener;
 import io.smileyjoe.putio.tv.ui.adapter.VideoAdapter;
 
-public class VideoListFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener{
+public class VideoListFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
-    public interface Listener{
+    public interface Listener {
         void onVideoClicked(Video video, ArrayList<Video> relatedVideos);
     }
 
@@ -52,14 +51,14 @@ public class VideoListFragment extends Fragment implements AdapterView.OnItemCli
         mGridVideos.setOnItemClickListener(this);
         mGridVideos.setOnItemSelectedListener(new FileSelectedListener(mVideoAdapter));
 
-        if(getActivity() instanceof Listener){
+        if (getActivity() instanceof Listener) {
             mListener = (Listener) getActivity();
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(mListener != null){
+        if (mListener != null) {
             mListener.onVideoClicked(mVideoAdapter.getItem(position), mVideoAdapter.getVideos());
         }
     }
@@ -76,8 +75,8 @@ public class VideoListFragment extends Fragment implements AdapterView.OnItemCli
         mVideoAdapter.notifyDataSetChanged();
     }
 
-    public void setVideos(ArrayList<Video> videos){
-        if(videos == null || videos.isEmpty()){
+    public void setVideos(ArrayList<Video> videos) {
+        if (videos == null || videos.isEmpty()) {
             mTextEmpty.setVisibility(View.VISIBLE);
             mGridVideos.setVisibility(View.GONE);
         } else {

@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 
-public class FolderListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class FolderListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    public interface Listener{
+    public interface Listener {
         void onFolderClicked(Video video);
     }
 
@@ -34,7 +34,7 @@ public class FolderListViewHolder extends RecyclerView.ViewHolder implements Vie
         mListener = listener;
     }
 
-    public void bindView(Video video){
+    public void bindView(Video video) {
         mVideo = video;
 
         mTextTitle.setText(video.getTitle());
@@ -43,7 +43,7 @@ public class FolderListViewHolder extends RecyclerView.ViewHolder implements Vie
 
     @Override
     public void onClick(View v) {
-        if(mListener != null){
+        if (mListener != null) {
             mListener.onFolderClicked(mVideo);
         }
     }

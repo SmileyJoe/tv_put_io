@@ -42,8 +42,8 @@ public class Video implements Parcelable {
         mType = type;
     }
 
-    public void setType(String putType){
-        switch (putType){
+    public void setType(String putType) {
+        switch (putType) {
             case "FOLDER":
                 setType(VideoType.FOLDER);
                 break;
@@ -80,8 +80,8 @@ public class Video implements Parcelable {
         mPoster = poster;
     }
 
-    public void setPoster(String poster){
-        if(!TextUtils.isEmpty(poster)) {
+    public void setPoster(String poster) {
+        if (!TextUtils.isEmpty(poster)) {
             setPoster(Uri.parse(poster));
         }
     }
@@ -90,8 +90,8 @@ public class Video implements Parcelable {
         mBackdrop = backdrop;
     }
 
-    public void setBackdrop(String backdrop){
-        if(!TextUtils.isEmpty(backdrop)) {
+    public void setBackdrop(String backdrop) {
+        if (!TextUtils.isEmpty(backdrop)) {
             setBackdrop(Uri.parse(backdrop));
         }
     }
@@ -100,15 +100,15 @@ public class Video implements Parcelable {
         mStreamUri = streamUri;
     }
 
-    public void setStreamUri(String streamUri, String streamMp4Uri){
+    public void setStreamUri(String streamUri, String streamMp4Uri) {
         String uri;
-        if(!TextUtils.isEmpty(streamMp4Uri)){
+        if (!TextUtils.isEmpty(streamMp4Uri)) {
             uri = streamMp4Uri;
         } else {
             uri = streamUri;
         }
 
-        if(!TextUtils.isEmpty(uri)) {
+        if (!TextUtils.isEmpty(uri)) {
             setStreamUri(Uri.parse(uri));
         }
     }
@@ -157,7 +157,7 @@ public class Video implements Parcelable {
         return mResumeTime;
     }
 
-    public String getResumeTimeFormatted(){
+    public String getResumeTimeFormatted() {
         long hours = mResumeTime / 3600;
         long minutes = (mResumeTime % 3600) / 60;
         long seconds = mResumeTime % 60;

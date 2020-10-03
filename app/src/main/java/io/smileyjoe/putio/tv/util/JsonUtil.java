@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.util;
 
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 public class JsonUtil {
@@ -11,11 +10,11 @@ public class JsonUtil {
         mJsonObject = jsonObject;
     }
 
-    public String getString(String name){
-        if(isValid(name)){
+    public String getString(String name) {
+        if (isValid(name)) {
             try {
                 return mJsonObject.get(name).getAsString();
-            } catch (UnsupportedOperationException e){
+            } catch (UnsupportedOperationException e) {
 
             }
         }
@@ -23,9 +22,9 @@ public class JsonUtil {
         return null;
     }
 
-    public long getLong(String name){
-        if(isValid(name)){
-            try{
+    public long getLong(String name) {
+        if (isValid(name)) {
+            try {
                 return mJsonObject.get(name).getAsLong();
             } catch (UnsupportedOperationException e) {
 
@@ -35,11 +34,11 @@ public class JsonUtil {
         return -1;
     }
 
-    public int getInt(String name){
-        if(isValid(name)){
-            try{
+    public int getInt(String name) {
+        if (isValid(name)) {
+            try {
                 return mJsonObject.get(name).getAsInt();
-            } catch (UnsupportedOperationException e){
+            } catch (UnsupportedOperationException e) {
 
             }
         }
@@ -47,11 +46,11 @@ public class JsonUtil {
         return -1;
     }
 
-    public boolean getBoolean(String name, boolean defaultValue){
-        if(isValid(name)){
-            try{
+    public boolean getBoolean(String name, boolean defaultValue) {
+        if (isValid(name)) {
+            try {
                 return mJsonObject.get(name).getAsBoolean();
-            } catch (UnsupportedOperationException e){
+            } catch (UnsupportedOperationException e) {
 
             }
         }
@@ -59,7 +58,7 @@ public class JsonUtil {
         return defaultValue;
     }
 
-    private boolean isValid(String name){
+    private boolean isValid(String name) {
         return mJsonObject != null && mJsonObject.has(name);
     }
 }

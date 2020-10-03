@@ -19,24 +19,24 @@ public class Parse {
         PATTERNS.put("year", "([\\[\\(]?((?:19[0-9]|20[01])[0-9])[\\]\\)]?)");
     }
 
-    public static Video update(Video video){
+    public static Video update(Video video) {
         HashMap<String, String> details = Parse.parse(video.getTitle());
 
         video.setTitle(details.get("title"));
 
-        if(details.containsKey("year")) {
+        if (details.containsKey("year")) {
             video.setYear(Integer.parseInt(details.get("year")));
         }
 
-        if(details.containsKey("season")) {
+        if (details.containsKey("season")) {
             video.setSeason(Integer.parseInt(details.get("season")));
         }
 
-        if(details.containsKey("episode")) {
+        if (details.containsKey("episode")) {
             video.setEpisode(Integer.parseInt(details.get("episode")));
         }
 
-        if(video.getType() == VideoType.VIDEO) {
+        if (video.getType() == VideoType.VIDEO) {
             if (details.containsKey("is_movie")) {
                 boolean isMovie = Boolean.parseBoolean(details.get("is_movie"));
 
@@ -51,19 +51,19 @@ public class Parse {
         return video;
     }
 
-    public static HashMap<String, String> parse(String rawTitle){
+    public static HashMap<String, String> parse(String rawTitle) {
         ArrayList<String> matchesRaw = new ArrayList<>();
         HashMap<String, String> matchesClean = new HashMap<>();
         int titleStart = 0;
         int titleEnd = rawTitle.length();
 
-        for(Map.Entry<String, String> entry:PATTERNS.entrySet()){
+        for (Map.Entry<String, String> entry : PATTERNS.entrySet()) {
             String key = entry.getKey();
             String pattern = entry.getValue();
 
             Matcher matcher = Pattern.compile(pattern).matcher(rawTitle);
 
-            while(matcher.find()) {
+            while (matcher.find()) {
                 int matchIndex = 0;
 
                 if (matcher.groupCount() > 1) {
@@ -76,7 +76,7 @@ public class Parse {
 
                 boolean isMovie = true;
 
-                switch (key){
+                switch (key) {
                     case "season":
                     case "episode":
                         isMovie = false;
@@ -88,30 +88,30 @@ public class Parse {
                 matchesClean.put(key, match);
                 matchesClean.put("is_movie", String.valueOf(isMovie));
 
-                if(matcher.start() == 0){
+                if (matcher.start() == 0) {
                     int end = matcher.end();
 
-                    if(titleStart < end){
+                    if (titleStart < end) {
                         titleStart = end;
                     }
 
                 } else {
                     int start = matcher.start();
 
-                    if(titleEnd > start) {
+                    if (titleEnd > start) {
                         titleEnd = start;
                     }
                 }
             }
         }
 
-        if(titleEnd <= titleStart){
+        if (titleEnd <= titleStart) {
             titleEnd = rawTitle.length();
         }
 
         String cleanTitle = rawTitle.substring(titleStart, titleEnd);
 
-        if(!cleanTitle.contains(" ") && cleanTitle.contains(".")){
+        if (!cleanTitle.contains(" ") && cleanTitle.contains(".")) {
             cleanTitle = cleanTitle.replace(".", " ");
         }
 

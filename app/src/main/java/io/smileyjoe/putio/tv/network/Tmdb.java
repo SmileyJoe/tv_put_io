@@ -7,7 +7,6 @@ import com.koushikdutta.ion.Ion;
 import java.net.URLEncoder;
 
 import io.smileyjoe.putio.tv.BuildConfig;
-import io.smileyjoe.putio.tv.network.Response;
 
 public class Tmdb {
 
@@ -19,10 +18,10 @@ public class Tmdb {
     private static String PARAM_SEARCH = "query";
     private static String PARAM_YEAR = "primary_release_year";
 
-    private static String getUrl(String... paths){
+    private static String getUrl(String... paths) {
         String url = BASE;
 
-        for(String path:paths){
+        for (String path : paths) {
             url += path;
         }
 
@@ -31,15 +30,15 @@ public class Tmdb {
         return url;
     }
 
-    private static String addParam(String url, String key, String value){
+    private static String addParam(String url, String key, String value) {
         return url + "&" + key + "=" + URLEncoder.encode(value);
     }
 
-    public static String getImageUrl(String url){
+    public static String getImageUrl(String url) {
         return BASE_IMAGE + url;
     }
 
-    public static void searchMovie(Context context, String title, int year, Response response){
+    public static void searchMovie(Context context, String title, int year, Response response) {
 
         String url = getUrl(SEARCH, MOVIE);
         url = addParam(url, PARAM_SEARCH, title);

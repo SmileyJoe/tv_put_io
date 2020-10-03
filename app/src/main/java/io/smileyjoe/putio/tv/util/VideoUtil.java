@@ -10,22 +10,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
-import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.torrent.Parse;
 
 public class VideoUtil {
 
-    private VideoUtil(){
+    private VideoUtil() {
 
     }
 
-    public static ArrayList<Video> filter(ArrayList<Video> videos){
+    public static ArrayList<Video> filter(ArrayList<Video> videos) {
         ArrayList<Video> videosFiltered = new ArrayList<>();
 
-        for(Video video:videos){
-            if(video.getType() != VideoType.UNKNOWN){
+        for (Video video : videos) {
+            if (video.getType() != VideoType.UNKNOWN) {
                 videosFiltered.add(video);
             }
         }
@@ -33,7 +33,7 @@ public class VideoUtil {
         return videosFiltered;
     }
 
-    public static void sort(ArrayList<Video> videos){
+    public static void sort(ArrayList<Video> videos) {
         Collections.sort(videos, new VideoComparator());
     }
 
@@ -42,7 +42,7 @@ public class VideoUtil {
         public int compare(Video videoOne, Video videoTwo) {
             int result = Integer.compare(videoOne.getType().getOrder(), videoTwo.getType().getOrder());
 
-            if(result != 0){
+            if (result != 0) {
                 return result;
             }
 
@@ -50,7 +50,7 @@ public class VideoUtil {
         }
     }
 
-    public static Video parseFromPut(JsonObject jsonObject){
+    public static Video parseFromPut(JsonObject jsonObject) {
         Video video = new Video();
         JsonUtil json = new JsonUtil(jsonObject);
 
@@ -70,18 +70,18 @@ public class VideoUtil {
         return video;
     }
 
-    public static ArrayList<Video> parseFromPut(JsonArray jsonArray){
+    public static ArrayList<Video> parseFromPut(JsonArray jsonArray) {
         ArrayList<Video> videos = new ArrayList<>();
 
-        for(JsonElement jsonElement:jsonArray){
+        for (JsonElement jsonElement : jsonArray) {
             videos.add(parseFromPut(jsonElement.getAsJsonObject()));
         }
 
         return videos;
     }
 
-    public static Video updateFromTmdb(Video video, JsonArray jsonArray){
-        for(JsonElement jsonElement:jsonArray){
+    public static Video updateFromTmdb(Video video, JsonArray jsonArray) {
+        for (JsonElement jsonElement : jsonArray) {
             JsonUtil json = new JsonUtil(jsonElement.getAsJsonObject());
 
             video.setTmdbId(json.getLong("id"));

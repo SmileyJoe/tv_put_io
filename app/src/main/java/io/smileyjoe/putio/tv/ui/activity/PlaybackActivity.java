@@ -14,11 +14,11 @@ public class PlaybackActivity extends FragmentActivity {
     public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_SHOULD_RESUME = "should_resume";
 
-    public static Intent getIntent(Context context, Video video){
+    public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
     }
 
-    public static Intent getIntent(Context context, Video video, boolean shouldResume){
+    public static Intent getIntent(Context context, Video video, boolean shouldResume) {
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);

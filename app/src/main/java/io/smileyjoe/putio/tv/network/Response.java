@@ -7,11 +7,12 @@ public abstract class Response implements FutureCallback<JsonObject> {
 
     public abstract void onSuccess(JsonObject result);
 
-    public void onFail(Exception e){}
+    public void onFail(Exception e) {
+    }
 
     @Override
     public void onCompleted(Exception e, JsonObject result) {
-        if(e == null){
+        if (e == null) {
             onSuccess(result);
         } else {
             onFail(e);

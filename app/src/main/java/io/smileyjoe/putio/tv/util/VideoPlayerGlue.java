@@ -17,6 +17,7 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
+
 import androidx.leanback.media.PlaybackTransportControlGlue;
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -28,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * https://github.com/googlearchive/androidtv-Leanback/blob/master/app/src/main/java/com/example/android/tvleanback/player/VideoPlayerGlue.java
- *
+ * <p>
  * Manages customizing the actions in the {@link PlaybackControlsRow}. Adds and manages the
  * following actions to the primary and secondary controls:
  *
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  *   <li>{@link androidx.leanback.widget.PlaybackControlsRow.FastForwardAction}
  *   <li>{@link androidx.leanback.widget.PlaybackControlsRow.RewindAction}
  * </ul>
- *
+ * <p>
  * Note that the superclass, {@link PlaybackTransportControlGlue}, manages the playback controls
  * row.
  */
@@ -49,13 +50,19 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
 
     private static final long TEN_SECONDS = TimeUnit.SECONDS.toMillis(10);
 
-    /** Listens for when skip to next and previous actions have been dispatched. */
+    /**
+     * Listens for when skip to next and previous actions have been dispatched.
+     */
     public interface OnActionClickedListener {
 
-        /** Skip to the previous item in the queue. */
+        /**
+         * Skip to the previous item in the queue.
+         */
         void onPrevious();
 
-        /** Skip to the next item in the queue. */
+        /**
+         * Skip to the next item in the queue.
+         */
         void onNext();
     }
 
@@ -168,14 +175,18 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mActionListener.onPrevious();
     }
 
-    /** Skips backwards 10 seconds. */
+    /**
+     * Skips backwards 10 seconds.
+     */
     public void rewind() {
         long newPosition = getCurrentPosition() - TEN_SECONDS;
         newPosition = (newPosition < 0) ? 0 : newPosition;
         getPlayerAdapter().seekTo(newPosition);
     }
 
-    /** Skips forward 10 seconds. */
+    /**
+     * Skips forward 10 seconds.
+     */
     public void fastForward() {
         if (getDuration() > -1) {
             long newPosition = getCurrentPosition() + TEN_SECONDS;

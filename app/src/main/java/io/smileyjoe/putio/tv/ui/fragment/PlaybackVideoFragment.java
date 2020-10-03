@@ -40,14 +40,14 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
 
 /**
  * https://github.com/googlearchive/androidtv-Leanback/blob/master/app/src/main/java/com/example/android/tvleanback/ui/PlaybackFragment.java
- *
+ * <p>
  * Plays selected video, loads playlist and related videos, and delegates playback to {@link
  * VideoPlayerGlue}.
  */
@@ -86,7 +86,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         }
     }
 
-    /** Pauses the player. */
+    /**
+     * Pauses the player.
+     */
     @TargetApi(Build.VERSION_CODES.N)
     @Override
     public void onPause() {
@@ -157,13 +159,13 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         mPlayer.prepare(mediaSource);
     }
 
-    private class PlayerCallback extends PlaybackGlue.PlayerCallback{
+    private class PlayerCallback extends PlaybackGlue.PlayerCallback {
         @Override
         public void onPreparedStateChanged(PlaybackGlue glue) {
             super.onPreparedStateChanged(glue);
 
-            if(mShouldResume){
-                mPlayerGlue.seekTo(mVideo.getResumeTime()*1000);
+            if (mShouldResume) {
+                mPlayerGlue.seekTo(mVideo.getResumeTime() * 1000);
                 // we only want to do this after the first load //
                 mShouldResume = false;
             }
@@ -173,13 +175,13 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         public void onPlayStateChanged(PlaybackGlue glue) {
             super.onPlayStateChanged(glue);
 
-            if(getSurfaceView() != null) {
+            if (getSurfaceView() != null) {
                 if (mPlayerGlue.isPlaying()) {
                     getSurfaceView().setKeepScreenOn(true);
                 } else {
                     getSurfaceView().setKeepScreenOn(false);
 
-                    Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition()/1000, null);
+                    Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition() / 1000, null);
                 }
             }
         }

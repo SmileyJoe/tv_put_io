@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 
 import io.smileyjoe.putio.tv.BuildConfig;
-import io.smileyjoe.putio.tv.network.Response;
 
 public class Putio {
 
@@ -17,21 +16,21 @@ public class Putio {
     private static final String RESUME_TIME = "/files/{id}/start-from";
     private static final String CONVERT = "/files/{id}/mp4";
 
-    public static void getFiles(Context context, Response response){
+    public static void getFiles(Context context, Response response) {
         getFiles(context, NO_PARENT, response);
     }
 
-    public static void getFiles(Context context, long parentId, Response response){
+    public static void getFiles(Context context, long parentId, Response response) {
         String url = BASE + FILES;
 
-        if(parentId != NO_PARENT){
+        if (parentId != NO_PARENT) {
             url += "?parent_id=" + parentId + "&stream_url=true&mp4_stream_url=true";
         }
 
         execute(context, url, response);
     }
 
-    public static void getResumeTime(Context context, long id, Response response){
+    public static void getResumeTime(Context context, long id, Response response) {
         String url = BASE + RESUME_TIME;
 
         url = url.replace("{id}", Long.toString(id));
@@ -39,7 +38,7 @@ public class Putio {
         execute(context, url, response);
     }
 
-    public static void setResumeTime(Context context, long id, long seconds, Response response){
+    public static void setResumeTime(Context context, long id, long seconds, Response response) {
         String url = BASE + RESUME_TIME;
         url = url.replace("{id}", Long.toString(id));
 
@@ -56,13 +55,13 @@ public class Putio {
                 .setCallback(response);
     }
 
-    public static void getConversionStatus(Context context, long id, Response response){
+    public static void getConversionStatus(Context context, long id, Response response) {
         String url = BASE + CONVERT;
         url = url.replace("{id}", Long.toString(id));
         execute(context, url, response);
     }
 
-    public static void convertFile(Context context, long id, Response response){
+    public static void convertFile(Context context, long id, Response response) {
         String url = BASE + CONVERT;
         url = url.replace("{id}", Long.toString(id));
 
@@ -76,7 +75,7 @@ public class Putio {
                 .setCallback(response);
     }
 
-    public static void getDownloadUrl(Context context, long id, Response response){
+    public static void getDownloadUrl(Context context, long id, Response response) {
         String url = BASE + DOWNLOAD_URL;
 
         url = url.replace("{id}", Long.toString(id));
@@ -84,7 +83,7 @@ public class Putio {
         execute(context, url, response);
     }
 
-    private static void execute(Context context, String url, Response response){
+    private static void execute(Context context, String url, Response response) {
         Ion.with(context)
                 .load(url)
                 .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)

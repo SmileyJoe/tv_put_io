@@ -33,7 +33,7 @@ public class VideoAdapter extends FileAdapter {
 
         textTitle.setText(video.getTitle());
 
-        if(isSelected(position)){
+        if (isSelected(position)) {
             textTitle.setLines(textTitle.getLineCount());
             textTitle.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.fastlane_background));
             textTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_selected));
@@ -45,12 +45,12 @@ public class VideoAdapter extends FileAdapter {
             frameSelected.setVisibility(View.GONE);
         }
 
-        if(video.isWatched()){
+        if (video.isWatched()) {
             frameWatched.setVisibility(View.VISIBLE);
         } else {
             frameWatched.setVisibility(View.GONE);
         }
-        if(video.getPoster() != null){
+        if (video.getPoster() != null) {
             Glide.with(getContext())
                     .load(video.getPoster())
                     .into(imagePoster);
