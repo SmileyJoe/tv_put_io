@@ -41,11 +41,11 @@ public class Tmdb {
         return BASE_IMAGE + url;
     }
 
-    public static void searchMovie(Context context, String title, String year, Response response){
+    public static void searchMovie(Context context, String title, int year, Response response){
 
         String url = getUrl(SEARCH, MOVIE);
         url = addParam(url, PARAM_SEARCH, title);
-        url = addParam(url, PARAM_YEAR, year);
+        url = addParam(url, PARAM_YEAR, Integer.toString(year));
 
         Ion.with(context)
                 .load(url)

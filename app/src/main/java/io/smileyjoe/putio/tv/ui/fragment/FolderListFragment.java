@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.FolderListAdapter;
 import io.smileyjoe.putio.tv.ui.viewholder.FolderListViewHolder;
 
@@ -63,15 +63,15 @@ public class FolderListFragment extends Fragment {
 
     }
 
-    public void setFolders(ArrayList<File> folders){
-        if(folders == null || folders.isEmpty()){
+    public void setVideos(ArrayList<Video> videos){
+        if(videos == null || videos.isEmpty()){
             mTextEmpty.setVisibility(View.VISIBLE);
             mRecycleFolders.setVisibility(View.GONE);
         } else {
             mTextEmpty.setVisibility(View.GONE);
             mRecycleFolders.setVisibility(View.VISIBLE);
 
-            mFolderAdapter.setFolders(folders);
+            mFolderAdapter.setVideos(videos);
             mFolderAdapter.notifyDataSetChanged();
         }
     }

@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.adapter.FileSelectedListener;
 import io.smileyjoe.putio.tv.ui.adapter.VideoAdapter;
@@ -23,7 +23,7 @@ import io.smileyjoe.putio.tv.ui.adapter.VideoAdapter;
 public class VideoListFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener{
 
     public interface Listener{
-        void onVideoClicked(File file, ArrayList<File> relatedVideos);
+        void onVideoClicked(Video video, ArrayList<Video> relatedVideos);
     }
 
     private GridView mGridVideos;
@@ -60,7 +60,7 @@ public class VideoListFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if(mListener != null){
-            mListener.onVideoClicked(mVideoAdapter.getItem(position), mVideoAdapter.getFiles());
+            mListener.onVideoClicked(mVideoAdapter.getItem(position), mVideoAdapter.getVideos());
         }
     }
 
@@ -76,15 +76,15 @@ public class VideoListFragment extends Fragment implements AdapterView.OnItemCli
         mVideoAdapter.notifyDataSetChanged();
     }
 
-    public void setVideos(ArrayList<File> files){
-        if(files == null || files.isEmpty()){
+    public void setVideos(ArrayList<Video> videos){
+        if(videos == null || videos.isEmpty()){
             mTextEmpty.setVisibility(View.VISIBLE);
             mGridVideos.setVisibility(View.GONE);
         } else {
             mTextEmpty.setVisibility(View.GONE);
             mGridVideos.setVisibility(View.VISIBLE);
 
-            mVideoAdapter.setFiles(files);
+            mVideoAdapter.setVideos(videos);
             mVideoAdapter.notifyDataSetChanged();
         }
     }

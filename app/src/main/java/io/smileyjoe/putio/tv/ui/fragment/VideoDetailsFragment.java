@@ -39,12 +39,12 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.putio.Putio;
 import io.smileyjoe.putio.tv.putio.Response;
 import io.smileyjoe.putio.tv.ui.viewholder.CardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
 import io.smileyjoe.putio.tv.ui.activity.DetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 
@@ -55,10 +55,10 @@ import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 public class VideoDetailsFragment extends DetailsFragment {
 
     public interface Listener{
-        void onWatchClicked(File file);
-        void onConvertClicked(File file);
-        void onRelatedClicked(File file, ArrayList<File> relatedVideos);
-        void onResumeClick(File file);
+        void onWatchClicked(Video video);
+        void onConvertClicked(Video video);
+        void onRelatedClicked(Video video, ArrayList<Video> relatedVideos);
+        void onResumeClick(Video video);
     }
 
     private enum ActionOption{
@@ -98,8 +98,8 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private static final int NUM_COLS = 10;
 
-    private File mFile;
-    private ArrayList<File> mRelatedVideos;
+    private Video mVideo;
+    private ArrayList<Video> mRelatedVideos;
 
     private ArrayObjectAdapter mAdapter;
     private ClassPresenterSelector mPresenterSelector;
@@ -118,8 +118,8 @@ public class VideoDetailsFragment extends DetailsFragment {
 
         handleIntent();
 
-        if (mFile != null) {
-            if(mFile.getResumeTime() <= 0) {
+        if (mVideo != null) {
+            if(mVideo.getResumeTime() <= 0) {
                 getResumeTime();
             }
 
@@ -128,7 +128,7 @@ public class VideoDetailsFragment extends DetailsFragment {
             mAdapter = new ArrayObjectAdapter(mPresenterSelector);
             setAdapter(mAdapter);
             populate();
-            initializeBackground(mFile);
+            initializeBackground(mVideo);
             setOnItemViewClickedListener(new OnRelatedItemClick());
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -137,12 +137,12 @@ public class VideoDetailsFragment extends DetailsFragment {
     }
 
     private void getResumeTime(){
-        Putio.getResumeTime(getContext(), mFile.getId(), new OnResumeResponse());
+        Putio.getResumeTime(getContext(), mVideo.getPutId(), new OnResumeResponse());
     }
 
     private void getConversionStatus(){
-        if(!mFile.isConverted()){
-            Putio.getConversionStatus(getContext(), mFile.getId(), new OnConvertResponse());
+        if(!mVideo.isConverted()){
+            Putio.getConversionStatus(getContext(), mVideo.getPutId(), new OnConvertResponse());
         }
     }
 
@@ -153,7 +153,7 @@ public class VideoDetailsFragment extends DetailsFragment {
     }
 
     public void handleIntent(){
-        mFile = getActivity().getIntent().getParcelableExtra(DetailsActivity.VIDEO);
+        mVideo = getActivity().getIntent().getParcelableExtra(DetailsActivity.VIDEO);
         mRelatedVideos = getActivity().getIntent().getParcelableArrayListExtra(DetailsActivity.RELATED_VIDEOS);
     }
 
@@ -172,10 +172,10 @@ public class VideoDetailsFragment extends DetailsFragment {
         getResumeTime();
     }
 
-    private void initializeBackground(File file) {
+    private void initializeBackground(Video video) {
         mDetailsBackground.enableParallax();
         Glide.with(getActivity())
-                .load(Uri.parse(file.getBackdrop()))
+                .load(video.getBackdrop())
                 .asBitmap()
                 .centerCrop()
                 .error(R.drawable.default_background)
@@ -183,7 +183,7 @@ public class VideoDetailsFragment extends DetailsFragment {
     }
 
     private void setupDetailsOverviewRow() {
-        DetailsOverviewRow row = new DetailsOverviewRow(mFile);
+        DetailsOverviewRow row = new DetailsOverviewRow(mVideo);
         row.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.default_background));
 
         loadThumb(row);
@@ -197,7 +197,7 @@ public class VideoDetailsFragment extends DetailsFragment {
         int height = convertDpToPixel(getActivity().getApplicationContext(), DETAIL_THUMB_HEIGHT);
 
         Glide.with(getActivity())
-                .load(Uri.parse(mFile.getPoster()))
+                .load(mVideo.getPoster())
                 .centerCrop()
                 .error(R.drawable.default_background)
                 .into(new OnThumbLoaded(width, height, row));
@@ -214,12 +214,12 @@ public class VideoDetailsFragment extends DetailsFragment {
                     action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
                     break;
                 case RESUME:
-                    if(mFile.getResumeTime() > 0) {
-                        action = new Action(option.getId(), getResources().getString(option.getTitleResId()), mFile.getResumeTimeFormatted());
+                    if(mVideo.getResumeTime() > 0) {
+                        action = new Action(option.getId(), getResources().getString(option.getTitleResId()), mVideo.getResumeTimeFormatted());
                     }
                     break;
                 case CONVERT:
-                    if(!mFile.isConverted()) {
+                    if(!mVideo.isConverted()) {
                         action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
                     }
                     break;
@@ -252,8 +252,8 @@ public class VideoDetailsFragment extends DetailsFragment {
     private void setupRelatedVideoListRow() {
         if(mRelatedVideos != null && !mRelatedVideos.isEmpty()) {
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-            for (File file:mRelatedVideos) {
-                listRowAdapter.add(file);
+            for (Video video:mRelatedVideos) {
+                listRowAdapter.add(video);
             }
 
             HeaderItem header = new HeaderItem(0, getString(R.string.related_videos));
@@ -316,7 +316,7 @@ public class VideoDetailsFragment extends DetailsFragment {
                     } else {
                         mActionAdapter.remove(action);
                         updateActions(action);
-                        mFile.setConverted(true);
+                        mVideo.setConverted(true);
                     }
                 }
             }
@@ -328,22 +328,22 @@ public class VideoDetailsFragment extends DetailsFragment {
         public void onSuccess(JsonObject result) {
             try {
                 long resumeTime = result.get("start_from").getAsLong();
-                mFile.setResumeTime(resumeTime);
+                mVideo.setResumeTime(resumeTime);
             } catch (UnsupportedOperationException | NullPointerException e){
-                mFile.setResumeTime(0);
+                mVideo.setResumeTime(0);
             }
 
-            if(mFile.getResumeTime() > 0){
+            if(mVideo.getResumeTime() > 0){
                 Action action = getAction(ActionOption.RESUME);
 
                 if(action == null) {
                     int currentRange = mActionAdapter.size() - 1;
-                    action = new Action(ActionOption.RESUME.getId(), getResources().getString(ActionOption.RESUME.getTitleResId()), mFile.getResumeTimeFormatted());
+                    action = new Action(ActionOption.RESUME.getId(), getResources().getString(ActionOption.RESUME.getTitleResId()), mVideo.getResumeTimeFormatted());
 
                     mActionAdapter.add(action);
                     mActionAdapter.notifyItemRangeChanged(currentRange, currentRange + 1);
                 } else {
-                    action.setLabel2(mFile.getResumeTimeFormatted());
+                    action.setLabel2(mVideo.getResumeTimeFormatted());
                     updateActions(action);
                 }
             }
@@ -358,17 +358,17 @@ public class VideoDetailsFragment extends DetailsFragment {
             switch (option){
                 case WATCH:
                     if(mListener != null){
-                        mListener.onWatchClicked(mFile);
+                        mListener.onWatchClicked(mVideo);
                     }
                     break;
                 case CONVERT:
                     if(mListener != null){
-                        mListener.onConvertClicked(mFile);
+                        mListener.onConvertClicked(mVideo);
                     }
                     break;
                 case RESUME:
                     if(mListener != null){
-                        mListener.onResumeClick(mFile);
+                        mListener.onResumeClick(mVideo);
                     }
                     break;
             }
@@ -383,8 +383,8 @@ public class VideoDetailsFragment extends DetailsFragment {
                 RowPresenter.ViewHolder rowViewHolder,
                 Row row) {
 
-            if(mListener != null && item instanceof File){
-                mListener.onRelatedClicked((File) item, mRelatedVideos);
+            if(mListener != null && item instanceof Video){
+                mListener.onRelatedClicked((Video) item, mRelatedVideos);
             }
         }
     }

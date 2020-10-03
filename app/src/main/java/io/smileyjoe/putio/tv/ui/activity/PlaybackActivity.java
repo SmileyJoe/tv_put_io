@@ -6,8 +6,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.FragmentActivity;
 
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
-import io.smileyjoe.putio.tv.putio.File;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragmentTwo;
 
 /**
@@ -15,16 +15,16 @@ import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragmentTwo;
  */
 public class PlaybackActivity extends FragmentActivity {
 
-    public static final String EXTRA_FILE = "file";
+    public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_SHOULD_RESUME = "should_resume";
 
-    public static Intent getIntent(Context context, File file){
-        return getIntent(context, file, false);
+    public static Intent getIntent(Context context, Video video){
+        return getIntent(context, video, false);
     }
 
-    public static Intent getIntent(Context context, File file, boolean shouldResume){
+    public static Intent getIntent(Context context, Video video, boolean shouldResume){
         Intent intent = new Intent(context, PlaybackActivity.class);
-        intent.putExtra(EXTRA_FILE, file);
+        intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
         return intent;
     }

@@ -12,28 +12,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.FolderListViewHolder;
 
 public class FolderListAdapter  extends RecyclerView.Adapter<FolderListViewHolder>{
 
     public interface Listener extends FolderListViewHolder.Listener{}
 
-    private ArrayList<File> mFolders;
+    private ArrayList<Video> mVideos;
     private Context mContext;
     private Listener mListener;
 
     public FolderListAdapter(Context context) {
         mContext = context;
-        setFolders(new ArrayList<>());
+        setVideos(new ArrayList<>());
     }
 
     public void setListener(Listener listener) {
         mListener = listener;
     }
 
-    public void setFolders(ArrayList<File> folders) {
-        mFolders = folders;
+    public void setVideos(ArrayList<Video> videos) {
+        mVideos = videos;
     }
 
     @NonNull
@@ -54,10 +54,10 @@ public class FolderListAdapter  extends RecyclerView.Adapter<FolderListViewHolde
 
     @Override
     public int getItemCount() {
-        return mFolders.size();
+        return mVideos.size();
     }
 
-    public File getItem(int position){
-        return mFolders.get(position);
+    public Video getItem(int position){
+        return mVideos.get(position);
     }
 }

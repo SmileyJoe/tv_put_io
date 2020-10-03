@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.
@@ -80,14 +80,14 @@ public class CardPresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
-        File video = (File) item;
+        Video video = (Video) item;
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
-        if (!TextUtils.isEmpty(video.getScreenShot())) {
-            cardView.setTitleText(video.getName());
+        if (video.getPoster() != null) {
+            cardView.setTitleText(video.getTitle());
             cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
             Glide.with(viewHolder.view.getContext())
-                    .load(Uri.parse(video.getScreenShot()))
+                    .load(video.getPoster())
                     .centerCrop()
                     .error(mDefaultCardImage)
                     .into(cardView.getMainImageView());

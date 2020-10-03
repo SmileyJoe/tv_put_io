@@ -1,5 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 public class JsonUtil {
@@ -12,7 +13,11 @@ public class JsonUtil {
 
     public String getString(String name){
         if(isValid(name)){
-            return mJsonObject.get(name).getAsString();
+            try {
+                return mJsonObject.get(name).getAsString();
+            } catch (UnsupportedOperationException e){
+
+            }
         }
 
         return null;
@@ -20,7 +25,11 @@ public class JsonUtil {
 
     public long getLong(String name){
         if(isValid(name)){
-            return mJsonObject.get(name).getAsLong();
+            try{
+                return mJsonObject.get(name).getAsLong();
+            } catch (UnsupportedOperationException e) {
+
+            }
         }
 
         return -1;
@@ -28,7 +37,11 @@ public class JsonUtil {
 
     public int getInt(String name){
         if(isValid(name)){
-            return mJsonObject.get(name).getAsInt();
+            try{
+                return mJsonObject.get(name).getAsInt();
+            } catch (UnsupportedOperationException e){
+
+            }
         }
 
         return -1;
@@ -36,7 +49,11 @@ public class JsonUtil {
 
     public boolean getBoolean(String name, boolean defaultValue){
         if(isValid(name)){
-            return mJsonObject.get(name).getAsBoolean();
+            try{
+                return mJsonObject.get(name).getAsBoolean();
+            } catch (UnsupportedOperationException e){
+
+            }
         }
 
         return defaultValue;

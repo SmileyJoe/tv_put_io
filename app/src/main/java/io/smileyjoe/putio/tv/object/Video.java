@@ -1,9 +1,11 @@
 package io.smileyjoe.putio.tv.object;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
-public class Video {
+public class Video implements Parcelable {
 
     // ids
     private long mPutId;
@@ -79,7 +81,9 @@ public class Video {
     }
 
     public void setPoster(String poster){
-        setPoster(Uri.parse(poster));
+        if(!TextUtils.isEmpty(poster)) {
+            setPoster(Uri.parse(poster));
+        }
     }
 
     public void setBackdrop(Uri backdrop) {
@@ -87,7 +91,9 @@ public class Video {
     }
 
     public void setBackdrop(String backdrop){
-        setBackdrop(Uri.parse(backdrop));
+        if(!TextUtils.isEmpty(backdrop)) {
+            setBackdrop(Uri.parse(backdrop));
+        }
     }
 
     public void setStreamUri(Uri streamUri) {
@@ -95,10 +101,15 @@ public class Video {
     }
 
     public void setStreamUri(String streamUri, String streamMp4Uri){
+        String uri;
         if(!TextUtils.isEmpty(streamMp4Uri)){
-            setStreamUri(Uri.parse(streamMp4Uri));
+            uri = streamMp4Uri;
         } else {
-            setStreamUri(Uri.parse(streamUri));
+            uri = streamUri;
+        }
+
+        if(!TextUtils.isEmpty(uri)) {
+            setStreamUri(Uri.parse(uri));
         }
     }
 
@@ -146,6 +157,14 @@ public class Video {
         return mResumeTime;
     }
 
+    public String getResumeTimeFormatted(){
+        long hours = mResumeTime / 3600;
+        long minutes = (mResumeTime % 3600) / 60;
+        long seconds = mResumeTime % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
     public Uri getPoster() {
         return mPoster;
     }
@@ -169,4 +188,57 @@ public class Video {
     public int getEpisode() {
         return mEpisode;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.mPutId);
+        dest.writeLong(this.mTmdbId);
+        dest.writeInt(this.mType == null ? -1 : this.mType.ordinal());
+        dest.writeString(this.mTitle);
+        dest.writeString(this.mOverView);
+        dest.writeByte(this.mIsWatched ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.mIsConverted ? (byte) 1 : (byte) 0);
+        dest.writeLong(this.mResumeTime);
+        dest.writeInt(this.mYear);
+        dest.writeInt(this.mSeason);
+        dest.writeInt(this.mEpisode);
+        dest.writeParcelable(this.mPoster, flags);
+        dest.writeParcelable(this.mBackdrop, flags);
+        dest.writeParcelable(this.mStreamUri, flags);
+    }
+
+    protected Video(Parcel in) {
+        this.mPutId = in.readLong();
+        this.mTmdbId = in.readLong();
+        int tmpMType = in.readInt();
+        this.mType = tmpMType == -1 ? null : VideoType.values()[tmpMType];
+        this.mTitle = in.readString();
+        this.mOverView = in.readString();
+        this.mIsWatched = in.readByte() != 0;
+        this.mIsConverted = in.readByte() != 0;
+        this.mResumeTime = in.readLong();
+        this.mYear = in.readInt();
+        this.mSeason = in.readInt();
+        this.mEpisode = in.readInt();
+        this.mPoster = in.readParcelable(Uri.class.getClassLoader());
+        this.mBackdrop = in.readParcelable(Uri.class.getClassLoader());
+        this.mStreamUri = in.readParcelable(Uri.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Video> CREATOR = new Parcelable.Creator<Video>() {
+        @Override
+        public Video createFromParcel(Parcel source) {
+            return new Video(source);
+        }
+
+        @Override
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
 }

@@ -13,7 +13,7 @@ import androidx.leanback.media.PlaybackGlue;
 import androidx.leanback.media.PlaybackTransportControlGlue;
 import androidx.leanback.widget.PlaybackControlsRow;
 
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.putio.Putio;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 
@@ -23,14 +23,14 @@ import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 public class PlaybackVideoFragment extends VideoSupportFragment {
 
     private PlaybackTransportControlGlue<MediaPlayerAdapter> mTransportControlGlue;
-    private File mFile;
+    private Video mVideo;
     private boolean mShouldResume;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFile = getActivity().getIntent().getParcelableExtra(PlaybackActivity.EXTRA_FILE);
+        mVideo = getActivity().getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO);
         mShouldResume = getActivity().getIntent().getBooleanExtra(PlaybackActivity.EXTRA_SHOULD_RESUME, false);
 
         VideoSupportFragmentGlueHost glueHost = new VideoSupportFragmentGlueHost(PlaybackVideoFragment.this);
@@ -40,17 +40,13 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
 
         mTransportControlGlue = new PlaybackTransportControlGlue<>(getContext(), playerAdapter);
         mTransportControlGlue.setHost(glueHost);
-        mTransportControlGlue.setTitle(mFile.getName());
-        mTransportControlGlue.setSubtitle(mFile.getName());
+        mTransportControlGlue.setTitle(mVideo.getTitle());
+        mTransportControlGlue.setSubtitle(mVideo.getTitle());
         mTransportControlGlue.playWhenPrepared();
         mTransportControlGlue.setSeekEnabled(true);
         mTransportControlGlue.addPlayerCallback(new PlayerCallback());
 
-        if(mFile.getStreamUriMp4() != null){
-            playerAdapter.setDataSource(mFile.getStreamUriMp4());
-        } else {
-            playerAdapter.setDataSource(mFile.getStreamUri());
-        }
+        playerAdapter.setDataSource(mVideo.getStreamUri());
     }
 
     @Override
@@ -72,7 +68,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
             super.onPreparedStateChanged(glue);
 
             if(mShouldResume){
-                mTransportControlGlue.seekTo(mFile.getResumeTime()*1000);
+                mTransportControlGlue.seekTo(mVideo.getResumeTime()*1000);
                 // we only want to do this after the first load //
                 mShouldResume = false;
             }
@@ -88,7 +84,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
                 } else {
                     getSurfaceView().setKeepScreenOn(false);
 
-                    Putio.setResumeTime(getContext(), mFile.getId(), mTransportControlGlue.getCurrentPosition()/1000, null);
+                    Putio.setResumeTime(getContext(), mVideo.getPutId(), mTransportControlGlue.getCurrentPosition()/1000, null);
                 }
             }
         }

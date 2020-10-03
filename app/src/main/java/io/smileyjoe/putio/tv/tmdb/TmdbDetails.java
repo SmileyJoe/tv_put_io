@@ -9,7 +9,6 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
-import io.smileyjoe.putio.tv.putio.File;
 
 public class TmdbDetails implements Parcelable {
 

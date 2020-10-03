@@ -8,17 +8,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 
 public class FolderListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
     public interface Listener{
-        void onFolderClicked(File folder);
+        void onFolderClicked(Video video);
     }
 
     private TextView mTextTitle;
     private ImageView mImageIcon;
-    private File mFile;
+    private Video mVideo;
     private Listener mListener;
 
     public FolderListViewHolder(@NonNull View itemView) {
@@ -34,22 +34,17 @@ public class FolderListViewHolder extends RecyclerView.ViewHolder implements Vie
         mListener = listener;
     }
 
-    public void bindView(File file){
-        mFile = file;
+    public void bindView(Video video){
+        mVideo = video;
 
-        if(file.isParent()){
-            mTextTitle.setText(R.string.text_back);
-            mImageIcon.setImageResource(R.drawable.ic_up_folder_24);
-        } else {
-            mTextTitle.setText(file.getName());
-            mImageIcon.setImageResource(R.drawable.ic_folder_24);
-        }
+        mTextTitle.setText(video.getTitle());
+        mImageIcon.setImageResource(R.drawable.ic_folder_24);
     }
 
     @Override
     public void onClick(View v) {
         if(mListener != null){
-            mListener.onFolderClicked(mFile);
+            mListener.onFolderClicked(mVideo);
         }
     }
 }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.putio.Putio;
 import io.smileyjoe.putio.tv.putio.Response;
 import io.smileyjoe.putio.tv.tmdb.Tmdb;
@@ -23,6 +23,7 @@ import io.smileyjoe.putio.tv.torrent.Parse;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.util.FileUtils;
+import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
@@ -31,8 +32,8 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
 
     private TextView mTextTitle;
 
-    private ArrayList<File> mParentFiles;
-    private File mCurrentFile = null;
+    private ArrayList<Video> mParentFiles;
+    private Video mCurrentFile = null;
 
     private FolderListFragment mFragmentFolderList;
     private VideoListFragment mFragmentVideoList;
@@ -45,7 +46,7 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
         mParentFiles = new ArrayList<>();
         mTextTitle = findViewById(R.id.text_title);
 
-        Putio.getFiles(getBaseContext(), new OnFileResponse());
+        Putio.getFiles(getBaseContext(), new OnPutResponse());
 
         mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
@@ -54,8 +55,8 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
     @Override
     public void onBackPressed() {
         if(mParentFiles != null && !mParentFiles.isEmpty()){
-            File parentFile = mParentFiles.get(mParentFiles.size()-1);
-            getFiles(parentFile.getId());
+            Video parentFile = mParentFiles.get(mParentFiles.size()-1);
+            getFiles(parentFile.getPutId());
             mParentFiles.remove(parentFile);
             mCurrentFile = null;
         } else {
@@ -64,23 +65,23 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
     }
 
     private void getFiles(long parentId){
-        Putio.getFiles(getBaseContext(), parentId, new OnFileResponse());
+        Putio.getFiles(getBaseContext(), parentId, new OnPutResponse());
     }
 
     @Override
-    public void onFolderClicked(File file) {
-        getFiles(file.getId());
+    public void onFolderClicked(Video video) {
+        getFiles(video.getPutId());
     }
 
     @Override
-    public void onVideoClicked(File file, ArrayList<File> relatedVideos) {
+    public void onVideoClicked(Video video, ArrayList<Video> relatedVideos) {
 //        startActivity(PlaybackActivity.getIntent(getBaseContext(), file));
-        startActivity(DetailsActivity.getIntent(getBaseContext(), file, relatedVideos));
+        startActivity(DetailsActivity.getIntent(getBaseContext(), video, relatedVideos));
     }
 
-    private void populate(ArrayList<File> files){
-        ArrayList<File> folders = new ArrayList<>();
-        ArrayList<File> videos = new ArrayList<>();
+    private void populate(ArrayList<Video> videos){
+        ArrayList<Video> folders = new ArrayList<>();
+        ArrayList<Video> videosSorted = new ArrayList<>();
 
         // todo: this has a loop issue, but it also means that the folder list shows //
         // to only show back, I don't know if I want that //
@@ -90,37 +91,39 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
 //                folders.add(mParentFiles.get(mParentFiles.size()-1));
 //            }
 
-        for(File file:files){
-            switch (file.getFileType()){
+        for(Video video:videos){
+            switch (video.getType()){
                 case VIDEO:
-                    videos.add(file);
+                case MOVIE:
+                case EPISODE:
+                    videosSorted.add(video);
                     break;
                 case FOLDER:
-                    folders.add(file);
+                    folders.add(video);
                     break;
             }
         }
 
-        mTextTitle.setText(mCurrentFile.getName());
+        mTextTitle.setText(mCurrentFile.getTitle());
 
-        mFragmentVideoList.setVideos(videos);
+        mFragmentVideoList.setVideos(videosSorted);
         populateFolders(folders);
     }
 
-    private void populateFolders(ArrayList<File> files){
+    private void populateFolders(ArrayList<Video> videos){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if(files == null || files.isEmpty()){
+        if(videos == null || videos.isEmpty()){
             transaction.hide(mFragmentFolderList);
         } else {
             transaction.show(mFragmentFolderList);
-            mFragmentFolderList.setFolders(files);
+            mFragmentFolderList.setVideos(videos);
         }
 
         transaction.commit();
     }
 
-    private class OnFileResponse extends Response{
+    private class OnPutResponse extends Response{
         @Override
         public void onSuccess(JsonObject result) {
             if(mCurrentFile != null){
@@ -130,36 +133,33 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
             JsonArray filesJson = result.getAsJsonArray("files");
             JsonObject parentObject = result.getAsJsonObject("parent");
 
-            ArrayList<File> files = FileUtils.filter(File.fromApi(filesJson));
-            FileUtils.sort(files);
-            mCurrentFile = File.fromApi(parentObject);
+            ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(filesJson));
+            VideoUtil.sort(videos);
+            mCurrentFile = VideoUtil.parseFromPut(parentObject);
 
-            for(File file:files){
-                if(file.getId() == 774524118){
-                    Tmdb.searchMovie(getBaseContext(), file.getParsedDetails().get("title"), file.getParsedDetails().get("year"), new OnTmdbSearchResponse(file));
+            // todo: testing, honey I shrunk the kids //
+            for(Video video:videos){
+                if(video.getPutId() == 774524118){
+                    Tmdb.searchMovie(getBaseContext(), video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
                     break;
                 }
             }
 
-            populate(files);
+            populate(videos);
         }
     }
 
     private class OnTmdbSearchResponse extends Response{
 
-        private File mFile;
+        private Video mVideo;
 
-        public OnTmdbSearchResponse(File file) {
-            mFile = file;
+        public OnTmdbSearchResponse(Video video) {
+            mVideo = video;
         }
 
         @Override
         public void onSuccess(JsonObject result) {
-            ArrayList<TmdbDetails> details = TmdbDetails.fromApi(result.get("results").getAsJsonArray());
-
-            if(details != null){
-                mFile.setTmdbDetails(details.get(0));
-            }
+            VideoUtil.updateFromTmdb(mVideo, result.get("results").getAsJsonArray());
         }
     }
 }

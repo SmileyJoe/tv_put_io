@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.putio.File;
 
 public class VideoAdapter extends FileAdapter {
@@ -25,7 +26,7 @@ public class VideoAdapter extends FileAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        File file = getItem(position);
+        Video video = getItem(position);
 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.grid_item_video, null);
         TextView textTitle = view.findViewById(R.id.text_title);
@@ -33,7 +34,7 @@ public class VideoAdapter extends FileAdapter {
         FrameLayout frameWatched = view.findViewById(R.id.frame_watched);
         FrameLayout frameSelected = view.findViewById(R.id.frame_selected);
 
-        textTitle.setText(file.getName());
+        textTitle.setText(video.getTitle());
 
         if(isSelected(position)){
             textTitle.setLines(textTitle.getLineCount());
@@ -47,14 +48,14 @@ public class VideoAdapter extends FileAdapter {
             frameSelected.setVisibility(View.GONE);
         }
 
-        if(file.isWatched()){
+        if(video.isWatched()){
             frameWatched.setVisibility(View.VISIBLE);
         } else {
             frameWatched.setVisibility(View.GONE);
         }
-        if(!TextUtils.isEmpty(file.getScreenShot())){
+        if(video.getPoster() != null){
             Glide.with(getContext())
-                    .load(Uri.parse(file.getScreenShot()))
+                    .load(video.getPoster())
                     .into(imagePoster);
         }
 

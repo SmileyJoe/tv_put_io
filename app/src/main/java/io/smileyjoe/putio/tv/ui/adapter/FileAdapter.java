@@ -18,30 +18,29 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 
 public abstract class FileAdapter extends BaseAdapter {
 
-    private ArrayList<File> mFiles;
+    private ArrayList<Video> mVideos;
     private Context mContext;
     private int mSelectedPosition = -1;
 
     public FileAdapter(Context context) {
         mContext = context;
-        setFiles(new ArrayList<>());
-
+        setVideos(new ArrayList<>());
     }
 
     protected Context getContext() {
         return mContext;
     }
 
-    public void setFiles(ArrayList<File> files) {
-        mFiles = files;
+    public ArrayList<Video> getVideos() {
+        return mVideos;
     }
 
-    public ArrayList<File> getFiles() {
-        return mFiles;
+    public void setVideos(ArrayList<Video> videos) {
+        mVideos = videos;
     }
 
     public void setSelectedPosition(int selectedPosition) {
@@ -54,16 +53,16 @@ public abstract class FileAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mFiles.size();
+        return mVideos.size();
     }
 
     @Override
-    public File getItem(int position) {
-        return mFiles.get(position);
+    public Video getItem(int position) {
+        return mVideos.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).getId();
+        return getItem(position).getPutId();
     }
 }

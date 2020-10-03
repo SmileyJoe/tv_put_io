@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.putio.File;
+import io.smileyjoe.putio.tv.object.Video;
 
 public class FolderAdapter extends FileAdapter {
 
@@ -28,19 +28,14 @@ public class FolderAdapter extends FileAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        File file = getItem(position);
+        Video video = getItem(position);
 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.list_item_folder, null);
         TextView textTitle = view.findViewById(R.id.text_title);
         ImageView imageIcon = view.findViewById(R.id.image_icon);
 
-        if(file.isParent()){
-            textTitle.setText(R.string.text_back);
-            imageIcon.setImageResource(R.drawable.ic_up_folder_24);
-        } else {
-            textTitle.setText(file.getName());
-            imageIcon.setImageResource(R.drawable.ic_folder_24);
-        }
+        textTitle.setText(video.getTitle());
+        imageIcon.setImageResource(R.drawable.ic_folder_24);
 
         return view;
     }
