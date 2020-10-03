@@ -16,7 +16,7 @@ public class DetailsDescriptionPresenter extends AbstractDetailsDescriptionPrese
             int colorText = ContextCompat.getColor(viewHolder.getTitle().getContext(), R.color.text_selected);
             viewHolder.getTitle().setText(movie.getName());
             viewHolder.getSubtitle().setText(Long.toString(movie.getId()));
-            viewHolder.getBody().setText(movie.getStreamUri().toString());
+            viewHolder.getBody().setText(movie.getOverview());
 
             viewHolder.getTitle().setTextColor(colorText);
             viewHolder.getSubtitle().setTextColor(colorText);

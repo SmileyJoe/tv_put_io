@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
@@ -10,11 +11,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.putio.File;
 import io.smileyjoe.putio.tv.putio.Putio;
 import io.smileyjoe.putio.tv.putio.Response;
+import io.smileyjoe.putio.tv.tmdb.Tmdb;
+import io.smileyjoe.putio.tv.tmdb.TmdbDetails;
+import io.smileyjoe.putio.tv.torrent.Parse;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.util.FileUtils;
@@ -129,7 +134,32 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
             FileUtils.sort(files);
             mCurrentFile = File.fromApi(parentObject);
 
+            for(File file:files){
+                if(file.getId() == 774524118){
+                    Tmdb.searchMovie(getBaseContext(), file.getParsedDetails().get("title"), file.getParsedDetails().get("year"), new OnTmdbSearchResponse(file));
+                    break;
+                }
+            }
+
             populate(files);
+        }
+    }
+
+    private class OnTmdbSearchResponse extends Response{
+
+        private File mFile;
+
+        public OnTmdbSearchResponse(File file) {
+            mFile = file;
+        }
+
+        @Override
+        public void onSuccess(JsonObject result) {
+            ArrayList<TmdbDetails> details = TmdbDetails.fromApi(result.get("results").getAsJsonArray());
+
+            if(details != null){
+                mFile.setTmdbDetails(details.get(0));
+            }
         }
     }
 }

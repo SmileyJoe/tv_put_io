@@ -19,8 +19,8 @@ public class Parse {
     public static HashMap<String, String> parse(String rawTitle){
         ArrayList<String> matchesRaw = new ArrayList<>();
         HashMap<String, String> matchesClean = new HashMap<>();
-        int titleStart = -1;
-        int titleEnd = -1;
+        int titleStart = 0;
+        int titleEnd = rawTitle.length();
 
         for(Map.Entry<String, String> entry:PATTERNS.entrySet()){
             String key = entry.getKey();

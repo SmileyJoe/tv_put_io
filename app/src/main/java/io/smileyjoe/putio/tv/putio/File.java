@@ -13,6 +13,8 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import io.smileyjoe.putio.tv.tmdb.Tmdb;
+import io.smileyjoe.putio.tv.tmdb.TmdbDetails;
 import io.smileyjoe.putio.tv.torrent.Parse;
 
 public class File implements Parcelable {
@@ -60,6 +62,7 @@ public class File implements Parcelable {
     private long mResumeTime;
     private boolean mIsConverted;
     private HashMap<String, String> mParsedDetails;
+    private TmdbDetails mTmdbDetails;
 
     public File() {
     }
@@ -73,7 +76,11 @@ public class File implements Parcelable {
     }
 
     public String getName() {
-        return mName;
+        if(mTmdbDetails == null || TextUtils.isEmpty(mTmdbDetails.getTitle())){
+            return mName;
+        } else {
+            return mTmdbDetails.getTitle();
+        }
     }
 
     public void setName(String name) {
@@ -178,6 +185,42 @@ public class File implements Parcelable {
         mIsConverted = converted;
     }
 
+    public TmdbDetails getTmdbDetails() {
+        return mTmdbDetails;
+    }
+
+    public void setTmdbDetails(TmdbDetails tmdbDetails) {
+        mTmdbDetails = tmdbDetails;
+    }
+
+    public HashMap<String, String> getParsedDetails() {
+        return mParsedDetails;
+    }
+
+    public String getPoster(){
+        if(mTmdbDetails == null || TextUtils.isEmpty(mTmdbDetails.getPoster())){
+            return getScreenShot();
+        } else {
+            return Tmdb.getImageUrl(mTmdbDetails.getPoster());
+        }
+    }
+
+    public String getBackdrop(){
+        if(mTmdbDetails == null || TextUtils.isEmpty(mTmdbDetails.getBackdrop())){
+            return getScreenShot();
+        } else {
+            return Tmdb.getImageUrl(mTmdbDetails.getBackdrop());
+        }
+    }
+
+    public String getOverview(){
+        if(mTmdbDetails == null || TextUtils.isEmpty(mTmdbDetails.getOverview())){
+            return getName();
+        } else {
+            return mTmdbDetails.getOverview();
+        }
+    }
+
     public static File fromApi(JsonObject fileJson){
         File file = new File();
         file.setName(fileJson.get("name").getAsString());
@@ -246,6 +289,7 @@ public class File implements Parcelable {
                 ", mResumeTime=" + mResumeTime +
                 ", mIsConverted=" + mIsConverted +
                 ", mParsedDetails=" + mParsedDetails +
+                ", mTmdbDetails=" + mTmdbDetails +
                 '}';
     }
 
@@ -269,6 +313,7 @@ public class File implements Parcelable {
         dest.writeLong(this.mResumeTime);
         dest.writeByte(this.mIsConverted ? (byte) 1 : (byte) 0);
         dest.writeSerializable(this.mParsedDetails);
+        dest.writeParcelable(this.mTmdbDetails, flags);
     }
 
     protected File(Parcel in) {
@@ -286,6 +331,7 @@ public class File implements Parcelable {
         this.mResumeTime = in.readLong();
         this.mIsConverted = in.readByte() != 0;
         this.mParsedDetails = (HashMap<String, String>) in.readSerializable();
+        this.mTmdbDetails = in.readParcelable(TmdbDetails.class.getClassLoader());
     }
 
     public static final Creator<File> CREATOR = new Creator<File>() {
