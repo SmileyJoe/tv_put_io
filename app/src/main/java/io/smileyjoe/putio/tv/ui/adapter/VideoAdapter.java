@@ -1,8 +1,6 @@
 package io.smileyjoe.putio.tv.ui.adapter;
 
 import android.content.Context;
-import android.net.Uri;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,6 @@ import com.bumptech.glide.Glide;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.putio.File;
 
 public class VideoAdapter extends FileAdapter {
 

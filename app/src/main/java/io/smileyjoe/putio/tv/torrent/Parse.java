@@ -36,13 +36,15 @@ public class Parse {
             video.setEpisode(Integer.parseInt(details.get("episode")));
         }
 
-        if(details.containsKey("is_movie")){
-            boolean isMovie = Boolean.parseBoolean(details.get("is_movie"));
+        if(video.getType() == VideoType.VIDEO) {
+            if (details.containsKey("is_movie")) {
+                boolean isMovie = Boolean.parseBoolean(details.get("is_movie"));
 
-            if(isMovie){
-                video.setType(VideoType.MOVIE);
-            } else {
-                video.setType(VideoType.EPISODE);
+                if (isMovie) {
+                    video.setType(VideoType.MOVIE);
+                } else {
+                    video.setType(VideoType.EPISODE);
+                }
             }
         }
 
