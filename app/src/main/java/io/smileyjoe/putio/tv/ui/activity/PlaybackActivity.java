@@ -8,11 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
-import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragmentTwo;
 
-/**
- * Loads {@link PlaybackVideoFragment}.
- */
 public class PlaybackActivity extends FragmentActivity {
 
     public static final String EXTRA_VIDEO = "video";
@@ -36,7 +32,7 @@ public class PlaybackActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(android.R.id.content, new PlaybackVideoFragmentTwo())
+                    .replace(android.R.id.content, new PlaybackVideoFragment())
                     .commit();
         }
     }
