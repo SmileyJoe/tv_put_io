@@ -34,6 +34,8 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.github.bumptech.glide:glide:3.8.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.10.8'
+    implementation 'com.google.android.exoplayer:extension-leanback:2.10.8'
 
     implementation 'com.koushikdutta.ion:ion:3.0.8'
 }
