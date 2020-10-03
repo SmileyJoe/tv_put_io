@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.putio.Putio;
-import io.smileyjoe.putio.tv.putio.Response;
-import io.smileyjoe.putio.tv.tmdb.Tmdb;
+import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.network.Response;
+import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.util.VideoUtil;

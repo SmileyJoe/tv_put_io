@@ -1,15 +1,12 @@
-package io.smileyjoe.putio.tv.putio;
+package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
-import java.util.ArrayList;
-
 import io.smileyjoe.putio.tv.BuildConfig;
+import io.smileyjoe.putio.tv.network.Response;
 
 public class Putio {
 

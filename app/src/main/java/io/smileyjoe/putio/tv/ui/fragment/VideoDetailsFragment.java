@@ -3,7 +3,6 @@ package io.smileyjoe.putio.tv.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -28,7 +27,6 @@ import androidx.leanback.widget.RowPresenter;
 import androidx.core.content.ContextCompat;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -40,8 +38,8 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.putio.Putio;
-import io.smileyjoe.putio.tv.putio.Response;
+import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.ui.viewholder.CardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.R;

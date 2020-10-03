@@ -12,7 +12,7 @@ import java.util.Comparator;
 
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
-import io.smileyjoe.putio.tv.tmdb.Tmdb;
+import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.torrent.Parse;
 
 public class VideoUtil {

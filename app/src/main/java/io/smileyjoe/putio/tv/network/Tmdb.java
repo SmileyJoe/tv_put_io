@@ -1,15 +1,13 @@
-package io.smileyjoe.putio.tv.tmdb;
+package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.net.URLEncoder;
 
 import io.smileyjoe.putio.tv.BuildConfig;
-import io.smileyjoe.putio.tv.putio.Response;
+import io.smileyjoe.putio.tv.network.Response;
 
 public class Tmdb {
 

@@ -1,4 +1,4 @@
-package io.smileyjoe.putio.tv.putio;
+package io.smileyjoe.putio.tv.network;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
