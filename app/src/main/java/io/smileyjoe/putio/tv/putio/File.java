@@ -8,10 +8,12 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import io.smileyjoe.putio.tv.torrent.Parse;
 
 public class File implements Parcelable {
 
@@ -57,6 +59,7 @@ public class File implements Parcelable {
     private long mParentId;
     private long mResumeTime;
     private boolean mIsConverted;
+    private HashMap<String, String> mParsedDetails;
 
     public File() {
     }
@@ -75,6 +78,8 @@ public class File implements Parcelable {
 
     public void setName(String name) {
         mName = name;
+
+        mParsedDetails = Parse.parse(name);
     }
 
     public Type getFileType() {
@@ -240,6 +245,7 @@ public class File implements Parcelable {
                 ", mParentId=" + mParentId +
                 ", mResumeTime=" + mResumeTime +
                 ", mIsConverted=" + mIsConverted +
+                ", mParsedDetails=" + mParsedDetails +
                 '}';
     }
 
@@ -262,6 +268,7 @@ public class File implements Parcelable {
         dest.writeLong(this.mParentId);
         dest.writeLong(this.mResumeTime);
         dest.writeByte(this.mIsConverted ? (byte) 1 : (byte) 0);
+        dest.writeSerializable(this.mParsedDetails);
     }
 
     protected File(Parcel in) {
@@ -278,6 +285,7 @@ public class File implements Parcelable {
         this.mParentId = in.readLong();
         this.mResumeTime = in.readLong();
         this.mIsConverted = in.readByte() != 0;
+        this.mParsedDetails = (HashMap<String, String>) in.readSerializable();
     }
 
     public static final Creator<File> CREATOR = new Creator<File>() {
