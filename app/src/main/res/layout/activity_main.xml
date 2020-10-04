@@ -21,12 +21,12 @@
             android:id="@+id/fragment_folder_list"
             android:layout_width="300dp"
             android:layout_height="match_parent"
-            android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
+            android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragmentTwo"/>
 
         <fragment
             android:id="@+id/fragment_video_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
+            android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragmentTwo"/>
     </LinearLayout>
 </LinearLayout>

@@ -22,4 +22,5 @@
     <string name="action_watch">Watch</string>
     <string name="action_convert">Convert</string>
     <string name="action_resume">Resume</string>
+    <string name="text_no_files">No Files</string>
 </resources>

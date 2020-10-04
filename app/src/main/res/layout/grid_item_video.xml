@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/image_poster"
-        android:layout_width="@dimen/file_grid_col_width"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/file_grid_col_height"
         android:scaleType="centerCrop"/>
 
     <FrameLayout
         android:id="@+id/frame_selected"
-        android:layout_width="@dimen/file_grid_col_width"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/file_grid_col_height"
         android:background="@color/overlay_selected"
         android:visibility="gone"/>
@@ -33,11 +33,14 @@
 
     <TextView
         android:id="@+id/text_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_alignParentBottom="true"
-        android:background="@color/overlay"
+        android:duplicateParentState="true"
+        android:textColor="@color/color_text_video_list"
+        android:clickable="true"
+        android:background="@drawable/bg_text_video_grid"
         android:padding="10dp"
         android:maxLines="2"/>
 

@@ -16,22 +16,24 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapterTwo;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
+import io.smileyjoe.putio.tv.ui.fragment.VideoListFragmentTwo;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends FragmentActivity implements FolderListFragment.Listener, VideoListFragment.Listener {
+public class MainActivity extends FragmentActivity implements VideoListFragmentTwo.Listener, VideoListFragment.Listener {
 
     private TextView mTextTitle;
 
     private ArrayList<Video> mParentFiles;
     private Video mCurrentFile = null;
 
-    private FolderListFragment mFragmentFolderList;
-    private VideoListFragment mFragmentVideoList;
+    private VideoListFragmentTwo mFragmentFolderList;
+    private VideoListFragmentTwo mFragmentVideoList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,8 +45,10 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
 
         Putio.getFiles(getBaseContext(), new OnPutResponse());
 
-        mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
-        mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
+        mFragmentFolderList = (VideoListFragmentTwo) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
+        mFragmentFolderList.setType(VideoListAdapterTwo.Type.LIST);
+        mFragmentVideoList = (VideoListFragmentTwo) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
+        mFragmentVideoList.setType(VideoListAdapterTwo.Type.GRID);
     }
 
     @Override
@@ -64,8 +68,17 @@ public class MainActivity extends FragmentActivity implements FolderListFragment
     }
 
     @Override
-    public void onFolderClicked(Video video) {
-        getFiles(video.getPutId());
+    public void onVideoClicked(Video video) {
+        switch (video.getType()){
+            case FOLDER:
+                getFiles(video.getPutId());
+                break;
+            case EPISODE:
+            case MOVIE:
+            case VIDEO:
+                startActivity(DetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
+                break;
+        }
     }
 
     @Override

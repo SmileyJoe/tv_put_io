@@ -9,7 +9,7 @@
         android:id="@+id/image_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:tint="@color/color_text_folder_list"
+        android:tint="@color/color_text_video_list"
         android:duplicateParentState="true"
         android:src="@drawable/ic_folder_24"
         android:layout_margin="10dp"/>
@@ -18,7 +18,7 @@
         android:id="@+id/text_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/color_text_folder_list"
+        android:textColor="@color/color_text_video_list"
         android:clickable="true"
         android:lines="1"
         android:duplicateParentState="true"
