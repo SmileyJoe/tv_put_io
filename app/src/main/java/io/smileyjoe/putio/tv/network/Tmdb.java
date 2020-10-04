@@ -17,7 +17,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 public class Tmdb {
 
     private static String BASE = "https://api.themoviedb.org/3";
-    private static String BASE_IMAGE = "https://image.tmdb.org/t/p/w500";
+    private static String BASE_IMAGE = "https://image.tmdb.org/t/p/original";
     private static String SEARCH = "/search";
     private static String MOVIE = "/movie";
     private static String LIST = "/list";
