@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
     <TextView
         android:id="@+id/text_title"
         android:layout_width="match_parent"
@@ -11,10 +10,21 @@
         android:lines="1"
         android:padding="10dp"
         android:textSize="24dp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"/>
+    <ProgressBar
+        android:id="@+id/progress_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/icon_tint"
+        android:layout_centerInParent="true"/>
     <LinearLayout
+        android:layout_below="@id/text_title"
+        android:id="@+id/layout_lists"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <fragment
@@ -29,4 +39,4 @@
             android:layout_height="match_parent"
             android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

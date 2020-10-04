@@ -1,6 +1,9 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
@@ -33,6 +36,9 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     private VideoListFragment mFragmentFolderList;
     private VideoListFragment mFragmentVideoList;
 
+    private LinearLayout mLayoutLists;
+    private ProgressBar mProgressLoading;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +46,8 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
         mParentFiles = new ArrayList<>();
         mTextTitle = findViewById(R.id.text_title);
+        mLayoutLists = findViewById(R.id.layout_lists);
+        mProgressLoading = findViewById(R.id.progress_loading);
 
         mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(VideoListAdapter.Type.LIST);
@@ -62,8 +70,8 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     }
 
     private void getFiles(long parentId) {
-        mFragmentVideoList.startLoading();
-        mFragmentFolderList.startLoading();
+        mLayoutLists.setVisibility(View.GONE);
+        mProgressLoading.setVisibility(View.VISIBLE);
         Putio.getFiles(getBaseContext(), parentId, new OnPutResponse());
     }
 
@@ -76,22 +84,18 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
             case EPISODE:
             case MOVIE:
             case VIDEO:
-                startActivity(DetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
+                showDetails(video);
                 break;
         }
+    }
+
+    private void showDetails(Video video){
+        startActivity(DetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
     }
 
     private void populate(ArrayList<Video> videos) {
         ArrayList<Video> folders = new ArrayList<>();
         ArrayList<Video> videosSorted = new ArrayList<>();
-
-        // todo: this has a loop issue, but it also means that the folder list shows //
-        // to only show back, I don't know if I want that //
-//            mCurrentFile.setParent(true);
-//
-//            if(mParentFiles != null && !mParentFiles.isEmpty()) {
-//                folders.add(mParentFiles.get(mParentFiles.size()-1));
-//            }
 
         for (Video video : videos) {
             switch (video.getType()) {
@@ -108,11 +112,17 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
         mTextTitle.setText(mCurrentFile.getTitle());
 
-        boolean folderFragmentIsVisible = populateFolders(folders);
+        if(videosSorted != null && videosSorted.size() == 1){
+            showDetails(videosSorted.get(0));
+        } else {
+            boolean folderFragmentIsVisible = populateFolders(folders);
 
-        mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
-        mFragmentVideoList.setVideos(videosSorted);
+            mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
+            mFragmentVideoList.setVideos(videosSorted);
+        }
 
+        mLayoutLists.setVisibility(View.VISIBLE);
+        mProgressLoading.setVisibility(View.GONE);
     }
 
     private boolean populateFolders(ArrayList<Video> videos) {
