@@ -121,7 +121,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
         mTextTitle.setText(mCurrentFile.getTitle());
 
-        if(videosSorted != null && videosSorted.size() == 1){
+        if((folders == null || folders.isEmpty()) && (videosSorted != null && videosSorted.size() == 1)){
             showDetails(videosSorted.get(0));
         } else {
             boolean folderFragmentIsVisible = populateFolders(folders);

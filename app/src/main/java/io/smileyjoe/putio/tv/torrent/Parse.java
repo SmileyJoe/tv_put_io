@@ -1,5 +1,7 @@
 package io.smileyjoe.putio.tv.torrent;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +44,20 @@ public class Parse {
 
         if(!video.isTmdbFound()) {
             video.setTitle(details.get("title"));
+
+            if (details.containsKey("is_movie")) {
+                boolean isMovie = Boolean.parseBoolean(details.get("is_movie"));
+
+                if (isMovie) {
+                    video.setType(VideoType.MOVIE);
+                } else {
+                    if(video.getType() != VideoType.FOLDER) {
+                        video.setType(VideoType.EPISODE);
+                    }
+                }
+            }
+        } else {
+            video.setType(VideoType.MOVIE);
         }
 
         if (details.containsKey("year")) {
@@ -54,18 +70,6 @@ public class Parse {
 
         if (details.containsKey("episode")) {
             video.setEpisode(Integer.parseInt(details.get("episode")));
-        }
-
-        if (video.getType() == VideoType.VIDEO) {
-            if (details.containsKey("is_movie")) {
-                boolean isMovie = Boolean.parseBoolean(details.get("is_movie"));
-
-                if (isMovie) {
-                    video.setType(VideoType.MOVIE);
-                } else {
-                    video.setType(VideoType.EPISODE);
-                }
-            }
         }
 
         return video;
@@ -121,9 +125,9 @@ public class Parse {
             }
         }
 
-        boolean isMovie = true;
-        if(matchesClean.containsKey("season") || matchesClean.containsKey("episode")){
-            isMovie = false;
+        boolean isMovie = false;
+        if(matchesClean.containsKey("year")){
+            isMovie = true;
         }
 
         matchesClean.put("is_movie", String.valueOf(isMovie));

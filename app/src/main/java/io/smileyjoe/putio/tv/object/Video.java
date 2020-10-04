@@ -243,11 +243,19 @@ public class Video implements Parcelable {
     }
 
     public Uri getPosterAsUri() {
-        return Uri.parse(mPoster);
+        if(!TextUtils.isEmpty(mPoster)) {
+            return Uri.parse(mPoster);
+        } else {
+            return null;
+        }
     }
 
     public Uri getBackdropAsUri() {
-        return Uri.parse(mBackdrop);
+        if(!TextUtils.isEmpty(mBackdrop)) {
+            return Uri.parse(mBackdrop);
+        } else {
+            return null;
+        }
     }
 
     public Uri getStreamUri() {
