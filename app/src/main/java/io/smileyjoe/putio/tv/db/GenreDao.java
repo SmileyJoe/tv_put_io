@@ -5,13 +5,16 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import io.smileyjoe.putio.tv.object.Video;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.smileyjoe.putio.tv.object.Genre;
 
 @Dao
-public interface VideoDao {
-    @Query("SELECT * FROM video WHERE id_put_io IS :id")
-    Video getByPutId(long id);
+public interface GenreDao {
+    @Query("SELECT * FROM genre")
+    List<Genre> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Video video);
+    void insert(List<Genre> genres);
 }

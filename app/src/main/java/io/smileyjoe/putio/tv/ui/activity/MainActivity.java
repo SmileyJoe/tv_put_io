@@ -61,6 +61,9 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID);
 
         getFiles(Putio.NO_PARENT);
+
+        // todo: this needs to be called when an id is not found in the db //
+        Tmdb.updateMovieGenres(getBaseContext());
     }
 
     @Override

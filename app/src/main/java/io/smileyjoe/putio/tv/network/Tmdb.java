@@ -1,19 +1,27 @@
 package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
 
+import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.BuildConfig;
+import io.smileyjoe.putio.tv.db.AppDatabase;
+import io.smileyjoe.putio.tv.object.Genre;
 
 public class Tmdb {
 
-    private static String BASE = "https://api.themoviedb.org";
+    private static String BASE = "https://api.themoviedb.org/3";
     private static String BASE_IMAGE = "https://image.tmdb.org/t/p/w500";
-    private static String SEARCH = "/3/search";
+    private static String SEARCH = "/search";
     private static String MOVIE = "/movie";
+    private static String LIST = "/list";
+    private static String GENRE = "/genre";
     private static String PARAM_API_KEY = "api_key";
     private static String PARAM_SEARCH = "query";
     private static String PARAM_YEAR = "primary_release_year";
@@ -48,6 +56,46 @@ public class Tmdb {
                 .load(url)
                 .asJsonObject()
                 .setCallback(response);
+    }
+
+    public static void updateMovieGenres(Context context){
+        Ion.with(context)
+                .load(getUrl(GENRE, MOVIE, LIST))
+                .asJsonObject()
+                .setCallback(new OnGenreResponse(context));
+    }
+
+    private static class OnGenreResponse extends Response{
+        private Context mContext;
+
+        public OnGenreResponse(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public void onSuccess(JsonObject result) {
+            ProcessGenreResponse task = new ProcessGenreResponse(mContext, result);
+            task.execute();
+        }
+    }
+
+    private static class ProcessGenreResponse extends AsyncTask<Void, Void, Void>{
+        private JsonObject mResult;
+        private Context mContext;
+
+        public ProcessGenreResponse(Context context, JsonObject result) {
+            mContext = context;
+            mResult = result;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ArrayList<Genre> genres = Genre.fromApi(mResult.get("genres").getAsJsonArray());
+
+            AppDatabase.getInstance(mContext).genreDao().insert(genres);
+
+            return null;
+        }
     }
 
 }
