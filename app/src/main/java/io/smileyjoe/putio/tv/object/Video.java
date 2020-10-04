@@ -313,6 +313,8 @@ public class Video implements Parcelable {
         dest.writeParcelable(this.mStreamUri, flags);
         dest.writeByte(this.mIsTmdbChecked ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mIsTmdbFound ? (byte) 1 : (byte) 0);
+        dest.writeString(this.mGenreIdsJson);
+        dest.writeList(this.mGenreIds);
     }
 
     protected Video(Parcel in) {
@@ -333,6 +335,9 @@ public class Video implements Parcelable {
         this.mStreamUri = in.readParcelable(Uri.class.getClassLoader());
         this.mIsTmdbChecked = in.readByte() != 0;
         this.mIsTmdbFound = in.readByte() != 0;
+        this.mGenreIdsJson = in.readString();
+        this.mGenreIds = new ArrayList<Integer>();
+        in.readList(this.mGenreIds, Integer.class.getClassLoader());
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {

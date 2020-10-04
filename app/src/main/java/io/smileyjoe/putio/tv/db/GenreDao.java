@@ -15,6 +15,9 @@ public interface GenreDao {
     @Query("SELECT * FROM genre")
     List<Genre> getAll();
 
+    @Query("SELECT * FROM genre WHERE id IN (:ids)")
+    List<Genre> getByIds(List<Integer> ids);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<Genre> genres);
 }
