@@ -17,15 +17,13 @@ import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapterTwo;
-import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
-import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragmentTwo;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends FragmentActivity implements VideoListFragmentTwo.Listener, VideoListFragment.Listener {
+public class MainActivity extends FragmentActivity implements VideoListFragmentTwo.Listener {
 
     private TextView mTextTitle;
 
@@ -79,12 +77,6 @@ public class MainActivity extends FragmentActivity implements VideoListFragmentT
                 startActivity(DetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
                 break;
         }
-    }
-
-    @Override
-    public void onVideoClicked(Video video, ArrayList<Video> relatedVideos) {
-//        startActivity(PlaybackActivity.getIntent(getBaseContext(), file));
-        startActivity(DetailsActivity.getIntent(getBaseContext(), video, relatedVideos));
     }
 
     private void populate(ArrayList<Video> videos) {

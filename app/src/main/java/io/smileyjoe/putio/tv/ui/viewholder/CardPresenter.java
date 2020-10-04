@@ -55,8 +55,6 @@ public class CardPresenter extends Presenter {
         sSelectedTextColor = ContextCompat.getColor(parent.getContext(), R.color.text_selected);
         sDefaultTextColor = ContextCompat.getColor(parent.getContext(), R.color.text_unselected);
 
-        mDefaultCardImage = ContextCompat.getDrawable(parent.getContext(), R.drawable.movie);
-
         ImageCardView cardView =
                 new ImageCardView(parent.getContext()) {
                     @Override

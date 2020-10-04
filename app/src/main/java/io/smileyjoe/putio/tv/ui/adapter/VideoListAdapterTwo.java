@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.viewholder.FolderListViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoBaseViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoGridViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoListViewHolderTwo;
@@ -24,7 +23,7 @@ public class VideoListAdapterTwo extends RecyclerView.Adapter<VideoBaseViewHolde
     }
 
     public enum Type{
-        LIST(R.layout.list_item_folder), GRID(R.layout.grid_item_video);
+        LIST(R.layout.list_item_video), GRID(R.layout.grid_item_video);
 
         @LayoutRes int mLayoutResId;
 

@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.adapter.FolderListAdapter;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapterTwo;
 
 public class VideoListFragmentTwo extends Fragment {
