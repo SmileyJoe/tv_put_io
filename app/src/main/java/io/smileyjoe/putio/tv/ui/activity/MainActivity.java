@@ -16,22 +16,22 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapterTwo;
-import io.smileyjoe.putio.tv.ui.fragment.VideoListFragmentTwo;
+import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
+import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends FragmentActivity implements VideoListFragmentTwo.Listener {
+public class MainActivity extends FragmentActivity implements VideoListFragment.Listener {
 
     private TextView mTextTitle;
 
     private ArrayList<Video> mParentFiles;
     private Video mCurrentFile = null;
 
-    private VideoListFragmentTwo mFragmentFolderList;
-    private VideoListFragmentTwo mFragmentVideoList;
+    private VideoListFragment mFragmentFolderList;
+    private VideoListFragment mFragmentVideoList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,10 +43,10 @@ public class MainActivity extends FragmentActivity implements VideoListFragmentT
 
         Putio.getFiles(getBaseContext(), new OnPutResponse());
 
-        mFragmentFolderList = (VideoListFragmentTwo) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
-        mFragmentFolderList.setType(VideoListAdapterTwo.Type.LIST);
-        mFragmentVideoList = (VideoListFragmentTwo) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
-        mFragmentVideoList.setType(VideoListAdapterTwo.Type.GRID);
+        mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
+        mFragmentFolderList.setType(VideoListAdapter.Type.LIST);
+        mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
+        mFragmentVideoList.setType(VideoListAdapter.Type.GRID);
     }
 
     @Override

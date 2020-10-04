@@ -18,7 +18,7 @@ import io.smileyjoe.putio.tv.object.Video;
  * A CardPresenter is used to generate Views and bind Objects to them on demand.
  * It contains an Image CardView
  */
-public class CardPresenter extends Presenter {
+public class RelatedVideoCardPresenter extends Presenter {
     private static final String TAG = "CardPresenter";
 
     private static final int CARD_WIDTH = 313;

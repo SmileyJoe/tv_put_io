@@ -15,9 +15,9 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoBaseViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoGridViewHolder;
-import io.smileyjoe.putio.tv.ui.viewholder.VideoListViewHolderTwo;
+import io.smileyjoe.putio.tv.ui.viewholder.VideoListViewHolder;
 
-public class VideoListAdapterTwo extends RecyclerView.Adapter<VideoBaseViewHolder> {
+public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> {
 
     public interface Listener extends VideoBaseViewHolder.Listener {
     }
@@ -41,7 +41,7 @@ public class VideoListAdapterTwo extends RecyclerView.Adapter<VideoBaseViewHolde
     private Listener mListener;
     private Type mType;
 
-    public VideoListAdapterTwo(Context context, Type type) {
+    public VideoListAdapter(Context context, Type type) {
         mContext = context;
         mType = type;
         setVideos(new ArrayList<>());
@@ -75,7 +75,7 @@ public class VideoListAdapterTwo extends RecyclerView.Adapter<VideoBaseViewHolde
                 break;
             case LIST:
             default:
-                holder = new VideoListViewHolderTwo(view);
+                holder = new VideoListViewHolder(view);
                 break;
         }
 

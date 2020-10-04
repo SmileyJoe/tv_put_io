@@ -42,7 +42,7 @@ import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.DetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
-import io.smileyjoe.putio.tv.ui.viewholder.CardPresenter;
+import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
 
 /*
@@ -252,7 +252,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private void setupRelatedVideoListRow() {
         if (mRelatedVideos != null && !mRelatedVideos.isEmpty()) {
-            ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
+            ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new RelatedVideoCardPresenter());
             for (Video video : mRelatedVideos) {
                 listRowAdapter.add(video);
             }

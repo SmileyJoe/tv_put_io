@@ -17,24 +17,24 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapterTwo;
+import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 
-public class VideoListFragmentTwo extends Fragment {
+public class VideoListFragment extends Fragment {
 
-    public interface Listener extends VideoListAdapterTwo.Listener {
+    public interface Listener extends VideoListAdapter.Listener {
     }
 
     private RecyclerView mRecycler;
     private TextView mTextEmpty;
 
-    private VideoListAdapterTwo mVideoListAdapter;
+    private VideoListAdapter mVideoListAdapter;
     private Listener mListener;
-    private VideoListAdapterTwo.Type mType = VideoListAdapterTwo.Type.LIST;
+    private VideoListAdapter.Type mType = VideoListAdapter.Type.LIST;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_video_list_two, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_video_list, null);
 
         mRecycler = view.findViewById(R.id.recycler);
         mTextEmpty = view.findViewById(R.id.text_empty);
@@ -42,7 +42,7 @@ public class VideoListFragmentTwo extends Fragment {
         return view;
     }
 
-    public void setType(VideoListAdapterTwo.Type type) {
+    public void setType(VideoListAdapter.Type type) {
         mType = type;
 
         if(mVideoListAdapter != null){
@@ -60,7 +60,7 @@ public class VideoListFragmentTwo extends Fragment {
             mListener = (Listener) getActivity();
         }
 
-        mVideoListAdapter = new VideoListAdapterTwo(getContext(), mType);
+        mVideoListAdapter = new VideoListAdapter(getContext(), mType);
         mVideoListAdapter.setListener(mListener);
 
         mRecycler.setAdapter(mVideoListAdapter);
