@@ -59,6 +59,16 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> 
         mVideos = videos;
     }
 
+    public void update(Video video){
+        for(int i = 0; i < mVideos.size(); i++){
+            if(mVideos.get(i).getPutId() == video.getPutId()){
+                mVideos.set(i, video);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
     public ArrayList<Video> getVideos() {
         return mVideos;
     }

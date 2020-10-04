@@ -213,7 +213,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         }
     }
 
-    private class ProcessTmdbResponse extends AsyncTask<Void, Void, Void>{
+    private class ProcessTmdbResponse extends AsyncTask<Void, Void, Video>{
         private JsonObject mResult;
         private Video mVideo;
 
@@ -223,11 +223,16 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Video doInBackground(Void... voids) {
             VideoUtil.updateFromTmdb(mVideo, mResult.get("results").getAsJsonArray());
 
             AppDatabase.getInstance(getBaseContext()).videoDao().insert(mVideo);
-            return null;
+            return mVideo;
+        }
+
+        @Override
+        protected void onPostExecute(Video video) {
+            mFragmentVideoList.update(video);
         }
     }
 }

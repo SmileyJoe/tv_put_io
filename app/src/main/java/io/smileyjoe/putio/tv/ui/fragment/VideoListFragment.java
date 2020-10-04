@@ -76,6 +76,12 @@ public class VideoListFragment extends Fragment {
         setLayoutManager();
     }
 
+    public void update(Video video){
+        if(mVideoListAdapter != null){
+            mVideoListAdapter.update(video);
+        }
+    }
+
     private void setLayoutManager(){
         if(mRecycler != null) {
             switch (mType) {
