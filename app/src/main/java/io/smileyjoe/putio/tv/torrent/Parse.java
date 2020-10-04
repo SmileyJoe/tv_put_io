@@ -16,7 +16,25 @@ public class Parse {
     static {
         PATTERNS.put("season", "([Ss]?([0-9]{1,2}))[Eex]");
         PATTERNS.put("episode", "([Eex]([0-9]{2})(?:[^0-9]|$))");
-        PATTERNS.put("year", "([\\[\\(]?((?:19[0-9]|20[01])[0-9])[\\]\\)]?)");
+        PATTERNS.put("year", "([\\[\\(]?((?:19[0-9]|20[0-9])[0-9])[\\]\\)]?)");
+        PATTERNS.put("resolution", "([0-9]{3,4}p)");
+        PATTERNS.put("quality", "((?:PPV\\.)?[HP]DTV|(?:HD)?CAM|B[DR]Rip|(?:HD-?)?TS|(?:PPV )?WEB-?DL(?: DVDRip)?|HDRip|DVDRip|DVDRIP|CamRip|W[EB]BRip|BluRay|DvDScr|hdtv|telesync)");
+        PATTERNS.put("codec", "(xvid|[HhXx]\\.?26[45])");
+        PATTERNS.put("audio", "(MP3|DD5\\.?1|Dual[\\- ]Audio|LiNE|DTS|AAC[.-]LC|AAC(?:\\.?2\\.0)?|AC3(?:\\.5\\.1)?)");
+        PATTERNS.put("group", "(- ?([^-]+(?:-=\\{[^-]+-?$)?))$");
+        PATTERNS.put("region", "R[0-9]");
+        PATTERNS.put("extended", "(EXTENDED(:?.CUT)?)");
+        PATTERNS.put("hardcoded", "HC");
+        PATTERNS.put("proper", "PROPER");
+        PATTERNS.put("repack", "REPACK");
+        PATTERNS.put("container", "(MKV|AVI|MP4)");
+        PATTERNS.put("widescreen", "WS");
+        PATTERNS.put("website", "^(\\[ ?([^\\]]+?) ?\\])");
+        PATTERNS.put("language", "(rus\\.eng|ita\\.eng)");
+        PATTERNS.put("sbs", "(?:Half-)?SBS");
+        PATTERNS.put("unrated", "UNRATED");
+        PATTERNS.put("size", "(\\d+(?:\\.\\d+)?(?:GB|MB))");
+        PATTERNS.put("3d", "3D");
     }
 
     public static Video update(Video video) {
@@ -109,14 +127,21 @@ public class Parse {
             titleEnd = rawTitle.length();
         }
 
-        String cleanTitle = rawTitle.substring(titleStart, titleEnd);
+        String cleanTitle = rawTitle.substring(titleStart, titleEnd).trim();
 
-        if (!cleanTitle.contains(" ") && cleanTitle.contains(".")) {
-            cleanTitle = cleanTitle.replace(".", " ");
-        }
+        cleanTitle = replaceIfAll(cleanTitle, ".");
+        cleanTitle = replaceIfAll(cleanTitle, "_");
 
         matchesClean.put("title", cleanTitle.trim());
 
         return matchesClean;
+    }
+
+    private static String replaceIfAll(String title, String character){
+        if (!title.contains(" ") && title.contains(character)) {
+            title = title.replace(character, " ");
+        }
+
+        return title;
     }
 }
