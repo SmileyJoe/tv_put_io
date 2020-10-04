@@ -52,13 +52,13 @@ import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
 public class VideoDetailsFragment extends DetailsFragment {
 
     public interface Listener {
-        void onWatchClicked(Video video);
+        void onWatchClicked(Video video, ArrayList<Video> videos);
 
         void onConvertClicked(Video video);
 
         void onRelatedClicked(Video video, ArrayList<Video> relatedVideos);
 
-        void onResumeClick(Video video);
+        void onResumeClick(Video video, ArrayList<Video> videos);
     }
 
     private enum ActionOption {
@@ -359,7 +359,7 @@ public class VideoDetailsFragment extends DetailsFragment {
             switch (option) {
                 case WATCH:
                     if (mListener != null) {
-                        mListener.onWatchClicked(mVideo);
+                        mListener.onWatchClicked(mVideo, mRelatedVideos);
                     }
                     break;
                 case CONVERT:
@@ -369,7 +369,7 @@ public class VideoDetailsFragment extends DetailsFragment {
                     break;
                 case RESUME:
                     if (mListener != null) {
-                        mListener.onResumeClick(mVideo);
+                        mListener.onResumeClick(mVideo, mRelatedVideos);
                     }
                     break;
             }

@@ -20,7 +20,11 @@ import android.annotation.TargetApi;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.leanback.app.VideoSupportFragment;
 import androidx.leanback.app.VideoSupportFragmentGlueHost;
 import androidx.leanback.media.PlaybackGlue;
@@ -53,6 +57,10 @@ import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
  */
 public class PlaybackVideoFragment extends VideoSupportFragment {
 
+    public interface Listener{
+        void onPlayComplete(Video video);
+    }
+
     private static final int UPDATE_DELAY = 16;
 
     private VideoPlayerGlue mPlayerGlue;
@@ -61,13 +69,23 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
     private TrackSelector mTrackSelector;
     private Video mVideo;
     private boolean mShouldResume;
+    private boolean mInitialized = false;
+    private Listener mListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mVideo = getActivity().getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO);
         mShouldResume = getActivity().getIntent().getBooleanExtra(PlaybackActivity.EXTRA_SHOULD_RESUME, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if(getActivity() instanceof Listener){
+            mListener = (Listener) getActivity();
+        }
     }
 
     @Override
@@ -122,7 +140,11 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
         mPlayerGlue.playWhenPrepared();
 
-        play(mVideo);
+        mInitialized = true;
+
+        if(mVideo != null) {
+            play(mVideo);
+        }
     }
 
     private void releasePlayer() {
@@ -135,15 +157,19 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         }
     }
 
-    private void play(Video video) {
-        mPlayerGlue.setTitle(video.getTitle());
-        mPlayerGlue.setSubtitle(video.getTitle());
+    public void play(Video video) {
+        mVideo = video;
 
-        prepareMediaForPlaying(video.getStreamUri());
+        if(mInitialized) {
+            mPlayerGlue.setTitle(video.getTitle());
+            mPlayerGlue.setSubtitle(video.getTitle());
 
-        mPlayerGlue.addPlayerCallback(new PlayerCallback());
+            prepareMediaForPlaying(video.getStreamUri());
 
-        mPlayerGlue.play();
+            mPlayerGlue.addPlayerCallback(new PlayerCallback());
+
+            mPlayerGlue.play();
+        }
     }
 
     private void prepareMediaForPlaying(Uri mediaSourceUri) {
@@ -183,6 +209,15 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
 
                     Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition() / 1000, null);
                 }
+            }
+        }
+
+        @Override
+        public void onPlayCompleted(PlaybackGlue glue) {
+            super.onPlayCompleted(glue);
+
+            if(mListener != null){
+                mListener.onPlayComplete(mVideo);
             }
         }
     }

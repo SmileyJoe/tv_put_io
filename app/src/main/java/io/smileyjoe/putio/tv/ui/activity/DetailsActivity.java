@@ -14,6 +14,8 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
+import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
 
 /*
@@ -50,8 +52,8 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     }
 
     @Override
-    public void onWatchClicked(Video video) {
-        startActivity(PlaybackActivity.getIntent(getBaseContext(), video));
+    public void onWatchClicked(Video video, ArrayList<Video> videos) {
+        play(video, videos, false);
     }
 
     @Override
@@ -65,8 +67,19 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     }
 
     @Override
-    public void onResumeClick(Video video) {
-        startActivity(PlaybackActivity.getIntent(getBaseContext(), video, true));
+    public void onResumeClick(Video video, ArrayList<Video> videos) {
+        play(video, videos, true);
+    }
+
+    private void play(Video video, ArrayList<Video> videos, boolean shouldResume){
+        if(video.getType() == VideoType.EPISODE){
+            if(videos != null && !videos.isEmpty()) {
+                startActivity(PlaybackActivity.getIntent(getBaseContext(), videos, video.getPutId(), shouldResume));
+                return;
+            }
+        }
+
+        startActivity(PlaybackActivity.getIntent(getBaseContext(), video, shouldResume));
     }
 
     private class OnConvertResponse extends Response {
