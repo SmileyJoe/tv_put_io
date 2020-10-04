@@ -1,6 +1,8 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -8,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.room.Room;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -15,10 +19,12 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.util.VideoUtil;
@@ -145,25 +151,46 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     private class OnPutResponse extends Response {
         @Override
         public void onSuccess(JsonObject result) {
+            ProcessPutResponse task = new ProcessPutResponse(result);
+            task.execute();
+        }
+    }
+
+    private class ProcessPutResponse extends AsyncTask<Void, Void, ArrayList<Video>>{
+
+        private JsonObject mResult;
+
+        public ProcessPutResponse(JsonObject result) {
+            mResult = result;
+        }
+
+        @Override
+        protected ArrayList<Video> doInBackground(Void... params) {
+
             if (mCurrentFile != null) {
                 mParentFiles.add(mCurrentFile);
             }
 
-            JsonArray filesJson = result.getAsJsonArray("files");
-            JsonObject parentObject = result.getAsJsonObject("parent");
+            JsonArray filesJson = mResult.getAsJsonArray("files");
+            JsonObject parentObject = mResult.getAsJsonObject("parent");
 
-            ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(filesJson));
+            ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(getBaseContext(), filesJson));
             VideoUtil.sort(videos);
-            mCurrentFile = VideoUtil.parseFromPut(parentObject);
+            mCurrentFile = VideoUtil.parseFromPut(getBaseContext(), parentObject);
 
-            // todo: testing, honey I shrunk the kids //
             for (Video video : videos) {
-                if (video.getPutId() == 774524118) {
-                    Tmdb.searchMovie(getBaseContext(), video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
-                    break;
+                if (video.getType() == VideoType.MOVIE) {
+                    if(!video.isTmdbChecked()) {
+                        Tmdb.searchMovie(getBaseContext(), video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
+                    }
                 }
             }
 
+            return videos;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Video> videos) {
             populate(videos);
         }
     }
@@ -178,7 +205,26 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
         @Override
         public void onSuccess(JsonObject result) {
-            VideoUtil.updateFromTmdb(mVideo, result.get("results").getAsJsonArray());
+            ProcessTmdbResponse task = new ProcessTmdbResponse(mVideo, result);
+            task.execute();
+        }
+    }
+
+    private class ProcessTmdbResponse extends AsyncTask<Void, Void, Void>{
+        private JsonObject mResult;
+        private Video mVideo;
+
+        public ProcessTmdbResponse(Video video, JsonObject result) {
+            mVideo = video;
+            mResult = result;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            VideoUtil.updateFromTmdb(mVideo, mResult.get("results").getAsJsonArray());
+
+            AppDatabase.getInstance(getBaseContext()).videoDao().insert(mVideo);
+            return null;
         }
     }
 }

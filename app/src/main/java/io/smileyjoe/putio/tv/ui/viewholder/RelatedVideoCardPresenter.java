@@ -77,11 +77,11 @@ public class RelatedVideoCardPresenter extends Presenter {
         Video video = (Video) item;
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
-        if (video.getPoster() != null) {
+        if (video.getPosterAsUri() != null) {
             cardView.setTitleText(video.getTitle());
             cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
             Glide.with(viewHolder.view.getContext())
-                    .load(video.getPoster())
+                    .load(video.getPosterAsUri())
                     .centerCrop()
                     .error(mDefaultCardImage)
                     .into(cardView.getMainImageView());

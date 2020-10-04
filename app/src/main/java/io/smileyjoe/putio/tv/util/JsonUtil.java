@@ -1,5 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class JsonUtil {
@@ -58,7 +59,25 @@ public class JsonUtil {
         return defaultValue;
     }
 
-    private boolean isValid(String name) {
+    public JsonArray getJsonArray(String name){
+        if(isValid(name)){
+            return mJsonObject.get(name).getAsJsonArray();
+        }
+
+        return null;
+    }
+
+//    public Integer[] getIntArray(String name){
+//        if(isValid(name)){
+//            try{
+//                return mJsonObject.get(name).getAs
+//            } catch (UnsupportedOperationException e){
+//
+//            }
+//        }
+//    }
+
+    public boolean isValid(String name) {
         return mJsonObject != null && mJsonObject.has(name);
     }
 }

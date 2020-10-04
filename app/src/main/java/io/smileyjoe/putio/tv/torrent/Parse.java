@@ -40,7 +40,9 @@ public class Parse {
     public static Video update(Video video) {
         HashMap<String, String> details = Parse.parse(video.getTitle());
 
-        video.setTitle(details.get("title"));
+        if(!video.isTmdbFound()) {
+            video.setTitle(details.get("title"));
+        }
 
         if (details.containsKey("year")) {
             video.setYear(Integer.parseInt(details.get("year")));

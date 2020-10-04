@@ -49,9 +49,9 @@ public class VideoGridViewHolder extends VideoBaseViewHolder {
         } else {
             mFrameWatched.setVisibility(View.GONE);
         }
-        if (video.getPoster() != null) {
+        if (video.getPosterAsUri() != null) {
             Glide.with(context)
-                    .load(video.getPoster())
+                    .load(video.getPosterAsUri())
                     .into(mImagePoster);
         }
     }

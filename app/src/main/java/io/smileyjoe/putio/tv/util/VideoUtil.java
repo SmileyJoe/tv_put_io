@@ -1,5 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.google.gson.JsonArray;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
@@ -37,16 +39,28 @@ public class VideoUtil {
         Collections.sort(videos, new VideoComparator());
     }
 
-    public static Video parseFromPut(JsonObject jsonObject) {
-        Video video = new Video();
+    public static Video parseFromPut(Context context, JsonObject jsonObject) {
         JsonUtil json = new JsonUtil(jsonObject);
+        long putId = json.getLong("id");
+        boolean hasTmdbData = false;
 
-        video.setTitle(json.getString("name"));
-        video.setPutId(json.getLong("id"));
+        Video video = AppDatabase.getInstance(context).videoDao().getByPutId(putId);
+
+        if(video != null){
+            hasTmdbData = video.isTmdbFound();
+        } else {
+            video = new Video();
+        }
+
+        if(!hasTmdbData){
+            video.setTitle(json.getString("name"));
+            video.setPutId(json.getLong("id"));
+            video.setBackdrop(json.getString("screenshot"));
+            video.setPoster(json.getString("screenshot"));
+        }
+
         video.setConverted(json.getBoolean("is_mp4_available", false));
         video.setType(json.getString("file_type"));
-        video.setBackdrop(json.getString("screenshot"));
-        video.setPoster(json.getString("screenshot"));
         video.setStreamUri(json.getString("stream_url"), json.getString("mp4_stream_url"));
 
         String firstAccessedAt = json.getString("first_accessed_at");
@@ -57,11 +71,11 @@ public class VideoUtil {
         return video;
     }
 
-    public static ArrayList<Video> parseFromPut(JsonArray jsonArray) {
+    public static ArrayList<Video> parseFromPut(Context context, JsonArray jsonArray) {
         ArrayList<Video> videos = new ArrayList<>();
 
         for (JsonElement jsonElement : jsonArray) {
-            videos.add(parseFromPut(jsonElement.getAsJsonObject()));
+            videos.add(parseFromPut(context, jsonElement.getAsJsonObject()));
         }
 
         return videos;
@@ -76,9 +90,22 @@ public class VideoUtil {
             video.setOverView(json.getString("overview"));
             video.setPoster(Tmdb.getImageUrl(json.getString("poster_path")));
             video.setTitle(json.getString("title"));
+            video.isTmdbFound(true);
+
+            JsonArray genreJson = json.getJsonArray("genre_ids");
+
+            if(genreJson != null) {
+                ArrayList<Integer> genreIds = new ArrayList<>();
+                for (JsonElement genreElement : genreJson) {
+                    genreIds.add(genreElement.getAsInt());
+                }
+                video.setGenreIds(genreIds);
+            }
 
             break;
         }
+
+        video.isTmdbChecked(true);
 
         return video;
     }

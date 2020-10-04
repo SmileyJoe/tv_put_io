@@ -176,7 +176,7 @@ public class VideoDetailsFragment extends DetailsFragment {
     private void initializeBackground(Video video) {
         mDetailsBackground.enableParallax();
         Glide.with(getActivity())
-                .load(video.getBackdrop())
+                .load(video.getBackdropAsUri())
                 .asBitmap()
                 .centerCrop()
                 .error(R.drawable.default_background)
@@ -198,7 +198,7 @@ public class VideoDetailsFragment extends DetailsFragment {
         int height = convertDpToPixel(getActivity().getApplicationContext(), DETAIL_THUMB_HEIGHT);
 
         Glide.with(getActivity())
-                .load(mVideo.getPoster())
+                .load(mVideo.getPosterAsUri())
                 .centerCrop()
                 .error(R.drawable.default_background)
                 .into(new OnThumbLoaded(width, height, row));

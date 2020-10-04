@@ -5,26 +5,61 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+@Entity(tableName = "video")
 public class Video implements Parcelable {
 
     // ids
+    @PrimaryKey
+    @ColumnInfo(name = "id_put_io")
     private long mPutId;
+    @ColumnInfo(name = "id_tmdb")
     private long mTmdbId;
     // general
+    @Ignore
     private VideoType mType;
+    @ColumnInfo(name = "title")
     private String mTitle;
+    @ColumnInfo(name = "overview")
     private String mOverView;
+    @Ignore
     private boolean mIsWatched;
+    @Ignore
     private boolean mIsConverted;
+    @Ignore
     private long mResumeTime;
+    @Ignore
     private int mYear;
+    @Ignore
     private int mSeason;
+    @Ignore
     private int mEpisode;
     // images
-    private Uri mPoster;
-    private Uri mBackdrop;
+    @ColumnInfo(name = "uri_poster")
+    private String mPoster;
+    @ColumnInfo(name = "uri_backdrop")
+    private String mBackdrop;
     // video links
+    @Ignore
     private Uri mStreamUri;
+    @ColumnInfo(name = "is_tmdb_checked")
+    private boolean mIsTmdbChecked = false;
+    @ColumnInfo(name = "is_tmdb_found")
+    private boolean mIsTmdbFound = false;
+    @ColumnInfo(name = "genre_ids_json")
+    private String mGenreIdsJson;
+    @Ignore
+    private ArrayList<Integer> mGenreIds;
 
     public Video() {
         mType = VideoType.UNKNOWN;
@@ -77,7 +112,7 @@ public class Video implements Parcelable {
     }
 
     public void setPoster(Uri poster) {
-        mPoster = poster;
+        mPoster = poster.toString();
     }
 
     public void setPoster(String poster) {
@@ -87,7 +122,7 @@ public class Video implements Parcelable {
     }
 
     public void setBackdrop(Uri backdrop) {
-        mBackdrop = backdrop;
+        mBackdrop = backdrop.toString();
     }
 
     public void setBackdrop(String backdrop) {
@@ -123,6 +158,36 @@ public class Video implements Parcelable {
 
     public void setEpisode(int episode) {
         mEpisode = episode;
+    }
+
+    public void isTmdbChecked(boolean tmdbChecked) {
+        mIsTmdbChecked = tmdbChecked;
+    }
+
+    public void isTmdbFound(boolean tmdbFound) {
+        mIsTmdbFound = tmdbFound;
+    }
+
+    public void setGenreIdsJson(String genreIdsJson) {
+        mGenreIdsJson = genreIdsJson;
+
+        if(mGenreIds == null || mGenreIds.isEmpty()) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Integer>>() {
+            }.getType();
+            setGenreIds(gson.fromJson(genreIdsJson, type));
+        }
+    }
+
+    public void setGenreIds(ArrayList<Integer> genreIds) {
+        mGenreIds = genreIds;
+
+        if(TextUtils.isEmpty(mGenreIdsJson)){
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Integer>>() {
+            }.getType();
+            setGenreIdsJson(gson.toJson(genreIds, type));
+        }
     }
 
     public long getPutId() {
@@ -169,12 +234,20 @@ public class Video implements Parcelable {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-    public Uri getPoster() {
+    public String getPoster() {
         return mPoster;
     }
 
-    public Uri getBackdrop() {
+    public String getBackdrop() {
         return mBackdrop;
+    }
+
+    public Uri getPosterAsUri() {
+        return Uri.parse(mPoster);
+    }
+
+    public Uri getBackdropAsUri() {
+        return Uri.parse(mBackdrop);
     }
 
     public Uri getStreamUri() {
@@ -191,6 +264,22 @@ public class Video implements Parcelable {
 
     public int getEpisode() {
         return mEpisode;
+    }
+
+    public boolean isTmdbChecked() {
+        return mIsTmdbChecked;
+    }
+
+    public boolean isTmdbFound() {
+        return mIsTmdbFound;
+    }
+
+    public String getGenreIdsJson() {
+        return mGenreIdsJson;
+    }
+
+    public ArrayList<Integer> getGenreIds() {
+        return mGenreIds;
     }
 
     @Override
@@ -211,9 +300,11 @@ public class Video implements Parcelable {
         dest.writeInt(this.mYear);
         dest.writeInt(this.mSeason);
         dest.writeInt(this.mEpisode);
-        dest.writeParcelable(this.mPoster, flags);
-        dest.writeParcelable(this.mBackdrop, flags);
+        dest.writeString(this.mPoster);
+        dest.writeString(this.mBackdrop);
         dest.writeParcelable(this.mStreamUri, flags);
+        dest.writeByte(this.mIsTmdbChecked ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.mIsTmdbFound ? (byte) 1 : (byte) 0);
     }
 
     protected Video(Parcel in) {
@@ -229,12 +320,14 @@ public class Video implements Parcelable {
         this.mYear = in.readInt();
         this.mSeason = in.readInt();
         this.mEpisode = in.readInt();
-        this.mPoster = in.readParcelable(Uri.class.getClassLoader());
-        this.mBackdrop = in.readParcelable(Uri.class.getClassLoader());
+        this.mPoster = in.readString();
+        this.mBackdrop = in.readString();
         this.mStreamUri = in.readParcelable(Uri.class.getClassLoader());
+        this.mIsTmdbChecked = in.readByte() != 0;
+        this.mIsTmdbFound = in.readByte() != 0;
     }
 
-    public static final Parcelable.Creator<Video> CREATOR = new Parcelable.Creator<Video>() {
+    public static final Creator<Video> CREATOR = new Creator<Video>() {
         @Override
         public Video createFromParcel(Parcel source) {
             return new Video(source);
