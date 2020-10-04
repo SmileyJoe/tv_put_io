@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 
 public class VideoGridViewHolder extends VideoBaseViewHolder {
 
@@ -25,8 +26,8 @@ public class VideoGridViewHolder extends VideoBaseViewHolder {
     private FrameLayout mFrameSelected;
     private View mItemView;
 
-    public VideoGridViewHolder(@NonNull View itemView) {
-        super(itemView);
+    public VideoGridViewHolder(@NonNull View itemView, VideoType videoType) {
+        super(itemView, videoType);
 
         itemView.setOnClickListener(this);
 

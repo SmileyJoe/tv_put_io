@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 
 public class VideoListFragment extends Fragment {
@@ -32,7 +33,9 @@ public class VideoListFragment extends Fragment {
     private VideoListAdapter mVideoListAdapter;
     private Listener mListener;
     private VideoListAdapter.Type mType = VideoListAdapter.Type.LIST;
+    private VideoType mVideoType = VideoType.FOLDER;
     private boolean mIsFullScreen = false;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Nullable
     @Override
@@ -46,19 +49,25 @@ public class VideoListFragment extends Fragment {
         return view;
     }
 
-    public void setType(VideoListAdapter.Type type) {
+    public void setType(VideoListAdapter.Type type, VideoType videoType) {
         mType = type;
+        mVideoType = videoType;
 
         if(mVideoListAdapter != null){
             mVideoListAdapter.setType(type);
+            mVideoListAdapter.setVideoType(videoType);
         }
 
-        setLayoutManager();
+        setLayoutManager(true);
     }
 
     public void setFullScreen(boolean fullScreen) {
         mIsFullScreen = fullScreen;
-        setLayoutManager();
+        boolean created = setLayoutManager(false);
+
+        if(!created && mLayoutManager instanceof GridLayoutManager){
+            ((GridLayoutManager) mLayoutManager).setSpanCount(getSpanCount());
+        }
     }
 
     @Override
@@ -73,7 +82,7 @@ public class VideoListFragment extends Fragment {
         mVideoListAdapter.setListener(mListener);
 
         mRecycler.setAdapter(mVideoListAdapter);
-        setLayoutManager();
+        setLayoutManager(false);
     }
 
     public void update(Video video){
@@ -82,24 +91,36 @@ public class VideoListFragment extends Fragment {
         }
     }
 
-    private void setLayoutManager(){
-        if(mRecycler != null) {
-            switch (mType) {
-                case LIST:
-                    mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-                    break;
-                case GRID:
-                    int spanCount;
+    private int getSpanCount(){
+        int spanCount;
 
-                    if(mIsFullScreen){
-                        spanCount = 5;
-                    } else {
-                        spanCount = 3;
-                    }
-                    mRecycler.setLayoutManager(new GridLayoutManager(getContext(),spanCount));
-                    break;
+        if (mIsFullScreen) {
+            spanCount = 5;
+        } else {
+            spanCount = 3;
+        }
+
+        return spanCount;
+    }
+
+    private boolean setLayoutManager(boolean force){
+        boolean created = false;
+        if(mRecycler != null) {
+            if(mLayoutManager == null || force) {
+                switch (mType) {
+                    case LIST:
+                        mLayoutManager = new LinearLayoutManager(getContext());
+                        break;
+                    case GRID:
+                        mLayoutManager = new GridLayoutManager(getContext(), getSpanCount());
+                        break;
+                }
+
+                mRecycler.setLayoutManager(mLayoutManager);
+                created = true;
             }
         }
+        return created;
     }
 
     public void startLoading(){

@@ -9,14 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 
 public class VideoListViewHolder extends VideoBaseViewHolder {
 
     private TextView mTextTitle;
     private ImageView mImageIcon;
 
-    public VideoListViewHolder(@NonNull View itemView) {
-        super(itemView);
+    public VideoListViewHolder(@NonNull View itemView, VideoType videoType) {
+        super(itemView, videoType);
 
         mTextTitle = itemView.findViewById(R.id.text_title);
         mImageIcon = itemView.findViewById(R.id.image_icon);

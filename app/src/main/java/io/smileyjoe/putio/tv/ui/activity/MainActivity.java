@@ -4,10 +4,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.DimenRes;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.content.AsyncTaskLoader;
@@ -45,6 +48,8 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     private LinearLayout mLayoutLists;
     private ProgressBar mProgressLoading;
 
+    private VideoType mVideoTypeFocus = VideoType.UNKNOWN;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,9 +61,9 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         mProgressLoading = findViewById(R.id.progress_loading);
 
         mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
-        mFragmentFolderList.setType(VideoListAdapter.Type.LIST);
+        mFragmentFolderList.setType(VideoListAdapter.Type.LIST, VideoType.FOLDER);
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
-        mFragmentVideoList.setType(VideoListAdapter.Type.GRID);
+        mFragmentVideoList.setType(VideoListAdapter.Type.GRID, VideoType.VIDEO);
 
         getFiles(Putio.NO_PARENT);
 
@@ -96,6 +101,32 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
                 showDetails(video);
                 break;
         }
+    }
+
+    @Override
+    public void hasFocus(VideoType videoType) {
+        if(mVideoTypeFocus != videoType){
+            mVideoTypeFocus = videoType;
+
+            switch (videoType){
+                case FOLDER:
+                    mTextTitle.setVisibility(View.VISIBLE);
+                    changeFolderWidth(R.dimen.width_folder_list_expanded);
+                    mFragmentVideoList.setFullScreen(false);
+                    break;
+                case VIDEO:
+                    mTextTitle.setVisibility(View.GONE);
+                    changeFolderWidth(R.dimen.width_folder_list_contracted);
+                    mFragmentVideoList.setFullScreen(true);
+                    break;
+            }
+        }
+    }
+
+    private void changeFolderWidth(@DimenRes int widthResId){
+        ViewGroup.LayoutParams params = mFragmentFolderList.getView().getLayoutParams();
+        params.width = getResources().getDimensionPixelOffset(widthResId);
+        mFragmentFolderList.getView().setLayoutParams(params);
     }
 
     private void showDetails(Video video){

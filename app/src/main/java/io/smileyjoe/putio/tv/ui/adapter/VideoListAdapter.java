@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoBaseViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoGridViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoListViewHolder;
@@ -40,6 +41,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> 
     private Context mContext;
     private Listener mListener;
     private Type mType;
+    private VideoType mVideoType;
 
     public VideoListAdapter(Context context, Type type) {
         mContext = context;
@@ -53,6 +55,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> 
 
     public void setType(Type type) {
         mType = type;
+    }
+
+    public void setVideoType(VideoType videoType){
+        mVideoType = videoType;
     }
 
     public void setVideos(ArrayList<Video> videos) {
@@ -81,11 +87,11 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> 
 
         switch (mType){
             case GRID:
-                holder = new VideoGridViewHolder(view);
+                holder = new VideoGridViewHolder(view, mVideoType);
                 break;
             case LIST:
             default:
-                holder = new VideoListViewHolder(view);
+                holder = new VideoListViewHolder(view, mVideoType);
                 break;
         }
 

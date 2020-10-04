@@ -29,7 +29,7 @@
 
         <fragment
             android:id="@+id/fragment_folder_list"
-            android:layout_width="300dp"
+            android:layout_width="@dimen/width_folder_list_expanded"
             android:layout_height="match_parent"
             android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
 
