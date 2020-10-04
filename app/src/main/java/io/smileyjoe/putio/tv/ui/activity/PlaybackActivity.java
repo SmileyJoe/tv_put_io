@@ -84,23 +84,16 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     @Override
     public void onPlayComplete(Video videoCompleted) {
         if(mVideos != null){
-            int nextVideoIndex = 0;
-            for(int i = 0; i<mVideos.size(); i++){
-                Video video = mVideos.get(i);
+            int nextEpisode = videoCompleted.getEpisode() + 1;
 
-                if(video.getPutId() == videoCompleted.getPutId()){
-                    nextVideoIndex = i + 1;
-                    break;
+            for(Video video:mVideos){
+                if(video.getEpisode() == nextEpisode){
+                    play(video);
+                    return;
                 }
             }
-
-            if(mVideos.size()>nextVideoIndex){
-                play(mVideos.get(nextVideoIndex));
-            } else {
-                finish();
-            }
-        } else {
-            finish();
         }
+
+        finish();
     }
 }

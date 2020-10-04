@@ -94,19 +94,15 @@ public class Parse {
 
                 matchesRaw.add(match);
 
-                boolean isMovie = true;
-
                 switch (key) {
                     case "season":
                     case "episode":
-                        isMovie = false;
                     case "year":
                         match = String.valueOf(Integer.parseInt(match.replaceAll("[^\\d]", "")));
                         break;
                 }
 
                 matchesClean.put(key, match);
-                matchesClean.put("is_movie", String.valueOf(isMovie));
 
                 if (matcher.start() == 0) {
                     int end = matcher.end();
@@ -124,6 +120,13 @@ public class Parse {
                 }
             }
         }
+
+        boolean isMovie = true;
+        if(matchesClean.containsKey("season") || matchesClean.containsKey("episode")){
+            isMovie = false;
+        }
+
+        matchesClean.put("is_movie", String.valueOf(isMovie));
 
         if (titleEnd <= titleStart) {
             titleEnd = rawTitle.length();
