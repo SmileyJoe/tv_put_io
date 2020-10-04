@@ -32,7 +32,6 @@
         <activity android:name=".ui.activity.DetailsActivity" />
         <activity android:name=".ui.activity.PlaybackActivity"
             android:theme="@style/AppTheme.Video"/>
-        <activity android:name=".BrowseErrorActivity" />
     </application>
 
 </manifest>
