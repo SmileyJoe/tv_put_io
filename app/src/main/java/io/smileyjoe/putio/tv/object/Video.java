@@ -138,7 +138,11 @@ public class Video implements Parcelable {
     }
 
     public String getTitle() {
-        return mTitle;
+        if(mType == VideoType.EPISODE){
+            return mTitle + " S" + String.format("%02d", getSeason()) + "E" + String.format("%02d", getEpisode());
+        } else {
+            return mTitle;
+        }
     }
 
     public String getOverView() {

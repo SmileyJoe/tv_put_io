@@ -37,19 +37,6 @@ public class VideoUtil {
         Collections.sort(videos, new VideoComparator());
     }
 
-    private static class VideoComparator implements Comparator<Video> {
-        @Override
-        public int compare(Video videoOne, Video videoTwo) {
-            int result = Integer.compare(videoOne.getType().getOrder(), videoTwo.getType().getOrder());
-
-            if (result != 0) {
-                return result;
-            }
-
-            return videoOne.getTitle().compareTo(videoTwo.getTitle());
-        }
-    }
-
     public static Video parseFromPut(JsonObject jsonObject) {
         Video video = new Video();
         JsonUtil json = new JsonUtil(jsonObject);
@@ -94,5 +81,30 @@ public class VideoUtil {
         }
 
         return video;
+    }
+
+    private static class VideoComparator implements Comparator<Video> {
+        @Override
+        public int compare(Video videoOne, Video videoTwo) {
+            int result = Integer.compare(videoOne.getType().getOrder(), videoTwo.getType().getOrder());
+
+            if (result != 0) {
+                return result;
+            }
+
+            result = videoOne.getTitle().compareTo(videoTwo.getTitle());
+
+            if(videoOne.getType() == VideoType.EPISODE){
+                result = Integer.compare(videoOne.getSeason(), videoTwo.getSeason());
+
+                if(result != 0){
+                    return result;
+                }
+
+                return Integer.compare(videoOne.getEpisode(), videoTwo.getEpisode());
+            } else {
+                return result;
+            }
+        }
     }
 }
