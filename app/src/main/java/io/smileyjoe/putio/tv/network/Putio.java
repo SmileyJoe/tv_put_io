@@ -9,7 +9,7 @@ import io.smileyjoe.putio.tv.BuildConfig;
 
 public class Putio {
 
-    private static final long NO_PARENT = -100;
+    public static final long NO_PARENT = -100;
     private static final String BASE = "https://api.put.io/v2";
     private static final String FILES = "/files/list";
     private static final String DOWNLOAD_URL = "/files/{id}/url";

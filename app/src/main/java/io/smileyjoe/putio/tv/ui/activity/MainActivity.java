@@ -41,12 +41,12 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         mParentFiles = new ArrayList<>();
         mTextTitle = findViewById(R.id.text_title);
 
-        Putio.getFiles(getBaseContext(), new OnPutResponse());
-
         mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(VideoListAdapter.Type.LIST);
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID);
+
+        getFiles(Putio.NO_PARENT);
     }
 
     @Override
@@ -62,6 +62,8 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     }
 
     private void getFiles(long parentId) {
+        mFragmentVideoList.startLoading();
+        mFragmentFolderList.startLoading();
         Putio.getFiles(getBaseContext(), parentId, new OnPutResponse());
     }
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ public class VideoListFragment extends Fragment {
 
     private RecyclerView mRecycler;
     private TextView mTextEmpty;
+    private ProgressBar mProgressLoading;
 
     private VideoListAdapter mVideoListAdapter;
     private Listener mListener;
@@ -39,6 +41,7 @@ public class VideoListFragment extends Fragment {
 
         mRecycler = view.findViewById(R.id.recycler);
         mTextEmpty = view.findViewById(R.id.text_empty);
+        mProgressLoading = view.findViewById(R.id.progress_loading);
 
         return view;
     }
@@ -93,7 +96,14 @@ public class VideoListFragment extends Fragment {
         }
     }
 
+    public void startLoading(){
+        mProgressLoading.setVisibility(View.VISIBLE);
+        mTextEmpty.setVisibility(View.GONE);
+        mRecycler.setVisibility(View.GONE);
+    }
+
     public void setVideos(ArrayList<Video> videos) {
+        mProgressLoading.setVisibility(View.GONE);
         if (videos == null || videos.isEmpty()) {
             mTextEmpty.setVisibility(View.VISIBLE);
             mRecycler.setVisibility(View.GONE);
