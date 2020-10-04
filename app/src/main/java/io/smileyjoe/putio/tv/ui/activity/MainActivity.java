@@ -106,21 +106,28 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
         mTextTitle.setText(mCurrentFile.getTitle());
 
+        boolean folderFragmentIsVisible = populateFolders(folders);
+
+        mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
         mFragmentVideoList.setVideos(videosSorted);
-        populateFolders(folders);
+
     }
 
-    private void populateFolders(ArrayList<Video> videos) {
+    private boolean populateFolders(ArrayList<Video> videos) {
+        boolean fragmentIsVisible;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         if (videos == null || videos.isEmpty()) {
             transaction.hide(mFragmentFolderList);
+            fragmentIsVisible = false;
         } else {
             transaction.show(mFragmentFolderList);
             mFragmentFolderList.setVideos(videos);
+            fragmentIsVisible = true;
         }
 
         transaction.commit();
+        return fragmentIsVisible;
     }
 
     private class OnPutResponse extends Response {

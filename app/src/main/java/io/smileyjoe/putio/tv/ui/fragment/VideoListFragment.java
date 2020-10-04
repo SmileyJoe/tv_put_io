@@ -30,6 +30,7 @@ public class VideoListFragment extends Fragment {
     private VideoListAdapter mVideoListAdapter;
     private Listener mListener;
     private VideoListAdapter.Type mType = VideoListAdapter.Type.LIST;
+    private boolean mIsFullScreen = false;
 
     @Nullable
     @Override
@@ -49,6 +50,11 @@ public class VideoListFragment extends Fragment {
             mVideoListAdapter.setType(type);
         }
 
+        setLayoutManager();
+    }
+
+    public void setFullScreen(boolean fullScreen) {
+        mIsFullScreen = fullScreen;
         setLayoutManager();
     }
 
@@ -74,7 +80,14 @@ public class VideoListFragment extends Fragment {
                     mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
                     break;
                 case GRID:
-                    mRecycler.setLayoutManager(new GridLayoutManager(getContext(),3));
+                    int spanCount;
+
+                    if(mIsFullScreen){
+                        spanCount = 5;
+                    } else {
+                        spanCount = 3;
+                    }
+                    mRecycler.setLayoutManager(new GridLayoutManager(getContext(),spanCount));
                     break;
             }
         }
