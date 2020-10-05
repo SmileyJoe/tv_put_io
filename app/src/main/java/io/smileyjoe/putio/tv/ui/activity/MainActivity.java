@@ -30,17 +30,15 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
+import io.smileyjoe.putio.tv.util.VideoLoader;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends FragmentActivity implements VideoListFragment.Listener {
+public class MainActivity extends FragmentActivity implements VideoListFragment.Listener, VideoLoader.Listener {
 
     private TextView mTextTitle;
-
-    private ArrayList<Video> mParentFiles;
-    private Video mCurrentFile = null;
 
     private VideoListFragment mFragmentFolderList;
     private VideoListFragment mFragmentVideoList;
@@ -49,13 +47,13 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     private ProgressBar mProgressLoading;
 
     private VideoType mVideoTypeFocus = VideoType.UNKNOWN;
+    private VideoLoader mVideoLoader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mParentFiles = new ArrayList<>();
         mTextTitle = findViewById(R.id.text_title);
         mLayoutLists = findViewById(R.id.layout_lists);
         mProgressLoading = findViewById(R.id.progress_loading);
@@ -65,7 +63,8 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID, VideoType.VIDEO);
 
-        getFiles(Putio.NO_PARENT);
+        mVideoLoader = new VideoLoader(getBaseContext(), this);
+        mVideoLoader.load();
 
         // todo: this needs to be called when an id is not found in the db //
         Tmdb.updateMovieGenres(getBaseContext());
@@ -73,27 +72,34 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
     @Override
     public void onBackPressed() {
-        if (mParentFiles != null && !mParentFiles.isEmpty()) {
-            Video parentFile = mParentFiles.get(mParentFiles.size() - 1);
-            getFiles(parentFile.getPutId());
-            mParentFiles.remove(parentFile);
-            mCurrentFile = null;
-        } else {
+        boolean hasHistory = mVideoLoader.back();
+
+        if(!hasHistory){
             super.onBackPressed();
         }
     }
 
-    private void getFiles(long parentId) {
+    @Override
+    public void onVideosLoadStarted() {
         mLayoutLists.setVisibility(View.GONE);
         mProgressLoading.setVisibility(View.VISIBLE);
-        Putio.getFiles(getBaseContext(), parentId, new OnPutResponse());
+    }
+
+    @Override
+    public void onVideosLoadFinished(Video current, ArrayList<Video> videos) {
+        populate(current, videos);
+    }
+
+    @Override
+    public void update(Video video) {
+        mFragmentVideoList.update(video);
     }
 
     @Override
     public void onVideoClicked(Video video) {
         switch (video.getType()){
             case FOLDER:
-                getFiles(video.getPutId());
+                mVideoLoader.load(video);
                 break;
             case EPISODE:
             case MOVIE:
@@ -133,7 +139,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         startActivity(DetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
     }
 
-    private void populate(ArrayList<Video> videos) {
+    private void populate(Video current, ArrayList<Video> videos) {
         ArrayList<Video> folders = new ArrayList<>();
         ArrayList<Video> videosSorted = new ArrayList<>();
 
@@ -150,7 +156,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
             }
         }
 
-        mTextTitle.setText(mCurrentFile.getTitle());
+        mTextTitle.setText(current.getTitle());
 
         if((folders == null || folders.isEmpty()) && (videosSorted != null && videosSorted.size() == 1)){
             showDetails(videosSorted.get(0));
@@ -180,90 +186,5 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
         transaction.commit();
         return fragmentIsVisible;
-    }
-
-    private class OnPutResponse extends Response {
-        @Override
-        public void onSuccess(JsonObject result) {
-            ProcessPutResponse task = new ProcessPutResponse(result);
-            task.execute();
-        }
-    }
-
-    private class ProcessPutResponse extends AsyncTask<Void, Void, ArrayList<Video>>{
-
-        private JsonObject mResult;
-
-        public ProcessPutResponse(JsonObject result) {
-            mResult = result;
-        }
-
-        @Override
-        protected ArrayList<Video> doInBackground(Void... params) {
-
-            if (mCurrentFile != null) {
-                mParentFiles.add(mCurrentFile);
-            }
-
-            JsonArray filesJson = mResult.getAsJsonArray("files");
-            JsonObject parentObject = mResult.getAsJsonObject("parent");
-
-            ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(getBaseContext(), filesJson));
-            VideoUtil.sort(videos);
-            mCurrentFile = VideoUtil.parseFromPut(getBaseContext(), parentObject);
-
-            for (Video video : videos) {
-                if (video.getType() == VideoType.MOVIE) {
-                    if(!video.isTmdbChecked()) {
-                        Tmdb.searchMovie(getBaseContext(), video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
-                    }
-                }
-            }
-
-            return videos;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Video> videos) {
-            populate(videos);
-        }
-    }
-
-    private class OnTmdbSearchResponse extends Response {
-
-        private Video mVideo;
-
-        public OnTmdbSearchResponse(Video video) {
-            mVideo = video;
-        }
-
-        @Override
-        public void onSuccess(JsonObject result) {
-            ProcessTmdbResponse task = new ProcessTmdbResponse(mVideo, result);
-            task.execute();
-        }
-    }
-
-    private class ProcessTmdbResponse extends AsyncTask<Void, Void, Video>{
-        private JsonObject mResult;
-        private Video mVideo;
-
-        public ProcessTmdbResponse(Video video, JsonObject result) {
-            mVideo = video;
-            mResult = result;
-        }
-
-        @Override
-        protected Video doInBackground(Void... voids) {
-            VideoUtil.updateFromTmdb(mVideo, mResult.get("results").getAsJsonArray());
-
-            AppDatabase.getInstance(getBaseContext()).videoDao().insert(mVideo);
-            return mVideo;
-        }
-
-        @Override
-        protected void onPostExecute(Video video) {
-            mFragmentVideoList.update(video);
-        }
     }
 }

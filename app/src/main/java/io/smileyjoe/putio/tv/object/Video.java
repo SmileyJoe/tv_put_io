@@ -15,9 +15,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Entity(tableName = "video")
-public class Video implements Parcelable {
+public class Video implements Parcelable{
 
     // ids
     @PrimaryKey
@@ -288,6 +289,19 @@ public class Video implements Parcelable {
 
     public ArrayList<Integer> getGenreIds() {
         return mGenreIds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Video)) return false;
+        Video video = (Video) o;
+        return mPutId == video.mPutId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPutId);
     }
 
     @Override
