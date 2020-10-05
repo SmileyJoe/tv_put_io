@@ -25,6 +25,7 @@ public class VideoGridViewHolder extends VideoBaseViewHolder {
     private FrameLayout mFrameWatched;
     private FrameLayout mFrameSelected;
     private View mItemView;
+    private int mPosterPadding;
 
     public VideoGridViewHolder(@NonNull View itemView, VideoType videoType) {
         super(itemView, videoType);
@@ -36,6 +37,8 @@ public class VideoGridViewHolder extends VideoBaseViewHolder {
         mImagePoster = itemView.findViewById(R.id.image_poster);
         mFrameWatched = itemView.findViewById(R.id.frame_watched);
         mFrameSelected = itemView.findViewById(R.id.frame_selected);
+
+        mPosterPadding = itemView.getContext().getResources().getDimensionPixelOffset(R.dimen.file_grid_poster_padding);
     }
 
     @Override
@@ -51,9 +54,13 @@ public class VideoGridViewHolder extends VideoBaseViewHolder {
             mFrameWatched.setVisibility(View.GONE);
         }
         if (video.getPosterAsUri() != null) {
+            mImagePoster.setPadding(0,0,0,0);
             Glide.with(context)
                     .load(video.getPosterAsUri())
                     .into(mImagePoster);
+        } else {
+            mImagePoster.setPadding(mPosterPadding,mPosterPadding,mPosterPadding,mPosterPadding);
+            mImagePoster.setImageResource(R.drawable.ic_movie_24);
         }
     }
 }

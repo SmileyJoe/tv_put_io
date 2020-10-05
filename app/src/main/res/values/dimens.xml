@@ -2,6 +2,7 @@
 <resources>
     <dimen name="file_grid_col_width">200dp</dimen>
     <dimen name="file_grid_col_height">200dp</dimen>
+    <dimen name="file_grid_poster_padding">50dp</dimen>
     <dimen name="width_folder_list_expanded">300dp</dimen>
     <dimen name="width_folder_list_contracted">1dp</dimen>
 </resources>
