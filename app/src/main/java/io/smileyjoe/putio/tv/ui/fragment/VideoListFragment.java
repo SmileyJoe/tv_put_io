@@ -95,9 +95,9 @@ public class VideoListFragment extends Fragment {
         int spanCount;
 
         if (mIsFullScreen) {
-            spanCount = 5;
+            spanCount = 7;
         } else {
-            spanCount = 3;
+            spanCount = 4;
         }
 
         return spanCount;
