@@ -44,6 +44,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
@@ -173,7 +174,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
     }
 
     private void prepareMediaForPlaying(Uri mediaSourceUri) {
-        String userAgent = Util.getUserAgent(getActivity(), "VideoPlayerGlue");
+        String userAgent = Util.getUserAgent(getActivity(), getContext().getString(R.string.app_name));
         MediaSource mediaSource =
                 new ExtractorMediaSource(
                         mediaSourceUri,
