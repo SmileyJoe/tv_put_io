@@ -13,11 +13,12 @@ public abstract class VideoBaseViewHolder extends RecyclerView.ViewHolder implem
 
     public interface Listener{
         void onVideoClicked(Video video);
-        void hasFocus(VideoType videoType, Video video);
+        void hasFocus(VideoType videoType, Video video, int position);
     }
 
     private Video mVideo;
     private VideoType mVideoType;
+    private int mPosition;
 
     public VideoBaseViewHolder(@NonNull View itemView, VideoType videoType) {
         super(itemView);
@@ -33,14 +34,15 @@ public abstract class VideoBaseViewHolder extends RecyclerView.ViewHolder implem
         mListener = listener;
     }
 
-    public void bindView(Video video){
+    public void bindView(Video video, int position){
         mVideo = video;
+        mPosition = position;
     }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(hasFocus && mListener != null){
-            mListener.hasFocus(mVideoType, mVideo);
+            mListener.hasFocus(mVideoType, mVideo, mPosition);
         }
     }
 

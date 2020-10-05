@@ -102,7 +102,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull VideoBaseViewHolder holder, int position) {
-        holder.bindView(getItem(position));
+        holder.bindView(getItem(position), position);
     }
 
     @Override

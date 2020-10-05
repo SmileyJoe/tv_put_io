@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.content.AsyncTaskLoader;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.google.gson.JsonArray;
@@ -115,11 +117,20 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     }
 
     @Override
-    public void hasFocus(VideoType videoType, Video video) {
+    public void hasFocus(VideoType videoType, Video video, int position) {
         if(videoType == VideoType.VIDEO) {
             if (video.isTmdbFound()) {
                 showFragment(mFragmentSummary);
                 mFragmentSummary.setVideo(video);
+
+                int topRow = mFragmentVideoList.getFirstVisiblePosition()/7;
+                int selectedRow = position/7;
+
+                if((selectedRow - topRow >= 2)){
+                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_TOP);
+                } else {
+                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                }
             } else {
                 hideFragment(mFragmentSummary);
             }
@@ -142,6 +153,14 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
                     break;
             }
         }
+    }
+
+    private void moveSummaryFragment(int rule){
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFragmentSummary.getView().getLayoutParams();
+        params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
+        params.addRule(rule);
+        mFragmentSummary.getView().setLayoutParams(params);
     }
 
     private void hideFragment(Fragment fragment){

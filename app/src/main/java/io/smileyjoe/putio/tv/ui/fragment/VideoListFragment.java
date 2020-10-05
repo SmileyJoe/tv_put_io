@@ -1,7 +1,10 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -101,6 +104,14 @@ public class VideoListFragment extends Fragment {
         }
 
         return spanCount;
+    }
+
+    public int getFirstVisiblePosition(){
+        if(mType == VideoListAdapter.Type.GRID) {
+            return ((GridLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
+        }
+
+        return 0;
     }
 
     private boolean setLayoutManager(boolean force){

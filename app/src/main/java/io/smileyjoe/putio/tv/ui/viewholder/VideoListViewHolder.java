@@ -24,8 +24,8 @@ public class VideoListViewHolder extends VideoBaseViewHolder {
     }
 
     @Override
-    public void bindView(Video video) {
-        super.bindView(video);
+    public void bindView(Video video, int position) {
+        super.bindView(video, position);
         mTextTitle.setText(video.getTitle());
         mImageIcon.setImageResource(R.drawable.ic_folder_24);
     }

@@ -39,8 +39,8 @@ public class VideoGridViewHolder extends VideoBaseViewHolder {
     }
 
     @Override
-    public void bindView(Video video) {
-        super.bindView(video);
+    public void bindView(Video video, int position) {
+        super.bindView(video, position);
 
         Context context = mItemView.getContext();
         mTextTitle.setText(video.getTitle());
