@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.ui.activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.content.AsyncTaskLoader;
@@ -30,6 +32,7 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
+import io.smileyjoe.putio.tv.ui.fragment.VideoSummaryFragment;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
@@ -42,6 +45,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
     private VideoListFragment mFragmentFolderList;
     private VideoListFragment mFragmentVideoList;
+    private VideoSummaryFragment mFragmentSummary;
 
     private LinearLayout mLayoutLists;
     private ProgressBar mProgressLoading;
@@ -62,6 +66,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         mFragmentFolderList.setType(VideoListAdapter.Type.LIST, VideoType.FOLDER);
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID, VideoType.VIDEO);
+        mFragmentSummary = (VideoSummaryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_summary);
 
         mVideoLoader = new VideoLoader(getBaseContext(), this);
         mVideoLoader.load();
@@ -110,29 +115,51 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     }
 
     @Override
-    public void hasFocus(VideoType videoType) {
+    public void hasFocus(VideoType videoType, Video video) {
+        if(videoType == VideoType.VIDEO) {
+            if (video.isTmdbFound()) {
+                showFragment(mFragmentSummary);
+                mFragmentSummary.setVideo(video);
+            } else {
+                hideFragment(mFragmentSummary);
+            }
+        }
+
         if(mVideoTypeFocus != videoType){
             mVideoTypeFocus = videoType;
 
             switch (videoType){
                 case FOLDER:
                     mTextTitle.setVisibility(View.VISIBLE);
-                    changeFolderWidth(R.dimen.width_folder_list_expanded);
+                    changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_expanded);
+                    hideFragment(mFragmentSummary);
                     mFragmentVideoList.setFullScreen(false);
                     break;
                 case VIDEO:
                     mTextTitle.setVisibility(View.GONE);
-                    changeFolderWidth(R.dimen.width_folder_list_contracted);
+                    changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_contracted);
                     mFragmentVideoList.setFullScreen(true);
                     break;
             }
         }
     }
 
-    private void changeFolderWidth(@DimenRes int widthResId){
-        ViewGroup.LayoutParams params = mFragmentFolderList.getView().getLayoutParams();
+    private void hideFragment(Fragment fragment){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.hide(fragment);
+        transaction.commit();
+    }
+
+    private void showFragment(Fragment fragment){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.show(fragment);
+        transaction.commit();
+    }
+
+    private void changeFragmentWidth(Fragment fragment, @DimenRes int widthResId){
+        ViewGroup.LayoutParams params = fragment.getView().getLayoutParams();
         params.width = getResources().getDimensionPixelOffset(widthResId);
-        mFragmentFolderList.getView().setLayoutParams(params);
+        fragment.getView().setLayoutParams(params);
     }
 
     private void showDetails(Video video){
@@ -173,18 +200,17 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
     private boolean populateFolders(ArrayList<Video> videos) {
         boolean fragmentIsVisible;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
 
         if (videos == null || videos.isEmpty()) {
-            transaction.hide(mFragmentFolderList);
+            hideFragment(mFragmentFolderList);
             fragmentIsVisible = false;
         } else {
-            transaction.show(mFragmentFolderList);
+            showFragment(mFragmentFolderList);
             mFragmentFolderList.setVideos(videos);
             fragmentIsVisible = true;
         }
 
-        transaction.commit();
         return fragmentIsVisible;
     }
 }
