@@ -227,7 +227,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             if(mVideoTypeFocus != fragmentType) {
                 mVideoTypeFocus = fragmentType;
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
-                mFragmentVideoList.setFullScreen(false);
+                hideFragment(mFragmentSummary);
             }
         }
     }
