@@ -24,12 +24,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
@@ -52,7 +55,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     private LinearLayout mLayoutLists;
     private ProgressBar mProgressLoading;
 
-    private VideoType mVideoTypeFocus = VideoType.UNKNOWN;
+    private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
 
     @Override
@@ -65,9 +68,9 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         mProgressLoading = findViewById(R.id.progress_loading);
 
         mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
-        mFragmentFolderList.setType(VideoListAdapter.Type.LIST, VideoType.FOLDER);
+        mFragmentFolderList.setType(VideoListAdapter.Type.LIST, FragmentType.FOLDER);
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
-        mFragmentVideoList.setType(VideoListAdapter.Type.GRID, VideoType.VIDEO);
+        mFragmentVideoList.setType(VideoListAdapter.Type.GRID, FragmentType.VIDEO);
         mFragmentSummary = (VideoSummaryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_summary);
 
         mVideoLoader = new VideoLoader(getBaseContext(), this);
@@ -117,8 +120,8 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     }
 
     @Override
-    public void hasFocus(VideoType videoType, Video video, int position) {
-        if(videoType == VideoType.VIDEO) {
+    public void hasFocus(FragmentType fragmentType, Video video, int position) {
+        if(fragmentType == FragmentType.VIDEO) {
             if (video.isTmdbFound()) {
                 showFragment(mFragmentSummary);
                 mFragmentSummary.setVideo(video);
@@ -136,10 +139,10 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
             }
         }
 
-        if(mVideoTypeFocus != videoType){
-            mVideoTypeFocus = videoType;
+        if(mVideoTypeFocus != fragmentType){
+            mVideoTypeFocus = fragmentType;
 
-            switch (videoType){
+            switch (fragmentType){
                 case FOLDER:
                     mTextTitle.setVisibility(View.VISIBLE);
                     changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_expanded);
@@ -202,6 +205,8 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
             }
         }
 
+        handleGenres(videosSorted);
+
         mTextTitle.setText(current.getTitle());
 
         if((folders == null || folders.isEmpty()) && (videosSorted != null && videosSorted.size() == 1)){
@@ -215,6 +220,22 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
 
         mLayoutLists.setVisibility(View.VISIBLE);
         mProgressLoading.setVisibility(View.GONE);
+    }
+
+    private void handleGenres(ArrayList<Video> videos){
+        Set<Integer> temp = new HashSet<>();
+
+        for(Video video:videos){
+            ArrayList<Integer> genres = video.getGenreIds();
+
+            if(genres != null && !genres.isEmpty()){
+                temp.addAll(genres);
+            }
+        }
+
+        ArrayList<Integer> genresAvailable = new ArrayList<>(temp);
+
+
     }
 
     private boolean populateFolders(ArrayList<Video> videos) {

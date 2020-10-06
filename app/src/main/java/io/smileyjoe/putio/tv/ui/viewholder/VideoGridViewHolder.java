@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 
@@ -27,8 +28,8 @@ public class VideoGridViewHolder extends VideoBaseViewHolder {
     private View mItemView;
     private int mPosterPadding;
 
-    public VideoGridViewHolder(@NonNull View itemView, VideoType videoType) {
-        super(itemView, videoType);
+    public VideoGridViewHolder(@NonNull View itemView, FragmentType fragmentType) {
+        super(itemView, fragmentType);
 
         itemView.setOnClickListener(this);
 

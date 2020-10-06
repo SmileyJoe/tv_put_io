@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
@@ -36,7 +37,7 @@ public class VideoListFragment extends Fragment {
     private VideoListAdapter mVideoListAdapter;
     private Listener mListener;
     private VideoListAdapter.Type mType = VideoListAdapter.Type.LIST;
-    private VideoType mVideoType = VideoType.FOLDER;
+    private FragmentType mFragmentType = FragmentType.FOLDER;
     private boolean mIsFullScreen = false;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -52,13 +53,13 @@ public class VideoListFragment extends Fragment {
         return view;
     }
 
-    public void setType(VideoListAdapter.Type type, VideoType videoType) {
+    public void setType(VideoListAdapter.Type type, FragmentType fragmentType) {
         mType = type;
-        mVideoType = videoType;
+        mFragmentType = fragmentType;
 
         if(mVideoListAdapter != null){
             mVideoListAdapter.setType(type);
-            mVideoListAdapter.setVideoType(videoType);
+            mVideoListAdapter.setFragmentType(fragmentType);
         }
 
         setLayoutManager(true);

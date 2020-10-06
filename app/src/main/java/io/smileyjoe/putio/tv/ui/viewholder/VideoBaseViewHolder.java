@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 
@@ -13,17 +14,17 @@ public abstract class VideoBaseViewHolder extends RecyclerView.ViewHolder implem
 
     public interface Listener{
         void onVideoClicked(Video video);
-        void hasFocus(VideoType videoType, Video video, int position);
+        void hasFocus(FragmentType fragmentType, Video video, int position);
     }
 
     private Video mVideo;
-    private VideoType mVideoType;
+    private FragmentType mFragmentType;
     private int mPosition;
 
-    public VideoBaseViewHolder(@NonNull View itemView, VideoType videoType) {
+    public VideoBaseViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView);
 
-        mVideoType = videoType;
+        mFragmentType = fragmentType;
         itemView.setOnClickListener(this);
         itemView.setOnFocusChangeListener(this);
     }
@@ -42,7 +43,7 @@ public abstract class VideoBaseViewHolder extends RecyclerView.ViewHolder implem
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(hasFocus && mListener != null){
-            mListener.hasFocus(mVideoType, mVideo, mPosition);
+            mListener.hasFocus(mFragmentType, mVideo, mPosition);
         }
     }
 

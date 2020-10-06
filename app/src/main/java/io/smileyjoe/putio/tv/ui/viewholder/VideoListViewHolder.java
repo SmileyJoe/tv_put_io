@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 
@@ -16,8 +17,8 @@ public class VideoListViewHolder extends VideoBaseViewHolder {
     private TextView mTextTitle;
     private ImageView mImageIcon;
 
-    public VideoListViewHolder(@NonNull View itemView, VideoType videoType) {
-        super(itemView, videoType);
+    public VideoListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
+        super(itemView, fragmentType);
 
         mTextTitle = itemView.findViewById(R.id.text_title);
         mImageIcon = itemView.findViewById(R.id.image_icon);

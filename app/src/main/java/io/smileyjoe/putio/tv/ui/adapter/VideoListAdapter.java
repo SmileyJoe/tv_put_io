@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoBaseViewHolder;
@@ -41,7 +42,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> 
     private Context mContext;
     private Listener mListener;
     private Type mType;
-    private VideoType mVideoType;
+    private FragmentType mFragmentType;
 
     public VideoListAdapter(Context context, Type type) {
         mContext = context;
@@ -57,8 +58,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> 
         mType = type;
     }
 
-    public void setVideoType(VideoType videoType){
-        mVideoType = videoType;
+    public void setFragmentType(FragmentType fragmentType){
+        mFragmentType = fragmentType;
     }
 
     public void setVideos(ArrayList<Video> videos) {
@@ -87,11 +88,11 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoBaseViewHolder> 
 
         switch (mType){
             case GRID:
-                holder = new VideoGridViewHolder(view, mVideoType);
+                holder = new VideoGridViewHolder(view, mFragmentType);
                 break;
             case LIST:
             default:
-                holder = new VideoListViewHolder(view, mVideoType);
+                holder = new VideoListViewHolder(view, mFragmentType);
                 break;
         }
 
