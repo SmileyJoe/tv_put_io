@@ -35,9 +35,7 @@ public class VideoListFragment extends Fragment {
     private ProgressBar mProgressLoading;
 
     private VideoListAdapter mVideoListAdapter;
-    private Listener mListener;
     private VideoListAdapter.Type mType = VideoListAdapter.Type.LIST;
-    private FragmentType mFragmentType = FragmentType.FOLDER;
     private boolean mIsFullScreen = false;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -55,7 +53,6 @@ public class VideoListFragment extends Fragment {
 
     public void setType(VideoListAdapter.Type type, FragmentType fragmentType) {
         mType = type;
-        mFragmentType = fragmentType;
 
         if(mVideoListAdapter != null){
             mVideoListAdapter.setType(type);
@@ -77,16 +74,14 @@ public class VideoListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        if (getActivity() instanceof Listener) {
-            mListener = (Listener) getActivity();
-        }
-
         mVideoListAdapter = new VideoListAdapter(getContext(), mType);
-        mVideoListAdapter.setListener(mListener);
 
         mRecycler.setAdapter(mVideoListAdapter);
         setLayoutManager(false);
+    }
+
+    public void setListener(Listener listener) {
+        mVideoListAdapter.setListener(listener);
     }
 
     public void update(Video video){

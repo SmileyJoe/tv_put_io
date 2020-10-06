@@ -33,6 +33,7 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.FragmentType;
+import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
@@ -45,7 +46,7 @@ import io.smileyjoe.putio.tv.util.VideoUtil;
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends FragmentActivity implements VideoListFragment.Listener, VideoLoader.Listener {
+public class MainActivity extends FragmentActivity implements VideoLoader.Listener {
 
     private TextView mTextTitle;
 
@@ -76,8 +77,14 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         mFragmentSummary = (VideoSummaryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_summary);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
 
+        mFragmentVideoList.setListener(new VideoListListener());
+        mFragmentFolderList.setListener(new FolderListListener());
+        mFragmentGenreList.setListener(new GenreListListener());
+
         mVideoLoader = new VideoLoader(getBaseContext(), this);
         mVideoLoader.load();
+
+        hideFragment(mFragmentGenreList);
 
         // todo: this needs to be called when an id is not found in the db //
         Tmdb.updateMovieGenres(getBaseContext());
@@ -106,59 +113,6 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     @Override
     public void update(Video video) {
         mFragmentVideoList.update(video);
-    }
-
-    @Override
-    public void onItemClicked(Video video) {
-        switch (video.getType()){
-            case FOLDER:
-                mVideoLoader.load(video);
-                break;
-            case EPISODE:
-            case MOVIE:
-            case VIDEO:
-                showDetails(video);
-                break;
-        }
-    }
-
-    @Override
-    public void hasFocus(FragmentType fragmentType, Video video, int position) {
-        if(fragmentType == FragmentType.VIDEO) {
-            if (video.isTmdbFound()) {
-                showFragment(mFragmentSummary);
-                mFragmentSummary.setVideo(video);
-
-                int topRow = mFragmentVideoList.getFirstVisiblePosition()/7;
-                int selectedRow = position/7;
-
-                if((selectedRow - topRow >= 2)){
-                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_TOP);
-                } else {
-                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                }
-            } else {
-                hideFragment(mFragmentSummary);
-            }
-        }
-
-        if(mVideoTypeFocus != fragmentType){
-            mVideoTypeFocus = fragmentType;
-
-            switch (fragmentType){
-                case FOLDER:
-                    mTextTitle.setVisibility(View.VISIBLE);
-                    changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_expanded);
-                    hideFragment(mFragmentSummary);
-                    mFragmentVideoList.setFullScreen(false);
-                    break;
-                case VIDEO:
-                    mTextTitle.setVisibility(View.GONE);
-                    changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_contracted);
-                    mFragmentVideoList.setFullScreen(true);
-                    break;
-            }
-        }
     }
 
     private void moveSummaryFragment(int rule){
@@ -237,7 +191,13 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         }
 
         ArrayList<Integer> genresAvailable = new ArrayList<>(temp);
-        mFragmentGenreList.setGenreIds(genresAvailable);
+
+        if(genresAvailable == null || genresAvailable.isEmpty()){
+            hideFragment(mFragmentGenreList);
+        } else {
+            showFragment(mFragmentGenreList);
+            mFragmentGenreList.setGenreIds(genresAvailable);
+        }
     }
 
     private boolean populateFolders(ArrayList<Video> videos) {
@@ -254,5 +214,72 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         }
 
         return fragmentIsVisible;
+    }
+
+    private class GenreListListener implements GenreListFragment.Listener{
+        @Override
+        public void onItemClicked(Genre genre) {
+
+        }
+
+        @Override
+        public void hasFocus(FragmentType type, Genre genre, int position) {
+            mVideoTypeFocus = type;
+            changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
+        }
+    }
+
+    private class FolderListListener implements VideoListFragment.Listener{
+        @Override
+        public void onItemClicked(Video video) {
+            mVideoLoader.load(video);
+        }
+
+        @Override
+        public void hasFocus(FragmentType fragmentType, Video item, int position) {
+            if(mVideoTypeFocus != fragmentType){
+                mVideoTypeFocus = fragmentType;
+
+                mTextTitle.setVisibility(View.VISIBLE);
+                changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_expanded);
+                hideFragment(mFragmentSummary);
+                mFragmentVideoList.setFullScreen(false);
+                changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_contracted);
+            }
+        }
+    }
+
+    private class VideoListListener implements VideoListFragment.Listener{
+        @Override
+        public void onItemClicked(Video video) {
+            showDetails(video);
+        }
+
+        @Override
+        public void hasFocus(FragmentType fragmentType, Video video, int position) {
+            if (video.isTmdbFound()) {
+                showFragment(mFragmentSummary);
+                mFragmentSummary.setVideo(video);
+
+                int topRow = mFragmentVideoList.getFirstVisiblePosition()/7;
+                int selectedRow = position/7;
+
+                if((selectedRow - topRow >= 2)){
+                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_TOP);
+                } else {
+                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                }
+            } else {
+                hideFragment(mFragmentSummary);
+            }
+
+            if(mVideoTypeFocus != fragmentType){
+                mVideoTypeFocus = fragmentType;
+                mTextTitle.setVisibility(View.GONE);
+                changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_contracted);
+                mFragmentVideoList.setFullScreen(true);
+                changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_contracted);
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@ import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 
 public class GenreListFragment extends Fragment {
 
-    public interface Listener extends GenreListAdapter.Listener {
+    public interface Listener extends GenreListAdapter.Listener<Genre> {
     }
 
     private RecyclerView mRecycler;
@@ -56,6 +56,10 @@ public class GenreListFragment extends Fragment {
 
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    public void setListener(Listener listener){
+        mAdapter.setListener(listener);
     }
 
     public void setGenres(ArrayList<Genre> genres){
