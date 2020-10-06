@@ -6,22 +6,22 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 
-public abstract class VideoBaseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
+public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
 
-    public interface Listener{
-        void onVideoClicked(Video video);
-        void hasFocus(FragmentType fragmentType, Video video, int position);
+    public interface Listener<T> extends HomeFragmentListener<T> {
+        void onItemClicked(T item);
     }
 
-    private Video mVideo;
+    private T mItem;
     private FragmentType mFragmentType;
     private int mPosition;
 
-    public VideoBaseViewHolder(@NonNull View itemView, FragmentType fragmentType) {
+    public BaseViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView);
 
         mFragmentType = fragmentType;
@@ -29,28 +29,28 @@ public abstract class VideoBaseViewHolder extends RecyclerView.ViewHolder implem
         itemView.setOnFocusChangeListener(this);
     }
 
-    private Listener mListener;
+    private Listener<T> mListener;
 
-    public void setListener(Listener listener) {
+    public void setListener(Listener<T> listener) {
         mListener = listener;
     }
 
-    public void bindView(Video video, int position){
-        mVideo = video;
+    public void bindView(T item, int position){
+        mItem = item;
         mPosition = position;
     }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(hasFocus && mListener != null){
-            mListener.hasFocus(mFragmentType, mVideo, mPosition);
+            mListener.hasFocus(mFragmentType, mItem, mPosition);
         }
     }
 
     @Override
     public void onClick(View v) {
         if(mListener != null){
-            mListener.onVideoClicked(mVideo);
+            mListener.onItemClicked(mItem);
         }
     }
 }

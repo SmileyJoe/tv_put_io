@@ -7,19 +7,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 
-public class VideoGridViewHolder extends VideoBaseViewHolder {
+public class VideoGridViewHolder extends BaseViewHolder<Video> {
 
     private TextView mTextTitle;
     private ImageView mImagePoster;
@@ -30,8 +25,6 @@ public class VideoGridViewHolder extends VideoBaseViewHolder {
 
     public VideoGridViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);
-
-        itemView.setOnClickListener(this);
 
         mItemView = itemView;
         mTextTitle = itemView.findViewById(R.id.text_title);

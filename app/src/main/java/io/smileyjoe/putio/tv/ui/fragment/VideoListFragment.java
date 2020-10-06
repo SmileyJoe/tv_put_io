@@ -27,7 +27,7 @@ import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 
 public class VideoListFragment extends Fragment {
 
-    public interface Listener extends VideoListAdapter.Listener {
+    public interface Listener extends VideoListAdapter.Listener<Video> {
     }
 
     private RecyclerView mRecycler;
@@ -150,14 +150,14 @@ public class VideoListFragment extends Fragment {
             mTextEmpty.setVisibility(View.GONE);
             mRecycler.setVisibility(View.VISIBLE);
 
-            mVideoListAdapter.setVideos(videos);
+            mVideoListAdapter.setItems(videos);
             mVideoListAdapter.notifyDataSetChanged();
         }
     }
 
     public ArrayList<Video> getVideos(){
         if(mVideoListAdapter != null){
-            return mVideoListAdapter.getVideos();
+            return mVideoListAdapter.getItems();
         }
 
         return null;

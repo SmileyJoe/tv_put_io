@@ -36,6 +36,7 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
+import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoSummaryFragment;
 import io.smileyjoe.putio.tv.util.VideoLoader;
@@ -51,6 +52,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     private VideoListFragment mFragmentFolderList;
     private VideoListFragment mFragmentVideoList;
     private VideoSummaryFragment mFragmentSummary;
+    private GenreListFragment mFragmentGenreList;
 
     private LinearLayout mLayoutLists;
     private ProgressBar mProgressLoading;
@@ -72,6 +74,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID, FragmentType.VIDEO);
         mFragmentSummary = (VideoSummaryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_summary);
+        mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
 
         mVideoLoader = new VideoLoader(getBaseContext(), this);
         mVideoLoader.load();
@@ -106,7 +109,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
     }
 
     @Override
-    public void onVideoClicked(Video video) {
+    public void onItemClicked(Video video) {
         switch (video.getType()){
             case FOLDER:
                 mVideoLoader.load(video);
@@ -234,8 +237,7 @@ public class MainActivity extends FragmentActivity implements VideoListFragment.
         }
 
         ArrayList<Integer> genresAvailable = new ArrayList<>(temp);
-
-
+        mFragmentGenreList.setGenreIds(genresAvailable);
     }
 
     private boolean populateFolders(ArrayList<Video> videos) {

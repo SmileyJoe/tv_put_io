@@ -5,14 +5,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 
-public class VideoListViewHolder extends VideoBaseViewHolder {
+public class VideoListViewHolder extends BaseViewHolder<Video> {
 
     private TextView mTextTitle;
     private ImageView mImageIcon;
