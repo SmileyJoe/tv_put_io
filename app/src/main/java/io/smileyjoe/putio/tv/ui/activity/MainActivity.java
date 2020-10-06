@@ -219,13 +219,16 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private class GenreListListener implements GenreListFragment.Listener{
         @Override
         public void onItemClicked(Genre genre) {
-
+            mFragmentVideoList.filterByGenre(genre.getId());
         }
 
         @Override
-        public void hasFocus(FragmentType type, Genre genre, int position) {
-            mVideoTypeFocus = type;
-            changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
+        public void hasFocus(FragmentType fragmentType, Genre genre, int position) {
+            if(mVideoTypeFocus != fragmentType) {
+                mVideoTypeFocus = fragmentType;
+                changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
+                mFragmentVideoList.setFullScreen(false);
+            }
         }
     }
 

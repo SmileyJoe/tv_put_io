@@ -24,4 +24,5 @@
     <string name="action_resume">Resume</string>
     <string name="text_no_files">Nothing to see here!</string>
     <string name="text_genres">Genres</string>
+    <string name="text_all">All</string>
 </resources>

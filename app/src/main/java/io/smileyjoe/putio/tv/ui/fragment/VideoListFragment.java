@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
+import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
@@ -38,6 +39,7 @@ public class VideoListFragment extends Fragment {
     private VideoListAdapter.Type mType = VideoListAdapter.Type.LIST;
     private boolean mIsFullScreen = false;
     private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<Video> mVideosAll;
 
     @Nullable
     @Override
@@ -137,6 +139,11 @@ public class VideoListFragment extends Fragment {
     }
 
     public void setVideos(ArrayList<Video> videos) {
+        mVideosAll = videos;
+        populate(videos);
+    }
+
+    private void populate(ArrayList<Video> videos){
         mProgressLoading.setVisibility(View.GONE);
         if (videos == null || videos.isEmpty()) {
             mTextEmpty.setVisibility(View.VISIBLE);
@@ -147,6 +154,23 @@ public class VideoListFragment extends Fragment {
 
             mVideoListAdapter.setItems(videos);
             mVideoListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void filterByGenre(Integer genreId){
+        if(genreId < 0){
+            populate(mVideosAll);
+        } else {
+            ArrayList<Video> filtered = new ArrayList<>();
+
+            for(Video video:mVideosAll){
+                ArrayList<Integer> genreIds = video.getGenreIds();
+                if(genreIds != null && genreIds.contains(genreId)){
+                    filtered.add(video);
+                }
+            }
+
+            populate(filtered);
         }
     }
 
