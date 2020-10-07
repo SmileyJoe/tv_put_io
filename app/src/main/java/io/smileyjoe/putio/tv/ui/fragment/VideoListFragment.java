@@ -181,4 +181,12 @@ public class VideoListFragment extends Fragment {
 
         return null;
     }
+
+    public float getHeight(){
+        return getView().getHeight();
+    }
+
+    public float getWidth(){
+        return getView().getWidth();
+    }
 }

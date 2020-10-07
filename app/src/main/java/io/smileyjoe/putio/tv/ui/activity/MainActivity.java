@@ -1,11 +1,13 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -20,6 +22,8 @@ import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -57,6 +61,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     private LinearLayout mLayoutLists;
     private ProgressBar mProgressLoading;
+    private RelativeLayout mLayoutLargeVideo;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -69,6 +74,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mTextTitle = findViewById(R.id.text_title);
         mLayoutLists = findViewById(R.id.layout_lists);
         mProgressLoading = findViewById(R.id.progress_loading);
+        mLayoutLargeVideo = findViewById(R.id.layout_large_video);
 
         mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(VideoListAdapter.Type.LIST, FragmentType.FOLDER);
@@ -93,6 +99,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     @Override
     public void onBackPressed() {
         boolean hasHistory = mVideoLoader.back();
+        hideLargeVideo();
 
         if(!hasHistory){
             super.onBackPressed();
@@ -216,6 +223,55 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         return fragmentIsVisible;
     }
 
+    private void hideLargeVideo(){
+        mLayoutLargeVideo.setVisibility(View.INVISIBLE);
+    }
+
+    private void displayLargeVideo(Video video, View smallView){
+        float x = smallView.getX();
+        float y = smallView.getY();
+        float height = smallView.getHeight();
+        float width = smallView.getWidth();
+        float centerX = x + width/2;
+        float centerY = y + height/2;
+        float largeWidth = mLayoutLargeVideo.getWidth();
+        float largeHeight = mLayoutLargeVideo.getHeight();
+        float largeCenterX = centerX - (largeWidth/2);
+        float largeCenterY = centerY - (largeHeight/2);
+
+        if(largeCenterY < 0){
+            largeCenterY = 0;
+        } else if((largeCenterY + largeHeight) > mFragmentVideoList.getHeight()){
+            largeCenterY = mFragmentVideoList.getHeight() - largeHeight;
+        }
+
+        if(largeCenterX < 0){
+            largeCenterX = 0;
+        } else if((largeCenterX + largeWidth) > mFragmentVideoList.getWidth()){
+            largeCenterX = mFragmentVideoList.getWidth() - largeWidth;
+        }
+
+        mLayoutLargeVideo.setElevation(10);
+
+        Glide.with(getBaseContext())
+                .load(video.getPosterAsUri())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .dontAnimate()
+                .into((ImageView) mLayoutLargeVideo.findViewById(R.id.image_poster));
+
+        TextView textSummary = mLayoutLargeVideo.findViewById(R.id.text_summary);
+        TextView textTitle = mLayoutLargeVideo.findViewById(R.id.text_title);
+        textTitle.setText(video.getTitle());
+        textTitle.setTypeface(null, Typeface.BOLD);
+        textSummary.setText(video.getOverView());
+        textSummary.setVisibility(View.VISIBLE);
+
+        mLayoutLargeVideo.setX(largeCenterX);
+        mLayoutLargeVideo.setY(largeCenterY);
+        mLayoutLargeVideo.setVisibility(View.VISIBLE);
+        Log.d("FocusThings", centerX + " : " + centerY + " : " + largeCenterX + " : " + largeCenterY);
+    }
+
     private class GenreListListener implements GenreListFragment.Listener{
         @Override
         public void onItemClicked(Genre genre) {
@@ -223,11 +279,12 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
 
         @Override
-        public void hasFocus(FragmentType fragmentType, Genre genre, int position) {
+        public void hasFocus(FragmentType fragmentType, Genre genre, View view, int position) {
             if(mVideoTypeFocus != fragmentType) {
                 mVideoTypeFocus = fragmentType;
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
                 hideFragment(mFragmentSummary);
+                hideLargeVideo();
             }
         }
     }
@@ -239,7 +296,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
 
         @Override
-        public void hasFocus(FragmentType fragmentType, Video item, int position) {
+        public void hasFocus(FragmentType fragmentType, Video item, View view, int position) {
             if(mVideoTypeFocus != fragmentType){
                 mVideoTypeFocus = fragmentType;
 
@@ -248,6 +305,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 hideFragment(mFragmentSummary);
                 mFragmentVideoList.setFullScreen(false);
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_contracted);
+                hideLargeVideo();
             }
         }
     }
@@ -259,22 +317,24 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
 
         @Override
-        public void hasFocus(FragmentType fragmentType, Video video, int position) {
-            if (video.isTmdbFound()) {
-                showFragment(mFragmentSummary);
-                mFragmentSummary.setVideo(video);
+        public void hasFocus(FragmentType fragmentType, Video video, View view, int position) {
+            displayLargeVideo(video, view);
 
-                int topRow = mFragmentVideoList.getFirstVisiblePosition()/7;
-                int selectedRow = position/7;
-
-                if((selectedRow - topRow >= 2)){
-                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_TOP);
-                } else {
-                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                }
-            } else {
-                hideFragment(mFragmentSummary);
-            }
+//            if (video.isTmdbFound()) {
+//                showFragment(mFragmentSummary);
+//                mFragmentSummary.setVideo(video);
+//
+//                int topRow = mFragmentVideoList.getFirstVisiblePosition()/7;
+//                int selectedRow = position/7;
+//
+//                if((selectedRow - topRow >= 2)){
+//                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_TOP);
+//                } else {
+//                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_BOTTOM);
+//                }
+//            } else {
+//                hideFragment(mFragmentSummary);
+//            }
 
             if(mVideoTypeFocus != fragmentType){
                 mVideoTypeFocus = fragmentType;

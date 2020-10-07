@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -51,6 +52,8 @@ public class VideoGridViewHolder extends BaseViewHolder<Video> {
             mImagePoster.setPadding(0,0,0,0);
             Glide.with(context)
                     .load(video.getPosterAsUri())
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(mImagePoster);
         } else {
             mImagePoster.setPadding(mPosterPadding,mPosterPadding,mPosterPadding,mPosterPadding);

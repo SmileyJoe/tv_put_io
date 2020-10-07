@@ -43,7 +43,7 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implemen
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(hasFocus && mListener != null){
-            mListener.hasFocus(mFragmentType, mItem, mPosition);
+            mListener.hasFocus(mFragmentType, mItem, v, mPosition);
         }
     }
 

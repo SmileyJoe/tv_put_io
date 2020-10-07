@@ -2,16 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/text_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:padding="10dp"
-        android:textSize="24dp"
-        android:textStyle="bold"
-        android:layout_alignParentTop="true"/>
+    android:layout_height="match_parent"
+    android:background="@color/default_background">
     <ProgressBar
         android:id="@+id/progress_loading"
         android:layout_width="wrap_content"
@@ -20,18 +12,32 @@
         android:indeterminateTint="@color/icon_tint"
         android:layout_centerInParent="true"/>
     <LinearLayout
-        android:layout_below="@id/text_title"
         android:id="@+id/layout_lists"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
         android:orientation="horizontal">
 
-        <fragment
-            android:id="@+id/fragment_folder_list"
-            android:layout_width="@dimen/width_folder_list_expanded"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/text_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:padding="10dp"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"/>
+
+            <fragment
+                android:id="@+id/fragment_folder_list"
+                android:layout_width="@dimen/width_folder_list_expanded"
+                android:layout_height="match_parent"
+                android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,6 +63,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:name="io.smileyjoe.putio.tv.ui.fragment.VideoSummaryFragment" />
+
+            <include
+                android:id="@+id/layout_large_video"
+                layout="@layout/grid_item_video"
+                android:layout_width="200dp"
+                android:layout_height="300dp"
+                android:visibility="invisible"/>
         </RelativeLayout>
 
 
