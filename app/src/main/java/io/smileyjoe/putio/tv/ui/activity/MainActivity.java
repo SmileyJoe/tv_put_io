@@ -44,6 +44,7 @@ import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoSummaryFragment;
+import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
@@ -61,7 +62,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     private LinearLayout mLayoutLists;
     private ProgressBar mProgressLoading;
-    private RelativeLayout mLayoutLargeVideo;
+    private ZoomGridVideo mZoomGridVideo;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -74,7 +75,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mTextTitle = findViewById(R.id.text_title);
         mLayoutLists = findViewById(R.id.layout_lists);
         mProgressLoading = findViewById(R.id.progress_loading);
-        mLayoutLargeVideo = findViewById(R.id.layout_large_video);
+        mZoomGridVideo = findViewById(R.id.zoom_grid_video);
 
         mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(VideoListAdapter.Type.LIST, FragmentType.FOLDER);
@@ -99,7 +100,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     @Override
     public void onBackPressed() {
         boolean hasHistory = mVideoLoader.back();
-        hideLargeVideo();
+        mZoomGridVideo.hide();
 
         if(!hasHistory){
             super.onBackPressed();
@@ -223,55 +224,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         return fragmentIsVisible;
     }
 
-    private void hideLargeVideo(){
-        mLayoutLargeVideo.setVisibility(View.INVISIBLE);
-    }
-
-    private void displayLargeVideo(Video video, View smallView){
-        float x = smallView.getX();
-        float y = smallView.getY();
-        float height = smallView.getHeight();
-        float width = smallView.getWidth();
-        float centerX = x + width/2;
-        float centerY = y + height/2;
-        float largeWidth = mLayoutLargeVideo.getWidth();
-        float largeHeight = mLayoutLargeVideo.getHeight();
-        float largeCenterX = centerX - (largeWidth/2);
-        float largeCenterY = centerY - (largeHeight/2);
-
-        if(largeCenterY < 0){
-            largeCenterY = 0;
-        } else if((largeCenterY + largeHeight) > mFragmentVideoList.getHeight()){
-            largeCenterY = mFragmentVideoList.getHeight() - largeHeight;
-        }
-
-        if(largeCenterX < 0){
-            largeCenterX = 0;
-        } else if((largeCenterX + largeWidth) > mFragmentVideoList.getWidth()){
-            largeCenterX = mFragmentVideoList.getWidth() - largeWidth;
-        }
-
-        mLayoutLargeVideo.setElevation(10);
-
-        Glide.with(getBaseContext())
-                .load(video.getPosterAsUri())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
-                .into((ImageView) mLayoutLargeVideo.findViewById(R.id.image_poster));
-
-        TextView textSummary = mLayoutLargeVideo.findViewById(R.id.text_summary);
-        TextView textTitle = mLayoutLargeVideo.findViewById(R.id.text_title);
-        textTitle.setText(video.getTitle());
-        textTitle.setTypeface(null, Typeface.BOLD);
-        textSummary.setText(video.getOverView());
-        textSummary.setVisibility(View.VISIBLE);
-
-        mLayoutLargeVideo.setX(largeCenterX);
-        mLayoutLargeVideo.setY(largeCenterY);
-        mLayoutLargeVideo.setVisibility(View.VISIBLE);
-        Log.d("FocusThings", centerX + " : " + centerY + " : " + largeCenterX + " : " + largeCenterY);
-    }
-
     private class GenreListListener implements GenreListFragment.Listener{
         @Override
         public void onItemClicked(Genre genre) {
@@ -284,7 +236,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 mVideoTypeFocus = fragmentType;
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
                 hideFragment(mFragmentSummary);
-                hideLargeVideo();
+                mZoomGridVideo.hide();
             }
         }
     }
@@ -305,7 +257,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 hideFragment(mFragmentSummary);
                 mFragmentVideoList.setFullScreen(false);
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_contracted);
-                hideLargeVideo();
+                mZoomGridVideo.hide();
             }
         }
     }
@@ -318,7 +270,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         @Override
         public void hasFocus(FragmentType fragmentType, Video video, View view, int position) {
-            displayLargeVideo(video, view);
+            mZoomGridVideo.show(view, video);
 
 //            if (video.isTmdbFound()) {
 //                showFragment(mFragmentSummary);
