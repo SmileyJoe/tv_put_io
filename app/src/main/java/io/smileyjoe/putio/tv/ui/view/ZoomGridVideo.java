@@ -21,6 +21,9 @@ import io.smileyjoe.putio.tv.object.Video;
 public class ZoomGridVideo extends RelativeLayout{
 
     private RelativeLayout mLayoutContent;
+    private TextView mTextSummary;
+    private TextView mTextTitle;
+    private ImageView mImagePoster;
 
     public ZoomGridVideo(Context context) {
         super(context);
@@ -41,6 +44,10 @@ public class ZoomGridVideo extends RelativeLayout{
         mLayoutContent = (RelativeLayout) LayoutInflater.from(getContext()).inflate(R.layout.grid_item_video, this, false);
         addView(mLayoutContent);
 
+        mTextSummary = mLayoutContent.findViewById(R.id.text_summary);
+        mTextTitle = mLayoutContent.findViewById(R.id.text_title);
+        mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
+
         getViewTreeObserver().addOnGlobalLayoutListener(new OnContentLayoutListener());
     }
 
@@ -48,48 +55,38 @@ public class ZoomGridVideo extends RelativeLayout{
         setVisibility(INVISIBLE);
     }
 
+    private float getDimension(float viewPosition, float viewSize, float size, float parentSize){
+        float center = viewPosition + viewSize/2;
+        float position = center - (size/2);
+
+        if(position < 0){
+            position = 0;
+        } else if((position + size) > parentSize){
+            position = parentSize - size;
+        }
+
+        return position;
+    }
+
     public void show(View view, Video video){
-        float x = view.getX();
-        float y = view.getY();
-        float height = view.getHeight();
-        float width = view.getWidth();
-        float centerX = x + width/2;
-        float centerY = y + height/2;
-        float largeWidth = getWidth();
-        float largeHeight = getHeight();
-        float largeCenterX = centerX - (largeWidth/2);
-        float largeCenterY = centerY - (largeHeight/2);
         ViewGroup parent = (ViewGroup) getParent();
-
-        if(largeCenterY < 0){
-            largeCenterY = 0;
-        } else if((largeCenterY + largeHeight) > parent.getHeight()){
-            largeCenterY = parent.getHeight() - largeHeight;
-        }
-
-        if(largeCenterX < 0){
-            largeCenterX = 0;
-        } else if((largeCenterX + largeWidth) > parent.getWidth()){
-            largeCenterX = parent.getWidth() - largeWidth;
-        }
-
         parent.setElevation(10);
 
         Glide.with(getContext())
                 .load(video.getPosterAsUri())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .dontAnimate()
-                .into((ImageView) findViewById(R.id.image_poster));
+                .into(mImagePoster);
 
-        TextView textSummary = findViewById(R.id.text_summary);
-        TextView textTitle = findViewById(R.id.text_title);
-        textTitle.setText(video.getTitle());
-        textTitle.setTypeface(null, Typeface.BOLD);
-        textSummary.setText(video.getOverView());
-        textSummary.setVisibility(View.VISIBLE);
 
-        setX(largeCenterX);
-        setY(largeCenterY);
+        mTextTitle.setText(video.getTitle());
+        mTextTitle.setTypeface(null, Typeface.BOLD);
+
+        mTextSummary.setText(video.getOverView());
+        mTextSummary.setVisibility(View.VISIBLE);
+
+        setX(getDimension(view.getX(), view.getWidth(), getWidth(), parent.getWidth()));
+        setY(getDimension(view.getY(), view.getHeight(), getHeight(), parent.getHeight()));
         setVisibility(View.VISIBLE);
     }
 
@@ -98,9 +95,10 @@ public class ZoomGridVideo extends RelativeLayout{
         public void onGlobalLayout() {
             float height = getHeight();
             float width = getWidth();
+
             if(height > 0 && width > 0) {
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) mLayoutContent.getLayoutParams();
+                ViewGroup.LayoutParams params = mLayoutContent.getLayoutParams();
                 params.height = getHeight();
                 params.width = getWidth();
                 mLayoutContent.setLayoutParams(params);
