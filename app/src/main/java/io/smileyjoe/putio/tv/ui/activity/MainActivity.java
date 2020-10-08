@@ -62,7 +62,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     private LinearLayout mLayoutLists;
     private ProgressBar mProgressLoading;
-    private ZoomGridVideo mZoomGridVideo;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -75,7 +74,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mTextTitle = findViewById(R.id.text_title);
         mLayoutLists = findViewById(R.id.layout_lists);
         mProgressLoading = findViewById(R.id.progress_loading);
-        mZoomGridVideo = findViewById(R.id.zoom_grid_video);
 
         mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(VideoListAdapter.Type.LIST, FragmentType.FOLDER);
@@ -100,7 +98,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     @Override
     public void onBackPressed() {
         boolean hasHistory = mVideoLoader.back();
-        mZoomGridVideo.hide();
+        mFragmentVideoList.hideDetails();
 
         if(!hasHistory){
             super.onBackPressed();
@@ -236,7 +234,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 mVideoTypeFocus = fragmentType;
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
                 hideFragment(mFragmentSummary);
-                mZoomGridVideo.hide();
+                mFragmentVideoList.hideDetails();
             }
         }
     }
@@ -257,7 +255,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 hideFragment(mFragmentSummary);
                 mFragmentVideoList.setFullScreen(false);
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_contracted);
-                mZoomGridVideo.hide();
+                mFragmentVideoList.hideDetails();
             }
         }
     }
@@ -270,7 +268,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         @Override
         public void hasFocus(FragmentType fragmentType, Video video, View view, int position) {
-            mZoomGridVideo.show(view, video);
 
 //            if (video.isTmdbFound()) {
 //                showFragment(mFragmentSummary);

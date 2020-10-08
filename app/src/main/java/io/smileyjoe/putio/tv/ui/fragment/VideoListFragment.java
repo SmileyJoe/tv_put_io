@@ -25,6 +25,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
+import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
 
 public class VideoListFragment extends Fragment {
 
@@ -34,6 +35,7 @@ public class VideoListFragment extends Fragment {
     private RecyclerView mRecycler;
     private TextView mTextEmpty;
     private ProgressBar mProgressLoading;
+    private ZoomGridVideo mZoomGridVideo;
 
     private VideoListAdapter mVideoListAdapter;
     private VideoListAdapter.Type mType = VideoListAdapter.Type.LIST;
@@ -49,6 +51,7 @@ public class VideoListFragment extends Fragment {
         mRecycler = view.findViewById(R.id.recycler);
         mTextEmpty = view.findViewById(R.id.text_empty);
         mProgressLoading = view.findViewById(R.id.progress_loading);
+        mZoomGridVideo = view.findViewById(R.id.zoom_grid_video);
 
         return view;
     }
@@ -82,8 +85,12 @@ public class VideoListFragment extends Fragment {
         setLayoutManager(false);
     }
 
+    public void hideDetails(){
+        mZoomGridVideo.hide();
+    }
+
     public void setListener(Listener listener) {
-        mVideoListAdapter.setListener(listener);
+        mVideoListAdapter.setListener(new AdapterListener(listener));
     }
 
     public void update(Video video){
@@ -188,5 +195,31 @@ public class VideoListFragment extends Fragment {
 
     public float getWidth(){
         return getView().getWidth();
+    }
+
+    private class AdapterListener implements VideoListAdapter.Listener<Video>{
+        private Listener mListener;
+
+        public AdapterListener(Listener listener) {
+            mListener = listener;
+        }
+
+        @Override
+        public void onItemClicked(Video item) {
+            if(mLayoutManager != null){
+                mListener.onItemClicked(item);
+            }
+        }
+
+        @Override
+        public void hasFocus(FragmentType type, Video item, View view, int position) {
+            if(mType == VideoListAdapter.Type.GRID){
+                mZoomGridVideo.show(view, item);
+            }
+
+            if(mListener != null){
+                mListener.hasFocus(type, item, view, position);
+            }
+        }
     }
 }

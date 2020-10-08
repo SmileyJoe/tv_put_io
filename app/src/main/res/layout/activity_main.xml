@@ -63,12 +63,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:name="io.smileyjoe.putio.tv.ui.fragment.VideoSummaryFragment" />
-
-            <io.smileyjoe.putio.tv.ui.view.ZoomGridVideo
-                android:id="@+id/zoom_grid_video"
-                android:layout_width="200dp"
-                android:layout_height="300dp"
-                android:visibility="invisible"/>
         </RelativeLayout>
 
 
