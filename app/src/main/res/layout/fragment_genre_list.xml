@@ -8,6 +8,7 @@
     <TextView
         android:id="@+id/text_title"
         style="@style/Text.Title.Page"
+        android:visibility="gone"
         android:padding="@dimen/padding_general"
         android:layout_alignParentTop="true"
         android:text="@string/text_genres"/>

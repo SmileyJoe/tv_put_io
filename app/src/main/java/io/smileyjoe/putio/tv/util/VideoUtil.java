@@ -28,7 +28,7 @@ public class VideoUtil {
         ArrayList<Video> videosFiltered = new ArrayList<>();
 
         for (Video video : videos) {
-            if (video.getType() != VideoType.UNKNOWN) {
+            if (video.getType() != VideoType.UNKNOWN && video.getSize() > 0) {
                 videosFiltered.add(video);
             }
         }

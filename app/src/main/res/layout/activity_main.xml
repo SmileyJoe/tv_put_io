@@ -30,22 +30,23 @@
                 android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <fragment
+                android:id="@+id/fragment_genre_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:name="io.smileyjoe.putio.tv.ui.fragment.GenreListFragment"/>
 
             <fragment
                 android:id="@+id/fragment_video_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
-
-            <fragment
-                android:id="@+id/fragment_genre_list"
-                android:layout_width="@dimen/home_fragment_width_contracted"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.GenreListFragment"/>
-        </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

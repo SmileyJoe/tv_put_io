@@ -14,7 +14,7 @@ import io.smileyjoe.putio.tv.object.VideoType;
 public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
 
     public interface Listener<T> extends HomeFragmentListener<T> {
-        void onItemClicked(T item);
+        void onItemClicked(View view, T item);
     }
 
     private T mItem;
@@ -50,7 +50,7 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implemen
     @Override
     public void onClick(View v) {
         if(mListener != null){
-            mListener.onItemClicked(mItem);
+            mListener.onItemClicked(v, mItem);
         }
     }
 }

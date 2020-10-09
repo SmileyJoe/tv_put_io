@@ -55,7 +55,11 @@ public class GenreListFragment extends Fragment {
         mAdapter.setListener(listener);
 
         mRecycler.setAdapter(mAdapter);
-        mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+    }
+
+    public void clearSelected(){
+        mAdapter.clearSelected();
     }
 
     public void setListener(Listener listener){

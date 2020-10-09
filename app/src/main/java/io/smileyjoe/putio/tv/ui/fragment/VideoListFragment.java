@@ -207,9 +207,9 @@ public class VideoListFragment extends Fragment {
         }
 
         @Override
-        public void onItemClicked(Video item) {
+        public void onItemClicked(View view, Video item) {
             if(mLayoutManager != null){
-                mListener.onItemClicked(item);
+                mListener.onItemClicked(view, item);
             }
         }
 
