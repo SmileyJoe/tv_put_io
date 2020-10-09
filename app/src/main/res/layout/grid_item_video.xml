@@ -40,6 +40,11 @@
             style="@style/Text.Title.Video"/>
 
         <TextView
+            android:id="@+id/text_genres"
+            android:visibility="gone"
+            style="@style/Text.Genre.Video"/>
+
+        <TextView
             android:id="@+id/text_summary"
             android:visibility="gone"
             style="@style/Text"/>

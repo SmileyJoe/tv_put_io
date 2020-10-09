@@ -22,6 +22,15 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="Text.Genre">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="Text.Genre.Video">
+        <item name="android:lines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
     <style name="Text.Title.Video">
         <item name="android:lines">2</item>
     </style>

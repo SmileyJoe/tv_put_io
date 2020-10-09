@@ -65,6 +65,8 @@ public class Video implements Parcelable{
     private ArrayList<Integer> mGenreIds;
     @Ignore
     private long mSize;
+    @Ignore
+    private String mGenresFormatted;
 
     public Video() {
         mType = VideoType.UNKNOWN;
@@ -199,6 +201,10 @@ public class Video implements Parcelable{
         mSize = size;
     }
 
+    public void setGenresFormatted(String genresFormatted) {
+        mGenresFormatted = genresFormatted;
+    }
+
     public long getPutId() {
         return mPutId;
     }
@@ -307,6 +313,10 @@ public class Video implements Parcelable{
         return Formatter.formatShortFileSize(context, mSize);
     }
 
+    public String getGenresFormatted() {
+        return mGenresFormatted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -346,6 +356,7 @@ public class Video implements Parcelable{
         dest.writeString(this.mGenreIdsJson);
         dest.writeList(this.mGenreIds);
         dest.writeLong(this.mSize);
+        dest.writeString(this.mGenresFormatted);
     }
 
     protected Video(Parcel in) {
@@ -370,6 +381,7 @@ public class Video implements Parcelable{
         this.mGenreIds = new ArrayList<Integer>();
         in.readList(this.mGenreIds, Integer.class.getClassLoader());
         this.mSize = in.readLong();
+        this.mGenresFormatted = in.readString();
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {
