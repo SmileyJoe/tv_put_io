@@ -1,52 +1,31 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
-import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.loader.content.AsyncTaskLoader;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
-import io.smileyjoe.putio.tv.ui.fragment.VideoSummaryFragment;
-import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
 import io.smileyjoe.putio.tv.util.VideoLoader;
-import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
@@ -57,7 +36,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     private VideoListFragment mFragmentFolderList;
     private VideoListFragment mFragmentVideoList;
-    private VideoSummaryFragment mFragmentSummary;
     private GenreListFragment mFragmentGenreList;
 
     private LinearLayout mLayoutLists;
@@ -79,7 +57,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentFolderList.setType(VideoListAdapter.Type.LIST, FragmentType.FOLDER);
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID, FragmentType.VIDEO);
-        mFragmentSummary = (VideoSummaryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_summary);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
 
         mFragmentVideoList.setListener(new VideoListListener());
@@ -119,14 +96,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     @Override
     public void update(Video video) {
         mFragmentVideoList.update(video);
-    }
-
-    private void moveSummaryFragment(int rule){
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFragmentSummary.getView().getLayoutParams();
-        params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
-        params.addRule(rule);
-        mFragmentSummary.getView().setLayoutParams(params);
     }
 
     private void hideFragment(Fragment fragment){
@@ -233,7 +202,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             if(mVideoTypeFocus != fragmentType) {
                 mVideoTypeFocus = fragmentType;
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
-                hideFragment(mFragmentSummary);
                 mFragmentVideoList.hideDetails();
             }
         }
@@ -252,7 +220,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
                 mTextTitle.setVisibility(View.VISIBLE);
                 changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_expanded);
-                hideFragment(mFragmentSummary);
                 mFragmentVideoList.setFullScreen(false);
                 changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_contracted);
                 mFragmentVideoList.hideDetails();
@@ -268,22 +235,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         @Override
         public void hasFocus(FragmentType fragmentType, Video video, View view, int position) {
-
-//            if (video.isTmdbFound()) {
-//                showFragment(mFragmentSummary);
-//                mFragmentSummary.setVideo(video);
-//
-//                int topRow = mFragmentVideoList.getFirstVisiblePosition()/7;
-//                int selectedRow = position/7;
-//
-//                if((selectedRow - topRow >= 2)){
-//                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_TOP);
-//                } else {
-//                    moveSummaryFragment(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//                }
-//            } else {
-//                hideFragment(mFragmentSummary);
-//            }
 
             if(mVideoTypeFocus != fragmentType){
                 mVideoTypeFocus = fragmentType;

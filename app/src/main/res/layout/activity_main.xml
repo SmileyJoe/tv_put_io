@@ -50,14 +50,6 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:name="io.smileyjoe.putio.tv.ui.fragment.GenreListFragment"/>
-
-            <fragment
-                android:id="@+id/fragment_video_summary"
-                android:layout_margin="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.VideoSummaryFragment" />
         </RelativeLayout>
 
 
