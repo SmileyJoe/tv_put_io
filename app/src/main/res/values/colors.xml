@@ -16,5 +16,6 @@
 
     <!-- icons -->
     <color name="ic_tint">#FFFFFF</color>
+    <color name="ic_tint_selected">#222222</color>
     <color name="ic_bg_launcher">#3D3D3D</color>
 </resources>

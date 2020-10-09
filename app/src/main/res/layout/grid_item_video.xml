@@ -18,6 +18,7 @@
         android:layout_height="@dimen/watched_height"
         android:background="@drawable/bg_watched">
         <ImageView
+            android:id="@+id/image_watched"
             android:src="@drawable/ic_watched_24"
             android:padding="@dimen/watched_ic_padding"
             style="@style/Icon"

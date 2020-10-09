@@ -32,6 +32,7 @@ public class ZoomGridVideo extends RelativeLayout{
     private TextView mTextTitle;
     private ImageView mImagePoster;
     private FrameLayout mFrameWatched;
+    private ImageView mImageWatched;
     private float mMultiplier;
     private boolean mSizeSet = false;
     private LinearLayout mLayoutDetails;
@@ -61,11 +62,13 @@ public class ZoomGridVideo extends RelativeLayout{
         mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
         mLayoutDetails = mLayoutContent.findViewById(R.id.layout_details);
         mFrameWatched = mLayoutContent.findViewById(R.id.frame_watched);
+        mImageWatched = mLayoutContent.findViewById(R.id.image_watched);
 
         mLayoutDetails.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_overlay_selected));
         mTextTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
         mTextSummary.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
         mFrameWatched.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.bg_overlay_selected)));
+        mImageWatched.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.ic_tint_selected)));
 
         getViewTreeObserver().addOnGlobalLayoutListener(new OnContentLayoutListener());
     }
