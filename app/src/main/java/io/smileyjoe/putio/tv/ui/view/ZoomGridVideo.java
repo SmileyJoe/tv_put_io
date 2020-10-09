@@ -1,7 +1,9 @@
 package io.smileyjoe.putio.tv.ui.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +26,9 @@ public class ZoomGridVideo extends RelativeLayout{
     private TextView mTextSummary;
     private TextView mTextTitle;
     private ImageView mImagePoster;
+    private float mMultiplier;
+    private boolean mSizeSet = false;
+    private View mCurrentView;
 
     public ZoomGridVideo(Context context) {
         super(context);
@@ -41,6 +46,7 @@ public class ZoomGridVideo extends RelativeLayout{
     }
 
     private void init(AttributeSet attrs){
+        handleAttributes(attrs);
         mLayoutContent = (RelativeLayout) LayoutInflater.from(getContext()).inflate(R.layout.grid_item_video, this, false);
         addView(mLayoutContent);
 
@@ -51,11 +57,20 @@ public class ZoomGridVideo extends RelativeLayout{
         getViewTreeObserver().addOnGlobalLayoutListener(new OnContentLayoutListener());
     }
 
+    private void handleAttributes(AttributeSet attributeSet){
+        TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.ZoomGridVideo, 0, 0);
+        try {
+            mMultiplier = ta.getFloat(R.styleable.ZoomGridVideo_multiplier, 2);
+        } finally {
+            ta.recycle();
+        }
+    }
+
     public void hide(){
         setVisibility(INVISIBLE);
     }
 
-    private float getDimension(float viewPosition, float viewSize, float size, float parentSize){
+    private float getPosition(float viewPosition, float viewSize, float size, float parentSize){
         float center = viewPosition + viewSize/2;
         float position = center - (size/2);
 
@@ -69,8 +84,14 @@ public class ZoomGridVideo extends RelativeLayout{
     }
 
     public void show(View view, Video video){
-        ViewGroup parent = (ViewGroup) getParent();
-        parent.setElevation(10);
+        mCurrentView = view;
+        if(!mSizeSet){
+            ViewGroup.LayoutParams params = mLayoutContent.getLayoutParams();
+            params.width = (int) (view.getWidth() * mMultiplier);
+            params.height = (int) (view.getHeight() * mMultiplier);
+            mLayoutContent.setLayoutParams(params);
+            mSizeSet = true;
+        }
 
         Glide.with(getContext())
                 .load(video.getPosterAsUri())
@@ -82,12 +103,21 @@ public class ZoomGridVideo extends RelativeLayout{
         mTextTitle.setText(video.getTitle());
         mTextTitle.setTypeface(null, Typeface.BOLD);
 
-        mTextSummary.setText(video.getOverView());
-        mTextSummary.setVisibility(View.VISIBLE);
+        if(!TextUtils.isEmpty(video.getOverView())) {
+            mTextSummary.setText(video.getOverView());
+            mTextSummary.setVisibility(View.VISIBLE);
+        } else {
+            mTextSummary.setVisibility(GONE);
+        }
 
-        setX(getDimension(view.getX(), view.getWidth(), getWidth(), parent.getWidth()));
-        setY(getDimension(view.getY(), view.getHeight(), getHeight(), parent.getHeight()));
+        ViewGroup parent = (ViewGroup) getParent();
+        setX(getPosition(view.getX(), view.getWidth(), getWidth(), parent.getWidth()));
+        setY(getPosition(view.getY(), view.getHeight(), getHeight(), parent.getHeight()));
         setVisibility(View.VISIBLE);
+    }
+
+    public void reset(){
+        mSizeSet = false;
     }
 
     private class OnContentLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
