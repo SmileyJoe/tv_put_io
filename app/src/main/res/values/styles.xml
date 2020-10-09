@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="@style/Theme.Leanback" />
 
     <style name="AppTheme.Video">
-        <item name="android:windowBackground">@color/black</item>
+        <item name="android:windowBackground">@color/color_black</item>
     </style>
 
     <style name="Text">

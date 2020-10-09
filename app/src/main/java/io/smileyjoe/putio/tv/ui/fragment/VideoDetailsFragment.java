@@ -179,13 +179,11 @@ public class VideoDetailsFragment extends DetailsFragment {
                 .load(video.getBackdropAsUri())
                 .asBitmap()
                 .centerCrop()
-                .error(R.drawable.default_background)
                 .into(new OnBackgroundLoaded());
     }
 
     private void setupDetailsOverviewRow() {
         DetailsOverviewRow row = new DetailsOverviewRow(mVideo);
-        row.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.default_background));
 
         loadThumb(row);
         addActions(row);
@@ -200,7 +198,6 @@ public class VideoDetailsFragment extends DetailsFragment {
         Glide.with(getActivity())
                 .load(mVideo.getPosterAsUri())
                 .centerCrop()
-                .error(R.drawable.default_background)
                 .into(new OnThumbLoaded(width, height, row));
     }
 
@@ -237,7 +234,6 @@ public class VideoDetailsFragment extends DetailsFragment {
     private void setupDetailsOverviewRowPresenter() {
         // Set detail background.
         FullWidthDetailsOverviewRowPresenter detailsPresenter = new FullWidthDetailsOverviewRowPresenter(new DetailsDescriptionPresenter());
-        detailsPresenter.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.selected_background));
 
         // Hook up transition element.
         FullWidthDetailsOverviewSharedElementHelper sharedElementHelper = new FullWidthDetailsOverviewSharedElementHelper();

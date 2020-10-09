@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        android:background="@color/overlay"
+        android:background="@color/bg_overlay"
         android:duplicateParentState="true"
         android:padding="10dp">
         <TextView

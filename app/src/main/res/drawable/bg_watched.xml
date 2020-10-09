@@ -8,7 +8,7 @@
             android:pivotY="80%" >
             <shape
                 android:shape="rectangle" >
-                <solid android:color="@color/overlay" />
+                <solid android:color="@color/bg_overlay" />
             </shape>
         </rotate>
     </item>
