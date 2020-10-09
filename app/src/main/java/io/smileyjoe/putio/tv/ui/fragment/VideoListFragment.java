@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -33,7 +34,7 @@ public class VideoListFragment extends Fragment {
     }
 
     private RecyclerView mRecycler;
-    private TextView mTextEmpty;
+    private LinearLayout mLayoutEmpty;
     private ProgressBar mProgressLoading;
     private ZoomGridVideo mZoomGridVideo;
 
@@ -49,7 +50,7 @@ public class VideoListFragment extends Fragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_video_list, null);
 
         mRecycler = view.findViewById(R.id.recycler);
-        mTextEmpty = view.findViewById(R.id.text_empty);
+        mLayoutEmpty = view.findViewById(R.id.layout_empty);
         mProgressLoading = view.findViewById(R.id.progress_loading);
         mZoomGridVideo = view.findViewById(R.id.zoom_grid_video);
 
@@ -142,7 +143,7 @@ public class VideoListFragment extends Fragment {
 
     public void startLoading(){
         mProgressLoading.setVisibility(View.VISIBLE);
-        mTextEmpty.setVisibility(View.GONE);
+        mLayoutEmpty.setVisibility(View.GONE);
         mRecycler.setVisibility(View.GONE);
     }
 
@@ -154,10 +155,10 @@ public class VideoListFragment extends Fragment {
     private void populate(ArrayList<Video> videos){
         mProgressLoading.setVisibility(View.GONE);
         if (videos == null || videos.isEmpty()) {
-            mTextEmpty.setVisibility(View.VISIBLE);
+            mLayoutEmpty.setVisibility(View.VISIBLE);
             mRecycler.setVisibility(View.GONE);
         } else {
-            mTextEmpty.setVisibility(View.GONE);
+            mLayoutEmpty.setVisibility(View.GONE);
             mRecycler.setVisibility(View.VISIBLE);
 
             mVideoListAdapter.setItems(videos);

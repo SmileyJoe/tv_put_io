@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.view;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.text.TextUtils;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -29,6 +31,7 @@ public class ZoomGridVideo extends RelativeLayout{
     private TextView mTextSummary;
     private TextView mTextTitle;
     private ImageView mImagePoster;
+    private FrameLayout mFrameWatched;
     private float mMultiplier;
     private boolean mSizeSet = false;
     private LinearLayout mLayoutDetails;
@@ -57,10 +60,12 @@ public class ZoomGridVideo extends RelativeLayout{
         mTextTitle = mLayoutContent.findViewById(R.id.text_title);
         mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
         mLayoutDetails = mLayoutContent.findViewById(R.id.layout_details);
+        mFrameWatched = mLayoutContent.findViewById(R.id.frame_watched);
 
-        mLayoutDetails.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_grid_details));
-        mTextTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_selected));
-        mTextSummary.setTextColor(ContextCompat.getColor(getContext(), R.color.text_selected));
+        mLayoutDetails.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_overlay_selected));
+        mTextTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
+        mTextSummary.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
+        mFrameWatched.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.bg_overlay_selected)));
 
         getViewTreeObserver().addOnGlobalLayoutListener(new OnContentLayoutListener());
     }
@@ -112,6 +117,12 @@ public class ZoomGridVideo extends RelativeLayout{
             mTextSummary.setVisibility(GONE);
         }
 
+        if(video.isWatched()){
+            mFrameWatched.setVisibility(View.VISIBLE);
+        } else {
+            mFrameWatched.setVisibility(View.GONE);
+        }
+
         ViewGroup parent = (ViewGroup) getParent();
         setX(getPosition(view.getX(), view.getWidth(), getWidth(), parent.getWidth()));
         setY(getPosition(view.getY(), view.getHeight(), getHeight(), parent.getHeight()));
@@ -125,16 +136,27 @@ public class ZoomGridVideo extends RelativeLayout{
     private class OnContentLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
         @Override
         public void onGlobalLayout() {
-            float height = getHeight();
-            float width = getWidth();
+            int height = getHeight();
+            int width = getWidth();
 
             if(height > 0 && width > 0) {
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                ViewGroup.LayoutParams params = mLayoutContent.getLayoutParams();
-                params.height = getHeight();
-                params.width = getWidth();
-                mLayoutContent.setLayoutParams(params);
+                setViewDimensions();
+                setSummaryLines();
             }
+        }
+
+        private void setSummaryLines(){
+            int lineSize = mTextSummary.getLineHeight();
+            int numLines = (getHeight()/2)/lineSize;
+            mTextSummary.setLines(numLines);
+        }
+
+        private void setViewDimensions(){
+            ViewGroup.LayoutParams params = mLayoutContent.getLayoutParams();
+            params.height = getHeight();
+            params.width = getWidth();
+            mLayoutContent.setLayoutParams(params);
         }
     }
 }
