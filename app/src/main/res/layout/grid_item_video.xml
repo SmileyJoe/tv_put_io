@@ -35,11 +35,12 @@
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/layout_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        android:background="@drawable/bg_text_video_grid"
+        android:background="@color/overlay"
         android:duplicateParentState="true"
         android:padding="10dp">
         <TextView

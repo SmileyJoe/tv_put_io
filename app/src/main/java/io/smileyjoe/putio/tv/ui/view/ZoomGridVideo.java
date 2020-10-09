@@ -11,8 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -28,7 +31,7 @@ public class ZoomGridVideo extends RelativeLayout{
     private ImageView mImagePoster;
     private float mMultiplier;
     private boolean mSizeSet = false;
-    private View mCurrentView;
+    private LinearLayout mLayoutDetails;
 
     public ZoomGridVideo(Context context) {
         super(context);
@@ -53,6 +56,7 @@ public class ZoomGridVideo extends RelativeLayout{
         mTextSummary = mLayoutContent.findViewById(R.id.text_summary);
         mTextTitle = mLayoutContent.findViewById(R.id.text_title);
         mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
+        mLayoutDetails = mLayoutContent.findViewById(R.id.layout_details);
 
         getViewTreeObserver().addOnGlobalLayoutListener(new OnContentLayoutListener());
     }
@@ -84,7 +88,6 @@ public class ZoomGridVideo extends RelativeLayout{
     }
 
     public void show(View view, Video video){
-        mCurrentView = view;
         if(!mSizeSet){
             ViewGroup.LayoutParams params = mLayoutContent.getLayoutParams();
             params.width = (int) (view.getWidth() * mMultiplier);
@@ -93,6 +96,7 @@ public class ZoomGridVideo extends RelativeLayout{
             mSizeSet = true;
         }
 
+        mLayoutDetails.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.selected_background));
         mImagePoster.setImageDrawable(((ImageView) view.findViewById(R.id.image_poster)).getDrawable());
 
         mTextTitle.setText(video.getTitle());
