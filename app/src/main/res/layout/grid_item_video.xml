@@ -8,21 +8,19 @@
         android:id="@+id/image_poster"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:tint="@color/ic_tint"
+        style="@style/Icon"
         app:srcCompat="@drawable/ic_movie_24"
         android:scaleType="centerCrop"/>
 
     <FrameLayout
         android:id="@+id/frame_watched"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="@dimen/watched_width"
+        android:layout_height="@dimen/watched_height"
         android:background="@drawable/bg_watched">
         <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
             android:src="@drawable/ic_watched_24"
-            android:padding="3dp"
-            android:tint="@color/ic_tint"
+            android:padding="@dimen/watched_ic_padding"
+            style="@style/Icon"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"/>
     </FrameLayout>
@@ -35,7 +33,7 @@
         android:orientation="vertical"
         android:background="@color/bg_overlay"
         android:duplicateParentState="true"
-        android:padding="10dp">
+        android:padding="@dimen/padding_general">
         <TextView
             android:id="@+id/text_title"
             style="@style/Text.Title.Video"/>

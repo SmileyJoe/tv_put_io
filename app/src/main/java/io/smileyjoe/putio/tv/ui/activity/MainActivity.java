@@ -201,7 +201,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         public void hasFocus(FragmentType fragmentType, Genre genre, View view, int position) {
             if(mVideoTypeFocus != fragmentType) {
                 mVideoTypeFocus = fragmentType;
-                changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_expanded);
+                changeFragmentWidth(mFragmentGenreList, R.dimen.home_fragment_width_expanded);
                 mFragmentVideoList.hideDetails();
             }
         }
@@ -219,9 +219,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 mVideoTypeFocus = fragmentType;
 
                 mTextTitle.setVisibility(View.VISIBLE);
-                changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_expanded);
+                changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_expanded);
                 mFragmentVideoList.setFullScreen(false);
-                changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_contracted);
+                changeFragmentWidth(mFragmentGenreList, R.dimen.home_fragment_width_contracted);
                 mFragmentVideoList.hideDetails();
             }
         }
@@ -239,9 +239,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             if(mVideoTypeFocus != fragmentType){
                 mVideoTypeFocus = fragmentType;
                 mTextTitle.setVisibility(View.GONE);
-                changeFragmentWidth(mFragmentFolderList, R.dimen.width_folder_list_contracted);
+                changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_contracted);
                 mFragmentVideoList.setFullScreen(true);
-                changeFragmentWidth(mFragmentGenreList, R.dimen.width_folder_list_contracted);
+                changeFragmentWidth(mFragmentGenreList, R.dimen.home_fragment_width_contracted);
             }
         }
     }

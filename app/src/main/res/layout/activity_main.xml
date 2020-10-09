@@ -5,11 +5,7 @@
     android:layout_height="match_parent">
     <ProgressBar
         android:id="@+id/progress_loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/ic_tint"
-        android:layout_centerInParent="true"/>
+        style="@style/Icon.ProgressSpinner"/>
     <LinearLayout
         android:id="@+id/layout_lists"
         android:layout_width="match_parent"
@@ -29,7 +25,7 @@
 
             <fragment
                 android:id="@+id/fragment_folder_list"
-                android:layout_width="@dimen/width_folder_list_expanded"
+                android:layout_width="@dimen/home_fragment_width_expanded"
                 android:layout_height="match_parent"
                 android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
         </LinearLayout>
@@ -46,12 +42,10 @@
 
             <fragment
                 android:id="@+id/fragment_genre_list"
-                android:layout_width="@dimen/width_folder_list_contracted"
+                android:layout_width="@dimen/home_fragment_width_contracted"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:name="io.smileyjoe.putio.tv.ui.fragment.GenreListFragment"/>
         </RelativeLayout>
-
-
     </LinearLayout>
 </RelativeLayout>

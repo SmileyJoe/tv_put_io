@@ -3,12 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_default"
-    android:elevation="3dp">
+    android:elevation="@dimen/elevation_home_fragment_floating">
 
     <TextView
         android:id="@+id/text_title"
         style="@style/Text.Title.Page"
-        android:padding="10dp"
+        android:padding="@dimen/padding_general"
         android:layout_alignParentTop="true"
         android:text="@string/text_genres"/>
 

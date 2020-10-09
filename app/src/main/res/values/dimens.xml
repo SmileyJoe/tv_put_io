@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="padding_general">10dp</dimen>
     <dimen name="file_grid_col_width">200dp</dimen>
     <dimen name="file_grid_col_height">200dp</dimen>
     <dimen name="file_grid_poster_padding">50dp</dimen>
-    <dimen name="width_folder_list_expanded">300dp</dimen>
-    <dimen name="width_folder_list_contracted">1dp</dimen>
+    <dimen name="home_fragment_width_expanded">300dp</dimen>
+    <dimen name="home_fragment_width_contracted">1dp</dimen>
+    <dimen name="elevation_home_fragment_floating">3dp</dimen>
+    <dimen name="elevation_zoom_video">10dp</dimen>
+    <dimen name="watched_width">75dp</dimen>
+    <dimen name="watched_height">@dimen/watched_width</dimen>
+    <dimen name="watched_ic_padding">3dp</dimen>
+    <dimen name="ic_width">24dp</dimen>
+    <dimen name="ic_height">24dp</dimen>
 </resources>

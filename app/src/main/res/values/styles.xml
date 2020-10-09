@@ -12,6 +12,11 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="Text.Empty">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="Text.Title">
         <item name="android:textStyle">bold</item>
     </style>
@@ -32,6 +37,19 @@
         <item name="android:clickable">true</item>
         <item name="android:lines">1</item>
         <item name="android:duplicateParentState">true</item>
+    </style>
+
+    <style name="Icon">
+        <item name="android:layout_width">@dimen/ic_width</item>
+        <item name="android:layout_height">@dimen/ic_height</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+
+    <style name="Icon.ProgressSpinner">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:indeterminateTint">@color/ic_tint</item>
     </style>
 
 </resources>

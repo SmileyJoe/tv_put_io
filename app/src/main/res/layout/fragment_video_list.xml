@@ -14,22 +14,17 @@
         android:divider="@null" />
     <TextView
         android:id="@+id/text_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Text.Empty"
         android:layout_centerInParent="true"
         android:text="@string/text_no_files"/>
     <ProgressBar
         android:id="@+id/progress_loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/ic_tint"/>
+        style="@style/Icon.ProgressSpinner"/>
     <io.smileyjoe.putio.tv.ui.view.ZoomGridVideo
         android:id="@+id/zoom_grid_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:elevation="10dp"
+        android:elevation="@dimen/elevation_zoom_video"
         android:background="@color/bg_default"
         app:multiplier="1.5"
         android:visibility="invisible"/>
