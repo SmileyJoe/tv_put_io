@@ -58,7 +58,7 @@ public class ZoomGridVideo extends RelativeLayout{
         mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
         mLayoutDetails = mLayoutContent.findViewById(R.id.layout_details);
 
-        mLayoutDetails.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.selected_background));
+        mLayoutDetails.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.overlay_selected_color));
         mTextTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_selected));
         mTextSummary.setTextColor(ContextCompat.getColor(getContext(), R.color.text_selected));
 
