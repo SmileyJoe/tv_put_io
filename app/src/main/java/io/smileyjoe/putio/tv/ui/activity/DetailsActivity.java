@@ -72,7 +72,7 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     }
 
     private void play(Video video, ArrayList<Video> videos, boolean shouldResume){
-        if(video.getType() == VideoType.EPISODE){
+        if(video.getVideoType() == VideoType.EPISODE){
             if(videos != null && !videos.isEmpty()) {
                 startActivity(PlaybackActivity.getIntent(getBaseContext(), videos, video.getPutId(), shouldResume));
                 return;
@@ -85,8 +85,6 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     private class OnConvertResponse extends Response {
         @Override
         public void onSuccess(JsonObject result) {
-            Log.d("PutThings", "Converted");
-
             // todo: this isn't working correctly //
             VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
             detailsFragment.conversionStarted();

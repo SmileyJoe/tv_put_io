@@ -30,7 +30,9 @@ public class Video implements Parcelable{
     private long mTmdbId;
     // general
     @Ignore
-    private VideoType mType;
+    private VideoType mVideoType;
+    @Ignore
+    private FileType mFileType;
     @ColumnInfo(name = "title")
     private String mTitle;
     @ColumnInfo(name = "overview")
@@ -69,7 +71,8 @@ public class Video implements Parcelable{
     private String mGenresFormatted;
 
     public Video() {
-        mType = VideoType.UNKNOWN;
+        mVideoType = VideoType.UNKNOWN;
+        mFileType = FileType.UNKNOWN;
     }
 
     public void setPutId(long putId) {
@@ -80,22 +83,16 @@ public class Video implements Parcelable{
         mTmdbId = tmdbId;
     }
 
-    public void setType(VideoType type) {
-        mType = type;
+    public void setVideoType(VideoType videoType) {
+        mVideoType = videoType;
     }
 
-    public void setType(String putType) {
-        switch (putType) {
-            case "FOLDER":
-                setType(VideoType.FOLDER);
-                break;
-            case "VIDEO":
-                setType(VideoType.VIDEO);
-                break;
-            default:
-                setType(VideoType.UNKNOWN);
-                break;
-        }
+    public void setFileType(FileType fileType) {
+        mFileType = fileType;
+    }
+
+    public void setFileType(String putType){
+        setFileType(FileType.fromPut(putType));
     }
 
     public void setTitle(String title) {
@@ -213,12 +210,16 @@ public class Video implements Parcelable{
         return mTmdbId;
     }
 
-    public VideoType getType() {
-        return mType;
+    public VideoType getVideoType() {
+        return mVideoType;
+    }
+
+    public FileType getFileType() {
+        return mFileType;
     }
 
     public String getTitle() {
-        if(mType == VideoType.EPISODE){
+        if(mVideoType == VideoType.EPISODE){
             return mTitle + " S" + String.format("%02d", getSeason()) + "E" + String.format("%02d", getEpisode());
         } else {
             return mTitle;
@@ -318,6 +319,33 @@ public class Video implements Parcelable{
     }
 
     @Override
+    public String toString() {
+        return "Video{" +
+                "mPutId=" + mPutId +
+                ", mTmdbId=" + mTmdbId +
+                ", mVideoType=" + mVideoType +
+                ", mFileType=" + mFileType +
+                ", mTitle='" + mTitle + '\'' +
+                ", mOverView='" + mOverView + '\'' +
+                ", mIsWatched=" + mIsWatched +
+                ", mIsConverted=" + mIsConverted +
+                ", mResumeTime=" + mResumeTime +
+                ", mYear=" + mYear +
+                ", mSeason=" + mSeason +
+                ", mEpisode=" + mEpisode +
+                ", mPoster='" + mPoster + '\'' +
+                ", mBackdrop='" + mBackdrop + '\'' +
+                ", mStreamUri=" + mStreamUri +
+                ", mIsTmdbChecked=" + mIsTmdbChecked +
+                ", mIsTmdbFound=" + mIsTmdbFound +
+                ", mGenreIdsJson='" + mGenreIdsJson + '\'' +
+                ", mGenreIds=" + mGenreIds +
+                ", mSize=" + mSize +
+                ", mGenresFormatted='" + mGenresFormatted + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Video)) return false;
@@ -339,7 +367,8 @@ public class Video implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.mPutId);
         dest.writeLong(this.mTmdbId);
-        dest.writeInt(this.mType == null ? -1 : this.mType.ordinal());
+        dest.writeInt(this.mVideoType == null ? -1 : this.mVideoType.ordinal());
+        dest.writeInt(this.mFileType == null ? -1 : this.mFileType.ordinal());
         dest.writeString(this.mTitle);
         dest.writeString(this.mOverView);
         dest.writeByte(this.mIsWatched ? (byte) 1 : (byte) 0);
@@ -362,8 +391,10 @@ public class Video implements Parcelable{
     protected Video(Parcel in) {
         this.mPutId = in.readLong();
         this.mTmdbId = in.readLong();
-        int tmpMType = in.readInt();
-        this.mType = tmpMType == -1 ? null : VideoType.values()[tmpMType];
+        int tmpMVideoType = in.readInt();
+        this.mVideoType = tmpMVideoType == -1 ? null : VideoType.values()[tmpMVideoType];
+        int tmpMFileType = in.readInt();
+        this.mFileType = tmpMFileType == -1 ? null : FileType.values()[tmpMFileType];
         this.mTitle = in.readString();
         this.mOverView = in.readString();
         this.mIsWatched = in.readByte() != 0;

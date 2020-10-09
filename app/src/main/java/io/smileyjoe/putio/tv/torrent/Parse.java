@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 
@@ -46,18 +47,18 @@ public class Parse {
             video.setTitle(details.get("title"));
 
             if (details.containsKey("is_movie")) {
-                boolean isMovie = Boolean.parseBoolean(details.get("is_movie"));
+                if (Boolean.parseBoolean(details.get("is_movie"))) {
+                    video.setVideoType(VideoType.MOVIE);
+                }
+            }
 
-                if (isMovie) {
-                    video.setType(VideoType.MOVIE);
-                } else {
-                    if(video.getType() != VideoType.FOLDER) {
-                        video.setType(VideoType.EPISODE);
-                    }
+            if (details.containsKey("is_episode")) {
+                if (Boolean.parseBoolean(details.get("is_episode"))) {
+                    video.setVideoType(VideoType.EPISODE);
                 }
             }
         } else {
-            video.setType(VideoType.MOVIE);
+            video.setVideoType(VideoType.MOVIE);
         }
 
         if (details.containsKey("year")) {
@@ -130,7 +131,13 @@ public class Parse {
             isMovie = true;
         }
 
+        boolean isEpisode = false;
+        if(matchesClean.containsKey("episode")){
+            isEpisode = true;
+        }
+
         matchesClean.put("is_movie", String.valueOf(isMovie));
+        matchesClean.put("is_episode", String.valueOf(isEpisode));
 
         if (titleEnd <= titleStart) {
             titleEnd = rawTitle.length();

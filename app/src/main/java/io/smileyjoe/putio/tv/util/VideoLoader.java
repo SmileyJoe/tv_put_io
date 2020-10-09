@@ -54,7 +54,6 @@ public class VideoLoader {
     }
 
     public boolean back(){
-        Log.d("NavThings", "History: " + mHistory);
         if(mHistory != null && mHistory.size() >= 2) {
             Video current = getCurrent();
             mHistory.remove(current);
@@ -109,8 +108,17 @@ public class VideoLoader {
             Video current = VideoUtil.parseFromPut(mContext, parentObject);
             mHistory.add(current);
 
+            if(videos != null && videos.size() == 1){
+                Video currentDbVideo = AppDatabase.getInstance(mContext).videoDao().getByPutId(current.getPutId());
+
+                if(currentDbVideo != null && currentDbVideo.isTmdbFound()){
+                    Video updated = VideoUtil.updateFromDb(videos.get(0), currentDbVideo);
+                    AppDatabase.getInstance(mContext).videoDao().insert(updated);
+                }
+            }
+
             for (Video video : videos) {
-                if (video.getType() == VideoType.MOVIE) {
+                if (video.getVideoType() == VideoType.MOVIE) {
                     if(!video.isTmdbChecked()) {
                         Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
                     }

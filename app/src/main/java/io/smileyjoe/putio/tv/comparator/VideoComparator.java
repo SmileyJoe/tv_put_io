@@ -8,15 +8,9 @@ import io.smileyjoe.putio.tv.object.VideoType;
 public class VideoComparator implements Comparator<Video> {
     @Override
     public int compare(Video videoOne, Video videoTwo) {
-        int result = Integer.compare(videoOne.getType().getOrder(), videoTwo.getType().getOrder());
+        int result = videoOne.getTitle().compareTo(videoTwo.getTitle());
 
-        if (result != 0) {
-            return result;
-        }
-
-        result = videoOne.getTitle().compareTo(videoTwo.getTitle());
-
-        if(videoOne.getType() == VideoType.EPISODE){
+        if(videoOne.getVideoType() == VideoType.EPISODE){
             result = Integer.compare(videoOne.getSeason(), videoTwo.getSeason());
 
             if(result != 0){

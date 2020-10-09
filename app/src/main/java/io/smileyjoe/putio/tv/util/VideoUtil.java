@@ -14,6 +14,7 @@ import java.util.Comparator;
 import io.smileyjoe.putio.tv.comparator.VideoComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.torrent.Parse;
@@ -28,7 +29,7 @@ public class VideoUtil {
         ArrayList<Video> videosFiltered = new ArrayList<>();
 
         for (Video video : videos) {
-            if (video.getType() != VideoType.UNKNOWN && video.getSize() > 0) {
+            if (video.getFileType() != FileType.UNKNOWN && video.getSize() > 0) {
                 videosFiltered.add(video);
             }
         }
@@ -61,7 +62,7 @@ public class VideoUtil {
         }
 
         video.setConverted(!json.getBoolean("need_convert", false));
-        video.setType(json.getString("file_type"));
+        video.setFileType(json.getString("file_type"));
         video.setStreamUri(json.getString("stream_url"), json.getString("mp4_stream_url"));
         video.setSize(json.getLong("size"));
 
@@ -81,6 +82,18 @@ public class VideoUtil {
         }
 
         return videos;
+    }
+
+    public static Video updateFromDb(Video putVideo, Video dbVideo){
+        putVideo.setTmdbId(dbVideo.getTmdbId());
+        putVideo.setBackdrop(dbVideo.getBackdrop());
+        putVideo.setOverView(dbVideo.getOverView());
+        putVideo.setPoster(dbVideo.getPoster());
+        putVideo.setTitle(dbVideo.getTitle());
+        putVideo.isTmdbFound(true);
+        putVideo.isTmdbChecked(true);
+        putVideo.setGenreIds(dbVideo.getGenreIds());
+        return putVideo;
     }
 
     public static Video updateFromTmdb(Video video, JsonArray jsonArray) {

@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -125,13 +126,12 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         ArrayList<Video> videosSorted = new ArrayList<>();
 
         for (Video video : videos) {
-            switch (video.getType()) {
-                case VIDEO:
-                case MOVIE:
+            switch (video.getVideoType()) {
                 case EPISODE:
+                case MOVIE:
                     videosSorted.add(video);
                     break;
-                case FOLDER:
+                case UNKNOWN:
                     folders.add(video);
                     break;
             }
@@ -229,7 +229,14 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private class VideoListListener implements VideoListFragment.Listener{
         @Override
         public void onItemClicked(View view, Video video) {
-            showDetails(video);
+            switch (video.getFileType()){
+                case VIDEO:
+                    showDetails(video);
+                    break;
+                case FOLDER:
+                    mVideoLoader.load(video);
+                    break;
+            }
         }
 
         @Override
