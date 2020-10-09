@@ -57,6 +57,7 @@ public class ZoomGridVideo extends RelativeLayout{
     private void init(AttributeSet attrs){
         handleAttributes(attrs);
         mLayoutContent = (RelativeLayout) LayoutInflater.from(getContext()).inflate(R.layout.grid_item_video, this, false);
+        mLayoutContent.setSelected(true);
         addView(mLayoutContent);
 
         mTextSummary = mLayoutContent.findViewById(R.id.text_summary);
@@ -67,12 +68,12 @@ public class ZoomGridVideo extends RelativeLayout{
         mImageWatched = mLayoutContent.findViewById(R.id.image_watched);
         mTextGenres = mLayoutContent.findViewById(R.id.text_genres);
 
-        mLayoutDetails.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_overlay_selected));
-        mTextTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
-        mTextSummary.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
-        mTextGenres.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
-        mFrameWatched.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.bg_overlay_selected)));
-        mImageWatched.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.ic_tint_selected)));
+//        mLayoutDetails.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_overlay_selected));
+//        mTextTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
+//        mTextSummary.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
+//        mTextGenres.setTextColor(ContextCompat.getColor(getContext(), R.color.text_grid_details));
+//        mFrameWatched.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.bg_overlay_selected)));
+//        mImageWatched.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.ic_tint_selected)));
         mTextGenres.setVisibility(VISIBLE);
 
         getViewTreeObserver().addOnGlobalLayoutListener(new OnContentLayoutListener());

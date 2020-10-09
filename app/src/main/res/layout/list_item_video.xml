@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_list_item_video"
+    android:background="@color/bg_default"
+    android:backgroundTint="@color/selector_bg_inverse"
     android:layout_gravity="center">
 
     <ImageView
         android:id="@+id/image_icon"
         style="@style/Icon"
-        android:tint="@color/color_text_video_list"
+        android:tint="@color/selector_icon_inverse"
         android:duplicateParentState="true"
         android:src="@drawable/ic_folder_24"
         android:layout_margin="@dimen/padding_general"/>

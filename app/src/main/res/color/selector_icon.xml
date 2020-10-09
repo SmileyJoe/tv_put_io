@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:drawable="@drawable/bg_text_video_grid_selected"
+        android:color="@color/ic_tint_selected"
         android:state_pressed="true"/>
     <item
-        android:drawable="@drawable/bg_text_video_grid_selected"
+        android:color="@color/ic_tint_selected"
         android:state_focused="true"/>
     <item
-        android:drawable="@drawable/bg_text_video_grid_selected"
+        android:color="@color/ic_tint_selected"
         android:state_selected="true"/>
-    <item android:drawable="@drawable/bg_text_video_grid_unselected"/>
+    <item android:color="@color/ic_tint"/>
 </selector>

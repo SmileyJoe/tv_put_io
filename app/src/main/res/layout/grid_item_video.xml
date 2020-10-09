@@ -16,7 +16,9 @@
         android:id="@+id/frame_watched"
         android:layout_width="@dimen/watched_width"
         android:layout_height="@dimen/watched_height"
-        android:background="@drawable/bg_watched">
+        android:duplicateParentState="true"
+        android:background="@drawable/bg_watched"
+        android:backgroundTint="@color/selector_overlay">
         <ImageView
             android:id="@+id/image_watched"
             android:src="@drawable/ic_watched_24"
@@ -33,6 +35,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
         android:background="@color/bg_overlay"
+        android:backgroundTint="@color/selector_overlay"
         android:duplicateParentState="true"
         android:padding="@dimen/padding_general">
         <TextView

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="@drawable/bg_list_item_video"
+    android:background="@color/bg_default"
+    android:backgroundTint="@color/selector_bg_inverse"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_general">

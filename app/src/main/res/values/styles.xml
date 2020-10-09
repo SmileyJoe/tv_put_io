@@ -7,7 +7,7 @@
     </style>
 
     <style name="Text">
-        <item name="android:textColor">@color/text</item>
+        <item name="android:textColor">@color/selector_text</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:ellipsize">end</item>
@@ -38,10 +38,11 @@
     <style name="Text.Title.Page">
         <item name="android:maxLines">2</item>
         <item name="android:textSize">@dimen/text_title_page</item>
+        <item name="android:textColor">@color/selector_text</item>
     </style>
 
     <style name="Text.List">
-        <item name="android:textColor">@color/color_text_video_list</item>
+        <item name="android:textColor">@color/selector_text_inverse</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:clickable">true</item>
@@ -57,6 +58,8 @@
         <item name="android:layout_width">@dimen/ic_width</item>
         <item name="android:layout_height">@dimen/ic_height</item>
         <item name="android:layout_centerInParent">true</item>
+        <item name="android:tint">@color/selector_icon</item>
+        <item name="android:duplicateParentState">true</item>
     </style>
 
     <style name="Icon.ProgressSpinner">
