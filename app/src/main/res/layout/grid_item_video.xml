@@ -8,7 +8,7 @@
         android:id="@+id/image_poster"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:tint="@color/icon_tint"
+        android:tint="@color/ic_tint"
         app:srcCompat="@drawable/ic_movie_24"
         android:scaleType="centerCrop"/>
 
@@ -22,7 +22,7 @@
             android:layout_height="25dp"
             android:src="@drawable/ic_watched_24"
             android:padding="3dp"
-            android:tint="@color/icon_tint"
+            android:tint="@color/ic_tint"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"/>
     </FrameLayout>
