@@ -93,12 +93,7 @@ public class ZoomGridVideo extends RelativeLayout{
             mSizeSet = true;
         }
 
-        Glide.with(getContext())
-                .load(video.getPosterAsUri())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
-                .into(mImagePoster);
-
+        mImagePoster.setImageDrawable(((ImageView) view.findViewById(R.id.image_poster)).getDrawable());
 
         mTextTitle.setText(video.getTitle());
         mTextTitle.setTypeface(null, Typeface.BOLD);
