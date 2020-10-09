@@ -61,11 +61,15 @@ public class PopulateGenres extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String genresFormatted) {
-        if(mHideOnEmpty && TextUtils.isEmpty(genresFormatted)){
-            mTextView.setVisibility(View.GONE);
-        } else {
-            mTextView.setVisibility(View.VISIBLE);
-            mTextView.setText(genresFormatted);
+        if(mHideOnEmpty) {
+            if(TextUtils.isEmpty(genresFormatted)){
+                mTextView.setVisibility(View.GONE);
+            } else {
+                mTextView.setVisibility(View.VISIBLE);
+            }
+
         }
+
+        mTextView.setText(genresFormatted);
     }
 }
