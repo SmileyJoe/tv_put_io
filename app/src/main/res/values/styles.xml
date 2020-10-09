@@ -27,7 +27,7 @@
 
     <style name="Text.Title.Page">
         <item name="android:maxLines">2</item>
-        <item name="android:textSize">24dp</item>
+        <item name="android:textSize">@dimen/text_title_page</item>
     </style>
 
     <style name="Text.List">

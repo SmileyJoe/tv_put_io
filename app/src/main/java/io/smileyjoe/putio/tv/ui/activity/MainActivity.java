@@ -29,6 +29,22 @@ import io.smileyjoe.putio.tv.util.VideoLoader;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
+ *
+ *
+ * - Zoom limit summary to half height
+ * - Selected text to black
+ * - Watched triangle to selected colour on zoom view
+ * - genres at the top
+ * - filters on the right panel where genres are
+ * - folder list dark get background for select
+ * - folder list highlight text image primary color
+ * - Back option in list of folders
+ * - Grid title set to 2
+ * - app logo on empty
+ * - folder list show inside count
+ * - different folder icons that the user can set
+ * - Folder list extra details
+ * - Filter options in list with sub text
  */
 public class MainActivity extends FragmentActivity implements VideoLoader.Listener {
 
