@@ -60,9 +60,10 @@ public class VideoUtil {
             video.setPoster(json.getString("screenshot"));
         }
 
-        video.setConverted(json.getBoolean("is_mp4_available", false));
+        video.setConverted(!json.getBoolean("need_convert", false));
         video.setType(json.getString("file_type"));
         video.setStreamUri(json.getString("stream_url"), json.getString("mp4_stream_url"));
+        video.setSize(json.getLong("size"));
 
         String firstAccessedAt = json.getString("first_accessed_at");
         video.setWatched(!TextUtils.isEmpty(firstAccessedAt));

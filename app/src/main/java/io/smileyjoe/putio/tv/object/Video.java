@@ -1,9 +1,11 @@
 package io.smileyjoe.putio.tv.object;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.text.format.Formatter;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -61,6 +63,8 @@ public class Video implements Parcelable{
     private String mGenreIdsJson;
     @Ignore
     private ArrayList<Integer> mGenreIds;
+    @Ignore
+    private long mSize;
 
     public Video() {
         mType = VideoType.UNKNOWN;
@@ -191,6 +195,10 @@ public class Video implements Parcelable{
         }
     }
 
+    public void setSize(long size) {
+        mSize = size;
+    }
+
     public long getPutId() {
         return mPutId;
     }
@@ -291,6 +299,14 @@ public class Video implements Parcelable{
         return mGenreIds;
     }
 
+    public long getSize() {
+        return mSize;
+    }
+
+    public String getSizeFormatted(Context context){
+        return Formatter.formatShortFileSize(context, mSize);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -329,6 +345,7 @@ public class Video implements Parcelable{
         dest.writeByte(this.mIsTmdbFound ? (byte) 1 : (byte) 0);
         dest.writeString(this.mGenreIdsJson);
         dest.writeList(this.mGenreIds);
+        dest.writeLong(this.mSize);
     }
 
     protected Video(Parcel in) {
@@ -352,6 +369,7 @@ public class Video implements Parcelable{
         this.mGenreIdsJson = in.readString();
         this.mGenreIds = new ArrayList<Integer>();
         in.readList(this.mGenreIds, Integer.class.getClassLoader());
+        this.mSize = in.readLong();
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {

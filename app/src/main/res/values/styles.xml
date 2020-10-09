@@ -40,6 +40,10 @@
         <item name="android:duplicateParentState">true</item>
     </style>
 
+    <style name="Text.List.Details">
+        <item name="android:textSize">@dimen/text_list_details</item>
+    </style>
+
     <style name="Icon">
         <item name="android:layout_width">@dimen/ic_width</item>
         <item name="android:layout_height">@dimen/ic_height</item>

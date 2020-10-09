@@ -24,7 +24,7 @@ public class Putio {
         String url = BASE + FILES;
 
         if (parentId != NO_PARENT) {
-            url += "?parent_id=" + parentId + "&stream_url=true&mp4_stream_url=true";
+            url += "?parent_id=" + parentId + "&stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true";
         }
 
         execute(context, url, response);
