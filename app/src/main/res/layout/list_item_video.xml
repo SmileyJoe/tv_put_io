@@ -16,12 +16,7 @@
 
     <TextView
         android:id="@+id/text_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/color_text_video_list"
-        android:clickable="true"
-        android:lines="1"
-        android:duplicateParentState="true"
+        style="@style/Text.List"
         android:gravity="center_vertical"
         android:layout_gravity="center_vertical"/>
 

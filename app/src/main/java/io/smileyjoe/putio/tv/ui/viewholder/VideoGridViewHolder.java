@@ -20,7 +20,6 @@ public class VideoGridViewHolder extends BaseViewHolder<Video> {
     private TextView mTextTitle;
     private ImageView mImagePoster;
     private FrameLayout mFrameWatched;
-    private FrameLayout mFrameSelected;
     private View mItemView;
     private int mPosterPadding;
 
@@ -31,7 +30,6 @@ public class VideoGridViewHolder extends BaseViewHolder<Video> {
         mTextTitle = itemView.findViewById(R.id.text_title);
         mImagePoster = itemView.findViewById(R.id.image_poster);
         mFrameWatched = itemView.findViewById(R.id.frame_watched);
-        mFrameSelected = itemView.findViewById(R.id.frame_selected);
 
         mPosterPadding = itemView.getContext().getResources().getDimensionPixelOffset(R.dimen.file_grid_poster_padding);
     }

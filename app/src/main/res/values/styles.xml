@@ -5,4 +5,33 @@
     <style name="AppTheme.Video">
         <item name="android:windowBackground">@color/black</item>
     </style>
+
+    <style name="Text">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Text.Title">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Text.Title.Video">
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="Text.Title.Page">
+        <item name="android:maxLines">2</item>
+        <item name="android:textSize">24dp</item>
+    </style>
+
+    <style name="Text.List">
+        <item name="android:textColor">@color/color_text_video_list</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:clickable">true</item>
+        <item name="android:lines">1</item>
+        <item name="android:duplicateParentState">true</item>
+    </style>
+
 </resources>

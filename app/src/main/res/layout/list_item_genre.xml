@@ -8,12 +8,6 @@
 
     <TextView
         android:id="@+id/text_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/color_text_video_list"
-        android:clickable="true"
-        android:lines="1"
-        android:duplicateParentState="true"
-        android:layout_gravity="center_vertical"/>
+        style="@style/Text.List"/>
 
 </LinearLayout>

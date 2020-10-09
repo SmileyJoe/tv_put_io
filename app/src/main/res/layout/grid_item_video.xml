@@ -13,13 +13,6 @@
         android:scaleType="centerCrop"/>
 
     <FrameLayout
-        android:id="@+id/frame_selected"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/file_grid_col_height"
-        android:background="@color/overlay_selected"
-        android:visibility="gone"/>
-
-    <FrameLayout
         android:id="@+id/frame_watched"
         android:layout_width="75dp"
         android:layout_height="75dp"
@@ -45,19 +38,12 @@
         android:padding="10dp">
         <TextView
             android:id="@+id/text_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_text_video_list"
-            android:clickable="true"
-            android:maxLines="2"/>
+            style="@style/Text.Title.Video"/>
 
         <TextView
             android:id="@+id/text_summary"
             android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_text_video_list"
-            android:clickable="true"/>
+            style="@style/Text"/>
     </LinearLayout>
 
 </RelativeLayout>

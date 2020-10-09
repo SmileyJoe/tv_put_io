@@ -1,4 +1,10 @@
 <resources>
+    <color name="primary_color">#77dd77</color>
+    <color name="text">#FFFFFF</color>
+    <color name="text_selected">#3d3d3d</color>
+    <color name="bg_grid_details">#E677dd77</color>
+    <color name="overlay">#B3000000</color>
+
     <color name="background_gradient_start">#000000</color>
     <color name="background_gradient_end">#DDDDDD</color>
     <color name="fastlane_background">#77dd77</color>
@@ -7,9 +13,4 @@
     <color name="default_background">#3d3d3d</color>
     <color name="icon_tint">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="overlay">#B3000000</color>
-    <color name="overlay_selected_color">#E677dd77</color>
-    <color name="overlay_selected">#33FFFFFF</color>
-    <color name="text_unselected">#FFFFFF</color>
-    <color name="text_selected">#3d3d3d</color>
 </resources>
