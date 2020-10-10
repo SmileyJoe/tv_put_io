@@ -191,6 +191,19 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         return fragmentIsVisible;
     }
 
+    private void showFolders(){
+        mTextTitle.setVisibility(View.VISIBLE);
+        changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_expanded);
+        mFragmentVideoList.setFullScreen(false);
+        mFragmentVideoList.hideDetails();
+    }
+
+    private void hideFolders(){
+        mTextTitle.setVisibility(View.GONE);
+        changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_contracted);
+        mFragmentVideoList.setFullScreen(true);
+    }
+
     private class GenreListListener implements GenreListFragment.Listener{
         @Override
         public void onItemClicked(View view, Genre genre) {
@@ -202,6 +215,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             if(mVideoTypeFocus != fragmentType) {
                 mVideoTypeFocus = fragmentType;
                 mFragmentVideoList.hideDetails();
+                hideFolders();
             }
         }
     }
@@ -218,10 +232,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             if(mVideoTypeFocus != fragmentType){
                 mVideoTypeFocus = fragmentType;
 
-                mTextTitle.setVisibility(View.VISIBLE);
-                changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_expanded);
-                mFragmentVideoList.setFullScreen(false);
-                mFragmentVideoList.hideDetails();
+                showFolders();
             }
         }
     }
@@ -241,12 +252,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         @Override
         public void hasFocus(FragmentType fragmentType, Video video, View view, int position) {
-
             if(mVideoTypeFocus != fragmentType){
                 mVideoTypeFocus = fragmentType;
-                mTextTitle.setVisibility(View.GONE);
-                changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_contracted);
-                mFragmentVideoList.setFullScreen(true);
+                hideFolders();
             }
         }
     }

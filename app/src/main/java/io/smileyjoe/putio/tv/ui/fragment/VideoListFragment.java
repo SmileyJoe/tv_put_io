@@ -69,12 +69,14 @@ public class VideoListFragment extends Fragment {
     }
 
     public void setFullScreen(boolean fullScreen) {
-        mIsFullScreen = fullScreen;
-        mZoomGridVideo.reset();
-        boolean created = setLayoutManager(false);
+        if(mIsFullScreen != fullScreen) {
+            mIsFullScreen = fullScreen;
+            mZoomGridVideo.reset();
+            boolean created = setLayoutManager(false);
 
-        if(!created && mLayoutManager instanceof GridLayoutManager){
-            ((GridLayoutManager) mLayoutManager).setSpanCount(getSpanCount());
+            if (!created && mLayoutManager instanceof GridLayoutManager) {
+                ((GridLayoutManager) mLayoutManager).setSpanCount(getSpanCount());
+            }
         }
     }
 

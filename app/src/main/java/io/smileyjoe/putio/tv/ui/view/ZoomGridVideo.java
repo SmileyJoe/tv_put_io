@@ -33,10 +33,8 @@ public class ZoomGridVideo extends RelativeLayout{
     private TextView mTextTitle;
     private ImageView mImagePoster;
     private FrameLayout mFrameWatched;
-    private ImageView mImageWatched;
     private float mMultiplier;
     private boolean mSizeSet = false;
-    private LinearLayout mLayoutDetails;
     private TextView mTextGenres;
 
     public ZoomGridVideo(Context context) {
@@ -63,9 +61,7 @@ public class ZoomGridVideo extends RelativeLayout{
         mTextSummary = mLayoutContent.findViewById(R.id.text_summary);
         mTextTitle = mLayoutContent.findViewById(R.id.text_title);
         mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
-        mLayoutDetails = mLayoutContent.findViewById(R.id.layout_details);
         mFrameWatched = mLayoutContent.findViewById(R.id.frame_watched);
-        mImageWatched = mLayoutContent.findViewById(R.id.image_watched);
         mTextGenres = mLayoutContent.findViewById(R.id.text_genres);
 
         getViewTreeObserver().addOnGlobalLayoutListener(new OnContentLayoutListener());
