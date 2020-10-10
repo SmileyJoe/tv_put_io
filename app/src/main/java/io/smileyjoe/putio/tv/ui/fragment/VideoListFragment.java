@@ -1,15 +1,11 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,10 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
-import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
 
@@ -165,6 +160,27 @@ public class VideoListFragment extends Fragment {
 
             mVideoListAdapter.setItems(videos);
             mVideoListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void filter(Filter filter, boolean isSelected){
+        switch (filter){
+            case SHOW_WATCHED:
+                if(!isSelected){
+                    populate(mVideosAll);
+                } else {
+                    ArrayList<Video> sorted = new ArrayList<>();
+                    for (Video video : mVideosAll) {
+                        if(!video.isWatched()){
+                            sorted.add(video);
+                        }
+                    }
+
+                    populate(sorted);
+                }
+                break;
+            case SORT_CREATED:
+                break;
         }
     }
 

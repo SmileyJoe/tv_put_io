@@ -20,6 +20,7 @@ import java.util.Set;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
@@ -62,6 +63,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID, FragmentType.VIDEO);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
         mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
+        mFragmentFilter.setListener(new FilterListener());
 
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
@@ -210,6 +212,18 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mTextTitle.setVisibility(View.GONE);
         changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_contracted);
         mFragmentVideoList.setFullScreen(true);
+    }
+
+    private class FilterListener implements FilterFragment.Listener{
+        @Override
+        public void onItemClicked(View view, Filter filter, boolean isSelected) {
+            mFragmentVideoList.filter(filter, isSelected);
+        }
+
+        @Override
+        public void hasFocus(FragmentType type, Filter item, View view, int position) {
+            mFragmentVideoList.hideDetails();
+        }
     }
 
     private class GenreListListener implements GenreListFragment.Listener{

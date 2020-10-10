@@ -7,8 +7,8 @@ import io.smileyjoe.putio.tv.R;
 
 public enum Filter {
 
-    SHOW_WATCHED(R.drawable.ic_watched_24, R.string.text_hide_watched, R.string.text_show_watched, true),
-    SHORT_CREATED(R.drawable.ic_sort_by_created_24, R.string.text_sort_created, R.string.text_sort_default, false);
+    SHOW_WATCHED(R.drawable.ic_hide_watched_24, R.string.text_hide_watched, R.string.text_show_watched, false),
+    SORT_CREATED(R.drawable.ic_sort_by_created_24, R.string.text_sort_created, R.string.text_sort_default, false);
 
     @DrawableRes private int mIconResId;
     @StringRes private int mTextResId;

@@ -21,6 +21,7 @@ import java.util.List;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.comparator.GenreComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.ui.adapter.GenreListAdapter;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
@@ -52,6 +53,7 @@ public class GenreListFragment extends Fragment {
         }
 
         mAdapter = new GenreListAdapter(getContext());
+        mAdapter.setFragmentType(FragmentType.GENRE);
         mAdapter.setListener(listener);
 
         mRecycler.setAdapter(mAdapter);
