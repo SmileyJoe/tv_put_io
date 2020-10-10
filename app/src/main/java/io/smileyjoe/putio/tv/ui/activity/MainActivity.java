@@ -24,6 +24,7 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
+import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.util.VideoLoader;
@@ -38,6 +39,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private VideoListFragment mFragmentFolderList;
     private VideoListFragment mFragmentVideoList;
     private GenreListFragment mFragmentGenreList;
+    private FilterFragment mFragmentFilter;
 
     private LinearLayout mLayoutLists;
     private ProgressBar mProgressLoading;
@@ -59,6 +61,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID, FragmentType.VIDEO);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
+        mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
 
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
@@ -148,6 +151,12 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
             mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
             mFragmentVideoList.setVideos(videosSorted);
+
+            if(videosSorted != null && !videosSorted.isEmpty()){
+                showFragment(mFragmentFilter);
+            } else {
+                hideFragment(mFragmentFilter);
+            }
         }
 
         mLayoutLists.setVisibility(View.VISIBLE);
@@ -177,7 +186,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     private boolean populateFolders(ArrayList<Video> videos) {
         boolean fragmentIsVisible;
-
 
         if (videos == null || videos.isEmpty()) {
             hideFragment(mFragmentFolderList);
