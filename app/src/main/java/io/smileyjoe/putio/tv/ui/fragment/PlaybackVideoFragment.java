@@ -60,6 +60,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
 
     public interface Listener{
         void onPlayComplete(Video video);
+        void onControlsVisibilityChanged(boolean isShown);
     }
 
     private static final int UPDATE_DELAY = 16;
@@ -102,6 +103,24 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         super.onResume();
         if ((Util.SDK_INT <= 23 || mPlayer == null)) {
             initializePlayer();
+        }
+    }
+
+    @Override
+    public void showControlsOverlay(boolean runAnimation) {
+        super.showControlsOverlay(runAnimation);
+
+        if(mListener != null){
+            mListener.onControlsVisibilityChanged(true);
+        }
+    }
+
+    @Override
+    public void hideControlsOverlay(boolean runAnimation) {
+        super.hideControlsOverlay(runAnimation);
+
+        if(mListener != null){
+            mListener.onControlsVisibilityChanged(false);
         }
     }
 
