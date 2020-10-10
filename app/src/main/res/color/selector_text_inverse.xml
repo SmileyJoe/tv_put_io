@@ -7,7 +7,7 @@
         android:color="@color/text_selected_inverse"
         android:state_focused="true"/>
     <item
-        android:color="@color/text_selected_inverse"
+        android:color="@color/text_selected"
         android:state_selected="true"/>
     <item android:color="@color/text"/>
 </selector>

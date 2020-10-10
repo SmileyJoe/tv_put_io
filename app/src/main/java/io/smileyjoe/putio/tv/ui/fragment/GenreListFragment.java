@@ -89,12 +89,6 @@ public class GenreListFragment extends Fragment {
         protected List<Genre> doInBackground(Void... voids) {
             List<Genre> genres = AppDatabase.getInstance(getContext()).genreDao().getByIds(mGenreIds);
             Collections.sort(genres, new GenreComparator());
-
-            Genre genreAll = new Genre();
-            genreAll.setId(-1);
-            genreAll.setTitle(getString(R.string.text_all));
-
-            genres.add(0, genreAll);
             return genres;
         }
 

@@ -61,6 +61,12 @@ public class FilterFragment extends Fragment {
         mLayoutRoot.addView(view);
     }
 
+    public void reset(){
+        for(int i = 0; i < mLayoutRoot.getChildCount(); i++){
+            mLayoutRoot.getChildAt(i).setSelected(false);
+        }
+    }
+
     private class OnFilterListener implements View.OnClickListener, View.OnFocusChangeListener {
         private Filter mFilter;
 

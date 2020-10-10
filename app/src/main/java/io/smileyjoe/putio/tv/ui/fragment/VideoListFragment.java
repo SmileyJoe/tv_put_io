@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
@@ -38,6 +39,8 @@ public class VideoListFragment extends Fragment {
     private boolean mIsFullScreen = false;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Video> mVideosAll;
+    private ArrayList<Filter> mAppliedFilters = new ArrayList<>();
+    private Integer mAppliedGenreId = -1;
 
     @Nullable
     @Override
@@ -145,11 +148,14 @@ public class VideoListFragment extends Fragment {
     }
 
     public void setVideos(ArrayList<Video> videos) {
+        mAppliedGenreId = -1;
+        mAppliedFilters = new ArrayList<>();
         mVideosAll = videos;
-        populate(videos);
+        populate();
     }
 
-    private void populate(ArrayList<Video> videos){
+    private void populate(){
+        ArrayList<Video> videos = applyFilters();
         mProgressLoading.setVisibility(View.GONE);
         if (videos == null || videos.isEmpty()) {
             mLayoutEmpty.setVisibility(View.VISIBLE);
@@ -164,40 +170,52 @@ public class VideoListFragment extends Fragment {
     }
 
     public void filter(Filter filter, boolean isSelected){
-        switch (filter){
-            case SHOW_WATCHED:
-                if(!isSelected){
-                    populate(mVideosAll);
-                } else {
-                    ArrayList<Video> sorted = new ArrayList<>();
-                    for (Video video : mVideosAll) {
-                        if(!video.isWatched()){
-                            sorted.add(video);
-                        }
-                    }
-
-                    populate(sorted);
-                }
-                break;
-            case SORT_CREATED:
-                break;
+        if(!isSelected){
+            mAppliedFilters.remove(filter);
+        } else {
+            mAppliedFilters.add(filter);
         }
+
+        populate();
     }
 
-    public void filterByGenre(Integer genreId){
-        if(genreId < 0){
-            populate(mVideosAll);
-        } else {
-            ArrayList<Video> filtered = new ArrayList<>();
+    private ArrayList<Video> applyFilters(){
+        ArrayList<Video> filtered = new ArrayList<>();
 
-            for(Video video:mVideosAll){
+        for(Video video:mVideosAll){
+            boolean includeVideo = true;
+
+            if(mAppliedGenreId > 0){
                 ArrayList<Integer> genreIds = video.getGenreIds();
-                if(genreIds != null && genreIds.contains(genreId)){
-                    filtered.add(video);
+                if(genreIds == null || !genreIds.contains(mAppliedGenreId)){
+                    includeVideo = false;
                 }
             }
 
-            populate(filtered);
+            if(includeVideo && mAppliedFilters != null && !mAppliedFilters.isEmpty()){
+                for(Filter filter:mAppliedFilters){
+                    switch (filter){
+                        case SHOW_WATCHED:
+                            if(video.isWatched()){
+                                includeVideo = false;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            if(includeVideo){
+                filtered.add(video);
+            }
+        }
+
+        return filtered;
+    }
+
+    public void filterByGenre(Integer genreId){
+        if(mAppliedGenreId != genreId) {
+            mAppliedGenreId = genreId;
+            populate();
         }
     }
 

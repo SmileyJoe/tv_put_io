@@ -7,7 +7,7 @@
         android:color="@color/ic_tint_selected"
         android:state_focused="true"/>
     <item
-        android:color="@color/ic_tint_selected"
+        android:color="@color/ic_tint_selected_inverse"
         android:state_selected="true"/>
     <item android:color="@color/ic_tint"/>
 </selector>

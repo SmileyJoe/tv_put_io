@@ -153,6 +153,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
             mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
             mFragmentVideoList.setVideos(videosSorted);
+            mFragmentFilter.reset();
 
             if(videosSorted != null && !videosSorted.isEmpty()){
                 showFragment(mFragmentFilter);
@@ -227,9 +228,16 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     private class GenreListListener implements GenreListFragment.Listener{
+        private int mSelectedGenre = -1;
+
         @Override
         public void onItemClicked(View view, Genre genre) {
-            mFragmentVideoList.filterByGenre(genre.getId());
+            if(mSelectedGenre == genre.getId()){
+                mSelectedGenre = -1;
+            } else {
+                mSelectedGenre = genre.getId();
+            }
+            mFragmentVideoList.filterByGenre(mSelectedGenre);
         }
 
         @Override

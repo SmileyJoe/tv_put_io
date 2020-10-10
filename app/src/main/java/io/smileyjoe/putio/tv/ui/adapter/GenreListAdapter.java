@@ -41,8 +41,16 @@ public class GenreListAdapter extends BaseListAdapter<Genre, GenreListViewHolder
     private class ViewHolderListener implements Listener<Genre>{
         @Override
         public void onItemClicked(View view, Genre item) {
-            mSelectedView = view;
-            mSelectedView.setSelected(true);
+            if(mSelectedView != view) {
+                if(mSelectedView != null){
+                    mSelectedView.setSelected(false);
+                }
+
+                mSelectedView = view;
+                mSelectedView.setSelected(true);
+            } else {
+                mSelectedView.setSelected(!mSelectedView.isSelected());
+            }
 
             if(getListener() != null){
                 getListener().onItemClicked(view, item);
@@ -51,8 +59,6 @@ public class GenreListAdapter extends BaseListAdapter<Genre, GenreListViewHolder
 
         @Override
         public void hasFocus(FragmentType type, Genre item, View view, int position) {
-            clearSelected();
-
             if(getListener() != null){
                 getListener().hasFocus(type, item, view, position);
             }

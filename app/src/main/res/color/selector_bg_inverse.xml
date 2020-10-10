@@ -7,6 +7,6 @@
         android:color="@color/bg_selected"
         android:state_focused="true"/>
     <item
-        android:color="@color/bg_selected"
+        android:color="@color/bg_selected_inverse"
         android:state_selected="true"/>
 </selector>
