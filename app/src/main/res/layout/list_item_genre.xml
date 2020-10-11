@@ -4,11 +4,13 @@
     android:background="@color/bg_default"
     android:backgroundTint="@color/selector_bg_inverse"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="@dimen/padding_general">
 
     <TextView
         android:id="@+id/text_title"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
         style="@style/Text.List"/>
 
 </LinearLayout>
