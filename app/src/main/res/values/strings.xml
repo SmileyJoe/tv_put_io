@@ -12,4 +12,6 @@
     <string name="text_show_watched">Show watched</string>
     <string name="text_sort_created">Newest first</string>
     <string name="text_sort_default">Sort alphabetically</string>
+    <string name="text_auth_instructions">Please visit {url} and enter the above code to login.</string>
+    <string name="text_auth_link_url">http://put.io/link</string>
 </resources>

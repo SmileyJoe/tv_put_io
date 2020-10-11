@@ -18,8 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="500dp"
-            android:layout_height="500dp"
+            android:layout_width="@dimen/logo_full_width"
+            android:layout_height="@dimen/logo_full_height"
             app:srcCompat="@drawable/ic_logo"/>
     </LinearLayout>
     <ProgressBar

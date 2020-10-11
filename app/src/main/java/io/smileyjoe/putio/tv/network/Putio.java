@@ -15,6 +15,23 @@ public class Putio {
     private static final String DOWNLOAD_URL = "/files/{id}/url";
     private static final String RESUME_TIME = "/files/{id}/start-from";
     private static final String CONVERT = "/files/{id}/mp4";
+    private static final String AUTH_GET_CODE = "/oauth2/oob/code";
+    private static final String AUTH_GET_TOKEN = "/oauth2/oob/code/{code}";
+
+    public static void getAuthCode(Context context, Response response){
+        String url = BASE + AUTH_GET_CODE + "?app_id=" + BuildConfig.PUTIO_CLIENT_ID;
+
+        Ion.with(context)
+                .load(url)
+                .asJsonObject()
+                .setCallback(response);
+    }
+
+    public static void getAuthToken(Context context, String code, Response response){
+        String url = BASE + AUTH_GET_TOKEN;
+        url = url.replace("{code}", code);
+        execute(context, url, response);
+    }
 
     public static void getFiles(Context context, Response response) {
         getFiles(context, NO_PARENT, response);
