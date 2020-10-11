@@ -33,7 +33,6 @@ public class VideoListFragment extends Fragment {
 
     private RecyclerView mRecycler;
     private LinearLayout mLayoutEmpty;
-    private ProgressBar mProgressLoading;
     private ZoomGridVideo mZoomGridVideo;
 
     private VideoListAdapter mVideoListAdapter;
@@ -51,7 +50,6 @@ public class VideoListFragment extends Fragment {
 
         mRecycler = view.findViewById(R.id.recycler);
         mLayoutEmpty = view.findViewById(R.id.layout_empty);
-        mProgressLoading = view.findViewById(R.id.progress_loading);
         mZoomGridVideo = view.findViewById(R.id.zoom_grid_video);
 
         return view;
@@ -143,12 +141,6 @@ public class VideoListFragment extends Fragment {
         return created;
     }
 
-    public void startLoading(){
-        mProgressLoading.setVisibility(View.VISIBLE);
-        mLayoutEmpty.setVisibility(View.GONE);
-        mRecycler.setVisibility(View.GONE);
-    }
-
     public void setVideos(ArrayList<Video> videos) {
         mAppliedGenreId = -1;
         mAppliedFilters = new ArrayList<>();
@@ -158,7 +150,7 @@ public class VideoListFragment extends Fragment {
 
     private void populate(){
         ArrayList<Video> videos = applyFilters();
-        mProgressLoading.setVisibility(View.GONE);
+
         if (videos == null || videos.isEmpty()) {
             mLayoutEmpty.setVisibility(View.VISIBLE);
             mRecycler.setVisibility(View.GONE);

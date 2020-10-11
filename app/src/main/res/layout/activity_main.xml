@@ -3,14 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ProgressBar
-        android:id="@+id/progress_loading"
-        style="@style/Icon.ProgressSpinner"/>
     <LinearLayout
         android:id="@+id/layout_lists"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -58,4 +54,15 @@
                 android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
         </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:colorBackground">
+        <ProgressBar
+            android:id="@+id/progress_loading"
+            android:layout_gravity="center"
+            style="@style/Icon.ProgressSpinner"/>
+    </FrameLayout>
 </RelativeLayout>

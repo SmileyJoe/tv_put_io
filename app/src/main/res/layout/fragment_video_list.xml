@@ -22,9 +22,6 @@
             android:layout_height="@dimen/logo_full_height"
             app:srcCompat="@drawable/ic_logo"/>
     </LinearLayout>
-    <ProgressBar
-        android:id="@+id/progress_loading"
-        style="@style/Icon.ProgressSpinner"/>
     <io.smileyjoe.putio.tv.ui.view.ZoomGridVideo
         android:id="@+id/zoom_grid_video"
         android:layout_width="wrap_content"

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -44,8 +45,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private GenreListFragment mFragmentGenreList;
     private FilterFragment mFragmentFilter;
 
-    private LinearLayout mLayoutLists;
-    private ProgressBar mProgressLoading;
+    private FrameLayout mFrameLoading;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -61,8 +61,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         setContentView(R.layout.activity_main);
 
         mTextTitle = findViewById(R.id.text_title);
-        mLayoutLists = findViewById(R.id.layout_lists);
-        mProgressLoading = findViewById(R.id.progress_loading);
+        mFrameLoading = findViewById(R.id.frame_loading);
 
         mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(VideoListAdapter.Type.LIST, FragmentType.FOLDER);
@@ -97,8 +96,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     @Override
     public void onVideosLoadStarted() {
-        mLayoutLists.setVisibility(View.GONE);
-        mProgressLoading.setVisibility(View.VISIBLE);
+        mFrameLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -169,8 +167,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             }
         }
 
-        mLayoutLists.setVisibility(View.VISIBLE);
-        mProgressLoading.setVisibility(View.GONE);
+        mFrameLoading.setVisibility(View.GONE);
     }
 
     private void handleGenres(ArrayList<Video> videos){
