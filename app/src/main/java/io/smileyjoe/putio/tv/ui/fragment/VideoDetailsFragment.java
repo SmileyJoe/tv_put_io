@@ -127,8 +127,8 @@ public class VideoDetailsFragment extends DetailsFragment {
             getConversionStatus();
             mPresenterSelector = new ClassPresenterSelector();
             mAdapter = new ArrayObjectAdapter(mPresenterSelector);
-            setAdapter(mAdapter);
             populate();
+            setAdapter(mAdapter);
             initializeBackground(mVideo);
             setOnItemViewClickedListener(new OnRelatedItemClick());
         } else {
