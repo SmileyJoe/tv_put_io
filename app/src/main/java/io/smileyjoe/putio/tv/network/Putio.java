@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.builder.Builders;
 
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.BuildConfig;
@@ -39,10 +40,10 @@ public class Putio {
     }
 
     public static void getFiles(Context context, long parentId, Response response) {
-        String url = BASE + FILES;
+        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true";
 
         if (parentId != NO_PARENT) {
-            url += "?parent_id=" + parentId + "&stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true";
+            url += "&parent_id=" + parentId;
         }
 
         execute(context, url, response);
@@ -63,10 +64,7 @@ public class Putio {
         JsonObject body = new JsonObject();
         body.addProperty("time", seconds);
 
-        Ion.with(context)
-                .load(url)
-                .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
-                .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
+        getBaseCall(context, url)
                 .setHeader("Authorization", "Bearer " + Application.getPutToken())
                 .setJsonObjectBody(body)
                 .asJsonObject()
@@ -83,11 +81,7 @@ public class Putio {
         String url = BASE + CONVERT;
         url = url.replace("{id}", Long.toString(id));
 
-        Ion.with(context)
-                .load(url)
-                .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
-                .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
-                .setHeader("Authorization", "Bearer " + Application.getPutToken())
+        getBaseCall(context, url)
                 .setJsonObjectBody(new JsonObject())
                 .asJsonObject()
                 .setCallback(response);
@@ -101,12 +95,16 @@ public class Putio {
         execute(context, url, response);
     }
 
-    private static void execute(Context context, String url, Response response) {
-        Ion.with(context)
+    private static Builders.Any.B getBaseCall(Context context, String url){
+        return Ion.with(context)
                 .load(url)
                 .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
                 .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
-                .setHeader("Authorization", "Bearer " + Application.getPutToken())
+                .setHeader("Authorization", "Bearer " + Application.getPutToken());
+    }
+
+    private static void execute(Context context, String url, Response response) {
+        getBaseCall(context, url)
                 .asJsonObject()
                 .setCallback(response);
     }
