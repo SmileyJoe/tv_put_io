@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
+import io.smileyjoe.putio.tv.util.VideoUtil;
 
 public class VideoListFragment extends Fragment {
 
@@ -207,6 +209,12 @@ public class VideoListFragment extends Fragment {
             if(includeVideo){
                 filtered.add(video);
             }
+        }
+
+        if(mAppliedFilters.contains(Filter.SORT_CREATED)) {
+            VideoUtil.sort(filtered, Filter.SORT_CREATED);
+        } else {
+            VideoUtil.sort(filtered);
         }
 
         return filtered;

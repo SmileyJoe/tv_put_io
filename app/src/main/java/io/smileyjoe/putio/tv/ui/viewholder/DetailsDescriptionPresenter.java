@@ -26,8 +26,10 @@ public class DetailsDescriptionPresenter extends AbstractDetailsDescriptionPrese
 
         if (video != null) {
             int colorText = ContextCompat.getColor(viewHolder.getTitle().getContext(), R.color.text);
+            String body = "Added on: " + video.getCreatedAtFormatted() + "\n\n" + video.getOverView();
+
             viewHolder.getTitle().setText(video.getTitle());
-            viewHolder.getBody().setText(video.getOverView());
+            viewHolder.getBody().setText(body);
 
             viewHolder.getTitle().setTextColor(colorText);
             viewHolder.getSubtitle().setTextColor(colorText);

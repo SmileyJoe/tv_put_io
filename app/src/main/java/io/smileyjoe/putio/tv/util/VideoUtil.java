@@ -2,19 +2,24 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 
 import io.smileyjoe.putio.tv.comparator.VideoComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.FileType;
+import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.torrent.Parse;
@@ -38,7 +43,15 @@ public class VideoUtil {
     }
 
     public static void sort(ArrayList<Video> videos) {
-        Collections.sort(videos, new VideoComparator());
+        sort(videos, VideoComparator.Order.ALPHABETICAL);
+    }
+
+    public static void sort(ArrayList<Video> videos, Filter filter) {
+        sort(videos, VideoComparator.Order.fromFilter(filter));
+    }
+
+    public static void sort(ArrayList<Video> videos, VideoComparator.Order order) {
+        Collections.sort(videos, new VideoComparator(order));
     }
 
     public static Video parseFromPut(Context context, JsonObject jsonObject) {
@@ -65,6 +78,8 @@ public class VideoUtil {
         video.setFileType(json.getString("file_type"));
         video.setStreamUri(json.getString("stream_url"), json.getString("mp4_stream_url"));
         video.setSize(json.getLong("size"));
+        video.setCreatedAt(json.getString("created_at"));
+        video.setUpdatedAt(json.getString("updated_at"));
 
         String firstAccessedAt = json.getString("first_accessed_at");
         video.setWatched(!TextUtils.isEmpty(firstAccessedAt));
@@ -72,6 +87,21 @@ public class VideoUtil {
         video = Parse.update(video);
 
         return video;
+    }
+
+    public static long getMillies(String putDate){
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date date = formatter.parse(putDate);
+            return date.getTime();
+        } catch (ParseException e){
+            return -1;
+        }
+    }
+
+    public static String getFormatted(long millies){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+        return formatter.format(new Date(millies));
     }
 
     public static ArrayList<Video> parseFromPut(Context context, JsonArray jsonArray) {

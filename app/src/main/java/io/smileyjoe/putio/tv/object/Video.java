@@ -17,7 +17,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
+
+import io.smileyjoe.putio.tv.util.VideoUtil;
 
 @Entity(tableName = "video")
 public class Video implements Parcelable{
@@ -69,6 +72,10 @@ public class Video implements Parcelable{
     private long mSize;
     @Ignore
     private String mGenresFormatted;
+    @Ignore
+    private long mCreatedAt;
+    @Ignore
+    private long mUpdatedAt;
 
     public Video() {
         mVideoType = VideoType.UNKNOWN;
@@ -202,6 +209,22 @@ public class Video implements Parcelable{
         mGenresFormatted = genresFormatted;
     }
 
+    public void setCreatedAt(long createdAt) {
+        mCreatedAt = createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        setCreatedAt(VideoUtil.getMillies(createdAt));
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        mUpdatedAt = updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        setUpdatedAt(VideoUtil.getMillies(updatedAt));
+    }
+
     public long getPutId() {
         return mPutId;
     }
@@ -318,6 +341,22 @@ public class Video implements Parcelable{
         return mGenresFormatted;
     }
 
+    public long getCreatedAt() {
+        return mCreatedAt;
+    }
+
+    public String getCreatedAtFormatted(){
+        return VideoUtil.getFormatted(mCreatedAt);
+    }
+
+    public long getUpdatedAt() {
+        return mUpdatedAt;
+    }
+
+    public String getUpdatedAtFormatted(){
+        return VideoUtil.getFormatted(mUpdatedAt);
+    }
+
     @Override
     public String toString() {
         return "Video{" +
@@ -342,6 +381,8 @@ public class Video implements Parcelable{
                 ", mGenreIds=" + mGenreIds +
                 ", mSize=" + mSize +
                 ", mGenresFormatted='" + mGenresFormatted + '\'' +
+                ", mCreatedAt=" + mCreatedAt +
+                ", mUpdatedAt=" + mUpdatedAt +
                 '}';
     }
 
@@ -386,6 +427,8 @@ public class Video implements Parcelable{
         dest.writeList(this.mGenreIds);
         dest.writeLong(this.mSize);
         dest.writeString(this.mGenresFormatted);
+        dest.writeLong(this.mCreatedAt);
+        dest.writeLong(this.mUpdatedAt);
     }
 
     protected Video(Parcel in) {
@@ -413,6 +456,8 @@ public class Video implements Parcelable{
         in.readList(this.mGenreIds, Integer.class.getClassLoader());
         this.mSize = in.readLong();
         this.mGenresFormatted = in.readString();
+        this.mCreatedAt = in.readLong();
+        this.mUpdatedAt = in.readLong();
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {
