@@ -13,7 +13,8 @@ import io.smileyjoe.putio.tv.object.Video;
 public class VideoListViewHolder extends BaseViewHolder<Video> {
 
     private TextView mTextTitle;
-    private TextView mTextDetails;
+    private TextView mTextSize;
+    private TextView mTextUpdatedAt;
     private ImageView mImageIcon;
 
     public VideoListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
@@ -21,14 +22,16 @@ public class VideoListViewHolder extends BaseViewHolder<Video> {
 
         mTextTitle = itemView.findViewById(R.id.text_title);
         mImageIcon = itemView.findViewById(R.id.image_icon);
-        mTextDetails = itemView.findViewById(R.id.text_details);
+        mTextSize = itemView.findViewById(R.id.text_size);
+        mTextUpdatedAt = itemView.findViewById(R.id.text_updated_at);
     }
 
     @Override
     public void bindView(Video video, int position) {
         super.bindView(video, position);
         mTextTitle.setText(video.getTitle());
-        mTextDetails.setText(video.getSizeFormatted(mTextDetails.getContext()));
+        mTextSize.setText(video.getSizeFormatted(mTextSize.getContext()));
         mImageIcon.setImageResource(R.drawable.ic_folder_24);
+        mTextUpdatedAt.setText(video.getUpdatedAtFormatted());
     }
 }

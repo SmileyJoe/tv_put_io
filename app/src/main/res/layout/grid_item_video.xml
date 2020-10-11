@@ -24,6 +24,7 @@
             android:src="@drawable/ic_watched_24"
             android:padding="@dimen/watched_ic_padding"
             style="@style/Icon"
+            android:tint="@color/selector_icon_inverse"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"/>
     </FrameLayout>
