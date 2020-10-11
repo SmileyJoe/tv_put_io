@@ -149,13 +149,13 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             }
         }
 
-        handleGenres(videosSorted);
-
-        mTextTitle.setText(current.getTitle());
-
         if((folders == null || folders.isEmpty()) && (videosSorted != null && videosSorted.size() == 1)){
             showDetails(videosSorted.get(0));
         } else {
+            mVideoLoader.addToHistory(current);
+            handleGenres(videosSorted);
+            mTextTitle.setText(current.getTitle());
+
             boolean folderFragmentIsVisible = populateFolders(folders);
 
             mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);

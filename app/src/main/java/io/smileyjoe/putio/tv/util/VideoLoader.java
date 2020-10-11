@@ -48,7 +48,6 @@ public class VideoLoader {
         if(videos == null){
             getFromPut(video.getPutId());
         } else {
-            mHistory.add(video);
             onVideosLoaded(video, videos);
         }
     }
@@ -82,6 +81,10 @@ public class VideoLoader {
         Putio.getFiles(mContext, putId, new OnPutResponse());
     }
 
+    public void addToHistory(Video video){
+        mHistory.add(video);
+    }
+
     private class OnPutResponse extends Response {
         @Override
         public void onSuccess(JsonObject result) {
@@ -93,6 +96,7 @@ public class VideoLoader {
     private class ProcessPutResponse extends AsyncTask<Void, Void, ArrayList<Video>> {
 
         private JsonObject mResult;
+        private Video mCurrent;
 
         public ProcessPutResponse(JsonObject result) {
             mResult = result;
@@ -105,11 +109,10 @@ public class VideoLoader {
 
             ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(mContext, filesJson));
             VideoUtil.sort(videos);
-            Video current = VideoUtil.parseFromPut(mContext, parentObject);
-            mHistory.add(current);
+            mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
 
             if(videos != null && videos.size() == 1){
-                Video currentDbVideo = AppDatabase.getInstance(mContext).videoDao().getByPutId(current.getPutId());
+                Video currentDbVideo = AppDatabase.getInstance(mContext).videoDao().getByPutId(mCurrent.getPutId());
 
                 if(currentDbVideo != null && currentDbVideo.isTmdbFound()){
                     Video updated = VideoUtil.updateFromDb(videos.get(0), currentDbVideo);
@@ -125,14 +128,14 @@ public class VideoLoader {
                 }
             }
 
-            mVideos.put(current.getPutId(), videos);
+            mVideos.put(mCurrent.getPutId(), videos);
 
             return videos;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Video> videos) {
-            onVideosLoaded(getCurrent(), videos);
+            onVideosLoaded(mCurrent, videos);
         }
     }
 
