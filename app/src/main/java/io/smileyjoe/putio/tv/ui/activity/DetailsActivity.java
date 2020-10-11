@@ -64,6 +64,7 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     @Override
     public void onRelatedClicked(Video video, ArrayList<Video> relatedVideos) {
         startActivity(getIntent(getBaseContext(), video, relatedVideos));
+        finish();
     }
 
     @Override
