@@ -96,6 +96,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mRepeatAction = new PlaybackControlsRow.RepeatAction(context);
 
         setSeekEnabled(true);
+        setControlsOverlayAutoHideEnabled(true);
     }
 
     @Override

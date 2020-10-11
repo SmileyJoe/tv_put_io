@@ -14,4 +14,5 @@
     <string name="text_sort_default">Sort alphabetically</string>
     <string name="text_auth_instructions">Please visit {url} and enter the above code to login.</string>
     <string name="text_auth_link_url">http://put.io/link</string>
+    <string name="text_ends_at">Ends at: %1$s</string>
 </resources>

@@ -43,6 +43,10 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.video.VideoListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
@@ -155,6 +159,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         mTrackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
         mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), mTrackSelector);
+        mPlayer.addVideoListener(new VideoListener());
         mPlayerAdapter = new LeanbackPlayerAdapter(getActivity(), mPlayer, UPDATE_DELAY);
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, null);
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
@@ -182,11 +187,16 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
 
         if(mInitialized) {
             mPlayerGlue.setTitle(video.getTitle());
-            mPlayerGlue.setSubtitle(video.getTitle());
 
             prepareMediaForPlaying(video.getStreamUri());
 
             mPlayerGlue.addPlayerCallback(new PlayerCallback());
+
+            if (mShouldResume) {
+                mPlayerGlue.seekTo(mVideo.getResumeTime() * 1000);
+                // we only want to do this after the first load //
+                mShouldResume = false;
+            }
 
             mPlayerGlue.play();
         }
@@ -205,17 +215,21 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         mPlayer.prepare(mediaSource);
     }
 
-    private class PlayerCallback extends PlaybackGlue.PlayerCallback {
+    private class VideoListener implements com.google.android.exoplayer2.video.VideoListener{
         @Override
-        public void onPreparedStateChanged(PlaybackGlue glue) {
-            super.onPreparedStateChanged(glue);
+        public void onRenderedFirstFrame() {
+            long current = mPlayerGlue.getCurrentPosition();
+            long total = mPlayerGlue.getDuration();
+            long left = total - current;
+            Date now = new Date();
+            now.setTime(now.getTime() + left);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 
-            if (mShouldResume) {
-                mPlayerGlue.seekTo(mVideo.getResumeTime() * 1000);
-                // we only want to do this after the first load //
-                mShouldResume = false;
-            }
+            mPlayerGlue.setSubtitle(getString(R.string.text_ends_at, dateFormat.format(now)));
         }
+    }
+
+    private class PlayerCallback extends PlaybackGlue.PlayerCallback {
 
         @Override
         public void onPlayStateChanged(PlaybackGlue glue) {
