@@ -23,7 +23,6 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
     public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_VIDEOS = "videos";
-    public static final String EXTRA_SELECTED_PUT_IO = "selected_put_id";
     public static final String EXTRA_SHOULD_RESUME = "should_resume";
 
     private PlaybackVideoFragment mPlaybackVideoFragment;
@@ -43,10 +42,10 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         return intent;
     }
 
-    public static Intent getIntent(Context context, ArrayList<Video> videos, long selectedPutId, boolean shouldResume) {
+    public static Intent getIntent(Context context, ArrayList<Video> videos, Video video, boolean shouldResume) {
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_VIDEOS, videos);
-        intent.putExtra(EXTRA_SELECTED_PUT_IO, selectedPutId);
+        intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
         return intent;
     }
@@ -105,20 +104,12 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         Bundle extras = getIntent().getExtras();
 
         if(extras != null){
-            if(extras.containsKey(EXTRA_VIDEO)){
-                play(getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO));
-            }
-
             if(extras.containsKey(EXTRA_VIDEOS)){
                 mVideos = extras.getParcelableArrayList(EXTRA_VIDEOS);
-                long selectedPutId = extras.getLong(EXTRA_SELECTED_PUT_IO);
+            }
 
-                for(Video video:mVideos){
-                    if(video.getPutId() == selectedPutId){
-                        play(video);
-                        break;
-                    }
-                }
+            if(extras.containsKey(EXTRA_VIDEO)){
+                play(getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO));
             }
         }
     }

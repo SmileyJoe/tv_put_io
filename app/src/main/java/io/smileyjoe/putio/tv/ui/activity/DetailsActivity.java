@@ -74,7 +74,7 @@ public class DetailsActivity extends Activity implements VideoDetailsFragment.Li
     private void play(Video video, ArrayList<Video> videos, boolean shouldResume){
         if(video.getVideoType() == VideoType.EPISODE){
             if(videos != null && !videos.isEmpty()) {
-                startActivity(PlaybackActivity.getIntent(getBaseContext(), videos, video.getPutId(), shouldResume));
+                startActivity(PlaybackActivity.getIntent(getBaseContext(), videos, video, shouldResume));
                 return;
             }
         }

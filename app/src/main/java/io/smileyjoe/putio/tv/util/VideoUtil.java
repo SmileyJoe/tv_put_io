@@ -80,6 +80,7 @@ public class VideoUtil {
         video.setSize(json.getLong("size"));
         video.setCreatedAt(json.getString("created_at"));
         video.setUpdatedAt(json.getString("updated_at"));
+        video.setResumeTime(json.getLong("start_from"));
 
         String firstAccessedAt = json.getString("first_accessed_at");
         video.setWatched(!TextUtils.isEmpty(firstAccessedAt));
