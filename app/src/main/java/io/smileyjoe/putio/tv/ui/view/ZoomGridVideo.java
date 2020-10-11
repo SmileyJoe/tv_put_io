@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -102,7 +103,15 @@ public class ZoomGridVideo extends RelativeLayout{
             mSizeSet = true;
         }
 
-        mImagePoster.setImageDrawable(((ImageView) view.findViewById(R.id.image_poster)).getDrawable());
+        Drawable currentPoster = ((ImageView) view.findViewById(R.id.image_poster)).getDrawable();
+
+        if(currentPoster == null){
+            Glide.with(getContext())
+                    .load(video.getPosterAsUri())
+                    .into(mImagePoster);
+        } else {
+            mImagePoster.setImageDrawable(currentPoster);
+        }
 
         mTextTitle.setText(video.getTitle());
         mTextTitle.setTypeface(null, Typeface.BOLD);
