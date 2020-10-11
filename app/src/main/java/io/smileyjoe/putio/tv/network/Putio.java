@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 
+import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.BuildConfig;
 
 public class Putio {
@@ -66,7 +67,7 @@ public class Putio {
                 .load(url)
                 .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
                 .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
-                .setHeader("Authorization", "Bearer " + BuildConfig.PUTIO_AUTH_TOKEN)
+                .setHeader("Authorization", "Bearer " + Application.getPutToken())
                 .setJsonObjectBody(body)
                 .asJsonObject()
                 .setCallback(response);
@@ -86,7 +87,7 @@ public class Putio {
                 .load(url)
                 .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
                 .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
-                .setHeader("Authorization", "Bearer " + BuildConfig.PUTIO_AUTH_TOKEN)
+                .setHeader("Authorization", "Bearer " + Application.getPutToken())
                 .setJsonObjectBody(new JsonObject())
                 .asJsonObject()
                 .setCallback(response);
@@ -105,7 +106,7 @@ public class Putio {
                 .load(url)
                 .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
                 .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
-                .setHeader("Authorization", "Bearer " + BuildConfig.PUTIO_AUTH_TOKEN)
+                .setHeader("Authorization", "Bearer " + Application.getPutToken())
                 .asJsonObject()
                 .setCallback(response);
     }

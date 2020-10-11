@@ -1,5 +1,7 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -47,6 +49,11 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
+
+    public static Intent getIntent(Context context){
+        Intent intent = new Intent(context, MainActivity.class);
+        return intent;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
