@@ -52,7 +52,7 @@ public class RelatedVideoCardPresenter extends Presenter {
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         sDefaultBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.bg_default);
         sSelectedBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.bg_selected);
-        sSelectedTextColor = ContextCompat.getColor(parent.getContext(), R.color.text_selected);
+        sSelectedTextColor = ContextCompat.getColor(parent.getContext(), R.color.text_selected_inverse);
         sDefaultTextColor = ContextCompat.getColor(parent.getContext(), R.color.text);
 
         ImageCardView cardView =
