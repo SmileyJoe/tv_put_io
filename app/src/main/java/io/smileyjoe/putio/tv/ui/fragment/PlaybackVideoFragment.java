@@ -236,7 +236,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         public void onPlayCompleted(PlaybackGlue glue) {
             super.onPlayCompleted(glue);
 
-            if(mListener != null){
+            if(mPlayerGlue.getDuration() < 0){
+                mPlayer.retry();
+            } else if(mListener != null){
                 mListener.onPlayComplete(mVideo);
             }
         }
