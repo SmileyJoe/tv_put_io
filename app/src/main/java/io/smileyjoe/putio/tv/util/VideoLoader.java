@@ -22,7 +22,7 @@ public class VideoLoader {
 
     public interface Listener{
         void onVideosLoadStarted();
-        void onVideosLoadFinished(Video current, ArrayList<Video> videos);
+        void onVideosLoadFinished(Video current, ArrayList<Video> videos, boolean shouldAddToHistory);
         void update(Video video);
     }
 
@@ -48,7 +48,7 @@ public class VideoLoader {
         if(videos == null){
             getFromPut(video.getPutId());
         } else {
-            onVideosLoaded(video, videos);
+            onVideosLoaded(video, videos, true);
         }
     }
 
@@ -57,7 +57,7 @@ public class VideoLoader {
             Video current = getCurrent();
             mHistory.remove(current);
             current = getCurrent();
-            onVideosLoaded(current, getVideos(current.getPutId()));
+            onVideosLoaded(current, getVideos(current.getPutId()), false);
             return true;
         }
 
@@ -72,8 +72,8 @@ public class VideoLoader {
         return mVideos.get(putId);
     }
 
-    private void onVideosLoaded(Video current, ArrayList<Video> videos){
-        mListener.onVideosLoadFinished(current, videos);
+    private void onVideosLoaded(Video current, ArrayList<Video> videos, boolean shouldAddToHistory){
+        mListener.onVideosLoadFinished(current, videos, shouldAddToHistory);
     }
 
     private void getFromPut(long putId){
@@ -135,7 +135,7 @@ public class VideoLoader {
 
         @Override
         protected void onPostExecute(ArrayList<Video> videos) {
-            onVideosLoaded(mCurrent, videos);
+            onVideosLoaded(mCurrent, videos, true);
         }
     }
 

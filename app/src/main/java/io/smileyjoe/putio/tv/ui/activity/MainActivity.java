@@ -100,8 +100,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     @Override
-    public void onVideosLoadFinished(Video current, ArrayList<Video> videos) {
-        populate(current, videos);
+    public void onVideosLoadFinished(Video current, ArrayList<Video> videos, boolean shouldAddToHistory) {
+        populate(current, videos, shouldAddToHistory);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         startActivity(DetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
     }
 
-    private void populate(Video current, ArrayList<Video> videos) {
+    private void populate(Video current, ArrayList<Video> videos, boolean shouldAddToHistory) {
         ArrayList<Video> folders = new ArrayList<>();
         ArrayList<Video> videosSorted = new ArrayList<>();
 
@@ -150,7 +150,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         if((folders == null || folders.isEmpty()) && (videosSorted != null && videosSorted.size() == 1)){
             showDetails(videosSorted.get(0));
         } else {
-            mVideoLoader.addToHistory(current);
+            if(shouldAddToHistory) {
+                mVideoLoader.addToHistory(current);
+            }
             handleGenres(videosSorted);
             mTextTitle.setText(current.getTitle());
 
