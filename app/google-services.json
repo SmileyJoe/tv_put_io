@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "996521692858",
+    "firebase_url": "https://putio-tv.firebaseio.com",
+    "project_id": "putio-tv",
+    "storage_bucket": "putio-tv.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996521692858:android:81137e0dd8811d7584fc83",
+        "android_client_info": {
+          "package_name": "io.smileyjoe.putio.tv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996521692858-upl9jvncvaaonivh57jjbcb5r7crreui.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIDnk819as-kLwdNqsbBgBVaZLNLV8BmM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996521692858-upl9jvncvaaonivh57jjbcb5r7crreui.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
