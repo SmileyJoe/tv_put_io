@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.text.format.Formatter;
 
 import androidx.room.ColumnInfo;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
+import io.smileyjoe.putio.tv.util.TimeUtil;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 @Entity(tableName = "video")
@@ -355,6 +357,10 @@ public class Video implements Parcelable{
 
     public String getUpdatedAtFormatted(){
         return VideoUtil.getFormatted(mUpdatedAt);
+    }
+
+    public String getUpdatedAgo(Context context){
+        return TimeUtil.toRelative(context, mUpdatedAt);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +33,6 @@ public class VideoListViewHolder extends BaseViewHolder<Video> {
         mTextTitle.setText(video.getTitle());
         mTextSize.setText(video.getSizeFormatted(mTextSize.getContext()));
         mImageIcon.setImageResource(R.drawable.ic_folder_24);
-        mTextUpdatedAt.setText(video.getUpdatedAtFormatted());
+        mTextUpdatedAt.setText(video.getUpdatedAgo(mTextUpdatedAt.getContext()));
     }
 }

@@ -23,7 +23,7 @@
         android:duplicateParentState="true">
         <TextView
             android:id="@+id/text_title"
-            style="@style/Text.List"/>
+            style="@style/Text.List.Title"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

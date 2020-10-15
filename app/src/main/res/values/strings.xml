@@ -15,4 +15,35 @@
     <string name="text_auth_instructions">Please visit {url} and enter the above code to login.</string>
     <string name="text_auth_link_url">http://put.io/link</string>
     <string name="text_ends_at">Ends at: %1$s</string>
+
+    <string name="text_time_ago">%1$s ago</string>
+    <string name="text_moments_ago">Moments ago</string>
+    <plurals name="plural_second">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+    <plurals name="plural_minute">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="plural_hour">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="plural_day">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="plural_week">
+        <item quantity="one">%d week</item>
+        <item quantity="other">%d weeks</item>
+    </plurals>
+    <plurals name="plural_month">
+        <item quantity="one">%d month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
+    <plurals name="plural_year">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
 </resources>
