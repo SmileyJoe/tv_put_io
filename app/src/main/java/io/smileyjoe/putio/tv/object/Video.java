@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
+import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.util.TimeUtil;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 @Entity(tableName = "video")
-public class Video implements Parcelable{
+public class Video implements Folder, Parcelable{
 
     // ids
     @PrimaryKey
@@ -243,6 +245,7 @@ public class Video implements Parcelable{
         return mFileType;
     }
 
+    @Override
     public String getTitle() {
         if(mVideoType == VideoType.EPISODE){
             return mTitle + " S" + String.format("%02d", getSeason()) + "E" + String.format("%02d", getEpisode());
@@ -369,6 +372,21 @@ public class Video implements Parcelable{
         } else {
             return null;
         }
+    }
+
+    @Override
+    public int getIconResId() {
+        return R.drawable.ic_folder_24;
+    }
+
+    @Override
+    public String getSubTextOne(Context context) {
+        return getSizeFormatted(context);
+    }
+
+    @Override
+    public String getSubTextTwo(Context context) {
+        return getUpdatedAgo(context);
     }
 
     @Override

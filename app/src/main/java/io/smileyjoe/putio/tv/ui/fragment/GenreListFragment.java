@@ -9,12 +9,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +22,6 @@ import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.ui.adapter.GenreListAdapter;
-import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 
 public class GenreListFragment extends Fragment {
 

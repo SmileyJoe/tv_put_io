@@ -23,7 +23,7 @@
                 android:id="@+id/fragment_folder_list"
                 android:layout_width="@dimen/home_fragment_width_expanded"
                 android:layout_height="match_parent"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
+                android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
         </LinearLayout>
 
         <LinearLayout
@@ -56,7 +56,7 @@
                 android:id="@+id/fragment_video_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.VideoListFragment"/>
+                android:name="io.smileyjoe.putio.tv.ui.fragment.VideoGridFragment"/>
         </LinearLayout>
     </LinearLayout>
 

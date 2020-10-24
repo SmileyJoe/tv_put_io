@@ -21,17 +21,18 @@ import java.util.Set;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
+import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
+import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
-import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
+import io.smileyjoe.putio.tv.ui.fragment.VideoGridFragment;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
 /*
@@ -41,8 +42,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     private TextView mTextTitle;
 
-    private VideoListFragment mFragmentFolderList;
-    private VideoListFragment mFragmentVideoList;
+    private FolderListFragment mFragmentFolderList;
+    private VideoGridFragment mFragmentVideoList;
     private GenreListFragment mFragmentGenreList;
     private ToggleFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
@@ -65,10 +66,10 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mTextTitle = findViewById(R.id.text_title);
         mFrameLoading = findViewById(R.id.frame_loading);
 
-        mFragmentFolderList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
-        mFragmentFolderList.setType(VideoListAdapter.Type.LIST, FragmentType.FOLDER);
-        mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
-        mFragmentVideoList.setType(VideoListAdapter.Type.GRID, FragmentType.VIDEO);
+        mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
+        mFragmentFolderList.setType(FragmentType.FOLDER);
+        mFragmentVideoList = (VideoGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
+        mFragmentVideoList.setType(FragmentType.VIDEO);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
         mFragmentFilter = (ToggleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
         mFragmentFilter.setListener(new FilterListener());
@@ -136,7 +137,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     private void populate(Video current, ArrayList<Video> videos, boolean shouldAddToHistory) {
-        ArrayList<Video> folders = new ArrayList<>();
+        ArrayList<Folder> folders = new ArrayList<>();
         ArrayList<Video> videosSorted = new ArrayList<>();
 
         for (Video video : videos) {
@@ -200,15 +201,15 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
     }
 
-    private boolean populateFolders(ArrayList<Video> videos) {
+    private boolean populateFolders(ArrayList<Folder> folders) {
         boolean fragmentIsVisible;
 
-        if (videos == null || videos.isEmpty()) {
+        if (folders == null || folders.isEmpty()) {
             hideFragment(mFragmentFolderList);
             fragmentIsVisible = false;
         } else {
             showFragment(mFragmentFolderList);
-            mFragmentFolderList.setVideos(videos);
+            mFragmentFolderList.setFolders(folders);
             fragmentIsVisible = true;
         }
 
@@ -292,23 +293,23 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
     }
 
-    private class FolderListListener implements VideoListFragment.Listener{
+    private class FolderListListener implements FolderListFragment.Listener{
         @Override
-        public void onItemClicked(View view, Video video) {
-            switch (video.getFileType()){
-                case FOLDER:
-                    mVideoLoader.load(video);
+        public void onItemClicked(View view, Folder folder) {
+//            switch (video.getFileType()){
+//                case FOLDER:
+                    mVideoLoader.load((Video) folder);
                     mFragmentGenreList.clearSelected();
-                    break;
-                case GROUP:
+//                    break;
+//                case GROUP:
                     // todo: Clicking a group //
-                    Log.d("GroupThings", "Group clicked: " + video);
-                    break;
-            }
+//                    Log.d("GroupThings", "Group clicked: " + video);
+//                    break;
+//            }
         }
 
         @Override
-        public void hasFocus(FragmentType fragmentType, Video item, View view, int position) {
+        public void hasFocus(FragmentType fragmentType, Folder item, View view, int position) {
             if(mVideoTypeFocus != fragmentType){
                 mVideoTypeFocus = fragmentType;
 
@@ -317,15 +318,12 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
     }
 
-    private class VideoListListener implements VideoListFragment.Listener{
+    private class VideoListListener implements VideoGridFragment.Listener{
         @Override
         public void onItemClicked(View view, Video video) {
             switch (video.getFileType()){
                 case VIDEO:
                     showDetails(video);
-                    break;
-                case FOLDER:
-                    mVideoLoader.load(video);
                     break;
             }
         }

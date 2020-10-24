@@ -10,18 +10,19 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
-public class VideoListViewHolder extends BaseViewHolder<Video> {
+public class FolderListViewHolder extends BaseViewHolder<Folder> {
 
     private TextView mTextTitle;
     private TextView mTextSize;
     private TextView mTextUpdatedAt;
     private ImageView mImageIcon;
 
-    public VideoListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
+    public FolderListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);
 
         mTextTitle = itemView.findViewById(R.id.text_title);
@@ -31,31 +32,14 @@ public class VideoListViewHolder extends BaseViewHolder<Video> {
     }
 
     @Override
-    public void bindView(Video video, int position) {
-        super.bindView(video, position);
+    public void bindView(Folder folder, int position) {
+        super.bindView(folder, position);
 
-        @DrawableRes int iconResId;
+        mTextTitle.setText(folder.getTitle());
+        mImageIcon.setImageResource(folder.getIconResId());
 
-        switch (video.getFileType()){
-            case GROUP:
-                if(video.getPutId() == Group.DEFAULT_ID_MOVIES){
-                    iconResId = R.drawable.ic_movie_24;
-                } else if (video.getPutId() == Group.DEFAULT_ID_SERIES){
-                    iconResId = R.drawable.ic_series_24;
-                } else {
-                    iconResId = R.drawable.ic_folder_24;
-                }
-                break;
-            default:
-                iconResId = R.drawable.ic_folder_24;
-                break;
-        }
-
-        mTextTitle.setText(video.getTitle());
-        mImageIcon.setImageResource(iconResId);
-
-        setText(mTextSize, video.getSizeFormatted(mTextSize.getContext()));
-        setText(mTextUpdatedAt, video.getUpdatedAgo(mTextUpdatedAt.getContext()));
+        setText(mTextSize, folder.getSubTextOne(mTextSize.getContext()));
+        setText(mTextUpdatedAt, folder.getSubTextTwo(mTextUpdatedAt.getContext()));
     }
 
     private void setText(TextView textView, String text){
