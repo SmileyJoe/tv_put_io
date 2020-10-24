@@ -17,6 +17,10 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -77,6 +81,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
     private boolean mShouldResume;
     private boolean mInitialized = false;
     private Listener mListener;
+    private BroadcastTick mBroadcastTick;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,6 +105,10 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         if (Util.SDK_INT > 23) {
             initializePlayer();
         }
+
+        mBroadcastTick = new BroadcastTick();
+
+        getActivity().registerReceiver(mBroadcastTick, new IntentFilter(Intent.ACTION_TIME_TICK));
     }
 
     @Override
@@ -149,6 +158,10 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         super.onStop();
         if (Util.SDK_INT > 23) {
             releasePlayer();
+        }
+
+        if (mBroadcastTick != null) {
+            getActivity().unregisterReceiver(mBroadcastTick);
         }
     }
 
@@ -215,17 +228,32 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         mPlayer.prepare(mediaSource);
     }
 
+    private void populateEndTime(){
+        long current = mPlayerGlue.getCurrentPosition();
+        long total = mPlayerGlue.getDuration();
+        long left = total - current;
+        Date now = new Date();
+        now.setTime(now.getTime() + left);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+
+        mPlayerGlue.setSubtitle(getString(R.string.text_ends_at, dateFormat.format(now)));
+    }
+
+    private class BroadcastTick extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().compareTo(Intent.ACTION_TIME_TICK) == 0) {
+                if(mPlayerGlue != null && !mPlayerGlue.isPlaying()){
+                    populateEndTime();
+                }
+            }
+        }
+    }
+
     private class VideoListener implements com.google.android.exoplayer2.video.VideoListener{
         @Override
         public void onRenderedFirstFrame() {
-            long current = mPlayerGlue.getCurrentPosition();
-            long total = mPlayerGlue.getDuration();
-            long left = total - current;
-            Date now = new Date();
-            now.setTime(now.getTime() + left);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-
-            mPlayerGlue.setSubtitle(getString(R.string.text_ends_at, dateFormat.format(now)));
+            populateEndTime();
         }
     }
 
@@ -238,6 +266,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
             if (getSurfaceView() != null) {
                 if (mPlayerGlue.isPlaying()) {
                     getSurfaceView().setKeepScreenOn(true);
+
+                    populateEndTime();
                 } else {
                     getSurfaceView().setKeepScreenOn(false);
 

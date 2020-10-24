@@ -28,7 +28,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     private PlaybackVideoFragment mPlaybackVideoFragment;
     private ArrayList<Video> mVideos;
     private TextView mTextTime;
-    private BroadcastReceiver mBroadcastReceiver;
+    private BroadcastTick mBroadcastTick;
     private final SimpleDateFormat mFormatWatchTime = new SimpleDateFormat("HH:mm");
 
     public static Intent getIntent(Context context, Video video) {
@@ -73,22 +73,18 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     @Override
     public void onStart() {
         super.onStart();
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context ctx, Intent intent) {
-                if (intent.getAction().compareTo(Intent.ACTION_TIME_TICK) == 0)
-                    mTextTime.setText(mFormatWatchTime.format(new Date()));
-            }
-        };
+        mBroadcastTick = new BroadcastTick();
 
-        registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        registerReceiver(mBroadcastTick, new IntentFilter(Intent.ACTION_TIME_TICK));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mBroadcastReceiver != null)
-            unregisterReceiver(mBroadcastReceiver);
+
+        if (mBroadcastTick != null) {
+            unregisterReceiver(mBroadcastTick);
+        }
     }
 
     @Override
@@ -132,5 +128,14 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         }
 
         finish();
+    }
+
+    private class BroadcastTick extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().compareTo(Intent.ACTION_TIME_TICK) == 0) {
+                mTextTime.setText(mFormatWatchTime.format(new Date()));
+            }
+        }
     }
 }
