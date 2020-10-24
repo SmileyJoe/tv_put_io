@@ -4,17 +4,10 @@
     android:layout_height="match_parent"
     android:elevation="@dimen/elevation_home_fragment_floating">
 
-    <TextView
-        android:id="@+id/text_title"
-        style="@style/Text.Title.Page"
-        android:visibility="gone"
-        android:padding="@dimen/padding_general"
-        android:layout_alignParentTop="true"
-        android:text="@string/text_genres"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:requiresFadingEdge="horizontal"
         android:divider="@null" />
 </LinearLayout>
