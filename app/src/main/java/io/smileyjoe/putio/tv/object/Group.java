@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.View;
 
+import androidx.annotation.DrawableRes;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -16,8 +17,11 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.interfaces.FilterItem;
+
 @Entity(tableName = "group")
-public class Group implements Parcelable {
+public class Group implements FilterItem, Parcelable {
 
     public static int DEFAULT_ID_MOVIES = 1;
     public static int DEFAULT_ID_SERIES = 2;
@@ -51,6 +55,26 @@ public class Group implements Parcelable {
         return mPutIdsJson;
     }
 
+    @Override
+    public int getIconResId() {
+        @DrawableRes int iconResId;
+
+        if(getId() == Group.DEFAULT_ID_MOVIES){
+            iconResId = R.drawable.ic_movie_24;
+        } else if (getId() == Group.DEFAULT_ID_SERIES){
+            iconResId = R.drawable.ic_series_24;
+        } else {
+            iconResId = R.drawable.ic_folder_24;
+        }
+
+        return iconResId;
+    }
+
+    @Override
+    public boolean isDefaultSelected() {
+        return false;
+    }
+
     public void setId(int id) {
         mId = id;
     }
@@ -62,12 +86,26 @@ public class Group implements Parcelable {
     public void setPutIds(ArrayList<Long> putIds) {
         mPutIds = putIds;
 
-        if(TextUtils.isEmpty(mPutIdsJson)){
-            Gson gson = new Gson();
-            Type type = new TypeToken<ArrayList<Integer>>() {
-            }.getType();
-            setPutIdsJson(gson.toJson(putIds, type));
+        if(TextUtils.isEmpty(mPutIdsJson)) {
+            setPutIdsJson();
         }
+    }
+
+    public void addPutId(Long putId){
+        if(mPutIds == null){
+            mPutIds = new ArrayList<>();
+        }
+
+        mPutIds.add(putId);
+
+        setPutIdsJson();
+    }
+
+    private void setPutIdsJson(){
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Integer>>() {
+        }.getType();
+        setPutIdsJson(gson.toJson(mPutIds, type));
     }
 
     public void setPutIdsJson(String putIdsJson) {

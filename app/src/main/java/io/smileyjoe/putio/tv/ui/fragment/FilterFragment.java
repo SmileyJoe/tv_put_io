@@ -13,18 +13,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.interfaces.FilterItem;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 
-public class FilterFragment extends Fragment {
+public class FilterFragment<T extends FilterItem> extends Fragment {
 
-    public interface Listener extends HomeFragmentListener<Filter>{
-        void onItemClicked(View view, Filter filter, boolean isSelected);
+    public interface Listener<T> extends HomeFragmentListener<T>{
+        void onItemClicked(View view, T filter, boolean isSelected);
     }
 
     private LinearLayout mLayoutRoot;
-    private Listener mListener;
+    private Listener<T> mListener;
 
     @Nullable
     @Override
@@ -37,17 +38,13 @@ public class FilterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        for(Filter filter:Filter.values()){
-            addOption(filter);
-        }
     }
 
     public void setListener(Listener listener) {
         mListener = listener;
     }
 
-    private void addOption(Filter filter){
+    protected void addOption(T filter){
         View view = LayoutInflater.from(getContext()).inflate(R.layout.item_filter, null);
         OnFilterListener listener = new OnFilterListener(filter);
 
@@ -68,9 +65,9 @@ public class FilterFragment extends Fragment {
     }
 
     private class OnFilterListener implements View.OnClickListener, View.OnFocusChangeListener {
-        private Filter mFilter;
+        private T mFilter;
 
-        public OnFilterListener(Filter filter) {
+        public OnFilterListener(T filter) {
             mFilter = filter;
         }
 

@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,14 +23,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
+import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
+import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
@@ -44,6 +48,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private VideoListFragment mFragmentVideoList;
     private GenreListFragment mFragmentGenreList;
     private FilterFragment mFragmentFilter;
+    private GroupFragment mFragmentGroup;
 
     private FrameLayout mFrameLoading;
 
@@ -70,6 +75,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
         mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
         mFragmentFilter.setListener(new FilterListener());
+        mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
+        mFragmentGroup.setListener(new GroupListener());
 
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
@@ -161,11 +168,14 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
             mFragmentVideoList.setVideos(videosSorted);
             mFragmentFilter.reset();
+            mFragmentGroup.reset();
 
             if(videosSorted != null && !videosSorted.isEmpty()){
                 showFragment(mFragmentFilter);
+                showFragment(mFragmentGroup);
             } else {
                 hideFragment(mFragmentFilter);
+                hideFragment(mFragmentGroup);
             }
         }
 
@@ -221,7 +231,36 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList.setFullScreen(true);
     }
 
-    private class FilterListener implements FilterFragment.Listener{
+    private class GroupListener implements FilterFragment.Listener<Group>{
+        @Override
+        public void onItemClicked(View view, Group group, boolean isSelected) {
+            UpdateGroup task = new UpdateGroup(group);
+            task.execute();
+        }
+
+        @Override
+        public void hasFocus(FragmentType type, Group item, View view, int position) {
+            mFragmentVideoList.hideDetails();
+        }
+
+        private class UpdateGroup extends AsyncTask<Void, Void, Void>{
+            private Group mGroup;
+
+            public UpdateGroup(Group group) {
+                mGroup = group;
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                mGroup.addPutId(mVideoLoader.getCurrent().getPutId());
+                Log.d("GroupThings", "Saving: " + mGroup);
+                AppDatabase.getInstance(getBaseContext()).groupDao().insert(mGroup);
+                return null;
+            }
+        }
+    }
+
+    private class FilterListener implements FilterFragment.Listener<Filter>{
         @Override
         public void onItemClicked(View view, Filter filter, boolean isSelected) {
             mFragmentVideoList.filter(filter, isSelected);

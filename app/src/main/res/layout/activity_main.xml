@@ -39,7 +39,12 @@
                     android:id="@+id/fragment_filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:name="io.smileyjoe.putio.tv.ui.fragment.FilterFragment"/>
+                    android:name="io.smileyjoe.putio.tv.ui.fragment.FilterTwoFragment"/>
+                <fragment
+                    android:id="@+id/fragment_groups"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:name="io.smileyjoe.putio.tv.ui.fragment.GroupFragment"/>
                 <fragment
                     android:id="@+id/fragment_genre_list"
                     android:layout_width="match_parent"
