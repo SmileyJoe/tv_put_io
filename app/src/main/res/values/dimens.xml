@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="padding_general">10dp</dimen>
+    <dimen name="padding_pill_horizontal">@dimen/padding_general</dimen>
+    <dimen name="padding_pill_vertical">5dp</dimen>
     <dimen name="file_grid_col_width">200dp</dimen>
     <dimen name="file_grid_col_height">200dp</dimen>
     <dimen name="file_grid_poster_padding">50dp</dimen>

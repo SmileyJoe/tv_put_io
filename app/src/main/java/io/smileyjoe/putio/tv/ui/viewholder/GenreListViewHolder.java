@@ -8,21 +8,22 @@ import androidx.annotation.NonNull;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
+import io.smileyjoe.putio.tv.ui.view.PillView;
 
 public class GenreListViewHolder extends BaseViewHolder<Genre> {
 
-    private TextView mTextTitle;
+    private PillView mPillTitle;
 
     public GenreListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);
 
-        mTextTitle = itemView.findViewById(R.id.text_title);
+        mPillTitle = itemView.findViewById(R.id.text_title);
     }
 
     @Override
     public void bindView(Genre item, int position) {
         super.bindView(item, position);
 
-        mTextTitle.setText(item.getTitle());
+        mPillTitle.setText(item.getTitle());
     }
 }

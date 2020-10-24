@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.object;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -46,8 +47,14 @@ public class Genre implements Parcelable {
         Genre genre = new Genre();
         JsonUtil json = new JsonUtil(jsonObject);
 
+        String name = json.getString("name");
+
+        if(!TextUtils.isEmpty(name)){
+            name = name.trim();
+        }
+
         genre.setId(json.getInt("id"));
-        genre.setTitle(json.getString("name"));
+        genre.setTitle(name);
 
         return genre;
     }
