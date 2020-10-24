@@ -2,8 +2,8 @@ package io.smileyjoe.putio.tv.interfaces;
 
 import androidx.annotation.DrawableRes;
 
-public interface FilterItem {
+public interface ToggleItem {
 
     @DrawableRes int getIconResId();
-    boolean isDefaultSelected();
+    boolean isSelected();
 }

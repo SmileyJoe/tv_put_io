@@ -4,9 +4,9 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.interfaces.FilterItem;
+import io.smileyjoe.putio.tv.interfaces.ToggleItem;
 
-public enum Filter implements FilterItem {
+public enum Filter implements ToggleItem {
 
     SHOW_WATCHED(R.drawable.ic_hide_watched_24, R.string.text_hide_watched, R.string.text_show_watched, false),
     SORT_CREATED(R.drawable.ic_sort_by_created_24, R.string.text_sort_created, R.string.text_sort_default, false);
@@ -37,7 +37,7 @@ public enum Filter implements FilterItem {
     }
 
     @Override
-    public boolean isDefaultSelected() {
+    public boolean isSelected() {
         return mDefaultSelected;
     }
 }

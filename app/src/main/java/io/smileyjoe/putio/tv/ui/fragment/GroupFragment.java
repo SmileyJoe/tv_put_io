@@ -10,10 +10,9 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.Group;
 
-public class GroupFragment extends FilterFragment<Group> {
+public class GroupFragment extends ToggleFragment<Group> {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

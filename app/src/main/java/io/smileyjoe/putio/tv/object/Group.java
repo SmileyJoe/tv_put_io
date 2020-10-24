@@ -3,7 +3,6 @@ package io.smileyjoe.putio.tv.object;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.view.View;
 
 import androidx.annotation.DrawableRes;
 import androidx.room.ColumnInfo;
@@ -18,10 +17,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.interfaces.FilterItem;
+import io.smileyjoe.putio.tv.interfaces.ToggleItem;
 
 @Entity(tableName = "group")
-public class Group implements FilterItem, Parcelable {
+public class Group implements ToggleItem, Parcelable {
 
     public static int DEFAULT_ID_MOVIES = 1;
     public static int DEFAULT_ID_SERIES = 2;
@@ -71,7 +70,7 @@ public class Group implements FilterItem, Parcelable {
     }
 
     @Override
-    public boolean isDefaultSelected() {
+    public boolean isSelected() {
         return false;
     }
 

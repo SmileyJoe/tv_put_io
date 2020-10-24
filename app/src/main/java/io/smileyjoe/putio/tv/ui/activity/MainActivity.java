@@ -8,9 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
@@ -31,7 +28,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
-import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
+import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideoListFragment;
@@ -47,7 +44,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private VideoListFragment mFragmentFolderList;
     private VideoListFragment mFragmentVideoList;
     private GenreListFragment mFragmentGenreList;
-    private FilterFragment mFragmentFilter;
+    private ToggleFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
 
     private FrameLayout mFrameLoading;
@@ -73,7 +70,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList = (VideoListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(VideoListAdapter.Type.GRID, FragmentType.VIDEO);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
-        mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
+        mFragmentFilter = (ToggleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
         mFragmentFilter.setListener(new FilterListener());
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
         mFragmentGroup.setListener(new GroupListener());
@@ -231,7 +228,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList.setFullScreen(true);
     }
 
-    private class GroupListener implements FilterFragment.Listener<Group>{
+    private class GroupListener implements ToggleFragment.Listener<Group>{
         @Override
         public void onItemClicked(View view, Group group, boolean isSelected) {
             UpdateGroup task = new UpdateGroup(group);
@@ -260,7 +257,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
     }
 
-    private class FilterListener implements FilterFragment.Listener<Filter>{
+    private class FilterListener implements ToggleFragment.Listener<Filter>{
         @Override
         public void onItemClicked(View view, Filter filter, boolean isSelected) {
             mFragmentVideoList.filter(filter, isSelected);
@@ -304,6 +301,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     mFragmentGenreList.clearSelected();
                     break;
                 case GROUP:
+                    // todo: Clicking a group //
                     Log.d("GroupThings", "Group clicked: " + video);
                     break;
             }
