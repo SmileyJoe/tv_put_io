@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
@@ -13,14 +14,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
+import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.util.JsonUtil;
 import io.smileyjoe.putio.tv.util.SharedPrefs;
 
@@ -36,13 +42,14 @@ public class AuthActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mPrefs = SharedPrefs.getInstance(getBaseContext());
+
         if(!TextUtils.isEmpty(Application.getPutToken())){
             authComplete();
             return;
         }
 
         setContentView(R.layout.activity_auth);
-        mPrefs = SharedPrefs.getInstance(getBaseContext());
 
         mTextCode = findViewById(R.id.text_code);
         mProgressCode = findViewById(R.id.progress_code);
@@ -52,6 +59,11 @@ public class AuthActivity extends Activity {
     }
 
     private void authComplete(){
+        CreateDefaultGroups task = new CreateDefaultGroups();
+        task.execute();
+    }
+
+    public void startNext(){
         startActivity(MainActivity.getIntent(getBaseContext()));
         finish();
     }
@@ -98,6 +110,35 @@ public class AuthActivity extends Activity {
 
         if(!TextUtils.isEmpty(mCode)){
             getToken();
+        }
+    }
+
+    private class CreateDefaultGroups extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if(!mPrefs.isGroupsSetup()){
+                addGroup(R.string.title_group_movies, Group.DEFAULT_ID_MOVIES);
+                addGroup(R.string.title_group_series, Group.DEFAULT_ID_SERIES);
+                mPrefs.groupsSetup();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            startNext();
+        }
+
+        private void addGroup(@StringRes int titleResId, int id){
+            Group group = new Group();
+            group.setId(id);
+            group.setTitle(getString(titleResId));
+            group.setPutIds(new ArrayList<>());
+            AppDatabase.getInstance(getBaseContext()).groupDao().insert(group);
         }
     }
 
