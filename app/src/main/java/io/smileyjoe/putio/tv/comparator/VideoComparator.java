@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.Comparator;
 
+import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
@@ -44,17 +45,14 @@ public class VideoComparator implements Comparator<Video> {
     public int compare(Video videoOne, Video videoTwo) {
         int result;
 
-        switch (mOrder){
-            case NEWEST_FIRST:
-                result = Long.compare(videoTwo.getCreatedAt(), videoOne.getCreatedAt());
-                break;
-            case ALPHABETICAL:
-            default:
-                result = videoOne.getTitle().compareTo(videoTwo.getTitle());
-                break;
-        }
+        if(videoOne.getFileType() == FileType.GROUP){
 
-        if(videoOne.getVideoType() == VideoType.EPISODE){
+            if(videoTwo.getFileType() == FileType.GROUP){
+                return videoOne.getTitle().compareTo(videoTwo.getTitle());
+            } else {
+                return -1;
+            }
+        } else if(videoOne.getVideoType() == VideoType.EPISODE){
             result = Integer.compare(videoOne.getSeason(), videoTwo.getSeason());
 
             if(result != 0){
@@ -63,6 +61,16 @@ public class VideoComparator implements Comparator<Video> {
 
             return Integer.compare(videoOne.getEpisode(), videoTwo.getEpisode());
         } else {
+            switch (mOrder){
+                case NEWEST_FIRST:
+                    result = Long.compare(videoTwo.getCreatedAt(), videoOne.getCreatedAt());
+                    break;
+                case ALPHABETICAL:
+                default:
+                    result = videoOne.getTitle().compareTo(videoTwo.getTitle());
+                    break;
+            }
+
             return result;
         }
     }

@@ -3,6 +3,7 @@ package io.smileyjoe.putio.tv.object;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.view.View;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -78,6 +79,15 @@ public class Group implements Parcelable {
             }.getType();
             setPutIds(gson.fromJson(putIdsJson, type));
         }
+    }
+
+    public Video toVideo(){
+        Video video = new Video();
+        video.setFileType(FileType.GROUP);
+        video.setPutId(getId());
+        video.setTitle(getTitle());
+        video.setGenreIdsJson(getPutIdsJson());
+        return video;
     }
 
     @Override

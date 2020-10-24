@@ -336,7 +336,11 @@ public class Video implements Parcelable{
     }
 
     public String getSizeFormatted(Context context){
-        return Formatter.formatShortFileSize(context, mSize);
+        if(mSize > 0){
+            return Formatter.formatShortFileSize(context, mSize);
+        } else {
+            return null;
+        }
     }
 
     public String getGenresFormatted() {
@@ -360,7 +364,11 @@ public class Video implements Parcelable{
     }
 
     public String getUpdatedAgo(Context context){
-        return TimeUtil.toRelative(context, mUpdatedAt);
+        if(mUpdatedAt > 0){
+            return TimeUtil.toRelative(context, mUpdatedAt);
+        } else {
+            return null;
+        }
     }
 
     @Override

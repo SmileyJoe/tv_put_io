@@ -259,8 +259,15 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private class FolderListListener implements VideoListFragment.Listener{
         @Override
         public void onItemClicked(View view, Video video) {
-            mVideoLoader.load(video);
-            mFragmentGenreList.clearSelected();
+            switch (video.getFileType()){
+                case FOLDER:
+                    mVideoLoader.load(video);
+                    mFragmentGenreList.clearSelected();
+                    break;
+                case GROUP:
+                    Log.d("GroupThings", "Group clicked: " + video);
+                    break;
+            }
         }
 
         @Override

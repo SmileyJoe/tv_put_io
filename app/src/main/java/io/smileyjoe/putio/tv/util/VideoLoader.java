@@ -9,11 +9,13 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
@@ -78,7 +80,7 @@ public class VideoLoader {
 
     private void getFromPut(long putId){
         mListener.onVideosLoadStarted();
-        Putio.getFiles(mContext, putId, new OnPutResponse());
+        Putio.getFiles(mContext, putId, new OnPutResponse(putId));
     }
 
     public void addToHistory(Video video){
@@ -86,19 +88,28 @@ public class VideoLoader {
     }
 
     private class OnPutResponse extends Response {
+
+        private long mPutId;
+
+        public OnPutResponse(long putId) {
+            mPutId = putId;
+        }
+
         @Override
         public void onSuccess(JsonObject result) {
-            ProcessPutResponse task = new ProcessPutResponse(result);
+            ProcessPutResponse task = new ProcessPutResponse(mPutId, result);
             task.execute();
         }
     }
 
     private class ProcessPutResponse extends AsyncTask<Void, Void, ArrayList<Video>> {
 
+        private long mPutId;
         private JsonObject mResult;
         private Video mCurrent;
 
-        public ProcessPutResponse(JsonObject result) {
+        public ProcessPutResponse(long putId, JsonObject result) {
+            mPutId = putId;
             mResult = result;
         }
 
@@ -106,6 +117,12 @@ public class VideoLoader {
         protected ArrayList<Video> doInBackground(Void... params) {
             JsonArray filesJson = mResult.getAsJsonArray("files");
             JsonObject parentObject = mResult.getAsJsonObject("parent");
+
+            List<Group> groups = null;
+
+            if(mPutId == Putio.NO_PARENT){
+                groups = AppDatabase.getInstance(mContext).groupDao().getAll();
+            }
 
             ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(mContext, filesJson));
             VideoUtil.sort(videos);
@@ -125,6 +142,12 @@ public class VideoLoader {
                     if(!video.isTmdbChecked()) {
                         Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
                     }
+                }
+            }
+
+            if(groups != null && !groups.isEmpty()){
+                for(Group group:groups){
+                    videos.add(group.toVideo());
                 }
             }
 

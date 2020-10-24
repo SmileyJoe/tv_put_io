@@ -1,14 +1,17 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
+import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
 public class VideoListViewHolder extends BaseViewHolder<Video> {
@@ -30,9 +33,37 @@ public class VideoListViewHolder extends BaseViewHolder<Video> {
     @Override
     public void bindView(Video video, int position) {
         super.bindView(video, position);
+
+        @DrawableRes int iconResId;
+
+        switch (video.getFileType()){
+            case GROUP:
+                if(video.getPutId() == Group.DEFAULT_ID_MOVIES){
+                    iconResId = R.drawable.ic_movie_24;
+                } else if (video.getPutId() == Group.DEFAULT_ID_SERIES){
+                    iconResId = R.drawable.ic_series_24;
+                } else {
+                    iconResId = R.drawable.ic_folder_24;
+                }
+                break;
+            default:
+                iconResId = R.drawable.ic_folder_24;
+                break;
+        }
+
         mTextTitle.setText(video.getTitle());
-        mTextSize.setText(video.getSizeFormatted(mTextSize.getContext()));
-        mImageIcon.setImageResource(R.drawable.ic_folder_24);
-        mTextUpdatedAt.setText(video.getUpdatedAgo(mTextUpdatedAt.getContext()));
+        mImageIcon.setImageResource(iconResId);
+
+        setText(mTextSize, video.getSizeFormatted(mTextSize.getContext()));
+        setText(mTextUpdatedAt, video.getUpdatedAgo(mTextUpdatedAt.getContext()));
+    }
+
+    private void setText(TextView textView, String text){
+        if(!TextUtils.isEmpty(text)) {
+            textView.setText(text);
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            textView.setVisibility(View.GONE);
+        }
     }
 }

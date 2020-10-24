@@ -4,6 +4,7 @@ public enum FileType {
 
     FOLDER("FOLDER"),
     VIDEO("VIDEO"),
+    GROUP(""),
     UNKNOWN("");
 
     private String mPutValue;
