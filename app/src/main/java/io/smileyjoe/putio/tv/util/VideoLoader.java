@@ -151,8 +151,16 @@ public class VideoLoader {
                         mFolders.put(id, folders);
                     }
 
+                    ArrayList<Folder> foldersClean = new ArrayList<>();
+
+                    for(Folder folder:folders){
+                        if(!mPutIds.contains(((Directory) folder).getPutId())){
+                            foldersClean.add(folder);
+                        }
+                    }
+
                     mGroupVideos.addAll(videos);
-                    mGroupFolders.addAll(folders);
+                    mGroupFolders.addAll(foldersClean);
                 }
             }
 
