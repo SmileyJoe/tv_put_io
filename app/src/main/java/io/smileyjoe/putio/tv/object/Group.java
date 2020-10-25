@@ -36,8 +36,11 @@ public class Group implements ToggleItem, Folder, Parcelable {
     private String mPutIdsJson;
     @Ignore
     private ArrayList<Long> mPutIds;
+    @Ignore
+    private boolean mIsSelected;
 
     public Group() {
+        mIsSelected = false;
     }
 
     public int getId() {
@@ -78,7 +81,11 @@ public class Group implements ToggleItem, Folder, Parcelable {
 
     @Override
     public boolean isSelected() {
-        return false;
+        return mIsSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        mIsSelected = selected;
     }
 
     public void setId(int id) {

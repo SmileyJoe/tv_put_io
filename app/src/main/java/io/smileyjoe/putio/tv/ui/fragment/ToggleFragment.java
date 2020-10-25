@@ -42,7 +42,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
         mListener = listener;
     }
 
-    protected void addOption(T filter){
+    protected View addOption(T filter){
         View view = LayoutInflater.from(getContext()).inflate(R.layout.item_filter, null);
         OnFilterListener listener = new OnFilterListener(filter);
 
@@ -54,6 +54,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
         view.setOnClickListener(listener);
         view.setOnFocusChangeListener(listener);
         mLayoutRoot.addView(view);
+        return view;
     }
 
     public void reset(){

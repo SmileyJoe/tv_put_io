@@ -80,7 +80,7 @@ public class VideoLoader {
             mHistory.remove(current);
             current = getCurrentHistory();
 
-            if(current.getPutIds() != null) {
+            if(current.isGroup()) {
                 load(current.getPutIds(), false);
             } else {
                 load(current.getPutId(), false);

@@ -154,11 +154,16 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
             mFragmentVideoList.setVideos(videos);
             mFragmentFilter.reset();
-            mFragmentGroup.reset();
 
             if(videos != null && !videos.isEmpty()){
                 showFragment(mFragmentFilter);
-                showFragment(mFragmentGroup);
+
+                if(historyItem.isGroup()){
+                    hideFragment(mFragmentGroup);
+                } else {
+                    showFragment(mFragmentGroup);
+                    mFragmentGroup.setCurrentPutId(historyItem.getPutId());
+                }
             } else {
                 hideFragment(mFragmentFilter);
                 hideFragment(mFragmentGroup);

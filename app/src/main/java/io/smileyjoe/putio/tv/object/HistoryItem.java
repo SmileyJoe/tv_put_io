@@ -26,6 +26,14 @@ public class HistoryItem implements Parcelable {
         mPutIds = putIds;
     }
 
+    public boolean isGroup(){
+        if(mPutIds == null){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
     public String toString() {
         return "HistoryItem{" +
