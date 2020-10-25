@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -57,13 +58,9 @@ public class VideoLoader {
     }
 
     public void load(Group group){
-        ArrayList<Video> videos = getVideos(group.getId());
-
-        if(videos == null){
-            getFromPut(group);
-        } else {
-            onVideosLoaded(new Long(group.getId()), videos, getFolders(group.getId()), true);
-        }
+        mListener.onVideosLoadStarted();
+        GetFromPut task = new GetFromPut(group);
+        task.execute();
     }
 
     public boolean back(){
@@ -99,25 +96,55 @@ public class VideoLoader {
         Putio.getFiles(mContext, putId, new OnPutResponse(putId));
     }
 
-    private void getFromPut(Group group){
-        mListener.onVideosLoadStarted();
-        // todo: task to get everything //
-    }
-
     public void addToHistory(Long currentPutId){
         mHistory.add(currentPutId);
     }
 
     private class GetFromPut extends AsyncTask<Void, Void, Void>{
         private Group mGroup;
+        private ArrayList<Video> mGroupVideos;
+        private ArrayList<Folder> mGroupFolders;
 
         public GetFromPut(Group group) {
+            mGroupFolders = new ArrayList<>();
+            mGroupVideos = new ArrayList<>();
             mGroup = group;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
+            if(mGroup != null && mGroup.getPutIds() != null && !mGroup.getPutIds().isEmpty()) {
+                PutioHelper helper;
+                for (long id:mGroup.getPutIds()){
+                    ArrayList<Video> videos = getVideos(id);
+                    ArrayList<Folder> folders = getFolders(id);
+
+                    if(videos == null) {
+                        helper = new PutioHelper(mContext);
+                        helper.setListener(mListener);
+
+                        JsonObject result = Putio.getFiles(mContext, id);
+                        Log.d("PutThings", "Result: " + result.toString());
+                        helper.parse(id, result);
+
+                        videos = helper.getVideos();
+                        folders = helper.getFolders();
+
+                        mVideos.put(id, videos);
+                        mFolders.put(id, folders);
+                    }
+
+                    mGroupVideos.addAll(videos);
+                    mGroupFolders.addAll(folders);
+                }
+            }
+
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            onVideosLoaded(mGroup.getIdAsLong(), mGroupVideos, mGroupFolders, true);
         }
     }
 

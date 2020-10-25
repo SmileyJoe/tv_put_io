@@ -44,6 +44,10 @@ public class Group implements ToggleItem, Folder, Parcelable {
         return mId;
     }
 
+    public Long getIdAsLong(){
+        return new Long(mId);
+    }
+
     @Override
     public String getTitle() {
         return mTitle;

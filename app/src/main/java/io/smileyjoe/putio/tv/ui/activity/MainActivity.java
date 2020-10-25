@@ -286,13 +286,12 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             switch (folder.getType()){
                 case DIRECTORY:
                     mVideoLoader.load(((Directory) folder).getVideo().getPutId());
-                    mFragmentGenreList.clearSelected();
                     break;
                 case GROUP:
-                    // todo: Clicking a group //
-//                    Log.d("GroupThings", "Group clicked: " + video);
+                    mVideoLoader.load((Group) folder);
                     break;
             }
+            mFragmentGenreList.clearSelected();
         }
 
         @Override
