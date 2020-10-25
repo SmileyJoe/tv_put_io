@@ -28,6 +28,7 @@ import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
+import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
@@ -106,8 +107,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     @Override
-    public void onVideosLoadFinished(Long current, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
-        populate(current, videos, folders, shouldAddToHistory);
+    public void onVideosLoadFinished(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
+        populate(historyItem, videos, folders, shouldAddToHistory);
     }
 
     @Override
@@ -137,13 +138,13 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         startActivity(DetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
     }
 
-    private void populate(Long currentPutId, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
+    private void populate(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
 
         if((folders == null || folders.isEmpty()) && (videos != null && videos.size() == 1)){
             showDetails(videos.get(0));
         } else {
             if(shouldAddToHistory) {
-                mVideoLoader.addToHistory(currentPutId);
+                mVideoLoader.addToHistory(historyItem);
             }
             handleGenres(videos);
 //            mTextTitle.setText(current.getTitle());
@@ -237,7 +238,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
             @Override
             protected Void doInBackground(Void... voids) {
-                mGroup.addPutId(mVideoLoader.getCurrentPutId());
+                mGroup.addPutId(mVideoLoader.getCurrentHistory().getPutId());
                 Log.d("GroupThings", "Saving: " + mGroup);
                 AppDatabase.getInstance(getBaseContext()).groupDao().insert(mGroup);
                 return null;
@@ -288,7 +289,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     mVideoLoader.load(((Directory) folder).getVideo().getPutId());
                     break;
                 case GROUP:
-                    mVideoLoader.load((Group) folder);
+                    mVideoLoader.load(((Group) folder).getPutIds());
                     break;
             }
             mFragmentGenreList.clearSelected();
