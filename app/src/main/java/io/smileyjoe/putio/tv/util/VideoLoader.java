@@ -23,10 +23,9 @@ import io.smileyjoe.putio.tv.object.Video;
 
 public class VideoLoader {
 
-    public interface Listener{
+    public interface Listener extends PutioHelper.Listener{
         void onVideosLoadStarted();
         void onVideosLoadFinished(Long currentPutId, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
-        void update(Video video);
     }
 
     private Context mContext;
@@ -54,6 +53,16 @@ public class VideoLoader {
             getFromPut(putId);
         } else {
             onVideosLoaded(putId, videos, getFolders(putId), true);
+        }
+    }
+
+    public void load(Group group){
+        ArrayList<Video> videos = getVideos(group.getId());
+
+        if(videos == null){
+            getFromPut(group);
+        } else {
+            onVideosLoaded(new Long(group.getId()), videos, getFolders(group.getId()), true);
         }
     }
 
@@ -90,8 +99,26 @@ public class VideoLoader {
         Putio.getFiles(mContext, putId, new OnPutResponse(putId));
     }
 
+    private void getFromPut(Group group){
+        mListener.onVideosLoadStarted();
+        // todo: task to get everything //
+    }
+
     public void addToHistory(Long currentPutId){
         mHistory.add(currentPutId);
+    }
+
+    private class GetFromPut extends AsyncTask<Void, Void, Void>{
+        private Group mGroup;
+
+        public GetFromPut(Group group) {
+            mGroup = group;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
     }
 
     private class OnPutResponse extends Response {
@@ -113,110 +140,32 @@ public class VideoLoader {
 
         private long mPutId;
         private JsonObject mResult;
-        private Video mCurrent;
+        private long mCurrentPutId;
 
         public ProcessPutResponse(long putId, JsonObject result) {
             mPutId = putId;
             mResult = result;
         }
 
-        // todo: This needs to split folders and videos and add groups //
-
         @Override
         protected Void doInBackground(Void... params) {
-            ArrayList<Folder> folders = new ArrayList<>();
-            ArrayList<Video> videosSorted = new ArrayList<>();
+            PutioHelper helper = new PutioHelper(mContext);
+            helper.setListener(mListener);
+            helper.parse(mPutId, mResult);
 
-            JsonArray filesJson = mResult.getAsJsonArray("files");
-            JsonObject parentObject = mResult.getAsJsonObject("parent");
+            mCurrentPutId = helper.getCurrent().getPutId();
 
-            if(mPutId == Putio.NO_PARENT){
-                List<Group> groups = AppDatabase.getInstance(mContext).groupDao().getAll();
-
-                if(groups != null && !groups.isEmpty()){
-                    for(Group group:groups){
-                        folders.add(group);
-                    }
-                }
-            }
-
-            ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(mContext, filesJson));
-            mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
-
-            if(videos != null && videos.size() == 1){
-                Video currentDbVideo = AppDatabase.getInstance(mContext).videoDao().getByPutId(mCurrent.getPutId());
-
-                if(currentDbVideo != null && currentDbVideo.isTmdbFound()){
-                    Video updated = VideoUtil.updateFromDb(videos.get(0), currentDbVideo);
-                    AppDatabase.getInstance(mContext).videoDao().insert(updated);
-                }
-            }
-
-            for (Video video : videos) {
-                switch (video.getVideoType()) {
-                    case MOVIE:
-                        if(!video.isTmdbChecked()) {
-                            Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
-                        }
-                    case EPISODE:
-                        videosSorted.add(video);
-                        break;
-                    case UNKNOWN:
-                        folders.add(new Directory(video));
-                        break;
-                }
-
-            }
-
-            VideoUtil.sort(videos);
-            Collections.sort(folders, new FolderComparator());
-            mVideos.put(mCurrent.getPutId(), videosSorted);
-            mFolders.put(mCurrent.getPutId(), folders);
+            mVideos.put(mCurrentPutId, helper.getVideos());
+            mFolders.put(mCurrentPutId, helper.getFolders());
 
             return null;
         }
 
         @Override
         protected void onPostExecute(Void param) {
-            onVideosLoaded(mCurrent.getPutId(), mVideos.get(mCurrent.getPutId()), mFolders.get(mCurrent.getPutId()), true);
+            onVideosLoaded(mCurrentPutId, mVideos.get(mCurrentPutId), mFolders.get(mCurrentPutId), true);
         }
     }
 
-    private class OnTmdbSearchResponse extends Response {
 
-        private Video mVideo;
-
-        public OnTmdbSearchResponse(Video video) {
-            mVideo = video;
-        }
-
-        @Override
-        public void onSuccess(JsonObject result) {
-            ProcessTmdbResponse task = new ProcessTmdbResponse(mVideo, result);
-            task.execute();
-        }
-    }
-
-    private class ProcessTmdbResponse extends AsyncTask<Void, Void, Video>{
-        private JsonObject mResult;
-        private Video mVideo;
-
-        public ProcessTmdbResponse(Video video, JsonObject result) {
-            mVideo = video;
-            mResult = result;
-        }
-
-        @Override
-        protected Video doInBackground(Void... voids) {
-            VideoUtil.updateFromTmdb(mVideo, mResult.get("results").getAsJsonArray());
-
-            AppDatabase.getInstance(mContext).videoDao().insert(mVideo);
-            return mVideo;
-        }
-
-        @Override
-        protected void onPostExecute(Video video) {
-            mListener.update(video);
-        }
-    }
 }

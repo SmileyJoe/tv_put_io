@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
 
+import java.util.concurrent.ExecutionException;
+
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.BuildConfig;
 
@@ -47,6 +49,22 @@ public class Putio {
         }
 
         execute(context, url, response);
+    }
+
+    public static JsonObject getFiles(Context context, long parentId) {
+        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true";
+
+        if (parentId != NO_PARENT) {
+            url += "&parent_id=" + parentId;
+        }
+
+        try {
+            return getBaseCall(context, url)
+                    .asJsonObject()
+                    .get();
+        } catch (InterruptedException | ExecutionException e){
+            return null;
+        }
     }
 
     public static void getResumeTime(Context context, long id, Response response) {
