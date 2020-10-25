@@ -2,7 +2,6 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -21,21 +20,19 @@ import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
-import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 
 public class VideoLoader {
 
     public interface Listener{
         void onVideosLoadStarted();
-        void onVideosLoadFinished(Video current, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
+        void onVideosLoadFinished(Long currentPutId, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
         void update(Video video);
     }
 
     private Context mContext;
     private HashMap<Long, ArrayList<Video>> mVideos;
     private HashMap<Long, ArrayList<Folder>> mFolders;
-    private ArrayList<Video> mHistory;
+    private ArrayList<Long> mHistory;
     private Listener mListener;
 
     public VideoLoader(Context context, Listener listener) {
@@ -50,29 +47,29 @@ public class VideoLoader {
         getFromPut(Putio.NO_PARENT);
     }
 
-    public void load(Video video){
-        ArrayList<Video> videos = getVideos(video.getPutId());
+    public void load(Long putId){
+        ArrayList<Video> videos = getVideos(putId);
 
         if(videos == null){
-            getFromPut(video.getPutId());
+            getFromPut(putId);
         } else {
-            onVideosLoaded(video, videos, getFolders(video.getPutId()), true);
+            onVideosLoaded(putId, videos, getFolders(putId), true);
         }
     }
 
     public boolean back(){
         if(mHistory != null && mHistory.size() >= 2) {
-            Video current = getCurrent();
+            Long current = getCurrentPutId();
             mHistory.remove(current);
-            current = getCurrent();
-            onVideosLoaded(current, getVideos(current.getPutId()), getFolders(current.getPutId()), false);
+            current = getCurrentPutId();
+            onVideosLoaded(current, getVideos(current), getFolders(current), false);
             return true;
         }
 
         return false;
     }
 
-    public Video getCurrent(){
+    public Long getCurrentPutId(){
         return mHistory.get(mHistory.size() - 1);
     }
 
@@ -84,7 +81,7 @@ public class VideoLoader {
         return mFolders.get(putId);
     }
 
-    private void onVideosLoaded(Video current, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory){
+    private void onVideosLoaded(Long current, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory){
         mListener.onVideosLoadFinished(current, videos, folders, shouldAddToHistory);
     }
 
@@ -93,8 +90,8 @@ public class VideoLoader {
         Putio.getFiles(mContext, putId, new OnPutResponse(putId));
     }
 
-    public void addToHistory(Video video){
-        mHistory.add(video);
+    public void addToHistory(Long currentPutId){
+        mHistory.add(currentPutId);
     }
 
     private class OnPutResponse extends Response {
@@ -181,7 +178,7 @@ public class VideoLoader {
 
         @Override
         protected void onPostExecute(Void param) {
-            onVideosLoaded(mCurrent, mVideos.get(mCurrent.getPutId()), mFolders.get(mCurrent.getPutId()), true);
+            onVideosLoaded(mCurrent.getPutId(), mVideos.get(mCurrent.getPutId()), mFolders.get(mCurrent.getPutId()), true);
         }
     }
 
