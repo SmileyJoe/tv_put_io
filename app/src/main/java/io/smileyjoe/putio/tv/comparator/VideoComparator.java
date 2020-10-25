@@ -45,14 +45,7 @@ public class VideoComparator implements Comparator<Video> {
     public int compare(Video videoOne, Video videoTwo) {
         int result;
 
-        if(videoOne.getFileType() == FileType.GROUP){
-
-            if(videoTwo.getFileType() == FileType.GROUP){
-                return videoOne.getTitle().compareTo(videoTwo.getTitle());
-            } else {
-                return -1;
-            }
-        } else if(videoOne.getVideoType() == VideoType.EPISODE){
+        if(videoOne.getVideoType() == VideoType.EPISODE){
             result = Integer.compare(videoOne.getSeason(), videoTwo.getSeason());
 
             if(result != 0){
