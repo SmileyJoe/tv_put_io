@@ -23,6 +23,7 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
@@ -105,8 +106,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     @Override
-    public void onVideosLoadFinished(Video current, ArrayList<Video> videos, boolean shouldAddToHistory) {
-        populate(current, videos, shouldAddToHistory);
+    public void onVideosLoadFinished(Video current, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
+        populate(current, videos, folders, shouldAddToHistory);
     }
 
     @Override
@@ -136,39 +137,25 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         startActivity(DetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
     }
 
-    private void populate(Video current, ArrayList<Video> videos, boolean shouldAddToHistory) {
-        ArrayList<Folder> folders = new ArrayList<>();
-        ArrayList<Video> videosSorted = new ArrayList<>();
+    private void populate(Video current, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
 
-        for (Video video : videos) {
-            switch (video.getVideoType()) {
-                case EPISODE:
-                case MOVIE:
-                    videosSorted.add(video);
-                    break;
-                case UNKNOWN:
-                    folders.add(video);
-                    break;
-            }
-        }
-
-        if((folders == null || folders.isEmpty()) && (videosSorted != null && videosSorted.size() == 1)){
-            showDetails(videosSorted.get(0));
+        if((folders == null || folders.isEmpty()) && (videos != null && videos.size() == 1)){
+            showDetails(videos.get(0));
         } else {
             if(shouldAddToHistory) {
                 mVideoLoader.addToHistory(current);
             }
-            handleGenres(videosSorted);
+            handleGenres(videos);
             mTextTitle.setText(current.getTitle());
 
             boolean folderFragmentIsVisible = populateFolders(folders);
 
             mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
-            mFragmentVideoList.setVideos(videosSorted);
+            mFragmentVideoList.setVideos(videos);
             mFragmentFilter.reset();
             mFragmentGroup.reset();
 
-            if(videosSorted != null && !videosSorted.isEmpty()){
+            if(videos != null && !videos.isEmpty()){
                 showFragment(mFragmentFilter);
                 showFragment(mFragmentGroup);
             } else {
@@ -296,16 +283,16 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private class FolderListListener implements FolderListFragment.Listener{
         @Override
         public void onItemClicked(View view, Folder folder) {
-//            switch (video.getFileType()){
-//                case FOLDER:
-                    mVideoLoader.load((Video) folder);
+            switch (folder.getType()){
+                case DIRECTORY:
+                    mVideoLoader.load(((Directory) folder).getVideo());
                     mFragmentGenreList.clearSelected();
-//                    break;
-//                case GROUP:
+                    break;
+                case GROUP:
                     // todo: Clicking a group //
 //                    Log.d("GroupThings", "Group clicked: " + video);
-//                    break;
-//            }
+                    break;
+            }
         }
 
         @Override
@@ -324,6 +311,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             switch (video.getFileType()){
                 case VIDEO:
                     showDetails(video);
+                    break;
+                case FOLDER:
+                    mVideoLoader.load(video);
                     break;
             }
         }

@@ -8,13 +8,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import io.smileyjoe.putio.tv.comparator.FolderComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
+import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
@@ -24,18 +28,20 @@ public class VideoLoader {
 
     public interface Listener{
         void onVideosLoadStarted();
-        void onVideosLoadFinished(Video current, ArrayList<Video> videos, boolean shouldAddToHistory);
+        void onVideosLoadFinished(Video current, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
         void update(Video video);
     }
 
     private Context mContext;
     private HashMap<Long, ArrayList<Video>> mVideos;
+    private HashMap<Long, ArrayList<Folder>> mFolders;
     private ArrayList<Video> mHistory;
     private Listener mListener;
 
     public VideoLoader(Context context, Listener listener) {
         mContext = context;
         mVideos = new HashMap<>();
+        mFolders = new HashMap<>();
         mHistory = new ArrayList<>();
         mListener = listener;
     }
@@ -50,7 +56,7 @@ public class VideoLoader {
         if(videos == null){
             getFromPut(video.getPutId());
         } else {
-            onVideosLoaded(video, videos, true);
+            onVideosLoaded(video, videos, getFolders(video.getPutId()), true);
         }
     }
 
@@ -59,7 +65,7 @@ public class VideoLoader {
             Video current = getCurrent();
             mHistory.remove(current);
             current = getCurrent();
-            onVideosLoaded(current, getVideos(current.getPutId()), false);
+            onVideosLoaded(current, getVideos(current.getPutId()), getFolders(current.getPutId()), false);
             return true;
         }
 
@@ -74,8 +80,12 @@ public class VideoLoader {
         return mVideos.get(putId);
     }
 
-    private void onVideosLoaded(Video current, ArrayList<Video> videos, boolean shouldAddToHistory){
-        mListener.onVideosLoadFinished(current, videos, shouldAddToHistory);
+    private ArrayList<Folder> getFolders(long putId){
+        return mFolders.get(putId);
+    }
+
+    private void onVideosLoaded(Video current, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory){
+        mListener.onVideosLoadFinished(current, videos, folders, shouldAddToHistory);
     }
 
     private void getFromPut(long putId){
@@ -102,7 +112,7 @@ public class VideoLoader {
         }
     }
 
-    private class ProcessPutResponse extends AsyncTask<Void, Void, ArrayList<Video>> {
+    private class ProcessPutResponse extends AsyncTask<Void, Void, Void> {
 
         private long mPutId;
         private JsonObject mResult;
@@ -113,19 +123,27 @@ public class VideoLoader {
             mResult = result;
         }
 
+        // todo: This needs to split folders and videos and add groups //
+
         @Override
-        protected ArrayList<Video> doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
+            ArrayList<Folder> folders = new ArrayList<>();
+            ArrayList<Video> videosSorted = new ArrayList<>();
+
             JsonArray filesJson = mResult.getAsJsonArray("files");
             JsonObject parentObject = mResult.getAsJsonObject("parent");
 
-            List<Group> groups = null;
-
             if(mPutId == Putio.NO_PARENT){
-                groups = AppDatabase.getInstance(mContext).groupDao().getAll();
+                List<Group> groups = AppDatabase.getInstance(mContext).groupDao().getAll();
+
+                if(groups != null && !groups.isEmpty()){
+                    for(Group group:groups){
+                        folders.add(group);
+                    }
+                }
             }
 
             ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(mContext, filesJson));
-            VideoUtil.sort(videos);
             mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
 
             if(videos != null && videos.size() == 1){
@@ -138,27 +156,32 @@ public class VideoLoader {
             }
 
             for (Video video : videos) {
-                if (video.getVideoType() == VideoType.MOVIE) {
-                    if(!video.isTmdbChecked()) {
-                        Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
-                    }
+                switch (video.getVideoType()) {
+                    case MOVIE:
+                        if(!video.isTmdbChecked()) {
+                            Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
+                        }
+                    case EPISODE:
+                        videosSorted.add(video);
+                        break;
+                    case UNKNOWN:
+                        folders.add(new Directory(video));
+                        break;
                 }
+
             }
 
-            if(groups != null && !groups.isEmpty()){
-                for(Group group:groups){
-                    videos.add(group.toVideo());
-                }
-            }
+            VideoUtil.sort(videos);
+            Collections.sort(folders, new FolderComparator());
+            mVideos.put(mCurrent.getPutId(), videosSorted);
+            mFolders.put(mCurrent.getPutId(), folders);
 
-            mVideos.put(mCurrent.getPutId(), videos);
-
-            return videos;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Video> videos) {
-            onVideosLoaded(mCurrent, videos, true);
+        protected void onPostExecute(Void param) {
+            onVideosLoaded(mCurrent, mVideos.get(mCurrent.getPutId()), mFolders.get(mCurrent.getPutId()), true);
         }
     }
 

@@ -27,7 +27,7 @@ import io.smileyjoe.putio.tv.util.TimeUtil;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 @Entity(tableName = "video")
-public class Video implements Folder, Parcelable{
+public class Video implements Parcelable{
 
     // ids
     @PrimaryKey
@@ -245,7 +245,6 @@ public class Video implements Folder, Parcelable{
         return mFileType;
     }
 
-    @Override
     public String getTitle() {
         if(mVideoType == VideoType.EPISODE){
             return mTitle + " S" + String.format("%02d", getSeason()) + "E" + String.format("%02d", getEpisode());
@@ -372,21 +371,6 @@ public class Video implements Folder, Parcelable{
         } else {
             return null;
         }
-    }
-
-    @Override
-    public int getIconResId() {
-        return R.drawable.ic_folder_24;
-    }
-
-    @Override
-    public String getSubTextOne(Context context) {
-        return getSizeFormatted(context);
-    }
-
-    @Override
-    public String getSubTextTwo(Context context) {
-        return getUpdatedAgo(context);
     }
 
     @Override

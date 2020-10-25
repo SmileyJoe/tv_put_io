@@ -1,5 +1,6 @@
 package io.smileyjoe.putio.tv.object;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -17,10 +18,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.interfaces.ToggleItem;
 
 @Entity(tableName = "group")
-public class Group implements ToggleItem, Parcelable {
+public class Group implements ToggleItem, Folder, Parcelable {
 
     public static int DEFAULT_ID_MOVIES = 1;
     public static int DEFAULT_ID_SERIES = 2;
@@ -42,6 +44,7 @@ public class Group implements ToggleItem, Parcelable {
         return mId;
     }
 
+    @Override
     public String getTitle() {
         return mTitle;
     }
@@ -118,13 +121,19 @@ public class Group implements ToggleItem, Parcelable {
         }
     }
 
-    public Video toVideo(){
-        Video video = new Video();
-        video.setFileType(FileType.GROUP);
-        video.setPutId(getId());
-        video.setTitle(getTitle());
-        video.setGenreIdsJson(getPutIdsJson());
-        return video;
+    @Override
+    public String getSubTextOne(Context context) {
+        return null;
+    }
+
+    @Override
+    public String getSubTextTwo(Context context) {
+        return null;
+    }
+
+    @Override
+    public FolderType getType() {
+        return FolderType.GROUP;
     }
 
     @Override
