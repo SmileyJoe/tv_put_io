@@ -25,8 +25,13 @@ public class DetailsDescriptionPresenter extends AbstractDetailsDescriptionPrese
         Video video = (Video) item;
 
         if (video != null) {
-            int colorText = ContextCompat.getColor(viewHolder.getTitle().getContext(), R.color.text);
-            String body = "Added on: " + video.getCreatedAtFormatted();
+            Context context = viewHolder.getTitle().getContext();
+            int colorText = ContextCompat.getColor(context, R.color.text);
+            String body = context.getString(R.string.text_added_on, video.getCreatedAtFormatted());
+
+            if(video.getReleaseDate() > 0){
+                body += "\n" + context.getString(R.string.text_released_on, video.getReleaseDateFormatted());
+            }
 
             if(!TextUtils.isEmpty(video.getOverView())){
                 body += "\n\n" + video.getOverView();

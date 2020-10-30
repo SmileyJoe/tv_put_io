@@ -32,6 +32,7 @@ public class ZoomGridVideo extends RelativeLayout{
     private RelativeLayout mLayoutContent;
     private TextView mTextSummary;
     private TextView mTextTitle;
+    private TextView mTextReleaseDate;
     private ImageView mImagePoster;
     private FrameLayout mFrameWatched;
     private float mMultiplier;
@@ -61,6 +62,7 @@ public class ZoomGridVideo extends RelativeLayout{
 
         mTextSummary = mLayoutContent.findViewById(R.id.text_summary);
         mTextTitle = mLayoutContent.findViewById(R.id.text_title);
+        mTextReleaseDate = mLayoutContent.findViewById(R.id.text_release_date);
         mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
         mFrameWatched = mLayoutContent.findViewById(R.id.frame_watched);
         mTextGenres = mLayoutContent.findViewById(R.id.text_genres);
@@ -127,6 +129,13 @@ public class ZoomGridVideo extends RelativeLayout{
             mFrameWatched.setVisibility(View.VISIBLE);
         } else {
             mFrameWatched.setVisibility(View.GONE);
+        }
+
+        if(video.getReleaseDate() > 0){
+            mTextReleaseDate.setVisibility(View.VISIBLE);
+            mTextReleaseDate.setText(video.getReleaseDateFormatted());
+        } else {
+            mTextReleaseDate.setVisibility(View.GONE);
         }
 
         mTextGenres.setText(null);

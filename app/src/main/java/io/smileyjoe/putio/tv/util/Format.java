@@ -3,6 +3,7 @@ package io.smileyjoe.putio.tv.util;
 import android.content.Context;
 import android.text.format.Formatter;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -29,6 +30,16 @@ public class Format {
             return TimeUtil.toRelative(context, millies);
         } else {
             return null;
+        }
+    }
+
+    public static long fromTmdbToMillies(String tmdbDate){
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = formatter.parse(tmdbDate);
+            return date.getTime();
+        } catch (ParseException e){
+            return -1;
         }
     }
 }

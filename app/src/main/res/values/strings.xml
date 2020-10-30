@@ -20,6 +20,8 @@
     <string name="text_moments_ago">Moments ago</string>
     <string name="title_group_movies">Movies</string>
     <string name="title_group_series">Series</string>
+    <string name="text_added_on">Added on: %1$s</string>
+    <string name="text_released_on">Released on: %1$s</string>
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

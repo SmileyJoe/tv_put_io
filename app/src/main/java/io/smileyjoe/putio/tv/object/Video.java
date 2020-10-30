@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.interfaces.Folder;
+import io.smileyjoe.putio.tv.util.Format;
 import io.smileyjoe.putio.tv.util.TimeUtil;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
@@ -80,6 +81,8 @@ public class Video implements Parcelable{
     private long mCreatedAt;
     @Ignore
     private long mUpdatedAt;
+    @ColumnInfo(name = "release_date")
+    private long mReleaseDate;
 
     public Video() {
         mVideoType = VideoType.UNKNOWN;
@@ -229,6 +232,10 @@ public class Video implements Parcelable{
         setUpdatedAt(VideoUtil.getMillies(updatedAt));
     }
 
+    public void setReleaseDate(long releaseDate) {
+        mReleaseDate = releaseDate;
+    }
+
     public long getPutId() {
         return mPutId;
     }
@@ -373,6 +380,14 @@ public class Video implements Parcelable{
         }
     }
 
+    public long getReleaseDate() {
+        return mReleaseDate;
+    }
+
+    public String getReleaseDateFormatted(){
+        return VideoUtil.getFormatted(mReleaseDate);
+    }
+
     @Override
     public String toString() {
         return "Video{" +
@@ -399,6 +414,7 @@ public class Video implements Parcelable{
                 ", mGenresFormatted='" + mGenresFormatted + '\'' +
                 ", mCreatedAt=" + mCreatedAt +
                 ", mUpdatedAt=" + mUpdatedAt +
+                ", mReleaseDate=" + mReleaseDate +
                 '}';
     }
 
@@ -445,6 +461,7 @@ public class Video implements Parcelable{
         dest.writeString(this.mGenresFormatted);
         dest.writeLong(this.mCreatedAt);
         dest.writeLong(this.mUpdatedAt);
+        dest.writeLong(this.mReleaseDate);
     }
 
     protected Video(Parcel in) {
@@ -474,6 +491,7 @@ public class Video implements Parcelable{
         this.mGenresFormatted = in.readString();
         this.mCreatedAt = in.readLong();
         this.mUpdatedAt = in.readLong();
+        this.mReleaseDate = in.readLong();
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {

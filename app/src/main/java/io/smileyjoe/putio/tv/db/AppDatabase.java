@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.db;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -15,7 +16,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
-@Database(entities = {Video.class, Genre.class, Group.class}, version = 2)
+@Database(entities = {Video.class, Genre.class, Group.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract VideoDao videoDao();
     public abstract GenreDao genreDao();
@@ -35,6 +36,15 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("DELETE FROM video");
+            database.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='video'");
+            database.execSQL("ALTER TABLE video ADD COLUMN release_date INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
@@ -42,6 +52,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "main_database")
                             .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_2_3)
                             .build();
                 }
             }
