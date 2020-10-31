@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -38,18 +39,20 @@ import java.util.ArrayList;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
+import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
+import io.smileyjoe.putio.tv.util.TmdbUtil;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
  * It shows a detailed view of video and its meta plus related videos.
  */
-public class VideoDetailsFragment extends DetailsFragment {
+public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Listener{
 
     public interface Listener {
         void onWatchClicked(Video video, ArrayList<Video> videos);
@@ -99,6 +102,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private ArrayObjectAdapter mAdapter;
     private ClassPresenterSelector mPresenterSelector;
+    private DetailsOverviewRow mRow;
 
     private ArrayObjectAdapter mActionAdapter;
 
@@ -178,12 +182,23 @@ public class VideoDetailsFragment extends DetailsFragment {
     }
 
     private void setupDetailsOverviewRow() {
-        DetailsOverviewRow row = new DetailsOverviewRow(mVideo);
+        mRow = new DetailsOverviewRow(mVideo);
 
-        loadThumb(row);
-        addActions(row);
+        loadThumb(mRow);
+        addActions(mRow);
 
-        mAdapter.add(row);
+        mAdapter.add(mRow);
+
+        if(mVideo.isTmdbFound() && TextUtils.isEmpty(mVideo.getTagLine())) {
+            TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(getContext(), mVideo);
+            response.setListener(this);
+            Tmdb.get(getContext(), mVideo.getTmdbId(), response);
+        }
+    }
+
+    @Override
+    public void update(Video video) {
+        mRow.setItem(video);
     }
 
     private void loadThumb(DetailsOverviewRow row) {

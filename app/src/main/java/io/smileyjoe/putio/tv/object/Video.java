@@ -83,6 +83,10 @@ public class Video implements Parcelable{
     private long mUpdatedAt;
     @ColumnInfo(name = "release_date")
     private long mReleaseDate;
+    @ColumnInfo(name = "tagline")
+    private String mTagLine;
+    @ColumnInfo(name = "runtime")
+    private int mRuntime;
 
     public Video() {
         mVideoType = VideoType.UNKNOWN;
@@ -234,6 +238,14 @@ public class Video implements Parcelable{
 
     public void setReleaseDate(long releaseDate) {
         mReleaseDate = releaseDate;
+    }
+
+    public void setTagLine(String tagLine) {
+        mTagLine = tagLine;
+    }
+
+    public void setRuntime(int runtime) {
+        mRuntime = runtime;
     }
 
     public long getPutId() {
@@ -388,6 +400,14 @@ public class Video implements Parcelable{
         return VideoUtil.getFormatted(mReleaseDate);
     }
 
+    public String getTagLine() {
+        return mTagLine;
+    }
+
+    public int getRuntime() {
+        return mRuntime;
+    }
+
     @Override
     public String toString() {
         return "Video{" +
@@ -415,6 +435,8 @@ public class Video implements Parcelable{
                 ", mCreatedAt=" + mCreatedAt +
                 ", mUpdatedAt=" + mUpdatedAt +
                 ", mReleaseDate=" + mReleaseDate +
+                ", mTagLine='" + mTagLine + '\'' +
+                ", mRuntime=" + mRuntime +
                 '}';
     }
 
@@ -462,6 +484,8 @@ public class Video implements Parcelable{
         dest.writeLong(this.mCreatedAt);
         dest.writeLong(this.mUpdatedAt);
         dest.writeLong(this.mReleaseDate);
+        dest.writeString(this.mTagLine);
+        dest.writeInt(this.mRuntime);
     }
 
     protected Video(Parcel in) {
@@ -492,6 +516,8 @@ public class Video implements Parcelable{
         this.mCreatedAt = in.readLong();
         this.mUpdatedAt = in.readLong();
         this.mReleaseDate = in.readLong();
+        this.mTagLine = in.readString();
+        this.mRuntime = in.readInt();
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {

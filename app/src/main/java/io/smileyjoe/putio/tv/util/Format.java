@@ -5,7 +5,11 @@ import android.text.format.Formatter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Date;
+
+import io.smileyjoe.putio.tv.R;
 
 public class Format {
 
@@ -40,6 +44,16 @@ public class Format {
             return date.getTime();
         } catch (ParseException e){
             return -1;
+        }
+    }
+
+    public static String runtime(Context context, int minutes){
+        if(minutes > 0) {
+            int hours = minutes / 60;
+            int minutesLeft = minutes % 60;
+            return context.getString(R.string.text_runtime, hours, minutesLeft);
+        } else {
+            return null;
         }
     }
 }
