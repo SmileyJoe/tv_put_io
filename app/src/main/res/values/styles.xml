@@ -67,14 +67,14 @@
     </style>
 
     <style name="Text.List.Pill">
-        <item name="android:paddingLeft">@dimen/padding_pill_horizontal</item>
-        <item name="android:paddingRight">@dimen/padding_pill_horizontal</item>
-        <item name="android:paddingTop">@dimen/padding_pill_vertical</item>
-        <item name="android:paddingBottom">@dimen/padding_pill_vertical</item>
         <item name="android:layout_marginRight">@dimen/padding_general</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:backgroundTint">@color/selector_bg_inverse_background</item>
+    </style>
+
+    <style name="Text.List.Pill.Details">
+        <item name="android:layout_width">wrap_content</item>
     </style>
 
     <style name="Icon">

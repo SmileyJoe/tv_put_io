@@ -30,7 +30,10 @@ public class PillView extends AppCompatTextView {
     }
 
     private void init(AttributeSet attributeSet){
-        // nothing to setup yet //
+        int paddingHorizontal = getResources().getDimensionPixelOffset(R.dimen.padding_pill_horizontal);
+        int paddingVertical = getResources().getDimensionPixelOffset(R.dimen.padding_pill_vertical);
+
+        setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
     }
 
     @Override
