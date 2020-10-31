@@ -91,7 +91,16 @@ public class PutioHelper {
                     mVideos.add(video);
                     break;
                 case UNKNOWN:
-                    mFolders.add(new Directory(video));
+                    switch (video.getFileType()){
+                        case VIDEO:
+                            mVideos.add(video);
+                            break;
+                        case FOLDER:
+                        case UNKNOWN:
+                        default:
+                            mFolders.add(new Directory(video));
+                            break;
+                    }
                     break;
             }
 
