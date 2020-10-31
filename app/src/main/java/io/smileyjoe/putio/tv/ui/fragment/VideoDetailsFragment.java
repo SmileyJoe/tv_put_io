@@ -44,7 +44,6 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
-import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
 
