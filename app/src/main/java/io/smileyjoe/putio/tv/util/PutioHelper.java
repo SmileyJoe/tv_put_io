@@ -22,9 +22,7 @@ import io.smileyjoe.putio.tv.object.Video;
 
 public class PutioHelper {
 
-    public interface Listener{
-        void update(Video video);
-    }
+    public interface Listener extends TmdbUtil.Listener{}
 
     private ArrayList<Folder> mFolders;
     private ArrayList<Video> mVideos;
@@ -85,7 +83,9 @@ public class PutioHelper {
             switch (video.getVideoType()) {
                 case MOVIE:
                     if(!video.isTmdbChecked()) {
-                        Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), new OnTmdbSearchResponse(video));
+                        TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
+                        response.setListener(mListener);
+                        Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), response);
                     }
                 case EPISODE:
                     mVideos.add(video);
@@ -108,46 +108,6 @@ public class PutioHelper {
 
         VideoUtil.sort(mVideos);
         Collections.sort(mFolders, new FolderComparator());
-    }
-
-    private class OnTmdbSearchResponse extends Response {
-
-        private Video mVideo;
-
-        public OnTmdbSearchResponse(Video video) {
-            mVideo = video;
-        }
-
-        @Override
-        public void onSuccess(JsonObject result) {
-            ProcessTmdbResponse task = new ProcessTmdbResponse(mVideo, result);
-            task.execute();
-        }
-    }
-
-    private class ProcessTmdbResponse extends AsyncTask<Void, Void, Video> {
-        private JsonObject mResult;
-        private Video mVideo;
-
-        public ProcessTmdbResponse(Video video, JsonObject result) {
-            mVideo = video;
-            mResult = result;
-        }
-
-        @Override
-        protected Video doInBackground(Void... voids) {
-            VideoUtil.updateFromTmdb(mVideo, mResult.get("results").getAsJsonArray());
-
-            AppDatabase.getInstance(mContext).videoDao().insert(mVideo);
-            return mVideo;
-        }
-
-        @Override
-        protected void onPostExecute(Video video) {
-            if(mListener != null) {
-                mListener.update(video);
-            }
-        }
     }
 
 }

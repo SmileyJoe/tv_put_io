@@ -9,6 +9,7 @@ import com.koushikdutta.ion.Ion;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -51,6 +52,15 @@ public class Tmdb {
         String url = getUrl(SEARCH, MOVIE);
         url = addParam(url, PARAM_SEARCH, title);
         url = addParam(url, PARAM_YEAR, Integer.toString(year));
+
+        Ion.with(context)
+                .load(url)
+                .asJsonObject()
+                .setCallback(response);
+    }
+
+    public static void get(Context context, long id, Response response){
+        String url = getUrl(MOVIE, "/" + id);
 
         Ion.with(context)
                 .load(url)

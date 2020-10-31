@@ -124,36 +124,8 @@ public class VideoUtil {
         putVideo.isTmdbFound(true);
         putVideo.isTmdbChecked(true);
         putVideo.setGenreIds(dbVideo.getGenreIds());
+        putVideo.setRuntime(dbVideo.getRuntime());
+        putVideo.setTagLine(dbVideo.getTagLine());
         return putVideo;
-    }
-
-    public static Video updateFromTmdb(Video video, JsonArray jsonArray) {
-        for (JsonElement jsonElement : jsonArray) {
-            JsonUtil json = new JsonUtil(jsonElement.getAsJsonObject());
-
-            video.setTmdbId(json.getLong("id"));
-            video.setBackdrop(Tmdb.getImageUrl(json.getString("backdrop_path")));
-            video.setOverView(json.getString("overview"));
-            video.setPoster(Tmdb.getImageUrl(json.getString("poster_path")));
-            video.setTitle(json.getString("title"));
-            video.setReleaseDate(Format.fromTmdbToMillies(json.getString("release_date")));
-            video.isTmdbFound(true);
-
-            JsonArray genreJson = json.getJsonArray("genre_ids");
-
-            if(genreJson != null) {
-                ArrayList<Integer> genreIds = new ArrayList<>();
-                for (JsonElement genreElement : genreJson) {
-                    genreIds.add(genreElement.getAsInt());
-                }
-                video.setGenreIds(genreIds);
-            }
-
-            break;
-        }
-
-        video.isTmdbChecked(true);
-
-        return video;
     }
 }
