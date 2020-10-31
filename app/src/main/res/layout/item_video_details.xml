@@ -6,38 +6,38 @@
 
     <TextView
         android:id="@+id/text_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        style="@style/Text.Details.Title"/>
 
     <TextView
         android:id="@+id/text_tagline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/text_runtime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/text_release_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/text_created_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        style="@style/Text.Details.Tagline"/>
 
     <LinearLayout
         android:id="@+id/layout_genres"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/padding_general"/>
+
+    <TextView
+        android:id="@+id/text_runtime"
+        style="@style/Text.Details.Runtime"/>
 
     <TextView
         android:id="@+id/text_overview"
+        style="@style/Text.Details.Overview"/>
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/text_release_date"
+            style="@style/Text.Details.Date"/>
+
+        <TextView
+            android:id="@+id/text_created_at"
+            style="@style/Text.Details.Date"/>
+    </LinearLayout>
 
 </LinearLayout>
