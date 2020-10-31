@@ -20,6 +20,8 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
     private TextView mTextOverview;
     private TextView mTextTagline;
     private TextView mTextRuntime;
+    private TextView mTextReleaseDate;
+    private TextView mTextCreatedAt;
     private LinearLayout mLayoutGenres;
     private Context mContext;
 
@@ -32,6 +34,8 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         mTextOverview = view.findViewById(R.id.text_overview);
         mTextTagline = view.findViewById(R.id.text_tagline);
         mTextRuntime = view.findViewById(R.id.text_runtime);
+        mTextReleaseDate = view.findViewById(R.id.text_release_date);
+        mTextCreatedAt = view.findViewById(R.id.text_created_at);
         mLayoutGenres = view.findViewById(R.id.layout_genres);
     }
 
@@ -40,6 +44,8 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         mTextOverview.setText(video.getOverView());
         mTextTagline.setText(video.getTagLine());
         mTextRuntime.setText(Format.runtime(mContext, video.getRuntime()));
+        mTextCreatedAt.setText(mContext.getString(R.string.text_added_on, video.getCreatedAtFormatted()));
+        mTextReleaseDate.setText(mContext.getString(R.string.text_released_on, video.getReleaseDateFormatted()));
 
         PopulateGenres task = new PopulateGenres(mLayoutGenres, video);
         task.setHideOnEmpty(true);
