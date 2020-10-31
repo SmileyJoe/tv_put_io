@@ -22,6 +22,7 @@ import java.util.Set;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
+import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
@@ -226,16 +227,11 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList.setFullScreen(true);
     }
 
-    private class GroupListener implements ToggleFragment.Listener<Group>{
+    private class GroupListener extends HomeListener<Group> implements ToggleFragment.Listener<Group>{
         @Override
         public void onItemClicked(View view, Group group, boolean isSelected) {
             UpdateGroup task = new UpdateGroup(group, isSelected);
             task.execute();
-        }
-
-        @Override
-        public void hasFocus(FragmentType type, Group item, View view, int position) {
-            mFragmentVideoList.hideDetails();
         }
 
         private class UpdateGroup extends AsyncTask<Void, Void, Void>{
@@ -261,19 +257,14 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
     }
 
-    private class FilterListener implements ToggleFragment.Listener<Filter>{
+    private class FilterListener extends HomeListener<Filter> implements ToggleFragment.Listener<Filter>{
         @Override
         public void onItemClicked(View view, Filter filter, boolean isSelected) {
             mFragmentVideoList.filter(filter, isSelected);
         }
-
-        @Override
-        public void hasFocus(FragmentType type, Filter item, View view, int position) {
-            mFragmentVideoList.hideDetails();
-        }
     }
 
-    private class GenreListListener implements GenreListFragment.Listener{
+    private class GenreListListener extends HomeListener<Genre> implements GenreListFragment.Listener{
         private int mSelectedGenre = -1;
 
         @Override
@@ -285,18 +276,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             }
             mFragmentVideoList.filterByGenre(mSelectedGenre);
         }
-
-        @Override
-        public void hasFocus(FragmentType fragmentType, Genre genre, View view, int position) {
-            if(mVideoTypeFocus != fragmentType) {
-                mVideoTypeFocus = fragmentType;
-                mFragmentVideoList.hideDetails();
-                hideFolders();
-            }
-        }
     }
 
-    private class FolderListListener implements FolderListFragment.Listener{
+    private class FolderListListener extends HomeListener<Folder> implements FolderListFragment.Listener{
         @Override
         public void onItemClicked(View view, Folder folder) {
             switch (folder.getType()){
@@ -309,18 +291,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             }
             mFragmentGenreList.clearSelected();
         }
-
-        @Override
-        public void hasFocus(FragmentType fragmentType, Folder item, View view, int position) {
-            if(mVideoTypeFocus != fragmentType){
-                mVideoTypeFocus = fragmentType;
-
-                showFolders();
-            }
-        }
     }
 
-    private class VideoListListener implements VideoGridFragment.Listener{
+    private class VideoListListener extends HomeListener<Video> implements VideoGridFragment.Listener{
         @Override
         public void onItemClicked(View view, Video video) {
             switch (video.getFileType()){
@@ -332,12 +305,23 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     break;
             }
         }
+    }
+
+    private abstract class HomeListener<T> implements HomeFragmentListener<T>{
 
         @Override
-        public void hasFocus(FragmentType fragmentType, Video video, View view, int position) {
-            if(mVideoTypeFocus != fragmentType){
-                mVideoTypeFocus = fragmentType;
-                hideFolders();
+        public void hasFocus(FragmentType type, T item, View view, int position) {
+            if(mVideoTypeFocus != type){
+                mVideoTypeFocus = type;
+
+                if(type == FragmentType.FOLDER){
+                    showFolders();
+                } else if(type == FragmentType.VIDEO) {
+                    hideFolders();
+                } else {
+                    mFragmentVideoList.hideDetails();
+                    hideFolders();
+                }
             }
         }
     }
