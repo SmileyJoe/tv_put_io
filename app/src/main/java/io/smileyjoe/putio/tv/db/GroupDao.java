@@ -16,6 +16,9 @@ public interface GroupDao {
     @Query("SELECT * FROM `group`")
     List<Group> getAll();
 
+    @Query("SELECT * FROM `group` WHERE id IS :id")
+    Group get(Long id);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Group group);
 }

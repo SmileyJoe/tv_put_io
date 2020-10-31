@@ -84,7 +84,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentGenreList.setListener(new GenreListListener());
 
         mVideoLoader = new VideoLoader(getBaseContext(), this);
-        mVideoLoader.load();
+        mVideoLoader.loadDirectory();
 
         hideFragment(mFragmentGenreList);
 
@@ -159,11 +159,14 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             if(videos != null && !videos.isEmpty()){
                 showFragment(mFragmentFilter);
 
-                if(historyItem.isGroup()){
-                    hideFragment(mFragmentGroup);
-                } else {
-                    showFragment(mFragmentGroup);
-                    mFragmentGroup.setCurrentPutId(historyItem.getPutId());
+                switch (historyItem.getFolderType()){
+                    case GROUP:
+                        hideFragment(mFragmentGroup);
+                        break;
+                    case DIRECTORY:
+                        showFragment(mFragmentGroup);
+                        mFragmentGroup.setCurrentPutId(historyItem.getId());
+                        break;
                 }
             } else {
                 hideFragment(mFragmentFilter);
@@ -247,9 +250,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             @Override
             protected Void doInBackground(Void... voids) {
                 if(mIsSelected) {
-                    mGroup.addPutId(mVideoLoader.getCurrentHistory().getPutId());
+                    mGroup.addPutId(mVideoLoader.getCurrentHistory().getId());
                 } else {
-                    mGroup.removePutId(mVideoLoader.getCurrentHistory().getPutId());
+                    mGroup.removePutId(mVideoLoader.getCurrentHistory().getId());
                 }
 
                 AppDatabase.getInstance(getBaseContext()).groupDao().insert(mGroup);
@@ -298,10 +301,10 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         public void onItemClicked(View view, Folder folder) {
             switch (folder.getType()){
                 case DIRECTORY:
-                    mVideoLoader.load(((Directory) folder).getVideo().getPutId());
+                    mVideoLoader.loadDirectory(((Directory) folder).getVideo().getPutId());
                     break;
                 case GROUP:
-                    mVideoLoader.load(((Group) folder).getPutIds());
+                    mVideoLoader.loadGroup(((Group) folder).getId());
                     break;
             }
             mFragmentGenreList.clearSelected();
@@ -325,7 +328,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     showDetails(video);
                     break;
                 case FOLDER:
-                    mVideoLoader.load(video.getPutId());
+                    mVideoLoader.loadDirectory(video.getPutId());
                     break;
             }
         }

@@ -7,40 +7,47 @@ import java.util.ArrayList;
 
 public class HistoryItem implements Parcelable {
 
-    private long mPutId;
-    private ArrayList<Long> mPutIds;
+    private long mId;
+    private FolderType mFolderType;
 
-    public long getPutId() {
-        return mPutId;
+    public static HistoryItem directory(Long id){
+        HistoryItem item = new HistoryItem();
+        item.setId(id);
+        item.setFolderType(FolderType.DIRECTORY);
+        return item;
     }
 
-    public void setPutId(long putId) {
-        mPutId = putId;
+    public static HistoryItem group(Long id){
+        HistoryItem item = new HistoryItem();
+        item.setId(id);
+        item.setFolderType(FolderType.GROUP);
+        return item;
     }
 
-    public ArrayList<Long> getPutIds() {
-        return mPutIds;
+    public long getId() {
+        return mId;
     }
 
-    public void setPutIds(ArrayList<Long> putIds) {
-        mPutIds = putIds;
+    public FolderType getFolderType() {
+        return mFolderType;
     }
 
-    public boolean isGroup(){
-        if(mPutIds == null){
-            return false;
-        } else {
-            return true;
-        }
+    public void setId(long id) {
+        mId = id;
+    }
+
+    public void setFolderType(FolderType folderType) {
+        mFolderType = folderType;
     }
 
     @Override
     public String toString() {
         return "HistoryItem{" +
-                "mPutId=" + mPutId +
-                ", mPutIds=" + mPutIds +
+                "mId=" + mId +
+                ", mFolderType=" + mFolderType +
                 '}';
     }
+
 
     @Override
     public int describeContents() {
@@ -49,20 +56,20 @@ public class HistoryItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.mPutId);
-        dest.writeList(this.mPutIds);
+        dest.writeLong(this.mId);
+        dest.writeInt(this.mFolderType == null ? -1 : this.mFolderType.ordinal());
     }
 
     public HistoryItem() {
     }
 
     protected HistoryItem(Parcel in) {
-        this.mPutId = in.readLong();
-        this.mPutIds = new ArrayList<Long>();
-        in.readList(this.mPutIds, Long.class.getClassLoader());
+        this.mId = in.readLong();
+        int tmpMFolderType = in.readInt();
+        this.mFolderType = tmpMFolderType == -1 ? null : FolderType.values()[tmpMFolderType];
     }
 
-    public static final Parcelable.Creator<HistoryItem> CREATOR = new Parcelable.Creator<HistoryItem>() {
+    public static final Creator<HistoryItem> CREATOR = new Creator<HistoryItem>() {
         @Override
         public HistoryItem createFromParcel(Parcel source) {
             return new HistoryItem(source);
