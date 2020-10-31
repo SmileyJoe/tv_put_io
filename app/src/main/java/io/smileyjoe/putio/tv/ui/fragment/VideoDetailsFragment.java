@@ -10,7 +10,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.DetailsFragment;
 import androidx.leanback.app.DetailsFragmentBackgroundController;
 import androidx.leanback.widget.Action;
@@ -40,10 +39,11 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.activity.DetailsActivity;
+import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.DetailsDescriptionPresenter;
+import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
@@ -93,11 +93,6 @@ public class VideoDetailsFragment extends DetailsFragment {
             return null;
         }
     }
-
-    private static final int DETAIL_THUMB_WIDTH = 274;
-    private static final int DETAIL_THUMB_HEIGHT = 274;
-
-    private static final int NUM_COLS = 10;
 
     private Video mVideo;
     private ArrayList<Video> mRelatedVideos;
@@ -154,8 +149,8 @@ public class VideoDetailsFragment extends DetailsFragment {
     }
 
     public void handleIntent() {
-        mVideo = getActivity().getIntent().getParcelableExtra(DetailsActivity.VIDEO);
-        mRelatedVideos = getActivity().getIntent().getParcelableArrayListExtra(DetailsActivity.RELATED_VIDEOS);
+        mVideo = getActivity().getIntent().getParcelableExtra(VideoDetailsActivity.VIDEO);
+        mRelatedVideos = getActivity().getIntent().getParcelableArrayListExtra(VideoDetailsActivity.RELATED_VIDEOS);
     }
 
     @Override
@@ -192,13 +187,10 @@ public class VideoDetailsFragment extends DetailsFragment {
     }
 
     private void loadThumb(DetailsOverviewRow row) {
-        int width = convertDpToPixel(getActivity().getApplicationContext(), DETAIL_THUMB_WIDTH);
-        int height = convertDpToPixel(getActivity().getApplicationContext(), DETAIL_THUMB_HEIGHT);
-
         Glide.with(getActivity())
                 .load(mVideo.getPosterAsUri())
                 .centerCrop()
-                .into(new OnThumbLoaded(width, height, row));
+                .into(new OnThumbLoaded(row));
     }
 
     private void addActions(DetailsOverviewRow row) {
@@ -233,11 +225,11 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private void setupDetailsOverviewRowPresenter() {
         // Set detail background.
-        FullWidthDetailsOverviewRowPresenter detailsPresenter = new FullWidthDetailsOverviewRowPresenter(new DetailsDescriptionPresenter());
+        FullWidthDetailsOverviewRowPresenter detailsPresenter = new FullWidthDetailsOverviewRowPresenter(new VideoDetailsDescriptionPresenter());
 
         // Hook up transition element.
         FullWidthDetailsOverviewSharedElementHelper sharedElementHelper = new FullWidthDetailsOverviewSharedElementHelper();
-        sharedElementHelper.setSharedElementEnterTransition(getActivity(), DetailsActivity.SHARED_ELEMENT_NAME);
+        sharedElementHelper.setSharedElementEnterTransition(getActivity(), VideoDetailsActivity.SHARED_ELEMENT_NAME);
 
         detailsPresenter.setListener(sharedElementHelper);
         detailsPresenter.setParticipatingEntranceTransition(true);
@@ -398,8 +390,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
         private DetailsOverviewRow mRow;
 
-        public OnThumbLoaded(int width, int height, DetailsOverviewRow row) {
-            super(width, height);
+        public OnThumbLoaded(DetailsOverviewRow row) {
             mRow = row;
         }
 
