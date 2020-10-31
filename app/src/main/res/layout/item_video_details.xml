@@ -14,4 +14,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"/>
 
+    <TextView
+        android:id="@+id/text_overview"
+        style="@style/Text.List.Details"/>
+
 </LinearLayout>

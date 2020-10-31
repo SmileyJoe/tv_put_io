@@ -16,6 +16,7 @@ import io.smileyjoe.putio.tv.util.PopulateGenres;
 public class VideoDetailsViewHolder extends Presenter.ViewHolder {
 
     private TextView mTextTitle;
+    private TextView mTextOverview;
     private LinearLayout mLayoutGenres;
     private Context mContext;
 
@@ -25,11 +26,13 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         mContext = view.getContext();
 
         mTextTitle = view.findViewById(R.id.text_title);
+        mTextOverview = view.findViewById(R.id.text_overview);
         mLayoutGenres = view.findViewById(R.id.layout_genres);
     }
 
     public void bind(Video video){
         mTextTitle.setText(video.getTitle());
+        mTextOverview.setText(video.getOverView());
 
         PopulateGenres task = new PopulateGenres(mLayoutGenres, video);
         task.setHideOnEmpty(true);
