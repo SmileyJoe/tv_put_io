@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.room.ColumnInfo;
@@ -111,6 +112,13 @@ public class Group implements ToggleItem, Folder, Parcelable {
 
         mPutIds.add(putId);
 
+        setPutIdsJson();
+    }
+
+    public void removePutId(Long putId){
+        if(mPutIds != null && mPutIds.contains(putId)){
+            mPutIds.remove(mPutIds.indexOf(putId));
+        }
         setPutIdsJson();
     }
 

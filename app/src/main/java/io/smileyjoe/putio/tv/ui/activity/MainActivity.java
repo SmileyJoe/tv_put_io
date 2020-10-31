@@ -30,6 +30,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
@@ -47,7 +48,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private FolderListFragment mFragmentFolderList;
     private VideoGridFragment mFragmentVideoList;
     private GenreListFragment mFragmentGenreList;
-    private ToggleFragment mFragmentFilter;
+    private FilterFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
 
     private FrameLayout mFrameLoading;
@@ -73,7 +74,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList = (VideoGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(FragmentType.VIDEO);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
-        mFragmentFilter = (ToggleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
+        mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
         mFragmentFilter.setListener(new FilterListener());
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
         mFragmentGroup.setListener(new GroupListener());
@@ -225,7 +226,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private class GroupListener implements ToggleFragment.Listener<Group>{
         @Override
         public void onItemClicked(View view, Group group, boolean isSelected) {
-            UpdateGroup task = new UpdateGroup(group);
+            UpdateGroup task = new UpdateGroup(group, isSelected);
             task.execute();
         }
 
@@ -236,15 +237,21 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         private class UpdateGroup extends AsyncTask<Void, Void, Void>{
             private Group mGroup;
+            private boolean mIsSelected;
 
-            public UpdateGroup(Group group) {
+            public UpdateGroup(Group group, boolean isSelected) {
                 mGroup = group;
+                mIsSelected = isSelected;
             }
 
             @Override
             protected Void doInBackground(Void... voids) {
-                mGroup.addPutId(mVideoLoader.getCurrentHistory().getPutId());
-                Log.d("GroupThings", "Saving: " + mGroup);
+                if(mIsSelected) {
+                    mGroup.addPutId(mVideoLoader.getCurrentHistory().getPutId());
+                } else {
+                    mGroup.removePutId(mVideoLoader.getCurrentHistory().getPutId());
+                }
+
                 AppDatabase.getInstance(getBaseContext()).groupDao().insert(mGroup);
                 return null;
             }
