@@ -7,6 +7,7 @@ public class SharedPrefs {
 
     private static final String NAME = "putio_prefs";
     private static final String KEY_PUT_IO_TOKEN = "put_io_token";
+    private static final String KEY_GROUPS_SETUP = "groups_setup";
 
     private SharedPreferences mPrefs;
     private static SharedPrefs sInstance;
@@ -29,5 +30,13 @@ public class SharedPrefs {
 
     public String getPutToken(){
         return mPrefs.getString(KEY_PUT_IO_TOKEN, null);
+    }
+
+    public void groupsSetup(){
+        mPrefs.edit().putBoolean(KEY_GROUPS_SETUP, true).apply();
+    }
+
+    public boolean isGroupsSetup(){
+        return mPrefs.getBoolean(KEY_GROUPS_SETUP, false);
     }
 }

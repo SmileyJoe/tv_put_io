@@ -136,6 +136,7 @@ public class VideoUtil {
             video.setOverView(json.getString("overview"));
             video.setPoster(Tmdb.getImageUrl(json.getString("poster_path")));
             video.setTitle(json.getString("title"));
+            video.setReleaseDate(Format.fromTmdbToMillies(json.getString("release_date")));
             video.isTmdbFound(true);
 
             JsonArray genreJson = json.getJsonArray("genre_ids");

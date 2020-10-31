@@ -10,10 +10,7 @@ import androidx.annotation.NonNull;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
-import io.smileyjoe.putio.tv.ui.viewholder.BaseViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.GenreListViewHolder;
-import io.smileyjoe.putio.tv.ui.viewholder.VideoGridViewHolder;
-import io.smileyjoe.putio.tv.ui.viewholder.VideoListViewHolder;
 
 public class GenreListAdapter extends BaseListAdapter<Genre, GenreListViewHolder> {
 
@@ -26,10 +23,20 @@ public class GenreListAdapter extends BaseListAdapter<Genre, GenreListViewHolder
     @NonNull
     @Override
     public GenreListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.list_item_genre, parent, false);
-        GenreListViewHolder holder = new GenreListViewHolder(view, getFragmentType());
+        View view = LayoutInflater.from(getContext()).inflate(getLayoutResId(), parent, false);
+        GenreListViewHolder holder = getViewHolder(view, getFragmentType());
         holder.setListener(new ViewHolderListener());
         return holder;
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.list_item_genre;
+    }
+
+    @Override
+    protected GenreListViewHolder getViewHolder(View view, FragmentType fragmentType) {
+        return new GenreListViewHolder(view, fragmentType);
     }
 
     public void clearSelected(){

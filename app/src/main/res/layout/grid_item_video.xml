@@ -44,6 +44,11 @@
             style="@style/Text.Title.Video"/>
 
         <TextView
+            android:id="@+id/text_release_date"
+            android:visibility="gone"
+            style="@style/Text.Date"/>
+
+        <TextView
             android:id="@+id/text_genres"
             android:visibility="gone"
             style="@style/Text.Genre.Video"/>

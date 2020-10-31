@@ -1,12 +1,10 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,28 +13,26 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.adapter.VideoListAdapter;
+import io.smileyjoe.putio.tv.ui.adapter.VideoGridAdapter;
 import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
-public class VideoListFragment extends Fragment {
+public class VideoGridFragment extends Fragment {
 
-    public interface Listener extends VideoListAdapter.Listener<Video> {
+    public interface Listener extends VideoGridAdapter.Listener<Video> {
     }
 
     private RecyclerView mRecycler;
     private LinearLayout mLayoutEmpty;
     private ZoomGridVideo mZoomGridVideo;
 
-    private VideoListAdapter mVideoListAdapter;
-    private VideoListAdapter.Type mType = VideoListAdapter.Type.LIST;
+    private VideoGridAdapter mVideoGridAdapter;
     private boolean mIsFullScreen = false;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Video> mVideosAll;
@@ -55,12 +51,10 @@ public class VideoListFragment extends Fragment {
         return view;
     }
 
-    public void setType(VideoListAdapter.Type type, FragmentType fragmentType) {
-        mType = type;
+    public void setType(FragmentType fragmentType) {
 
-        if(mVideoListAdapter != null){
-            mVideoListAdapter.setType(type);
-            mVideoListAdapter.setFragmentType(fragmentType);
+        if(mVideoGridAdapter != null){
+            mVideoGridAdapter.setFragmentType(fragmentType);
         }
 
         setLayoutManager(true);
@@ -81,9 +75,9 @@ public class VideoListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mVideoListAdapter = new VideoListAdapter(getContext(), mType);
+        mVideoGridAdapter = new VideoGridAdapter(getContext());
 
-        mRecycler.setAdapter(mVideoListAdapter);
+        mRecycler.setAdapter(mVideoGridAdapter);
         setLayoutManager(false);
     }
 
@@ -92,12 +86,12 @@ public class VideoListFragment extends Fragment {
     }
 
     public void setListener(Listener listener) {
-        mVideoListAdapter.setListener(new AdapterListener(listener));
+        mVideoGridAdapter.setListener(new AdapterListener(listener));
     }
 
     public void update(Video video){
-        if(mVideoListAdapter != null){
-            mVideoListAdapter.update(video);
+        if(mVideoGridAdapter != null){
+            mVideoGridAdapter.update(video);
         }
     }
 
@@ -113,27 +107,11 @@ public class VideoListFragment extends Fragment {
         return spanCount;
     }
 
-    public int getFirstVisiblePosition(){
-        if(mType == VideoListAdapter.Type.GRID) {
-            return ((GridLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
-        }
-
-        return 0;
-    }
-
     private boolean setLayoutManager(boolean force){
         boolean created = false;
         if(mRecycler != null) {
             if(mLayoutManager == null || force) {
-                switch (mType) {
-                    case LIST:
-                        mLayoutManager = new LinearLayoutManager(getContext());
-                        break;
-                    case GRID:
-                        mLayoutManager = new GridLayoutManager(getContext(), getSpanCount());
-                        break;
-                }
-
+                mLayoutManager = new GridLayoutManager(getContext(), getSpanCount());
                 mRecycler.setLayoutManager(mLayoutManager);
                 created = true;
             }
@@ -158,8 +136,8 @@ public class VideoListFragment extends Fragment {
             mLayoutEmpty.setVisibility(View.GONE);
             mRecycler.setVisibility(View.VISIBLE);
 
-            mVideoListAdapter.setItems(videos);
-            mVideoListAdapter.notifyDataSetChanged();
+            mVideoGridAdapter.setItems(videos);
+            mVideoGridAdapter.notifyDataSetChanged();
         }
     }
 
@@ -220,8 +198,8 @@ public class VideoListFragment extends Fragment {
     }
 
     public ArrayList<Video> getVideos(){
-        if(mVideoListAdapter != null){
-            return mVideoListAdapter.getItems();
+        if(mVideoGridAdapter != null){
+            return mVideoGridAdapter.getItems();
         }
 
         return null;
@@ -235,7 +213,7 @@ public class VideoListFragment extends Fragment {
         return getView().getWidth();
     }
 
-    private class AdapterListener implements VideoListAdapter.Listener<Video>{
+    private class AdapterListener implements VideoGridAdapter.Listener<Video>{
         private Listener mListener;
 
         public AdapterListener(Listener listener) {
@@ -251,9 +229,7 @@ public class VideoListFragment extends Fragment {
 
         @Override
         public void hasFocus(FragmentType type, Video item, View view, int position) {
-            if(mType == VideoListAdapter.Type.GRID){
-                mZoomGridVideo.show(view, item);
-            }
+            mZoomGridVideo.show(view, item);
 
             if(mListener != null){
                 mListener.hasFocus(type, item, view, position);
