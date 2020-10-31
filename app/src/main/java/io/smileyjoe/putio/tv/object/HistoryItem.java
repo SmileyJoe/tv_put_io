@@ -8,18 +8,21 @@ import java.util.ArrayList;
 public class HistoryItem implements Parcelable {
 
     private long mId;
+    private String mTitle;
     private FolderType mFolderType;
 
-    public static HistoryItem directory(Long id){
+    public static HistoryItem directory(Long id, String title){
         HistoryItem item = new HistoryItem();
         item.setId(id);
+        item.setTitle(title);
         item.setFolderType(FolderType.DIRECTORY);
         return item;
     }
 
-    public static HistoryItem group(Long id){
+    public static HistoryItem group(Long id, String title){
         HistoryItem item = new HistoryItem();
         item.setId(id);
+        item.setTitle(title);
         item.setFolderType(FolderType.GROUP);
         return item;
     }
@@ -28,12 +31,20 @@ public class HistoryItem implements Parcelable {
         return mId;
     }
 
+    public String getTitle() {
+        return mTitle;
+    }
+
     public FolderType getFolderType() {
         return mFolderType;
     }
 
     public void setId(long id) {
         mId = id;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
     }
 
     public void setFolderType(FolderType folderType) {

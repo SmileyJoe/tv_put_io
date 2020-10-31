@@ -49,17 +49,17 @@ public class VideoLoader {
         getFromPut(Putio.NO_PARENT);
     }
 
-    public void loadDirectory(Long putId){
-        loadDirectory(putId, true);
+    public void loadDirectory(Long putId, String title){
+        loadDirectory(putId, title, true);
     }
 
-    public void loadDirectory(Long putId, boolean shouldAddToHistory){
+    public void loadDirectory(Long putId, String title, boolean shouldAddToHistory){
         ArrayList<Video> videos = getVideos(putId);
 
         if(videos == null){
             getFromPut(putId);
         } else {
-            onVideosLoaded(HistoryItem.directory(putId), videos, getFolders(putId), shouldAddToHistory);
+            onVideosLoaded(HistoryItem.directory(putId, title), videos, getFolders(putId), shouldAddToHistory);
         }
     }
 
@@ -85,7 +85,7 @@ public class VideoLoader {
 
             switch (current.getFolderType()){
                 case DIRECTORY:
-                    loadDirectory(current.getId(), false);
+                    loadDirectory(current.getId(), current.getTitle(), false);
                     break;
                 case GROUP:
                     loadGroup(current.getId(), false);
@@ -124,6 +124,7 @@ public class VideoLoader {
 
     private class GetGroup extends AsyncTask<Void, Void, Void>{
         private Long mId;
+        private Group mGroup;
         private ArrayList<Video> mGroupVideos;
         private ArrayList<Folder> mGroupFolders;
         private boolean mShouldAddToHistory;
@@ -137,8 +138,8 @@ public class VideoLoader {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Group group = AppDatabase.getInstance(mContext).groupDao().get(mId);
-            ArrayList<Long> putIds = group.getPutIds();
+            mGroup = AppDatabase.getInstance(mContext).groupDao().get(mId);
+            ArrayList<Long> putIds = mGroup.getPutIds();
 
             if(putIds != null && !putIds.isEmpty()) {
                 PutioHelper helper;
@@ -178,7 +179,7 @@ public class VideoLoader {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            onVideosLoaded(HistoryItem.group(mId), mGroupVideos, mGroupFolders, mShouldAddToHistory);
+            onVideosLoaded(HistoryItem.group(mId, mGroup.getTitle()), mGroupVideos, mGroupFolders, mShouldAddToHistory);
         }
     }
 
@@ -202,6 +203,7 @@ public class VideoLoader {
         private long mPutId;
         private JsonObject mResult;
         private long mCurrentPutId;
+        private String mCurrentTitle;
 
         public ProcessPutResponse(long putId, JsonObject result) {
             mPutId = putId;
@@ -215,6 +217,7 @@ public class VideoLoader {
             helper.parse(mPutId, mResult);
 
             mCurrentPutId = helper.getCurrent().getPutId();
+            mCurrentTitle = helper.getCurrent().getTitle();
 
             mVideos.put(mCurrentPutId, helper.getVideos());
             mFolders.put(mCurrentPutId, helper.getFolders());
@@ -224,7 +227,7 @@ public class VideoLoader {
 
         @Override
         protected void onPostExecute(Void param) {
-            onVideosLoaded(HistoryItem.directory(mCurrentPutId), mVideos.get(mCurrentPutId), mFolders.get(mCurrentPutId), true);
+            onVideosLoaded(HistoryItem.directory(mCurrentPutId, mCurrentTitle), mVideos.get(mCurrentPutId), mFolders.get(mCurrentPutId), true);
         }
     }
 

@@ -149,7 +149,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 mVideoLoader.addToHistory(historyItem);
             }
             handleGenres(videos);
-//            mTextTitle.setText(current.getTitle());
+            mTextTitle.setText(historyItem.getTitle());
 
             boolean folderFragmentIsVisible = populateFolders(folders);
 
@@ -283,7 +283,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         public void onItemClicked(View view, Folder folder) {
             switch (folder.getType()){
                 case DIRECTORY:
-                    mVideoLoader.loadDirectory(((Directory) folder).getVideo().getPutId());
+                    Directory directory = (Directory) folder;
+                    mVideoLoader.loadDirectory(directory.getPutId(), directory.getTitle());
                     break;
                 case GROUP:
                     mVideoLoader.loadGroup(((Group) folder).getId());
@@ -301,7 +302,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     showDetails(video);
                     break;
                 case FOLDER:
-                    mVideoLoader.loadDirectory(video.getPutId());
+                    mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
                     break;
             }
         }
