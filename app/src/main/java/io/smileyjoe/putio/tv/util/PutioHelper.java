@@ -17,6 +17,7 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
+import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
@@ -67,43 +68,53 @@ public class PutioHelper {
             }
         }
 
-        ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(mContext, filesJson));
         mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
 
-        if(videos != null && videos.size() == 1){
+        if(mCurrent.getFileType() == FileType.FOLDER) {
+
+            ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(mContext, filesJson));
+
+            if (videos != null && videos.size() == 1) {
+                Video currentDbVideo = AppDatabase.getInstance(mContext).videoDao().getByPutId(mCurrent.getPutId());
+
+                if (currentDbVideo != null && currentDbVideo.isTmdbFound()) {
+                    Video updated = VideoUtil.updateFromDb(videos.get(0), currentDbVideo);
+                    AppDatabase.getInstance(mContext).videoDao().insert(updated);
+                }
+            }
+
+            for (Video video : videos) {
+                switch (video.getVideoType()) {
+                    case MOVIE:
+                        if (!video.isTmdbChecked()) {
+                            TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
+                            response.setListener(mListener);
+                            Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), response);
+                        }
+                    case EPISODE:
+                        mVideos.add(video);
+                        break;
+                    case UNKNOWN:
+                        switch (video.getFileType()) {
+                            case VIDEO:
+                                mVideos.add(video);
+                                break;
+                            case FOLDER:
+                            case UNKNOWN:
+                            default:
+                                mFolders.add(new Directory(video));
+                                break;
+                        }
+                        break;
+                }
+            }
+        } else {
             Video currentDbVideo = AppDatabase.getInstance(mContext).videoDao().getByPutId(mCurrent.getPutId());
 
-            if(currentDbVideo != null && currentDbVideo.isTmdbFound()){
-                Video updated = VideoUtil.updateFromDb(videos.get(0), currentDbVideo);
-                AppDatabase.getInstance(mContext).videoDao().insert(updated);
+            if (currentDbVideo != null && currentDbVideo.isTmdbFound()) {
+                Video updated = VideoUtil.updateFromDb(mCurrent, currentDbVideo);
+                mVideos.add(updated);
             }
-        }
-
-        for (Video video : videos) {
-            switch (video.getVideoType()) {
-                case MOVIE:
-                    if(!video.isTmdbChecked()) {
-                        TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
-                        response.setListener(mListener);
-                        Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), response);
-                    }
-                case EPISODE:
-                    mVideos.add(video);
-                    break;
-                case UNKNOWN:
-                    switch (video.getFileType()){
-                        case VIDEO:
-                            mVideos.add(video);
-                            break;
-                        case FOLDER:
-                        case UNKNOWN:
-                        default:
-                            mFolders.add(new Directory(video));
-                            break;
-                    }
-                    break;
-            }
-
         }
 
         VideoUtil.sort(mVideos);

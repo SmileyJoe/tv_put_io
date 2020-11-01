@@ -152,6 +152,7 @@ public class VideoLoader {
                         helper.setListener(mListener);
 
                         JsonObject result = Putio.getFiles(mContext, id);
+
                         helper.parse(id, result);
 
                         videos = helper.getVideos();

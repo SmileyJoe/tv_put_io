@@ -25,6 +25,7 @@ import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
+import io.smileyjoe.putio.tv.object.FolderType;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
@@ -141,7 +142,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     private void populate(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
 
-        if((folders == null || folders.isEmpty()) && (videos != null && videos.size() == 1)){
+        if((folders == null || folders.isEmpty()) && (videos != null && videos.size() == 1) && historyItem.getFolderType() == FolderType.DIRECTORY){
             showDetails(videos.get(0));
         } else {
             if(shouldAddToHistory) {
