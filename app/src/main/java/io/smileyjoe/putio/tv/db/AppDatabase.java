@@ -16,7 +16,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
-@Database(entities = {Video.class, Genre.class, Group.class}, version = 4)
+@Database(entities = {Video.class, Genre.class, Group.class}, version = 5)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract VideoDao videoDao();
     public abstract GenreDao genreDao();
@@ -54,6 +54,16 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE `group` ADD COLUMN group_type_id INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("UPDATE `group` SET group_type_id = 1 WHERE id = 1");
+            database.execSQL("UPDATE `group` SET group_type_id = 1 WHERE id = 2");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (3, 'Watch Later', '[]', 2)");
+        }
+    };
+
     private static void resetVideo(SupportSQLiteDatabase database){
         database.execSQL("DELETE FROM video");
         database.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='video'");
@@ -68,6 +78,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             .addMigrations(MIGRATION_1_2)
                             .addMigrations(MIGRATION_2_3)
                             .addMigrations(MIGRATION_3_4)
+                            .addMigrations(MIGRATION_4_5)
                             .build();
                 }
             }

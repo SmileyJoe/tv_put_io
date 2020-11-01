@@ -280,7 +280,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private class FolderListListener extends HomeListener<Folder> implements FolderListFragment.Listener{
         @Override
         public void onItemClicked(View view, Folder folder) {
-            switch (folder.getType()){
+            switch (folder.getFolderType()){
                 case DIRECTORY:
                     Directory directory = (Directory) folder;
                     mVideoLoader.loadDirectory(directory.getPutId(), directory.getTitle());

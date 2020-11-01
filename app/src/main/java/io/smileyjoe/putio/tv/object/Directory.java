@@ -84,7 +84,7 @@ public class Directory implements Folder, Parcelable {
     }
 
     @Override
-    public FolderType getType() {
+    public FolderType getFolderType() {
         return FolderType.DIRECTORY;
     }
 
