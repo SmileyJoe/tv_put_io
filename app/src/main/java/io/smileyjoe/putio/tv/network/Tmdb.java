@@ -21,6 +21,7 @@ public class Tmdb {
     private static String BASE_IMAGE = "https://image.tmdb.org/t/p/original";
     private static String SEARCH = "/search";
     private static String MOVIE = "/movie";
+    private static String MOVIE_CREDITS = MOVIE + "/{id}/credits";
     private static String LIST = "/list";
     private static String GENRE = "/genre";
     private static String PARAM_API_KEY = "api_key";
@@ -61,7 +62,7 @@ public class Tmdb {
     }
 
     public static void get(Context context, long id, Response response){
-        String url = getUrl(MOVIE, "/" + id);
+        String url = getUrl(MOVIE, "/" + id) + "&append_to_response=credits";
 
         Ion.with(context)
                 .load(url)

@@ -45,6 +45,7 @@ import io.smileyjoe.putio.tv.db.GroupDao;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Character;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.object.Video;
@@ -209,6 +210,10 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     @Override
     public void update(Video video) {
         mRow.setItem(video);
+
+        for(Character character:video.getCharacters()){
+            Log.d("PutThings", character.toString());
+        }
     }
 
     private void loadThumb(DetailsOverviewRow row) {

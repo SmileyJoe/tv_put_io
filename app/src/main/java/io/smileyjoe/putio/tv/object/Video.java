@@ -87,6 +87,8 @@ public class Video implements Parcelable{
     private String mTagLine;
     @ColumnInfo(name = "runtime")
     private int mRuntime;
+    @Ignore
+    private ArrayList<Character> mCharacters;
 
     public Video() {
         mVideoType = VideoType.UNKNOWN;
@@ -246,6 +248,10 @@ public class Video implements Parcelable{
 
     public void setRuntime(int runtime) {
         mRuntime = runtime;
+    }
+
+    public void setCharacters(ArrayList<Character> characters) {
+        mCharacters = characters;
     }
 
     public long getPutId() {
@@ -412,6 +418,10 @@ public class Video implements Parcelable{
         return mRuntime;
     }
 
+    public ArrayList<Character> getCharacters() {
+        return mCharacters;
+    }
+
     @Override
     public String toString() {
         return "Video{" +
@@ -441,6 +451,7 @@ public class Video implements Parcelable{
                 ", mReleaseDate=" + mReleaseDate +
                 ", mTagLine='" + mTagLine + '\'' +
                 ", mRuntime=" + mRuntime +
+                ", mCharacters=" + mCharacters +
                 '}';
     }
 
@@ -490,6 +501,7 @@ public class Video implements Parcelable{
         dest.writeLong(this.mReleaseDate);
         dest.writeString(this.mTagLine);
         dest.writeInt(this.mRuntime);
+        dest.writeTypedList(this.mCharacters);
     }
 
     protected Video(Parcel in) {
@@ -522,6 +534,7 @@ public class Video implements Parcelable{
         this.mReleaseDate = in.readLong();
         this.mTagLine = in.readString();
         this.mRuntime = in.readInt();
+        this.mCharacters = in.createTypedArrayList(Character.CREATOR);
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {

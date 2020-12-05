@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Character;
 import io.smileyjoe.putio.tv.object.Video;
 
 public class TmdbUtil {
@@ -83,7 +84,38 @@ public class TmdbUtil {
             }
         }
 
+        private void handleCast(Video video, JsonObject jsonObject){
+            if(jsonObject.has("credits")){
+                JsonObject creditsJsonObject = jsonObject.getAsJsonObject("credits");
+
+                if(creditsJsonObject.has("cast")) {
+                    ArrayList<Character> characters = new ArrayList<>();
+                    JsonArray jsonArray = creditsJsonObject.getAsJsonArray("cast");
+
+                    for (JsonElement jsonElement : jsonArray) {
+                        Character character = new Character();
+                        JsonUtil json = new JsonUtil(jsonElement.getAsJsonObject());
+
+                        character.setCastMemberName(json.getString("name"));
+                        character.setCastMemberTmdbId(json.getLong("id"));
+                        character.setName(json.getString("character"));
+                        character.setOrder(json.getInt("order"));
+                        character.setProfileImage(Tmdb.getImageUrl(json.getString("profile_path")));
+                        character.setVideoTmdbId(video.getTmdbId());
+
+                        characters.add(character);
+                    }
+
+                    if(characters != null && !characters.isEmpty()) {
+                        AppDatabase.getInstance(mContext).characterDao().insert(characters);
+                        video.setCharacters(characters);
+                    }
+                }
+            }
+        }
+
         private Video update(Video video, JsonObject jsonObject){
+            handleCast(video, jsonObject);
             JsonUtil json = new JsonUtil(jsonObject);
 
             video.setTmdbId(json.getLong("id"));

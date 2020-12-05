@@ -12,15 +12,17 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.smileyjoe.putio.tv.object.Character;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
-@Database(entities = {Video.class, Genre.class, Group.class}, version = 5)
+@Database(entities = {Video.class, Genre.class, Group.class, Character.class}, version = 6)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract VideoDao videoDao();
     public abstract GenreDao genreDao();
     public abstract GroupDao groupDao();
+    public abstract CharacterDao characterDao();
 
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -67,6 +69,20 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            resetVideo(database);
+            database.execSQL("CREATE TABLE `character` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+                    + "`video_tmdb_id` INTEGER NOT NULL,"
+                    + "`cast_member_tmdb_id` INTEGER NOT NULL,"
+                    + "`name` TEXT,"
+                    + "`profile_image` TEXT,"
+                    + "`order` INTEGER NOT NULL,"
+                    + "`cast_member_name` TEXT)");
+        }
+    };
+
     private static void resetVideo(SupportSQLiteDatabase database){
         database.execSQL("DELETE FROM video");
         database.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='video'");
@@ -82,6 +98,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             .addMigrations(MIGRATION_2_3)
                             .addMigrations(MIGRATION_3_4)
                             .addMigrations(MIGRATION_4_5)
+                            .addMigrations(MIGRATION_5_6)
                             .addCallback(new RoomCallback())
                             .build();
                 }

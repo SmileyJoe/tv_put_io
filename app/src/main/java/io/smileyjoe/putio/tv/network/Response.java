@@ -22,14 +22,17 @@ public abstract class Response implements FutureCallback<com.koushikdutta.ion.Re
         int responseCode = result.getHeaders().code();
 
         if(responseCode == 401){
-            Context context = Application.getStaticContext();
+            Log.e("PutThings", result.getRequest().getPath());
+//            Context context = Application.getStaticContext();
+//
+//            SharedPrefs prefs = SharedPrefs.getInstance(context);
+//            prefs.clearPutToken();
+//            Application.setPutToken(null);
+//
+//            context.startActivity(AuthActivity.getIntent(context));
+        }
 
-            SharedPrefs prefs = SharedPrefs.getInstance(context);
-            prefs.clearPutToken();
-            Application.setPutToken(null);
-
-            context.startActivity(AuthActivity.getIntent(context));
-        } else if (e == null) {
+        if (e == null) {
             onSuccess(result.getResult());
         } else {
             onFail(e);
