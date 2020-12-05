@@ -3,9 +3,11 @@ package io.smileyjoe.putio.tv.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -35,11 +37,16 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.db.AppDatabase;
+import io.smileyjoe.putio.tv.db.GroupDao;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Group;
+import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
@@ -64,6 +71,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     }
 
     private enum ActionOption {
+        UNKNOWN(0, 0),
         WATCH(1, R.string.action_watch),
         RESUME(2, R.string.action_resume),
         CONVERT(3, R.string.action_convert);
@@ -92,7 +100,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                 }
             }
 
-            return null;
+            return UNKNOWN;
         }
     }
 
@@ -129,6 +137,8 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
             setAdapter(mAdapter);
             initializeBackground(mVideo);
             setOnItemViewClickedListener(new OnRelatedItemClick());
+            GetGroups groupsTask = new GetGroups();
+            groupsTask.execute();
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
@@ -274,11 +284,15 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         return Math.round((float) dp * density);
     }
 
-    private Action getAction(ActionOption option) {
+    private Action getAction(int id) {
+        return getAction(new Long(id));
+    }
+
+    private Action getAction(long id) {
         for (int i = 0; i < mActionAdapter.size(); i++) {
             Action action = (Action) mActionAdapter.get(i);
 
-            if (action.getId() == option.getId()) {
+            if (action.getId() == id) {
                 return action;
             }
         }
@@ -289,6 +303,33 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     private void updateActions(Action action) {
         int position = mActionAdapter.indexOf(action);
         mActionAdapter.notifyItemRangeChanged(position, position);
+    }
+
+    private class GetGroups extends AsyncTask<Void, Void, List<Group>>{
+        @Override
+        protected List<Group> doInBackground(Void... voids) {
+            return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.VIDEO.getId());
+        }
+
+        @Override
+        protected void onPostExecute(List<Group> groups) {
+            super.onPostExecute(groups);
+
+            if(groups != null && !groups.isEmpty()){
+                for(Group group:groups){
+                    @StringRes int subTextResId;
+
+                    if(group.getPutIds().contains(mVideo.getPutId())){
+                        subTextResId = R.string.text_remove_from;
+                    } else {
+                        subTextResId = R.string.text_add_to;
+                    }
+
+                    Action action = new Action(group.getId() + 100, getString(subTextResId), group.getTitle());
+                    mActionAdapter.add(action);
+                }
+            }
+        }
     }
 
     private class OnConvertResponse extends Response {
@@ -303,7 +344,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
             }
 
             if (percentDone >= 0) {
-                Action action = getAction(ActionOption.CONVERT);
+                Action action = getAction(ActionOption.CONVERT.getId());
 
                 if (action != null) {
                     if (percentDone < 100) {
@@ -337,7 +378,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
             }
 
             if (mVideo.getResumeTime() > 0) {
-                Action action = getAction(ActionOption.RESUME);
+                Action action = getAction(ActionOption.RESUME.getId());
 
                 if (action == null) {
                     int currentRange = mActionAdapter.size() - 1;
@@ -374,7 +415,52 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                         mListener.onResumeClick(mVideo, mRelatedVideos);
                     }
                     break;
+                case UNKNOWN:
+                    OnGroupClicked task = new OnGroupClicked(action);
+                    task.execute();
+                    break;
             }
+        }
+    }
+
+    private class OnGroupClicked extends AsyncTask<Void, Void, Action>{
+        private Action mAction;
+
+        public OnGroupClicked(Action action) {
+            mAction = action;
+        }
+
+        @Override
+        protected Action doInBackground(Void... voids) {
+            long id = mAction.getId() - 100;
+
+            if(id == Group.DEFAULT_ID_WATCH_LATER) {
+                long putId = mVideo.getPutId();
+                @StringRes int labelOne;
+
+                GroupDao groupDao = AppDatabase.getInstance(getContext()).groupDao();
+                Group group = groupDao.get(id);
+
+                if(group.getPutIds().contains(putId)){
+                    group.removePutId(putId);
+                    labelOne = R.string.text_add_to;
+                } else {
+                    group.addPutId(putId);
+                    labelOne = R.string.text_remove_from;
+                }
+
+                mAction.setLabel1(getString(labelOne));
+                groupDao.insert(group);
+            }
+
+            return mAction;
+        }
+
+        @Override
+        protected void onPostExecute(Action action) {
+            super.onPostExecute(action);
+
+            updateActions(action);
         }
     }
 

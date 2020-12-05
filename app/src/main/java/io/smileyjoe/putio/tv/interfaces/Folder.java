@@ -12,6 +12,6 @@ public interface Folder {
     String getTitle();
     String getSubTextOne(Context context);
     String getSubTextTwo(Context context);
-    FolderType getType();
+    FolderType getFolderType();
 
 }

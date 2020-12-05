@@ -27,6 +27,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
 
     public static int DEFAULT_ID_MOVIES = 1;
     public static int DEFAULT_ID_SERIES = 2;
+    public static int DEFAULT_ID_WATCH_LATER = 3;
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -39,6 +40,10 @@ public class Group implements ToggleItem, Folder, Parcelable {
     private ArrayList<Long> mPutIds;
     @Ignore
     private boolean mIsSelected;
+    @Ignore
+    private GroupType mType;
+    @ColumnInfo(name = "group_type_id")
+    private int mTypeId;
 
     public Group() {
         mIsSelected = false;
@@ -65,14 +70,24 @@ public class Group implements ToggleItem, Folder, Parcelable {
         return mPutIdsJson;
     }
 
+    public int getTypeId() {
+        return mTypeId;
+    }
+
+    public GroupType getType() {
+        return mType;
+    }
+
     @Override
     public int getIconResId() {
         @DrawableRes int iconResId;
 
-        if(getId() == Group.DEFAULT_ID_MOVIES){
+        if(getId() == DEFAULT_ID_MOVIES){
             iconResId = R.drawable.ic_movie_24;
-        } else if (getId() == Group.DEFAULT_ID_SERIES){
+        } else if (getId() == DEFAULT_ID_SERIES) {
             iconResId = R.drawable.ic_series_24;
+        } else if(getId() == DEFAULT_ID_WATCH_LATER){
+            iconResId = R.drawable.ic_watch_later_24;
         } else {
             iconResId = R.drawable.ic_folder_24;
         }
@@ -140,6 +155,24 @@ public class Group implements ToggleItem, Folder, Parcelable {
         }
     }
 
+    public void setType(GroupType type) {
+        mType = type;
+
+        if(mTypeId != type.getId()){
+            setTypeId(type.getId());
+        }
+    }
+
+    public void setTypeId(int typeId) {
+        mTypeId = typeId;
+        GroupType type = GroupType.fromId(typeId);
+
+        if(mType != type){
+            setType(type);
+        }
+
+    }
+
     @Override
     public String getSubTextOne(Context context) {
         return null;
@@ -151,7 +184,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
     }
 
     @Override
-    public FolderType getType() {
+    public FolderType getFolderType() {
         return FolderType.GROUP;
     }
 

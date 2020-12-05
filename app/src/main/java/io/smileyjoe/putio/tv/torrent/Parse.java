@@ -1,5 +1,6 @@
 package io.smileyjoe.putio.tv.torrent;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -77,6 +78,10 @@ public class Parse {
     }
 
     public static HashMap<String, String> parse(String rawTitle) {
+        if(TextUtils.isEmpty(rawTitle)){
+            return new HashMap<>();
+        }
+
         ArrayList<String> matchesRaw = new ArrayList<>();
         HashMap<String, String> matchesClean = new HashMap<>();
         int titleStart = 0;

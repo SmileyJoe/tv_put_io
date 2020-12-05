@@ -13,6 +13,7 @@ import java.util.List;
 
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.Group;
+import io.smileyjoe.putio.tv.object.GroupType;
 
 public class GroupFragment extends ToggleFragment<Group> {
 
@@ -43,7 +44,7 @@ public class GroupFragment extends ToggleFragment<Group> {
     private class GetGroups extends AsyncTask<Void, Void, List<Group>>{
         @Override
         protected List<Group> doInBackground(Void... voids) {
-            return AppDatabase.getInstance(getContext()).groupDao().getAll();
+            return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId());
         }
 
         @Override

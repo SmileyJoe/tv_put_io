@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
@@ -52,7 +53,7 @@ public class Putio {
     }
 
     public static JsonObject getFiles(Context context, long parentId) {
-        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true";
+        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true&stream_url_parent=true&mp4_stream_url_parent=true&mp4_status_parent=true";
 
         if (parentId != NO_PARENT) {
             url += "&parent_id=" + parentId;
