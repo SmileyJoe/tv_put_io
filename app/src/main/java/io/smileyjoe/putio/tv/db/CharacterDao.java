@@ -15,7 +15,7 @@ public interface CharacterDao {
     List<Character> getAll();
 
     @Query("SELECT * FROM character WHERE video_tmdb_id IS :id")
-    List<Character> getForVideo(long id);
+    List<Character> getByTmdbId(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<Character> characters);

@@ -210,10 +210,6 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     @Override
     public void update(Video video) {
         mRow.setItem(video);
-
-        for(Character character:video.getCharacters()){
-            Log.d("PutThings", character.toString());
-        }
     }
 
     private void loadThumb(DetailsOverviewRow row) {
