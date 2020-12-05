@@ -69,7 +69,6 @@ public class PutioHelper {
             }
         }
 
-//        Log.d("PutThings", "Parent: " + parentObject.toString());
         mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
 
         if(mCurrent.getFileType() == FileType.FOLDER) {

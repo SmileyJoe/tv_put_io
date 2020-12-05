@@ -314,7 +314,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         @Override
         protected void onPostExecute(List<Group> groups) {
             super.onPostExecute(groups);
-Log.d("PutThings", "Groups: " + groups);
+
             if(groups != null && !groups.isEmpty()){
                 for(Group group:groups){
                     @StringRes int subTextResId;

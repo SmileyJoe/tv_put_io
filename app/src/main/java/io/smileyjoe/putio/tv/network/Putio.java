@@ -49,13 +49,11 @@ public class Putio {
             url += "&parent_id=" + parentId;
         }
 
-        Log.d("PutThings", url);
-
         execute(context, url, response);
     }
 
     public static JsonObject getFiles(Context context, long parentId) {
-        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true";
+        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true&stream_url_parent=true&mp4_stream_url_parent=true&mp4_status_parent=true";
 
         if (parentId != NO_PARENT) {
             url += "&parent_id=" + parentId;
