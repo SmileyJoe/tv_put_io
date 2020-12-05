@@ -73,7 +73,7 @@ public class PutioHelper {
             ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(mContext, filesJson));
 
             if (videos != null && videos.size() == 1) {
-                Video currentDbVideo = AppDatabase.getInstance(mContext).videoDao().getByPutId(mCurrent.getPutId());
+                Video currentDbVideo = VideoUtil.getFromDbByPutId(mContext, mCurrent.getPutId());
 
                 if (currentDbVideo != null && currentDbVideo.isTmdbFound()) {
                     Video updated = VideoUtil.updateFromDb(videos.get(0), currentDbVideo);
@@ -107,7 +107,7 @@ public class PutioHelper {
                 }
             }
         } else {
-            Video currentDbVideo = AppDatabase.getInstance(mContext).videoDao().getByPutId(mCurrent.getPutId());
+            Video currentDbVideo = VideoUtil.getFromDbByPutId(mContext, mCurrent.getPutId());
 
             if (currentDbVideo != null && currentDbVideo.isTmdbFound()) {
                 Video updated = VideoUtil.updateFromDb(mCurrent, currentDbVideo);

@@ -29,6 +29,17 @@ public class VideoUtil {
 
     }
 
+    public static Video getFromDbByPutId(Context context, long putId){
+        AppDatabase db = AppDatabase.getInstance(context);
+        Video currentDbVideo = db.videoDao().getByPutId(putId);
+
+        if(currentDbVideo != null && currentDbVideo.getTmdbId() > 0){
+            currentDbVideo.setCharacters(new ArrayList<>(db.characterDao().getByTmdbId(currentDbVideo.getTmdbId())));
+        }
+
+        return currentDbVideo;
+    }
+
     public static ArrayList<Video> filter(ArrayList<Video> videos) {
         ArrayList<Video> videosFiltered = new ArrayList<>();
 
@@ -58,7 +69,7 @@ public class VideoUtil {
         long putId = json.getLong("id");
         boolean hasTmdbData = false;
 
-        Video video = AppDatabase.getInstance(context).videoDao().getByPutId(putId);
+        Video video = VideoUtil.getFromDbByPutId(context, putId);
 
         if(video != null){
             hasTmdbData = video.isTmdbFound();
