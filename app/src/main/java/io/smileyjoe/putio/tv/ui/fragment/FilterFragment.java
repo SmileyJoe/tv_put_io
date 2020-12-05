@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import io.smileyjoe.putio.tv.object.Filter;
+import io.smileyjoe.putio.tv.object.FragmentType;
 
 public class FilterFragment extends ToggleFragment<Filter> {
 
@@ -17,5 +18,10 @@ public class FilterFragment extends ToggleFragment<Filter> {
         for(Filter filter:Filter.values()){
             addOption(filter);
         }
+    }
+
+    @Override
+    protected FragmentType getFragmentType() {
+        return FragmentType.FILTER;
     }
 }

@@ -25,6 +25,8 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
     private LinearLayout mLayoutRoot;
     private Listener<T> mListener;
 
+    protected abstract FragmentType getFragmentType();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -73,7 +75,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if(mListener != null){
-                mListener.hasFocus(FragmentType.FILTER, mFilter, v, 0);
+                mListener.hasFocus(getFragmentType(), mFilter, v, 0);
             }
         }
 

@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 
@@ -27,6 +28,7 @@ public class VideoLoader {
     private Context mContext;
     private HashMap<Long, ArrayList<Video>> mVideos;
     private HashMap<Long, ArrayList<Folder>> mFolders;
+    private HashMap<Long, Video> mParents;
     private ArrayList<HistoryItem> mHistory;
     private Listener mListener;
 
@@ -34,6 +36,7 @@ public class VideoLoader {
         mContext = context;
         mVideos = new HashMap<>();
         mFolders = new HashMap<>();
+        mParents = new HashMap<>();
         mHistory = new ArrayList<>();
         mListener = listener;
     }
@@ -90,6 +93,14 @@ public class VideoLoader {
         return false;
     }
 
+    public boolean hasHistory(){
+        if(mHistory == null || mHistory.size() <= 1){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public HistoryItem getCurrentHistory(){
         return mHistory.get(mHistory.size() - 1);
     }
@@ -135,40 +146,79 @@ public class VideoLoader {
             ArrayList<Long> putIds = mGroup.getPutIds();
 
             if(putIds != null && !putIds.isEmpty()) {
-                PutioHelper helper;
-                for (long id:putIds){
-                    ArrayList<Video> videos = getVideos(id);
-                    ArrayList<Folder> folders = getFolders(id);
-
-                    if(videos == null) {
-                        helper = new PutioHelper(mContext);
-                        helper.setListener(mListener);
-
-                        JsonObject result = Putio.getFiles(mContext, id);
-
-                        helper.parse(id, result);
-
-                        videos = helper.getVideos();
-                        folders = helper.getFolders();
-
-                        mVideos.put(id, videos);
-                        mFolders.put(id, folders);
-                    }
-
-                    ArrayList<Folder> foldersClean = new ArrayList<>();
-
-                    for(Folder folder:folders){
-                        if(!putIds.contains(((Directory) folder).getPutId())){
-                            foldersClean.add(folder);
-                        }
-                    }
-
-                    mGroupVideos.addAll(videos);
-                    mGroupFolders.addAll(foldersClean);
+                if(mGroup.isUseParent()){
+                    handleParents(putIds);
+                } else {
+                    handleVideos(putIds);
                 }
             }
 
             return null;
+        }
+
+        private void handleVideos(ArrayList<Long> putIds){
+            PutioHelper helper;
+            for (long id:putIds){
+                ArrayList<Video> videos = getVideos(id);
+                ArrayList<Folder> folders = getFolders(id);
+
+                if(videos == null) {
+                    helper = new PutioHelper(mContext);
+                    helper.setListener(mListener);
+
+                    JsonObject result = Putio.getFiles(mContext, id);
+
+                    helper.parse(id, result);
+
+                    videos = helper.getVideos();
+                    folders = helper.getFolders();
+
+                    mParents.put(id, helper.getCurrent());
+                    mVideos.put(id, videos);
+                    mFolders.put(id, folders);
+                }
+
+                ArrayList<Folder> foldersClean = new ArrayList<>();
+
+                for(Folder folder:folders){
+                    if(!putIds.contains(((Directory) folder).getPutId())){
+                        foldersClean.add(folder);
+                    }
+                }
+
+                mGroupVideos.addAll(videos);
+                mGroupFolders.addAll(foldersClean);
+            }
+        }
+
+        private void handleParents(ArrayList<Long> putIds){
+            PutioHelper helper;
+            for (long id:putIds){
+                Video parent = mParents.get(id);
+
+                if(parent == null) {
+                    helper = new PutioHelper(mContext);
+                    helper.setListener(mListener);
+
+                    JsonObject result = Putio.getFiles(mContext, id);
+
+                    helper.parse(id, result);
+
+                    parent = helper.getCurrent();
+                    mParents.put(id, parent);
+                }
+
+                switch (parent.getFileType()) {
+                    case VIDEO:
+                        mGroupVideos.add(parent);
+                        break;
+                    case FOLDER:
+                    case UNKNOWN:
+                    default:
+                        mGroupFolders.add(new Directory(parent));
+                        break;
+                }
+            }
         }
 
         @Override
@@ -213,6 +263,7 @@ public class VideoLoader {
             mCurrentPutId = helper.getCurrent().getPutId();
             mCurrentTitle = helper.getCurrent().getTitleFormatted();
 
+            mParents.put(mCurrentPutId, helper.getCurrent());
             mVideos.put(mCurrentPutId, helper.getVideos());
             mFolders.put(mCurrentPutId, helper.getFolders());
 
