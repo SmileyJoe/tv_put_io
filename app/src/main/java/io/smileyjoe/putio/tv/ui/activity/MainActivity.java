@@ -160,15 +160,20 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 showFragment(mFragmentFilter);
             } else {
                 hideFragment(mFragmentFilter);
-                switch (historyItem.getFolderType()){
-                    case GROUP:
-                        hideFragment(mFragmentGroup);
-                        break;
-                    case DIRECTORY:
+            }
+
+            switch (historyItem.getFolderType()){
+                case GROUP:
+                    hideFragment(mFragmentGroup);
+                    break;
+                case DIRECTORY:
+                    if(mVideoLoader.hasHistory()) {
                         showFragment(mFragmentGroup);
                         mFragmentGroup.setCurrentPutId(historyItem.getId());
-                        break;
-                }
+                    } else {
+                        hideFragment(mFragmentGroup);
+                    }
+                    break;
             }
         }
 
@@ -202,11 +207,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList.setFullScreen(false);
         mFragmentVideoList.hideDetails();
 
-        if(mVideoLoader.hasHistory()){
-            showFragment(mFragmentGroup);
+        if(mFragmentGroup.isVisible()){
             changeFragmentWidth(mFragmentGroup, R.dimen.home_fragment_width_expanded);
-        } else {
-            hideFragment(mFragmentGroup);
         }
     }
 
