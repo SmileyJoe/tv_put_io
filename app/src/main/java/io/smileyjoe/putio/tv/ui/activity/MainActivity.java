@@ -200,16 +200,16 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private boolean populateFolders(ArrayList<Folder> folders) {
         boolean fragmentIsVisible;
 
-        if (folders == null || folders.isEmpty()) {
-            hideFragment(mFragmentFolderList);
-            fragmentIsVisible = false;
-        } else {
-            showFragment(mFragmentFolderList);
+//        if (folders == null || folders.isEmpty()) {
+//            hideFragment(mFragmentFolderList);
+//            fragmentIsVisible = false;
+//        } else {
+//            showFragment(mFragmentFolderList);
             mFragmentFolderList.setFolders(folders);
-            fragmentIsVisible = true;
-        }
+//            fragmentIsVisible = true;
+//        }
 
-        return fragmentIsVisible;
+        return true;
     }
 
     private void showFolders(){
@@ -220,6 +220,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         if(mVideoLoader.hasHistory()){
             showFragment(mFragmentGroup);
+            changeFragmentWidth(mFragmentGroup, R.dimen.home_fragment_width_expanded);
         } else {
             hideFragment(mFragmentGroup);
         }
@@ -229,7 +230,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mTextTitle.setVisibility(View.GONE);
         changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_contracted);
         mFragmentVideoList.setFullScreen(true);
-        hideFragment(mFragmentGroup);
+        changeFragmentWidth(mFragmentGroup, R.dimen.home_fragment_width_contracted);
     }
 
     private class GroupListener extends HomeListener<Group> implements ToggleFragment.Listener<Group>{

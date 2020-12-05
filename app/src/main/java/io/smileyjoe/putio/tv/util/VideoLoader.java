@@ -92,7 +92,6 @@ public class VideoLoader {
     }
 
     public boolean hasHistory(){
-        Log.d("PutThings", "History size: " + mHistory.size());
         if(mHistory == null || mHistory.size() <= 1){
             return false;
         } else {
