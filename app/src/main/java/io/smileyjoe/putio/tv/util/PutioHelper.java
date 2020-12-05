@@ -1,8 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -15,7 +13,6 @@ import io.smileyjoe.putio.tv.comparator.FolderComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.FileType;

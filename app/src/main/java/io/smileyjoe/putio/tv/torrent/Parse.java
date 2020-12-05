@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.torrent;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +8,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 

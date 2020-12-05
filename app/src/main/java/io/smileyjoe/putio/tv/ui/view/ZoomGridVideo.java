@@ -1,27 +1,21 @@
 package io.smileyjoe.putio.tv.ui.view;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
@@ -115,7 +109,7 @@ public class ZoomGridVideo extends RelativeLayout{
             mImagePoster.setImageDrawable(currentPoster);
         }
 
-        mTextTitle.setText(video.getTitle());
+        mTextTitle.setText(video.getTitleFormatted());
         mTextTitle.setTypeface(null, Typeface.BOLD);
 
         if(!TextUtils.isEmpty(video.getOverView())) {

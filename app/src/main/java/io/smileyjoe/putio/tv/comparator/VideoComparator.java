@@ -1,10 +1,7 @@
 package io.smileyjoe.putio.tv.comparator;
 
-import android.util.Log;
-
 import java.util.Comparator;
 
-import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;

@@ -12,12 +12,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 
 import io.smileyjoe.putio.tv.comparator.VideoComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.Video;
@@ -127,5 +126,69 @@ public class VideoUtil {
         putVideo.setRuntime(dbVideo.getRuntime());
         putVideo.setTagLine(dbVideo.getTagLine());
         return putVideo;
+    }
+
+    public static ArrayList<Video> getRelated(Video videoPrimary, ArrayList<Video> videoList){
+        switch (videoPrimary.getVideoType()){
+            case EPISODE:
+                return getRelatedSeries(videoPrimary, videoList);
+            case MOVIE:
+                return getRelatedMovie(videoPrimary, videoList);
+            case UNKNOWN:
+            default:
+                return videoList;
+        }
+    }
+
+    private static ArrayList<Video> getRelatedSeries(Video videoPrimary, ArrayList<Video> videoList){
+        ArrayList<Video> relatedVideos = new ArrayList<>();
+
+        for(Video video:videoList) {
+            if (video.getPutId() != videoPrimary.getPutId()
+                    && video.getVideoType() == VideoType.EPISODE
+                    && video.getTitle().equalsIgnoreCase(videoPrimary.getTitle())) {
+                relatedVideos.add(video);
+            }
+        }
+
+        return relatedVideos;
+    }
+
+    private static ArrayList<Video> getRelatedMovie(Video videoPrimary, ArrayList<Video> videoList){
+        ArrayList<Video> relatedVideos = new ArrayList<>();
+        HashMap<Integer, ArrayList<Video>> relatedVideosMap = new HashMap<>();
+
+        for(Video video:videoList){
+            if(video.getPutId() != videoPrimary.getPutId() && video.getVideoType() == VideoType.MOVIE) {
+                int count = 0;
+                for (int genreId : video.getGenreIds()) {
+                    if (videoPrimary.getGenreIds().contains(genreId)) {
+                        count++;
+                    }
+                }
+
+                if (count > 0) {
+                    ArrayList<Video> videosFromMap;
+
+                    if (relatedVideosMap.containsKey(count)) {
+                        videosFromMap = relatedVideosMap.get(count);
+                    } else {
+                        videosFromMap = new ArrayList<>();
+                    }
+
+                    videosFromMap.add(video);
+
+                    relatedVideosMap.put(count, videosFromMap);
+                }
+            }
+        }
+
+        for(int i = videoPrimary.getGenreIds().size(); i >= 1; i--){
+            if(relatedVideosMap.containsKey(i)){
+                relatedVideos.addAll(relatedVideosMap.get(i));
+            }
+        }
+
+        return relatedVideos;
     }
 }

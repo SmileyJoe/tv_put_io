@@ -53,6 +53,7 @@ import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
+import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
@@ -263,9 +264,12 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     }
 
     private void setupRelatedVideoListRow() {
-        if (mRelatedVideos != null && !mRelatedVideos.isEmpty()) {
+        ArrayList<Video> relatedVideos = VideoUtil.getRelated(mVideo,mRelatedVideos);
+
+        if (relatedVideos != null && !relatedVideos.isEmpty()) {
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new RelatedVideoCardPresenter());
-            for (Video video : mRelatedVideos) {
+
+            for (Video video : relatedVideos) {
                 listRowAdapter.add(video);
             }
 

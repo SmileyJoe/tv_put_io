@@ -39,7 +39,7 @@ public class VideoGridViewHolder extends BaseViewHolder<Video> {
         super.bindView(video, position);
 
         Context context = mItemView.getContext();
-        mTextTitle.setText(video.getTitle());
+        mTextTitle.setText(video.getTitleFormatted());
 
         if (video.isWatched()) {
             mFrameWatched.setVisibility(View.VISIBLE);

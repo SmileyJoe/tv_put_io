@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ public class RelatedVideoCardPresenter extends Presenter {
     private static int sDefaultTextColor;
     private static int sSelectedTextColor;
     private Drawable mDefaultCardImage;
+    private static int sPosterPadding;
 
     private static void updateCardBackgroundColor(ImageCardView view, boolean selected) {
         int color = selected ? sSelectedBackgroundColor : sDefaultBackgroundColor;
@@ -50,6 +52,7 @@ public class RelatedVideoCardPresenter extends Presenter {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
+        sPosterPadding = parent.getContext().getResources().getDimensionPixelOffset(R.dimen.file_grid_poster_padding);
         sDefaultBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.bg_default);
         sSelectedBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.bg_selected);
         sSelectedTextColor = ContextCompat.getColor(parent.getContext(), R.color.text_selected_inverse);
@@ -77,15 +80,20 @@ public class RelatedVideoCardPresenter extends Presenter {
         Video video = (Video) item;
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
+        cardView.setTitleText(video.getTitleFormatted());
+        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
+
         if (video.getPosterAsUri() != null) {
-            cardView.setTitleText(video.getTitle());
-            cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
             Glide.with(viewHolder.view.getContext())
                     .load(video.getPosterAsUri())
                     .centerCrop()
                     .error(mDefaultCardImage)
                     .into(cardView.getMainImageView());
+        } else {
+            cardView.getMainImageView().setPadding(sPosterPadding,sPosterPadding,sPosterPadding,sPosterPadding);
+            cardView.getMainImageView().setImageResource(R.drawable.ic_movie_24);
         }
+
     }
 
     @Override

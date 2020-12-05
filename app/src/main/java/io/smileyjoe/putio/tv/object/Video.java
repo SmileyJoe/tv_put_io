@@ -264,12 +264,16 @@ public class Video implements Parcelable{
         return mFileType;
     }
 
-    public String getTitle() {
+    public String getTitleFormatted() {
         if(mVideoType == VideoType.EPISODE){
             return mTitle + " S" + String.format("%02d", getSeason()) + "E" + String.format("%02d", getEpisode());
         } else {
             return mTitle;
         }
+    }
+
+    public String getTitle() {
+        return mTitle;
     }
 
     public String getOverView() {

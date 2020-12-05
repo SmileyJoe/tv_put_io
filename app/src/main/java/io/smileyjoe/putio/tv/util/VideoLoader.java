@@ -2,23 +2,16 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
-import io.smileyjoe.putio.tv.comparator.FolderComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
-import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.HistoryItem;
@@ -218,7 +211,7 @@ public class VideoLoader {
             helper.parse(mPutId, mResult);
 
             mCurrentPutId = helper.getCurrent().getPutId();
-            mCurrentTitle = helper.getCurrent().getTitle();
+            mCurrentTitle = helper.getCurrent().getTitleFormatted();
 
             mVideos.put(mCurrentPutId, helper.getVideos());
             mFolders.put(mCurrentPutId, helper.getFolders());

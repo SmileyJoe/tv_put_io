@@ -24,7 +24,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -47,7 +46,6 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -199,7 +197,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         mVideo = video;
 
         if(mInitialized) {
-            mPlayerGlue.setTitle(video.getTitle());
+            mPlayerGlue.setTitle(video.getTitleFormatted());
 
             prepareMediaForPlaying(video.getStreamUri());
 

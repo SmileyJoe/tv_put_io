@@ -8,9 +8,7 @@ import android.widget.TextView;
 import androidx.leanback.widget.Presenter;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.view.PillView;
 import io.smileyjoe.putio.tv.util.Format;
 import io.smileyjoe.putio.tv.util.PopulateGenres;
 
@@ -40,7 +38,7 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
     }
 
     public void bind(Video video){
-        mTextTitle.setText(video.getTitle());
+        mTextTitle.setText(video.getTitleFormatted());
         mTextOverview.setText(video.getOverView());
         mTextTagline.setText(video.getTagLine());
         mTextRuntime.setText(Format.runtime(mContext, video.getRuntime()));
