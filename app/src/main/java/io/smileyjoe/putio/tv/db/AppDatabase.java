@@ -33,6 +33,9 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("CREATE TABLE `group` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
                     + "`title` TEXT,"
                     + "`put_ids_json` TEXT)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json) VALUES (1, 'Movies', '[]')");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json) VALUES (2, 'Series', '[]')");
+            database.execSQL("INSERT INTO genre(id, title) VALUES (1, 'test 1')");
         }
     };
 
@@ -79,10 +82,22 @@ public abstract class AppDatabase extends RoomDatabase {
                             .addMigrations(MIGRATION_2_3)
                             .addMigrations(MIGRATION_3_4)
                             .addMigrations(MIGRATION_4_5)
+                            .addCallback(new RoomCallback())
                             .build();
                 }
             }
         }
         return INSTANCE;
+    }
+
+    private static class RoomCallback extends RoomDatabase.Callback{
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase database) {
+            super.onCreate(database);
+
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (1, 'Movies', '[]', 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (2, 'Series', '[]', 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (3, 'Watch Later', '[]', 2)");
+        }
     }
 }

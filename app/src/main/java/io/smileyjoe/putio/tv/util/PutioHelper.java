@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -68,6 +69,7 @@ public class PutioHelper {
             }
         }
 
+//        Log.d("PutThings", "Parent: " + parentObject.toString());
         mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
 
         if(mCurrent.getFileType() == FileType.FOLDER) {

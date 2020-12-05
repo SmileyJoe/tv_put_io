@@ -194,6 +194,7 @@ public class VideoLoader {
 
         @Override
         public void onSuccess(JsonObject result) {
+            Log.d("PutThings", result.toString());
             ProcessPutResponse task = new ProcessPutResponse(mPutId, result);
             task.execute();
         }

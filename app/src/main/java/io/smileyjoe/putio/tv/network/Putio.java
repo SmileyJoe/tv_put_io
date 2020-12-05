@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
@@ -47,6 +48,8 @@ public class Putio {
         if (parentId != NO_PARENT) {
             url += "&parent_id=" + parentId;
         }
+
+        Log.d("PutThings", url);
 
         execute(context, url, response);
     }

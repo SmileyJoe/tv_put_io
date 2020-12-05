@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -313,7 +314,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         @Override
         protected void onPostExecute(List<Group> groups) {
             super.onPostExecute(groups);
-
+Log.d("PutThings", "Groups: " + groups);
             if(groups != null && !groups.isEmpty()){
                 for(Group group:groups){
                     @StringRes int subTextResId;

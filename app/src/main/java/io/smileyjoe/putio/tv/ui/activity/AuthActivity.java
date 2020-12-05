@@ -59,8 +59,7 @@ public class AuthActivity extends Activity {
     }
 
     private void authComplete(){
-        CreateDefaultGroups task = new CreateDefaultGroups();
-        task.execute();
+        startNext();
     }
 
     public void startNext(){
@@ -110,35 +109,6 @@ public class AuthActivity extends Activity {
 
         if(!TextUtils.isEmpty(mCode)){
             getToken();
-        }
-    }
-
-    private class CreateDefaultGroups extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if(!mPrefs.isGroupsSetup()){
-                addGroup(R.string.title_group_movies, Group.DEFAULT_ID_MOVIES);
-                addGroup(R.string.title_group_series, Group.DEFAULT_ID_SERIES);
-                mPrefs.groupsSetup();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            startNext();
-        }
-
-        private void addGroup(@StringRes int titleResId, int id){
-            Group group = new Group();
-            group.setId(id);
-            group.setTitle(getString(titleResId));
-            group.setPutIds(new ArrayList<>());
-            AppDatabase.getInstance(getBaseContext()).groupDao().insert(group);
         }
     }
 

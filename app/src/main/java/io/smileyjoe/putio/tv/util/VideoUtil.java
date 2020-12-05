@@ -95,7 +95,7 @@ public class VideoUtil {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             Date date = formatter.parse(putDate);
             return date.getTime();
-        } catch (ParseException e){
+        } catch (ParseException | NullPointerException e){
             return -1;
         }
     }
