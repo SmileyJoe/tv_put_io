@@ -141,7 +141,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     private void populate(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
-
         if((folders == null || folders.isEmpty()) && (videos != null && videos.size() == 1) && historyItem.getFolderType() == FolderType.DIRECTORY){
             showDetails(videos.get(0));
         } else {
@@ -171,7 +170,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                 }
             } else {
                 hideFragment(mFragmentFilter);
-                hideFragment(mFragmentGroup);
             }
         }
 
@@ -219,12 +217,19 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_expanded);
         mFragmentVideoList.setFullScreen(false);
         mFragmentVideoList.hideDetails();
+
+        if(mVideoLoader.hasHistory()){
+            showFragment(mFragmentGroup);
+        } else {
+            hideFragment(mFragmentGroup);
+        }
     }
 
     private void hideFolders(){
         mTextTitle.setVisibility(View.GONE);
         changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_contracted);
         mFragmentVideoList.setFullScreen(true);
+        hideFragment(mFragmentGroup);
     }
 
     private class GroupListener extends HomeListener<Group> implements ToggleFragment.Listener<Group>{
@@ -319,6 +324,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     showFolders();
                 } else if(type == FragmentType.VIDEO) {
                     hideFolders();
+                } else if(type == FragmentType.GROUP) {
+                    showFolders();
                 } else {
                     mFragmentVideoList.hideDetails();
                     hideFolders();

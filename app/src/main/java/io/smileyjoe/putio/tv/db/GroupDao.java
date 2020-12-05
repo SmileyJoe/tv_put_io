@@ -19,7 +19,7 @@ public interface GroupDao {
     @Query("SELECT * FROM `group` WHERE id IS :id")
     Group get(Long id);
 
-    @Query("SELECT * FROM `group` WHERE group_type_id IS :typeId")
+    @Query("SELECT * FROM `group` WHERE group_type_id IN (3, :typeId)")
     List<Group> getByType(int typeId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.room.ColumnInfo;
@@ -28,6 +27,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
     public static int DEFAULT_ID_MOVIES = 1;
     public static int DEFAULT_ID_SERIES = 2;
     public static int DEFAULT_ID_WATCH_LATER = 3;
+    public static int DEFAULT_ID_FAVOURITE = 4;
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -86,8 +86,10 @@ public class Group implements ToggleItem, Folder, Parcelable {
             iconResId = R.drawable.ic_movie_24;
         } else if (getId() == DEFAULT_ID_SERIES) {
             iconResId = R.drawable.ic_series_24;
-        } else if(getId() == DEFAULT_ID_WATCH_LATER){
+        } else if(getId() == DEFAULT_ID_WATCH_LATER) {
             iconResId = R.drawable.ic_watch_later_24;
+        } else if(getId() == DEFAULT_ID_FAVOURITE) {
+            iconResId = R.drawable.ic_favourite_24;
         } else {
             iconResId = R.drawable.ic_folder_24;
         }

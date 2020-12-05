@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.smileyjoe.putio.tv.db.AppDatabase;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 
@@ -29,6 +30,11 @@ public class GroupFragment extends ToggleFragment<Group> {
 
         GetGroups task = new GetGroups();
         task.execute();
+    }
+
+    @Override
+    protected FragmentType getFragmentType() {
+        return FragmentType.GROUP;
     }
 
     public void setCurrentPutId(long currentPutId) {

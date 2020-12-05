@@ -437,9 +437,10 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
 
         @Override
         protected Action doInBackground(Void... voids) {
-            long id = mAction.getId() - 100;
+            final long id = mAction.getId() - 100;
 
-            if(id == Group.DEFAULT_ID_WATCH_LATER) {
+            if(id == Group.DEFAULT_ID_WATCH_LATER
+                || id == Group.DEFAULT_ID_FAVOURITE) {
                 long putId = mVideo.getPutId();
                 @StringRes int labelOne;
 

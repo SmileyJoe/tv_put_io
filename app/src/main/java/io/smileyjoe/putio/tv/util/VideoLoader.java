@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 
@@ -88,6 +89,15 @@ public class VideoLoader {
         }
 
         return false;
+    }
+
+    public boolean hasHistory(){
+        Log.d("PutThings", "History size: " + mHistory.size());
+        if(mHistory == null || mHistory.size() <= 1){
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public HistoryItem getCurrentHistory(){

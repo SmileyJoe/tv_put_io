@@ -20,6 +20,12 @@
                 android:layout_alignParentTop="true"/>
 
             <fragment
+                android:id="@+id/fragment_groups"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:name="io.smileyjoe.putio.tv.ui.fragment.GroupFragment"/>
+
+            <fragment
                 android:id="@+id/fragment_folder_list"
                 android:layout_width="@dimen/home_fragment_width_expanded"
                 android:layout_height="match_parent"
@@ -40,11 +46,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:name="io.smileyjoe.putio.tv.ui.fragment.FilterFragment"/>
-                <fragment
-                    android:id="@+id/fragment_groups"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:name="io.smileyjoe.putio.tv.ui.fragment.GroupFragment"/>
                 <fragment
                     android:id="@+id/fragment_genre_list"
                     android:layout_width="match_parent"

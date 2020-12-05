@@ -2,7 +2,7 @@ package io.smileyjoe.putio.tv.object;
 
 public enum GroupType {
 
-    UNKNOWN(0), DIRECTORY(1), VIDEO(2);
+    UNKNOWN(0), DIRECTORY(1), VIDEO(2), DIRECTORY_VIDEO(3);
 
     private int mId;
 

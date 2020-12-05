@@ -17,7 +17,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
-@Database(entities = {Video.class, Genre.class, Group.class, Character.class}, version = 6)
+@Database(entities = {Video.class, Genre.class, Group.class, Character.class}, version = 7)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract VideoDao videoDao();
     public abstract GenreDao genreDao();
@@ -37,7 +37,6 @@ public abstract class AppDatabase extends RoomDatabase {
                     + "`put_ids_json` TEXT)");
             database.execSQL("INSERT INTO `group` (id, title, put_ids_json) VALUES (1, 'Movies', '[]')");
             database.execSQL("INSERT INTO `group` (id, title, put_ids_json) VALUES (2, 'Series', '[]')");
-            database.execSQL("INSERT INTO genre(id, title) VALUES (1, 'test 1')");
         }
     };
 
@@ -83,6 +82,13 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (4, 'Favourites', '[]', 3)");
+        }
+    };
+
     private static void resetVideo(SupportSQLiteDatabase database){
         database.execSQL("DELETE FROM video");
         database.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='video'");
@@ -99,6 +105,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             .addMigrations(MIGRATION_3_4)
                             .addMigrations(MIGRATION_4_5)
                             .addMigrations(MIGRATION_5_6)
+                            .addMigrations(MIGRATION_6_7)
                             .addCallback(new RoomCallback())
                             .build();
                 }
@@ -115,6 +122,7 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (1, 'Movies', '[]', 1)");
             database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (2, 'Series', '[]', 1)");
             database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (3, 'Watch Later', '[]', 2)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (4, 'Favourites', '[]', 3)");
         }
     }
 }
