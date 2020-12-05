@@ -150,15 +150,16 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             handleGenres(videos);
             mTextTitle.setText(historyItem.getTitle());
 
-            boolean folderFragmentIsVisible = populateFolders(folders);
+            mFragmentFolderList.setFolders(folders);
 
-            mFragmentVideoList.setFullScreen(!folderFragmentIsVisible);
+            mFragmentVideoList.setFullScreen(false);
             mFragmentVideoList.setVideos(videos);
             mFragmentFilter.reset();
 
             if(videos != null && !videos.isEmpty()){
                 showFragment(mFragmentFilter);
-
+            } else {
+                hideFragment(mFragmentFilter);
                 switch (historyItem.getFolderType()){
                     case GROUP:
                         hideFragment(mFragmentGroup);
@@ -168,8 +169,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                         mFragmentGroup.setCurrentPutId(historyItem.getId());
                         break;
                 }
-            } else {
-                hideFragment(mFragmentFilter);
             }
         }
 
@@ -195,21 +194,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             showFragment(mFragmentGenreList);
             mFragmentGenreList.setGenreIds(genresAvailable);
         }
-    }
-
-    private boolean populateFolders(ArrayList<Folder> folders) {
-        boolean fragmentIsVisible;
-
-//        if (folders == null || folders.isEmpty()) {
-//            hideFragment(mFragmentFolderList);
-//            fragmentIsVisible = false;
-//        } else {
-//            showFragment(mFragmentFolderList);
-            mFragmentFolderList.setFolders(folders);
-//            fragmentIsVisible = true;
-//        }
-
-        return true;
     }
 
     private void showFolders(){

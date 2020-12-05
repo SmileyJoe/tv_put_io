@@ -85,7 +85,12 @@ public abstract class AppDatabase extends RoomDatabase {
     static final Migration MIGRATION_6_7 = new Migration(6, 7) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (4, 'Favourites', '[]', 3)");
+            database.execSQL("ALTER TABLE `group` ADD COLUMN use_parent INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("UPDATE `group` SET use_parent = 0 WHERE id = 1");
+            database.execSQL("UPDATE `group` SET use_parent = 0 WHERE id = 2");
+            database.execSQL("UPDATE `group` SET use_parent = 1 WHERE id = 3");
+            database.execSQL("UPDATE `group` SET group_type_id = 3 WHERE id = 3");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (4, 'Favourites', '[]', 3, 1)");
         }
     };
 
@@ -119,10 +124,10 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase database) {
             super.onCreate(database);
 
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (1, 'Movies', '[]', 1)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (2, 'Series', '[]', 1)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (3, 'Watch Later', '[]', 2)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id) VALUES (4, 'Favourites', '[]', 3)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (1, 'Movies', '[]', 1, 0)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (2, 'Series', '[]', 1, 0)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (3, 'Watch Later', '[]', 3, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (4, 'Favourites', '[]', 3, 1)");
         }
     }
 }
