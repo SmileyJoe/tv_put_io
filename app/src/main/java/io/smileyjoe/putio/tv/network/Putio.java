@@ -29,6 +29,7 @@ public class Putio {
         Ion.with(context)
                 .load(url)
                 .asJsonObject()
+                .withResponse()
                 .setCallback(response);
     }
 
@@ -87,6 +88,7 @@ public class Putio {
                 .setHeader("Authorization", "Bearer " + Application.getPutToken())
                 .setJsonObjectBody(body)
                 .asJsonObject()
+                .withResponse()
                 .setCallback(response);
     }
 
@@ -103,6 +105,7 @@ public class Putio {
         getBaseCall(context, url)
                 .setJsonObjectBody(new JsonObject())
                 .asJsonObject()
+                .withResponse()
                 .setCallback(response);
     }
 
@@ -125,6 +128,7 @@ public class Putio {
     private static void execute(Context context, String url, Response response) {
         getBaseCall(context, url)
                 .asJsonObject()
+                .withResponse()
                 .setCallback(response);
     }
 

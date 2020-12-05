@@ -28,6 +28,10 @@ public class SharedPrefs {
         mPrefs.edit().putString(KEY_PUT_IO_TOKEN, token).apply();
     }
 
+    public void clearPutToken(){
+        mPrefs.edit().remove(KEY_PUT_IO_TOKEN).apply();
+    }
+
     public String getPutToken(){
         return mPrefs.getString(KEY_PUT_IO_TOKEN, null);
     }

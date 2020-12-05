@@ -56,6 +56,7 @@ public class Tmdb {
         Ion.with(context)
                 .load(url)
                 .asJsonObject()
+                .withResponse()
                 .setCallback(response);
     }
 
@@ -65,6 +66,7 @@ public class Tmdb {
         Ion.with(context)
                 .load(url)
                 .asJsonObject()
+                .withResponse()
                 .setCallback(response);
     }
 
@@ -72,6 +74,7 @@ public class Tmdb {
         Ion.with(context)
                 .load(getUrl(GENRE, MOVIE, LIST))
                 .asJsonObject()
+                .withResponse()
                 .setCallback(new OnGenreResponse(context));
     }
 

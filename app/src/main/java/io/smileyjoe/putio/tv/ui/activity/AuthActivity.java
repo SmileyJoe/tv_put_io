@@ -1,6 +1,8 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +39,12 @@ public class AuthActivity extends Activity {
     private SharedPrefs mPrefs;
     private String mCode;
     private boolean mIsPaused = false;
+
+    public static Intent getIntent(Context context){
+        Intent intent = new Intent(context, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,7 +130,7 @@ public class AuthActivity extends Activity {
                 getToken();
             } else {
                 mPrefs.savePutToken(token);
-                ((Application) getApplication()).setPutToken(token);
+                Application.setPutToken(token);
                 authComplete();
             }
         }
