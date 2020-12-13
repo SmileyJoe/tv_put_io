@@ -47,6 +47,7 @@
         <item name="android:ellipsize">end</item>
         <item name="android:textSize">@dimen/text_title_page</item>
         <item name="android:textColor">@color/selector_text</item>
+        <item name="android:padding">@dimen/padding_general</item>
     </style>
 
     <style name="Text.List">
@@ -123,6 +124,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:indeterminate">true</item>
         <item name="android:indeterminateTint">@color/ic_tint</item>
+    </style>
+
+    <style name="ListItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/bg_default</item>
+        <item name="android:backgroundTint">@color/selector_bg_inverse</item>
     </style>
 
 </resources>

@@ -58,12 +58,18 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
             mLayoutCast.setVisibility(View.VISIBLE);
             String cast = "";
 
+            int count = 0;
             for(Character character:video.getCharacters()){
+                count++;
                 if(!TextUtils.isEmpty(cast)){
                     cast += ", ";
                 }
 
                 cast += character.getCastMemberName();
+
+                if(count >= 10){
+                    break;
+                }
             }
 
             mTextCast.setText(cast);

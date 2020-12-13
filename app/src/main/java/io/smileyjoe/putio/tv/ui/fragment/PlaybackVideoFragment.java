@@ -62,11 +62,12 @@ import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
  * Plays selected video, loads playlist and related videos, and delegates playback to {@link
  * VideoPlayerGlue}.
  */
-public class PlaybackVideoFragment extends VideoSupportFragment {
+public class PlaybackVideoFragment extends VideoSupportFragment implements VideoPlayerGlue.OnActionClickedListener{
 
     public interface Listener{
         void onPlayComplete(Video video);
         void onControlsVisibilityChanged(boolean isShown);
+        void onSubtitlesClicked();
     }
 
     private static final int UPDATE_DELAY = 16;
@@ -172,7 +173,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
         mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), mTrackSelector);
         mPlayer.addVideoListener(new VideoListener());
         mPlayerAdapter = new LeanbackPlayerAdapter(getActivity(), mPlayer, UPDATE_DELAY);
-        mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, null);
+        mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
         mPlayerGlue.playWhenPrepared();
 
@@ -210,6 +211,23 @@ public class PlaybackVideoFragment extends VideoSupportFragment {
             }
 
             mPlayerGlue.play();
+        }
+    }
+
+    @Override
+    public void onPrevious() {
+        // todo: implement //
+    }
+
+    @Override
+    public void onNext() {
+        // todo: implement //
+    }
+
+    @Override
+    public void onSubtitles() {
+        if(mListener != null){
+            mListener.onSubtitlesClicked();
         }
     }
 

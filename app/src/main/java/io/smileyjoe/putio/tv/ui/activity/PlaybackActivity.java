@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Date;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
+import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 
 public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener{
 
@@ -30,6 +32,8 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     private TextView mTextTime;
     private BroadcastTick mBroadcastTick;
     private final SimpleDateFormat mFormatWatchTime = new SimpleDateFormat("HH:mm");
+    private SubtitleFragment mSubtitleFragment;
+    private Video mVideo;
 
     public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
@@ -56,8 +60,14 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
         setContentView(R.layout.activity_playback);
 
+        handleExtras();
+
         mTextTime = findViewById(R.id.text_time);
         mTextTime.setText(mFormatWatchTime.format(new Date()));
+
+        mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
+        setSubtitleVisibility(false);
+        mSubtitleFragment.setPutId(mVideo.getPutId());
 
         if (savedInstanceState == null) {
             mPlaybackVideoFragment = new PlaybackVideoFragment();
@@ -67,7 +77,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
                     .commit();
         }
 
-        handleExtras();
+        play(mVideo);
     }
 
     @Override
@@ -93,7 +103,25 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
             mTextTime.setVisibility(View.VISIBLE);
         } else {
             mTextTime.setVisibility(View.GONE);
+            setSubtitleVisibility(false);
         }
+    }
+
+    @Override
+    public void onSubtitlesClicked() {
+        setSubtitleVisibility(!mSubtitleFragment.isVisible());
+    }
+
+    private void setSubtitleVisibility(boolean visible){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        if(!visible){
+            transaction.hide(mSubtitleFragment);
+        } else {
+            transaction.show(mSubtitleFragment);
+        }
+
+        transaction.commit();
     }
 
     private void handleExtras(){
@@ -105,7 +133,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
             }
 
             if(extras.containsKey(EXTRA_VIDEO)){
-                play(getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO));
+                mVideo = getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO);
             }
         }
     }

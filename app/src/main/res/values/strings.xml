@@ -27,6 +27,9 @@
     <string name="text_remove_from">Remove from</string>
     <string name="title_cast">Cast:</string>
     <string name="text_no_folders">There are no folders</string>
+    <string name="action_subtitle">Subtitles</string>
+    <string name="text_no_subtitles">No subtitles available!</string>
+    <string name="title_subtitles">Subtitles</string>
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

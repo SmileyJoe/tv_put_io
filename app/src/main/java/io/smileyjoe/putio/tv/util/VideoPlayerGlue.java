@@ -18,6 +18,7 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 
+import androidx.core.content.ContextCompat;
 import androidx.leanback.media.PlaybackTransportControlGlue;
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -26,6 +27,8 @@ import androidx.leanback.widget.PlaybackControlsRow;
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
 
 import java.util.concurrent.TimeUnit;
+
+import io.smileyjoe.putio.tv.R;
 
 /**
  * https://github.com/googlearchive/androidtv-Leanback/blob/master/app/src/main/java/com/example/android/tvleanback/player/VideoPlayerGlue.java
@@ -64,6 +67,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
          * Skip to the next item in the queue.
          */
         void onNext();
+
+        void onSubtitles();
     }
 
     private final OnActionClickedListener mActionListener;
@@ -75,6 +80,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
     private PlaybackControlsRow.SkipNextAction mSkipNextAction;
     private PlaybackControlsRow.FastForwardAction mFastForwardAction;
     private PlaybackControlsRow.RewindAction mRewindAction;
+    private SubtitlesAction mSubtitlesAction;
 
     public VideoPlayerGlue(
             Context context,
@@ -88,6 +94,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mSkipNextAction = new PlaybackControlsRow.SkipNextAction(context);
         mFastForwardAction = new PlaybackControlsRow.FastForwardAction(context);
         mRewindAction = new PlaybackControlsRow.RewindAction(context);
+        mSubtitlesAction = new SubtitlesAction();
 
         mThumbsUpAction = new PlaybackControlsRow.ThumbsUpAction(context);
         mThumbsUpAction.setIndex(PlaybackControlsRow.ThumbsUpAction.INDEX_OUTLINE);
@@ -118,6 +125,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
 //        adapter.add(mThumbsDownAction);
 //        adapter.add(mThumbsUpAction);
 //        adapter.add(mRepeatAction);
+        adapter.add(mSubtitlesAction);
     }
 
     @Override
@@ -136,7 +144,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
                 || action == mFastForwardAction
                 || action == mThumbsDownAction
                 || action == mThumbsUpAction
-                || action == mRepeatAction;
+                || action == mRepeatAction
+                || action == mSubtitlesAction;
     }
 
     private void dispatchAction(Action action) {
@@ -145,6 +154,10 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             rewind();
         } else if (action == mFastForwardAction) {
             fastForward();
+        } else if(action == mSubtitlesAction){
+            if(mActionListener != null){
+                mActionListener.onSubtitles();
+            }
         } else if (action instanceof PlaybackControlsRow.MultiAction) {
             PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
             multiAction.nextIndex();
@@ -193,6 +206,14 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             long newPosition = getCurrentPosition() + TEN_SECONDS;
             newPosition = (newPosition > getDuration()) ? getDuration() : newPosition;
             getPlayerAdapter().seekTo(newPosition);
+        }
+    }
+
+    private class SubtitlesAction extends Action{
+        public SubtitlesAction() {
+            super(100);
+            setLabel1(getContext().getString(R.string.action_subtitle));
+            setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_subtitles_24));
         }
     }
 }
