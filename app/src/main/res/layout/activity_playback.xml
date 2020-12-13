@@ -17,6 +17,14 @@
         android:textSize="@dimen/text_time_video_playback"
         android:textStyle="bold"/>
 
+    <TextView
+        android:id="@+id/text_subtitle"
+        style="@style/Text.Subtitle"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/padding_general"/>
+
     <fragment
         android:id="@+id/fragment_subtitle"
         android:layout_width="@dimen/subtitle_fragment_playback_width"

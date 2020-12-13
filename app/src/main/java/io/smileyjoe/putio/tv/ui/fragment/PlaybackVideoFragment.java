@@ -24,6 +24,8 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -32,12 +34,18 @@ import androidx.leanback.app.VideoSupportFragment;
 import androidx.leanback.app.VideoSupportFragmentGlueHost;
 import androidx.leanback.media.PlaybackGlue;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MergingMediaSource;
+import com.google.android.exoplayer2.source.SingleSampleMediaSource;
+import com.google.android.exoplayer2.text.Cue;
+import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -45,10 +53,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
@@ -68,6 +78,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         void onPlayComplete(Video video);
         void onControlsVisibilityChanged(boolean isShown);
         void onSubtitlesClicked();
+        void showSubtitle(String subTitle);
     }
 
     private static final int UPDATE_DELAY = 16;
@@ -81,6 +92,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private boolean mInitialized = false;
     private Listener mListener;
     private BroadcastTick mBroadcastTick;
+    private SubtitleOutput mSubtitleOutput;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -176,6 +188,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
         mPlayerGlue.playWhenPrepared();
+        mSubtitleOutput = new SubtitleOutput();
 
         mInitialized = true;
 
@@ -194,13 +207,17 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
-    public void play(Video video) {
+    public void play(Video video){
+        play(video, null);
+    }
+
+    private void play(Video video, Uri subtitleUri) {
         mVideo = video;
 
         if(mInitialized) {
             mPlayerGlue.setTitle(video.getTitleFormatted());
 
-            prepareMediaForPlaying(video.getStreamUri());
+            prepareMediaForPlaying(video.getStreamUri(), subtitleUri);
 
             mPlayerGlue.addPlayerCallback(new PlayerCallback());
 
@@ -231,17 +248,52 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
-    private void prepareMediaForPlaying(Uri mediaSourceUri) {
+    public void showSubtitles(Uri uri){
+        mShouldResume = true;
+        mVideo.setResumeTime(mPlayer.getCurrentPosition()/1000);
+        play(mVideo, uri);
+    }
+
+    private void prepareMediaForPlaying(Uri mediaSourceUri, Uri subtitleUri) {
         String userAgent = Util.getUserAgent(getActivity(), getContext().getString(R.string.app_name));
+        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), userAgent);
+
+        SingleSampleMediaSource subtitleSource = null;
+        MediaSource[] mediaSources = null;
+
         MediaSource mediaSource =
                 new ExtractorMediaSource(
                         mediaSourceUri,
-                        new DefaultDataSourceFactory(getActivity(), userAgent),
+                        dataSourceFactory,
                         new DefaultExtractorsFactory(),
                         null,
                         null);
 
-        mPlayer.prepare(mediaSource);
+        if(subtitleUri != null){
+            mediaSources = new MediaSource[2];
+
+            subtitleSource = new SingleSampleMediaSource(
+                    subtitleUri,
+                    new DefaultDataSourceFactory(getActivity(), userAgent),
+                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, Format.NO_VALUE, "en", null),
+                    C.TIME_UNSET);
+
+            mediaSources[0] = mediaSource;
+            mediaSources[1] = subtitleSource;
+
+            mPlayer.addTextOutput(mSubtitleOutput);
+        } else {
+            mediaSources = new MediaSource[1];
+            mediaSources[0] = mediaSource;
+
+            mPlayer.removeTextOutput(mSubtitleOutput);
+
+            if(mListener != null){
+                mListener.showSubtitle(null);
+            }
+        }
+
+        mPlayer.prepare(new MergingMediaSource(mediaSources));
     }
 
     private void populateEndTime(){
@@ -253,6 +305,25 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 
         mPlayerGlue.setSubtitle(getString(R.string.text_ends_at, dateFormat.format(now)));
+    }
+
+    private class SubtitleOutput implements TextOutput{
+        @Override
+        public void onCues(List<Cue> subtitles) {
+            String subtitle = null;
+
+            if(subtitles != null && !subtitles.isEmpty()){
+                String text = subtitles.get(0).text.toString();
+
+                if(!TextUtils.isEmpty(text)){
+                    subtitle = text;
+                }
+            }
+
+            if(mListener != null){
+                mListener.showSubtitle(subtitle);
+            }
+        }
     }
 
     private class BroadcastTick extends BroadcastReceiver {

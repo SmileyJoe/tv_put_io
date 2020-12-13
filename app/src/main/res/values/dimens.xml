@@ -16,6 +16,7 @@
     <dimen name="ic_width">24dp</dimen>
     <dimen name="ic_height">24dp</dimen>
     <dimen name="text_title_page">24sp</dimen>
+    <dimen name="text_subtitle">24sp</dimen>
     <dimen name="text_title_details">26sp</dimen>
     <dimen name="text_list_details">10sp</dimen>
     <dimen name="text_time_video_playback">40sp</dimen>

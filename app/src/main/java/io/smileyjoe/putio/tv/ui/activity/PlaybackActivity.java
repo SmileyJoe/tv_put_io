@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -21,7 +23,7 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 
-public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener{
+public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener{
 
     public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_VIDEOS = "videos";
@@ -34,6 +36,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     private final SimpleDateFormat mFormatWatchTime = new SimpleDateFormat("HH:mm");
     private SubtitleFragment mSubtitleFragment;
     private Video mVideo;
+    private TextView mTextSubtitle;
 
     public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
@@ -62,12 +65,15 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
         handleExtras();
 
+        mTextSubtitle = findViewById(R.id.text_subtitle);
+
         mTextTime = findViewById(R.id.text_time);
         mTextTime.setText(mFormatWatchTime.format(new Date()));
 
         mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
         setSubtitleVisibility(false);
         mSubtitleFragment.setPutId(mVideo.getPutId());
+        mSubtitleFragment.setListener(this);
 
         if (savedInstanceState == null) {
             mPlaybackVideoFragment = new PlaybackVideoFragment();
@@ -110,6 +116,30 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     @Override
     public void onSubtitlesClicked() {
         setSubtitleVisibility(!mSubtitleFragment.isVisible());
+    }
+
+    @Override
+    public void showSubtitles(Uri uri) {
+        mPlaybackVideoFragment.showSubtitles(uri);
+    }
+
+    @Override
+    public void showSubtitle(String subTitle) {
+        if(TextUtils.isEmpty(subTitle)){
+            mTextSubtitle.setVisibility(View.GONE);
+        } else {
+            mTextSubtitle.setVisibility(View.VISIBLE);
+            mTextSubtitle.setText(subTitle);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mSubtitleFragment.isVisible()){
+            setSubtitleVisibility(false);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void setSubtitleVisibility(boolean visible){
