@@ -120,6 +120,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
     @Override
     public void showSubtitles(Uri uri) {
+        setSubtitleVisibility(false);
         mPlaybackVideoFragment.showSubtitles(uri);
     }
 
