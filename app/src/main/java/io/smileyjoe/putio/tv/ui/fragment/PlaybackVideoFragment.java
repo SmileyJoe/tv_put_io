@@ -64,6 +64,7 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
+import io.smileyjoe.putio.tv.util.MediaUtil;
 import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
 import io.smileyjoe.putio.tv.util.YoutubeUtil;
 
@@ -95,6 +96,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private BroadcastTick mBroadcastTick;
     private SubtitleOutput mSubtitleOutput;
     private YoutubeUtil mYoutube;
+    private MediaUtil mMediaUtil;
     private String mYoutubeUrl;
 
     @Override
@@ -213,7 +215,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        Log.d("FlowThings", "Attach");
+
+        mMediaUtil = new MediaUtil(context);
+        if(mVideo != null){
+            play(mVideo);
+        }
+
         mYoutube = new YoutubeUtil(context);
         mYoutube.setListener(this);
         if(!TextUtils.isEmpty(mYoutubeUrl)){
@@ -223,7 +230,6 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     public void play(String youtubeUrl){
-        Log.d("FlowThings", "Play Youtube");
         if(mYoutube != null) {
             mYoutube.extract(youtubeUrl);
         } else {
@@ -232,8 +238,11 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     public void play(Video video){
-        Log.d("FlowThings", "PlayVideo");
-        play(video, null);
+        if(mMediaUtil != null){
+            play(video, null);
+        } else {
+            mVideo = video;
+        }
     }
 
     private void play(Video video, Uri subtitleUri) {
@@ -297,72 +306,21 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     private void prepareMediaForPlaying(String youtubeVideoUrl, String youtubeAudioUrl) {
+        mMediaUtil.reset();
+        mMediaUtil.addMedia(youtubeVideoUrl);
+        mMediaUtil.addMedia(youtubeAudioUrl);
 
-        Log.d("FlowThings", "Prepare youtube");
-        Uri videoUri = Uri.parse(youtubeVideoUrl);
-        Uri audioUri = Uri.parse(youtubeAudioUrl);
-
-        String userAgent = Util.getUserAgent(getActivity(), getContext().getString(R.string.app_name));
-        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), userAgent);
-        MediaSource[] mediaSources = null;
-
-        MediaSource videoSource =
-                new ExtractorMediaSource(
-                        videoUri,
-                        dataSourceFactory,
-                        new DefaultExtractorsFactory(),
-                        null,
-                        null);
-
-        MediaSource audioSource =
-                new ExtractorMediaSource(
-                        audioUri,
-                        dataSourceFactory,
-                        new DefaultExtractorsFactory(),
-                        null,
-                        null);
-
-        mediaSources = new MediaSource[2];
-        mediaSources[0] = videoSource;
-        mediaSources[1] = audioSource;
-
-        mPlayer.prepare(new MergingMediaSource(mediaSources));
+        mPlayer.prepare(mMediaUtil.getSource());
     }
 
     private void prepareMediaForPlaying(Uri mediaSourceUri, Uri subtitleUri) {
-
-        Log.d("FlowThings", "Prepair video");
-        String userAgent = Util.getUserAgent(getActivity(), getContext().getString(R.string.app_name));
-        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), userAgent);
-
-        SingleSampleMediaSource subtitleSource = null;
-        MediaSource[] mediaSources = null;
-
-        MediaSource mediaSource =
-                new ExtractorMediaSource(
-                        mediaSourceUri,
-                        dataSourceFactory,
-                        new DefaultExtractorsFactory(),
-                        null,
-                        null);
+        mMediaUtil.reset();
+        mMediaUtil.addMedia(mediaSourceUri);
 
         if(subtitleUri != null){
-            mediaSources = new MediaSource[2];
-
-            subtitleSource = new SingleSampleMediaSource(
-                    subtitleUri,
-                    new DefaultDataSourceFactory(getActivity(), userAgent),
-                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, Format.NO_VALUE, "en", null),
-                    C.TIME_UNSET);
-
-            mediaSources[0] = mediaSource;
-            mediaSources[1] = subtitleSource;
-
+            mMediaUtil.addSubtitles(subtitleUri);
             mPlayer.addTextOutput(mSubtitleOutput);
         } else {
-            mediaSources = new MediaSource[1];
-            mediaSources[0] = mediaSource;
-
             mPlayer.removeTextOutput(mSubtitleOutput);
 
             if(mListener != null){
@@ -370,7 +328,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
             }
         }
 
-        mPlayer.prepare(new MergingMediaSource(mediaSources));
+        mPlayer.prepare(mMediaUtil.getSource());
     }
 
     private void populateEndTime(){

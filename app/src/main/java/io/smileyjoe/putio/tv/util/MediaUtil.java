@@ -24,9 +24,13 @@ public class MediaUtil {
     private ArrayList<MediaSource> mSources;
 
     public MediaUtil(Context context) {
-        mSources = new ArrayList<>();
+        reset();
         String userAgent = Util.getUserAgent(context, context.getString(R.string.app_name));
         mDataSourceFactory = new DefaultDataSourceFactory(context, userAgent);
+    }
+
+    public void reset(){
+        mSources = new ArrayList<>();
     }
 
     public void addSubtitles(Uri uri){
@@ -43,15 +47,15 @@ public class MediaUtil {
         if(mSources.size() == 1){
             return mSources.get(0);
         } else {
-            return new MergingMediaSource((MediaSource[]) mSources.toArray());
+            return new MergingMediaSource(mSources.toArray(new MediaSource[mSources.size()]));
         }
     }
 
-    private void addMedia(String url){
+    public void addMedia(String url){
         addMedia(Uri.parse(url));
     }
 
-    private void addMedia(Uri uri){
+    public void addMedia(Uri uri){
         MediaSource source =
                 new ExtractorMediaSource(
                         uri,
