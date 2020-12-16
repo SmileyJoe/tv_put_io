@@ -41,7 +41,6 @@ public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Li
     private ProgressBar mProgressLoading;
     private TextView mTextEmpty;
     private Listener mListener;
-    private View mViewSelected;
 
     @Nullable
     @Override
@@ -84,14 +83,13 @@ public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Li
 
     @Override
     public void onItemClicked(View view, Subtitle item) {
-        if(mViewSelected != null){
-            mViewSelected.setSelected(false);
+        if(item.getPutId() != 0) {
+            Putio.getSubtitles(getContext(), item.getPutId(), item.getKey(), new OnSubtitlesGetResponse());
+        } else {
+            if(mListener != null){
+                mListener.showSubtitles(null);
+            }
         }
-
-        view.setSelected(true);
-        mViewSelected = view;
-
-        Putio.getSubtitles(getContext(), item.getPutId(), item.getKey(), new OnSubtitlesGetResponse());
     }
 
     @Override
@@ -122,6 +120,12 @@ public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Li
                     mRecycler.setVisibility(View.GONE);
                     mTextEmpty.setVisibility(View.VISIBLE);
                 } else {
+                    Subtitle subtitleEmpty = new Subtitle();
+                    subtitleEmpty.setLanguage(getString(R.string.text_none));
+                    subtitleEmpty.setPutId(0);
+
+                    subtitles.add(0, subtitleEmpty);
+
                     mAdapter.setItems(subtitles);
                     mAdapter.notifyDataSetChanged();
 

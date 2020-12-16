@@ -41,13 +41,4 @@ public class FolderListViewHolder extends BaseViewHolder<Folder> {
         setText(mTextSize, folder.getSubTextOne(mTextSize.getContext()));
         setText(mTextUpdatedAt, folder.getSubTextTwo(mTextUpdatedAt.getContext()));
     }
-
-    private void setText(TextView textView, String text){
-        if(!TextUtils.isEmpty(text)) {
-            textView.setText(text);
-            textView.setVisibility(View.VISIBLE);
-        } else {
-            textView.setVisibility(View.GONE);
-        }
-    }
 }

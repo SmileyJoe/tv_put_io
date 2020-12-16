@@ -26,6 +26,6 @@ public class SubtitleViewHolder extends BaseViewHolder<Subtitle> {
         super.bindView(item, position);
 
         mTextTitle.setText(item.getLanguage());
-        mTextDetails.setText(item.getName());
+        setText(mTextDetails, item.getName());
     }
 }

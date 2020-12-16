@@ -1,7 +1,9 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +16,7 @@ import io.smileyjoe.putio.tv.object.VideoType;
 public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
 
     public interface Listener<T> extends HomeFragmentListener<T> {
-        void onItemClicked(View view, T item);
+        void onItemClicked(View view, T item, int position);
     }
 
     private T mItem;
@@ -40,6 +42,10 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implemen
         mPosition = position;
     }
 
+    public View getView(){
+        return itemView;
+    }
+
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(hasFocus && mListener != null){
@@ -50,7 +56,16 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implemen
     @Override
     public void onClick(View v) {
         if(mListener != null){
-            mListener.onItemClicked(v, mItem);
+            mListener.onItemClicked(v, mItem, mPosition);
+        }
+    }
+
+    protected void setText(TextView textView, String text){
+        if(!TextUtils.isEmpty(text)) {
+            textView.setText(text);
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            textView.setVisibility(View.GONE);
         }
     }
 }
