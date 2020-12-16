@@ -254,6 +254,11 @@ public class Video implements Parcelable{
         mCharacters = characters;
     }
 
+    public String getTrailerUrl(){
+        // todo: this needs to be done //
+        return "https://www.youtube.com/watch?v=FsQfxb--UZo";
+    }
+
     public long getPutId() {
         return mPutId;
     }

@@ -65,6 +65,7 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
+import io.smileyjoe.putio.tv.util.YoutubeUtil;
 
 /**
  * https://github.com/googlearchive/androidtv-Leanback/blob/master/app/src/main/java/com/example/android/tvleanback/ui/PlaybackFragment.java
@@ -72,7 +73,7 @@ import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
  * Plays selected video, loads playlist and related videos, and delegates playback to {@link
  * VideoPlayerGlue}.
  */
-public class PlaybackVideoFragment extends VideoSupportFragment implements VideoPlayerGlue.OnActionClickedListener{
+public class PlaybackVideoFragment extends VideoSupportFragment implements VideoPlayerGlue.OnActionClickedListener, YoutubeUtil.Listener {
 
     public interface Listener{
         void onPlayComplete(Video video);
@@ -93,6 +94,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private Listener mListener;
     private BroadcastTick mBroadcastTick;
     private SubtitleOutput mSubtitleOutput;
+    private YoutubeUtil mYoutube;
+    private String mYoutubeUrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -207,7 +210,29 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Log.d("FlowThings", "Attach");
+        mYoutube = new YoutubeUtil(context);
+        mYoutube.setListener(this);
+        if(!TextUtils.isEmpty(mYoutubeUrl)){
+            play(mYoutubeUrl);
+            mYoutubeUrl = null;
+        }
+    }
+
+    public void play(String youtubeUrl){
+        Log.d("FlowThings", "Play Youtube");
+        if(mYoutube != null) {
+            mYoutube.extract(youtubeUrl);
+        } else {
+            mYoutubeUrl = youtubeUrl;
+        }
+    }
+
     public void play(Video video){
+        Log.d("FlowThings", "PlayVideo");
         play(video, null);
     }
 
@@ -226,6 +251,23 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 // we only want to do this after the first load //
                 mShouldResume = false;
             }
+
+            mPlayerGlue.play();
+        }
+    }
+
+    @Override
+    public void onYoutubeExtracted(String title, String videoUrl, String audioUrl) {
+        play(title, videoUrl, audioUrl);
+    }
+
+    private void play(String title, String videoUrl, String audioUrl) {
+        if(mInitialized) {
+            mPlayerGlue.setTitle(title);
+
+            prepareMediaForPlaying(videoUrl, audioUrl);
+
+            mPlayerGlue.addPlayerCallback(new PlayerCallback());
 
             mPlayerGlue.play();
         }
@@ -254,7 +296,42 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         play(mVideo, uri);
     }
 
+    private void prepareMediaForPlaying(String youtubeVideoUrl, String youtubeAudioUrl) {
+
+        Log.d("FlowThings", "Prepare youtube");
+        Uri videoUri = Uri.parse(youtubeVideoUrl);
+        Uri audioUri = Uri.parse(youtubeAudioUrl);
+
+        String userAgent = Util.getUserAgent(getActivity(), getContext().getString(R.string.app_name));
+        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), userAgent);
+        MediaSource[] mediaSources = null;
+
+        MediaSource videoSource =
+                new ExtractorMediaSource(
+                        videoUri,
+                        dataSourceFactory,
+                        new DefaultExtractorsFactory(),
+                        null,
+                        null);
+
+        MediaSource audioSource =
+                new ExtractorMediaSource(
+                        audioUri,
+                        dataSourceFactory,
+                        new DefaultExtractorsFactory(),
+                        null,
+                        null);
+
+        mediaSources = new MediaSource[2];
+        mediaSources[0] = videoSource;
+        mediaSources[1] = audioSource;
+
+        mPlayer.prepare(new MergingMediaSource(mediaSources));
+    }
+
     private void prepareMediaForPlaying(Uri mediaSourceUri, Uri subtitleUri) {
+
+        Log.d("FlowThings", "Prepair video");
         String userAgent = Util.getUserAgent(getActivity(), getContext().getString(R.string.app_name));
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), userAgent);
 
@@ -358,7 +435,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 } else {
                     getSurfaceView().setKeepScreenOn(false);
 
-                    Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition() / 1000, null);
+                    if(mVideo != null) {
+                        Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition() / 1000, null);
+                    }
                 }
             }
         }

@@ -25,9 +25,15 @@ import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 
 public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener{
 
+    private enum Type{
+        YOUTUBE, VIDEO;
+    }
+
     public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_VIDEOS = "videos";
     public static final String EXTRA_SHOULD_RESUME = "should_resume";
+    public static final String EXTRA_YOUTUBE_URL = "youtube_url";
+    public static final String EXTRA_TYPE = "type";
 
     private PlaybackVideoFragment mPlaybackVideoFragment;
     private ArrayList<Video> mVideos;
@@ -37,6 +43,8 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     private SubtitleFragment mSubtitleFragment;
     private Video mVideo;
     private TextView mTextSubtitle;
+    private String mYoutubeUrl;
+    private Type mType;
 
     public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
@@ -46,6 +54,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
+        intent.putExtra(EXTRA_TYPE, Type.VIDEO);
         return intent;
     }
 
@@ -54,6 +63,14 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         intent.putExtra(EXTRA_VIDEOS, videos);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
+        intent.putExtra(EXTRA_TYPE, Type.VIDEO);
+        return intent;
+    }
+
+    public static Intent getIntent(Context context, String youtubeUrl){
+        Intent intent = new Intent(context, PlaybackActivity.class);
+        intent.putExtra(EXTRA_YOUTUBE_URL, youtubeUrl);
+        intent.putExtra(EXTRA_TYPE, Type.YOUTUBE);
         return intent;
     }
 
@@ -72,8 +89,10 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
         mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
         setSubtitleVisibility(false);
-        mSubtitleFragment.setPutId(mVideo.getPutId());
-        mSubtitleFragment.setListener(this);
+        if(mType == Type.VIDEO) {
+            mSubtitleFragment.setPutId(mVideo.getPutId());
+            mSubtitleFragment.setListener(this);
+        }
 
         if (savedInstanceState == null) {
             mPlaybackVideoFragment = new PlaybackVideoFragment();
@@ -83,7 +102,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
                     .commit();
         }
 
-        play(mVideo);
+        play();
     }
 
     @Override
@@ -159,6 +178,12 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         Bundle extras = getIntent().getExtras();
 
         if(extras != null){
+            if(extras.containsKey(EXTRA_TYPE)){
+                mType = (Type) extras.getSerializable(EXTRA_TYPE);
+            }
+
+            Log.d("TubeThings", mType.toString());
+
             if(extras.containsKey(EXTRA_VIDEOS)){
                 mVideos = extras.getParcelableArrayList(EXTRA_VIDEOS);
             }
@@ -166,7 +191,26 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
             if(extras.containsKey(EXTRA_VIDEO)){
                 mVideo = getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO);
             }
+
+            if(extras.containsKey(EXTRA_YOUTUBE_URL)){
+                mYoutubeUrl = getIntent().getStringExtra(EXTRA_YOUTUBE_URL);
+            }
         }
+    }
+
+    private void play(){
+        switch (mType){
+            case YOUTUBE:
+                play(mYoutubeUrl);
+                break;
+            case VIDEO:
+                play(mVideo);
+                break;
+        }
+    }
+
+    private void play(String youtubeUrl){
+        mPlaybackVideoFragment.play(youtubeUrl);
     }
 
     private void play(Video video){

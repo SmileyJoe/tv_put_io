@@ -31,6 +31,7 @@
     <string name="text_no_subtitles">No subtitles available!</string>
     <string name="title_subtitles">Subtitles</string>
     <string name="text_none">None</string>
+    <string name="action_trailer">Trailer</string>
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>
