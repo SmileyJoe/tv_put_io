@@ -48,6 +48,7 @@ import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Character;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
+import io.smileyjoe.putio.tv.object.Subtitle;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;

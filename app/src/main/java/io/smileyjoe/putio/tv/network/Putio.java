@@ -22,6 +22,8 @@ public class Putio {
     private static final String CONVERT = "/files/{id}/mp4";
     private static final String AUTH_GET_CODE = "/oauth2/oob/code";
     private static final String AUTH_GET_TOKEN = "/oauth2/oob/code/{code}";
+    private static final String SUBTITLES_AVAILABLE = "/files/{id}/subtitles";
+    private static final String SUBTITLES = SUBTITLES_AVAILABLE + "/{key}";
 
     public static void getAuthCode(Context context, Response response){
         String url = BASE + AUTH_GET_CODE + "?app_id=" + BuildConfig.PUTIO_CLIENT_ID;
@@ -37,6 +39,22 @@ public class Putio {
         String url = BASE + AUTH_GET_TOKEN;
         url = url.replace("{code}", code);
         execute(context, url, response);
+    }
+
+    public static void getAvailableSubtitles(Context context, long id, Response response){
+        String url = BASE + SUBTITLES_AVAILABLE.replace("{id}", Long.toString(id));
+        execute(context, url, response);
+    }
+
+    public static void getSubtitles(Context context, long id, String key, ResponseString response){
+        String url = BASE + SUBTITLES
+                .replace("{id}", Long.toString(id))
+                .replace("{key}", key);
+
+        getBaseCall(context, url)
+                .asString()
+                .withResponse()
+                .setCallback(response);
     }
 
     public static void getFiles(Context context, Response response) {
