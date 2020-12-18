@@ -62,6 +62,7 @@ import java.util.List;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 import io.smileyjoe.putio.tv.util.MediaUtil;
@@ -250,6 +251,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
         if(mInitialized) {
             mPlayerGlue.setTitle(video.getTitleFormatted());
+            mPlayerGlue.setMediaType(MediaType.VIDEO);
 
             prepareMediaForPlaying(video.getStreamUri(), subtitleUri);
 
@@ -273,6 +275,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private void play(String title, String videoUrl, String audioUrl) {
         if(mInitialized) {
             mPlayerGlue.setTitle(title);
+            mPlayerGlue.setMediaType(MediaType.YOUTUBE);
 
             prepareMediaForPlaying(videoUrl, audioUrl);
 

@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
 import java.util.concurrent.TimeUnit;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.MediaType;
 
 /**
  * https://github.com/googlearchive/androidtv-Leanback/blob/master/app/src/main/java/com/example/android/tvleanback/player/VideoPlayerGlue.java
@@ -81,6 +82,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
     private PlaybackControlsRow.FastForwardAction mFastForwardAction;
     private PlaybackControlsRow.RewindAction mRewindAction;
     private SubtitlesAction mSubtitlesAction;
+    private ArrayObjectAdapter mPrimaryActionsAdapter;
+    private ArrayObjectAdapter mSecondaryActionsAdapter;
 
     public VideoPlayerGlue(
             Context context,
@@ -113,6 +116,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         // play/pause, previous, rewind, fast forward, next
         //   > /||      |<        <<        >>         >|
         super.onCreatePrimaryActions(adapter);
+        mPrimaryActionsAdapter = adapter;
 //        adapter.add(mSkipPreviousAction);
 //        adapter.add(mRewindAction);
 //        adapter.add(mFastForwardAction);
@@ -122,10 +126,10 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
     @Override
     protected void onCreateSecondaryActions(ArrayObjectAdapter adapter) {
         super.onCreateSecondaryActions(adapter);
+        mSecondaryActionsAdapter = adapter;
 //        adapter.add(mThumbsDownAction);
 //        adapter.add(mThumbsUpAction);
 //        adapter.add(mRepeatAction);
-        adapter.add(mSubtitlesAction);
     }
 
     @Override
@@ -136,6 +140,17 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
         // Super class handles play/pause and delegates to abstract methods next()/previous().
         super.onActionClicked(action);
+    }
+
+    public void setMediaType(MediaType mediaType){
+        mSecondaryActionsAdapter.clear();
+        switch (mediaType){
+            case VIDEO:
+                mSecondaryActionsAdapter.add(mSubtitlesAction);
+                break;
+            case YOUTUBE:
+                break;
+        }
     }
 
     // Should dispatch actions that the super class does not supply callbacks for.

@@ -19,21 +19,18 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 
 public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener{
 
-    private enum Type{
-        YOUTUBE, VIDEO;
-    }
-
     public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_VIDEOS = "videos";
     public static final String EXTRA_SHOULD_RESUME = "should_resume";
     public static final String EXTRA_YOUTUBE_URL = "youtube_url";
-    public static final String EXTRA_TYPE = "type";
+    public static final String EXTRA_MEDIA_TYPE = "media_type";
 
     private PlaybackVideoFragment mPlaybackVideoFragment;
     private ArrayList<Video> mVideos;
@@ -44,7 +41,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     private Video mVideo;
     private TextView mTextSubtitle;
     private String mYoutubeUrl;
-    private Type mType;
+    private MediaType mMediaType;
 
     public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
@@ -54,7 +51,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
-        intent.putExtra(EXTRA_TYPE, Type.VIDEO);
+        intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.VIDEO);
         return intent;
     }
 
@@ -63,14 +60,14 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         intent.putExtra(EXTRA_VIDEOS, videos);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
-        intent.putExtra(EXTRA_TYPE, Type.VIDEO);
+        intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.VIDEO);
         return intent;
     }
 
     public static Intent getIntent(Context context, String youtubeUrl){
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_YOUTUBE_URL, youtubeUrl);
-        intent.putExtra(EXTRA_TYPE, Type.YOUTUBE);
+        intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.YOUTUBE);
         return intent;
     }
 
@@ -89,7 +86,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
         mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
         setSubtitleVisibility(false);
-        if(mType == Type.VIDEO) {
+        if(mMediaType == MediaType.VIDEO) {
             mSubtitleFragment.setPutId(mVideo.getPutId());
             mSubtitleFragment.setListener(this);
         }
@@ -178,11 +175,9 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         Bundle extras = getIntent().getExtras();
 
         if(extras != null){
-            if(extras.containsKey(EXTRA_TYPE)){
-                mType = (Type) extras.getSerializable(EXTRA_TYPE);
+            if(extras.containsKey(EXTRA_MEDIA_TYPE)){
+                mMediaType = (MediaType) extras.getSerializable(EXTRA_MEDIA_TYPE);
             }
-
-            Log.d("TubeThings", mType.toString());
 
             if(extras.containsKey(EXTRA_VIDEOS)){
                 mVideos = extras.getParcelableArrayList(EXTRA_VIDEOS);
@@ -199,7 +194,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     }
 
     private void play(){
-        switch (mType){
+        switch (mMediaType){
             case YOUTUBE:
                 play(mYoutubeUrl);
                 break;
