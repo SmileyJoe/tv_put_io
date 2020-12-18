@@ -214,6 +214,11 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     @Override
     public void update(Video video) {
         mRow.setItem(video);
+
+        if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
+            Action action = new Action(ActionOption.TRAILER.getId(), getResources().getString(ActionOption.TRAILER.getTitleResId()));
+            mActionAdapter.add(action);
+        }
     }
 
     private void loadThumb(DetailsOverviewRow row) {
@@ -239,7 +244,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                     }
                     break;
                 case TRAILER:
-                    if(!TextUtils.isEmpty(mVideo.getTrailerUrl())){
+                    if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
                         action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
                     }
                     break;
@@ -431,7 +436,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                     break;
                 case TRAILER:
                     if(mListener != null){
-                        mListener.onTrailerClick(mVideo.getTrailerUrl());
+                        mListener.onTrailerClick(mVideo.getYoutubeTrailerUrl());
                     }
                     break;
                 case UNKNOWN:

@@ -62,7 +62,7 @@ public class Tmdb {
     }
 
     public static void get(Context context, long id, Response response){
-        String url = getUrl(MOVIE, "/" + id) + "&append_to_response=credits";
+        String url = getUrl(MOVIE, "/" + id) + "&append_to_response=credits,videos";
 
         Ion.with(context)
                 .load(url)
