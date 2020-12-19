@@ -14,6 +14,7 @@ public class YoutubeUtil {
 
     public interface Listener{
         void onYoutubeExtracted(String title, String videoUrl, String audioUrl);
+        void onYoutubeFailed();
     }
 
     private Extractor mExtractor;
@@ -39,29 +40,36 @@ public class YoutubeUtil {
 
         @Override
         protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
-            int maxHeight = -1;
-            int maxBitrate = -1;
-            String videoUrl = null;
-            String audioUrl = null;
+            if(ytFiles != null && videoMeta != null) {
+                int maxHeight = -1;
+                int maxBitrate = -1;
+                String videoUrl = null;
+                String audioUrl = null;
 
-            for(int i = 0; i < ytFiles.size(); i++) {
-                int key = ytFiles.keyAt(i);
-                // get the object by the key.
-                YtFile file = ytFiles.get(key);
 
-                if(file.getFormat().getHeight() > maxHeight){
-                    videoUrl = file.getUrl();
-                    maxHeight = file.getFormat().getHeight();
+                for (int i = 0; i < ytFiles.size(); i++) {
+                    int key = ytFiles.keyAt(i);
+                    // get the object by the key.
+                    YtFile file = ytFiles.get(key);
+
+                    if (file.getFormat().getHeight() > maxHeight) {
+                        videoUrl = file.getUrl();
+                        maxHeight = file.getFormat().getHeight();
+                    }
+
+                    if (file.getFormat().getAudioBitrate() > maxBitrate) {
+                        audioUrl = file.getUrl();
+                        maxBitrate = file.getFormat().getAudioBitrate();
+                    }
                 }
 
-                if(file.getFormat().getAudioBitrate() > maxBitrate){
-                    audioUrl = file.getUrl();
-                    maxBitrate = file.getFormat().getAudioBitrate();
+                if(mListener != null){
+                    mListener.onYoutubeExtracted(videoMeta.getTitle(), videoUrl, audioUrl);
                 }
-            }
-
-            if(mListener != null){
-                mListener.onYoutubeExtracted(videoMeta.getTitle(), videoUrl, audioUrl);
+            } else {
+                if(mListener != null){
+                    mListener.onYoutubeFailed();
+                }
             }
         }
     }

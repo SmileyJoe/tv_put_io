@@ -32,6 +32,11 @@
     <string name="title_subtitles">Subtitles</string>
     <string name="text_none">None</string>
     <string name="action_trailer">Trailer</string>
+    <string name="button_error">Dismiss</string>
+    <string name="title_error">Something went wrong</string>
+    <string name="error_trailer">The trailer could not be played</string>
+    <string name="error_generic">An unknown error occured.</string>
+    <string name="error_video">The video could not be played</string>
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

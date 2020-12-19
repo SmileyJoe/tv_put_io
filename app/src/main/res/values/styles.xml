@@ -1,6 +1,8 @@
 <resources>
 
-    <style name="AppTheme" parent="@style/Theme.Leanback" />
+    <style name="AppTheme" parent="@style/Theme.Leanback" >
+        <item name="android:textViewStyle">@style/Text</item>
+    </style>
 
     <style name="AppTheme.Video">
         <item name="android:windowBackground">@color/color_black</item>

@@ -31,6 +31,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
@@ -66,6 +67,8 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        ErrorFragment.show(this, R.string.title_error, R.string.text_auth_instructions, R.id.layout_main);
 
         mTextTitle = findViewById(R.id.text_title);
         mFrameLoading = findViewById(R.id.frame_loading);

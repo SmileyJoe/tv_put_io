@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -21,10 +23,11 @@ import java.util.Date;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 
-public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener{
+public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener{
 
     public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_VIDEOS = "videos";
@@ -85,7 +88,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         mTextTime.setText(mFormatWatchTime.format(new Date()));
 
         mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
-        setSubtitleVisibility(false);
+        setFragmentVisibility(mSubtitleFragment, false);
         if(mMediaType == MediaType.VIDEO) {
             mSubtitleFragment.setPutId(mVideo.getPutId());
             mSubtitleFragment.setListener(this);
@@ -125,18 +128,18 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
             mTextTime.setVisibility(View.VISIBLE);
         } else {
             mTextTime.setVisibility(View.GONE);
-            setSubtitleVisibility(false);
+            setFragmentVisibility(mSubtitleFragment, false);
         }
     }
 
     @Override
     public void onSubtitlesClicked() {
-        setSubtitleVisibility(!mSubtitleFragment.isVisible());
+        setFragmentVisibility(mSubtitleFragment, !mSubtitleFragment.isVisible());
     }
 
     @Override
     public void showSubtitles(Uri uri) {
-        setSubtitleVisibility(false);
+        setFragmentVisibility(mSubtitleFragment, false);
         mPlaybackVideoFragment.showSubtitles(uri);
     }
 
@@ -153,19 +156,19 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     @Override
     public void onBackPressed() {
         if(mSubtitleFragment.isVisible()){
-            setSubtitleVisibility(false);
+            setFragmentVisibility(mSubtitleFragment, false);
         } else {
             super.onBackPressed();
         }
     }
 
-    private void setSubtitleVisibility(boolean visible){
+    private void setFragmentVisibility(Fragment fragment, boolean visible){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         if(!visible){
-            transaction.hide(mSubtitleFragment);
+            transaction.hide(fragment);
         } else {
-            transaction.show(mSubtitleFragment);
+            transaction.show(fragment);
         }
 
         transaction.commit();
@@ -210,6 +213,29 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
     private void play(Video video){
         mPlaybackVideoFragment.play(video);
+    }
+
+    @Override
+    public void showError() {
+        @StringRes int message;
+        switch (mMediaType){
+            case YOUTUBE:
+                message = R.string.error_trailer;
+                break;
+            case VIDEO:
+                message = R.string.error_video;
+                break;
+            default:
+                message = R.string.error_generic;
+                break;
+        }
+
+        ErrorFragment.show(this, R.string.title_error, message, R.id.layout_main);
+    }
+
+    @Override
+    public void onErrorDismissed() {
+        finish();
     }
 
     @Override

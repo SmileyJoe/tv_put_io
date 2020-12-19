@@ -35,8 +35,10 @@ import androidx.leanback.app.VideoSupportFragmentGlueHost;
 import androidx.leanback.media.PlaybackGlue;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -82,6 +84,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         void onControlsVisibilityChanged(boolean isShown);
         void onSubtitlesClicked();
         void showSubtitle(String subTitle);
+        void showError();
     }
 
     private static final int UPDATE_DELAY = 16;
@@ -194,6 +197,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
         mPlayerGlue.playWhenPrepared();
+
         mSubtitleOutput = new SubtitleOutput();
 
         mInitialized = true;
@@ -270,6 +274,13 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     @Override
     public void onYoutubeExtracted(String title, String videoUrl, String audioUrl) {
         play(title, videoUrl, audioUrl);
+    }
+
+    @Override
+    public void onYoutubeFailed() {
+        if(mListener != null){
+            mListener.showError();
+        }
     }
 
     private void play(String title, String videoUrl, String audioUrl) {
