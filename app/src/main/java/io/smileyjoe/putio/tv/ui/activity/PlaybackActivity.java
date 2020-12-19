@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -19,15 +21,19 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 
-public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener{
+public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener{
 
     public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_VIDEOS = "videos";
     public static final String EXTRA_SHOULD_RESUME = "should_resume";
+    public static final String EXTRA_YOUTUBE_URL = "youtube_url";
+    public static final String EXTRA_MEDIA_TYPE = "media_type";
 
     private PlaybackVideoFragment mPlaybackVideoFragment;
     private ArrayList<Video> mVideos;
@@ -37,6 +43,8 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     private SubtitleFragment mSubtitleFragment;
     private Video mVideo;
     private TextView mTextSubtitle;
+    private String mYoutubeUrl;
+    private MediaType mMediaType;
 
     public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
@@ -46,6 +54,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
+        intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.VIDEO);
         return intent;
     }
 
@@ -54,6 +63,14 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         intent.putExtra(EXTRA_VIDEOS, videos);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
+        intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.VIDEO);
+        return intent;
+    }
+
+    public static Intent getIntent(Context context, String youtubeUrl){
+        Intent intent = new Intent(context, PlaybackActivity.class);
+        intent.putExtra(EXTRA_YOUTUBE_URL, youtubeUrl);
+        intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.YOUTUBE);
         return intent;
     }
 
@@ -71,9 +88,11 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         mTextTime.setText(mFormatWatchTime.format(new Date()));
 
         mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
-        setSubtitleVisibility(false);
-        mSubtitleFragment.setPutId(mVideo.getPutId());
-        mSubtitleFragment.setListener(this);
+        setFragmentVisibility(mSubtitleFragment, false);
+        if(mMediaType == MediaType.VIDEO) {
+            mSubtitleFragment.setPutId(mVideo.getPutId());
+            mSubtitleFragment.setListener(this);
+        }
 
         if (savedInstanceState == null) {
             mPlaybackVideoFragment = new PlaybackVideoFragment();
@@ -83,7 +102,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
                     .commit();
         }
 
-        play(mVideo);
+        play();
     }
 
     @Override
@@ -109,18 +128,18 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
             mTextTime.setVisibility(View.VISIBLE);
         } else {
             mTextTime.setVisibility(View.GONE);
-            setSubtitleVisibility(false);
+            setFragmentVisibility(mSubtitleFragment, false);
         }
     }
 
     @Override
     public void onSubtitlesClicked() {
-        setSubtitleVisibility(!mSubtitleFragment.isVisible());
+        setFragmentVisibility(mSubtitleFragment, !mSubtitleFragment.isVisible());
     }
 
     @Override
     public void showSubtitles(Uri uri) {
-        setSubtitleVisibility(false);
+        setFragmentVisibility(mSubtitleFragment, false);
         mPlaybackVideoFragment.showSubtitles(uri);
     }
 
@@ -137,19 +156,19 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     @Override
     public void onBackPressed() {
         if(mSubtitleFragment.isVisible()){
-            setSubtitleVisibility(false);
+            setFragmentVisibility(mSubtitleFragment, false);
         } else {
             super.onBackPressed();
         }
     }
 
-    private void setSubtitleVisibility(boolean visible){
+    private void setFragmentVisibility(Fragment fragment, boolean visible){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         if(!visible){
-            transaction.hide(mSubtitleFragment);
+            transaction.hide(fragment);
         } else {
-            transaction.show(mSubtitleFragment);
+            transaction.show(fragment);
         }
 
         transaction.commit();
@@ -159,6 +178,10 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         Bundle extras = getIntent().getExtras();
 
         if(extras != null){
+            if(extras.containsKey(EXTRA_MEDIA_TYPE)){
+                mMediaType = (MediaType) extras.getSerializable(EXTRA_MEDIA_TYPE);
+            }
+
             if(extras.containsKey(EXTRA_VIDEOS)){
                 mVideos = extras.getParcelableArrayList(EXTRA_VIDEOS);
             }
@@ -166,11 +189,53 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
             if(extras.containsKey(EXTRA_VIDEO)){
                 mVideo = getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO);
             }
+
+            if(extras.containsKey(EXTRA_YOUTUBE_URL)){
+                mYoutubeUrl = getIntent().getStringExtra(EXTRA_YOUTUBE_URL);
+            }
         }
+    }
+
+    private void play(){
+        switch (mMediaType){
+            case YOUTUBE:
+                play(mYoutubeUrl);
+                break;
+            case VIDEO:
+                play(mVideo);
+                break;
+        }
+    }
+
+    private void play(String youtubeUrl){
+        mPlaybackVideoFragment.play(youtubeUrl);
     }
 
     private void play(Video video){
         mPlaybackVideoFragment.play(video);
+    }
+
+    @Override
+    public void showError() {
+        @StringRes int message;
+        switch (mMediaType){
+            case YOUTUBE:
+                message = R.string.error_trailer;
+                break;
+            case VIDEO:
+                message = R.string.error_video;
+                break;
+            default:
+                message = R.string.error_generic;
+                break;
+        }
+
+        ErrorFragment.show(this, R.string.title_error, message, R.id.layout_main);
+    }
+
+    @Override
+    public void onErrorDismissed() {
+        finish();
     }
 
     @Override

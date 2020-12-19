@@ -17,7 +17,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
-@Database(entities = {Video.class, Genre.class, Group.class, Character.class}, version = 7)
+@Database(entities = {Video.class, Genre.class, Group.class, Character.class}, version = 8)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract VideoDao videoDao();
     public abstract GenreDao genreDao();
@@ -99,6 +99,15 @@ public abstract class AppDatabase extends RoomDatabase {
         database.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='video'");
     }
 
+    static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("DELETE FROM video");
+            database.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='video'");
+            database.execSQL("ALTER TABLE video ADD COLUMN youtube_trailer_key TEXT");
+        }
+    };
+
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
@@ -111,6 +120,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             .addMigrations(MIGRATION_4_5)
                             .addMigrations(MIGRATION_5_6)
                             .addMigrations(MIGRATION_6_7)
+                            .addMigrations(MIGRATION_7_8)
                             .addCallback(new RoomCallback())
                             .build();
                 }

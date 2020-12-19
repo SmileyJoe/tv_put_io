@@ -71,13 +71,16 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         void onRelatedClicked(Video video, ArrayList<Video> relatedVideos);
 
         void onResumeClick(Video video, ArrayList<Video> videos);
+
+        void onTrailerClick(String youtubeUrl);
     }
 
     private enum ActionOption {
         UNKNOWN(0, 0),
         WATCH(1, R.string.action_watch),
         RESUME(2, R.string.action_resume),
-        CONVERT(3, R.string.action_convert);
+        CONVERT(3, R.string.action_convert),
+        TRAILER(4, R.string.action_trailer);
 
         private long mId;
         private @StringRes
@@ -211,6 +214,11 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     @Override
     public void update(Video video) {
         mRow.setItem(video);
+
+        if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
+            Action action = new Action(ActionOption.TRAILER.getId(), getResources().getString(ActionOption.TRAILER.getTitleResId()));
+            mActionAdapter.add(action);
+        }
     }
 
     private void loadThumb(DetailsOverviewRow row) {
@@ -235,11 +243,16 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                         action = new Action(option.getId(), getResources().getString(option.getTitleResId()), mVideo.getResumeTimeFormatted());
                     }
                     break;
-                case CONVERT:
-                    if (!mVideo.isConverted()) {
+                case TRAILER:
+                    if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
                         action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
                     }
                     break;
+//                case CONVERT:
+//                    if (!mVideo.isConverted()) {
+//                        action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
+//                    }
+//                    break;
             }
 
             if (action != null) {
@@ -419,6 +432,11 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                 case RESUME:
                     if (mListener != null) {
                         mListener.onResumeClick(mVideo, mRelatedVideos);
+                    }
+                    break;
+                case TRAILER:
+                    if(mListener != null){
+                        mListener.onTrailerClick(mVideo.getYoutubeTrailerUrl());
                     }
                     break;
                 case UNKNOWN:

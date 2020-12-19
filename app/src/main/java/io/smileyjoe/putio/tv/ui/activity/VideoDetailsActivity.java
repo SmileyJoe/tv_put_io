@@ -55,6 +55,11 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
     }
 
     @Override
+    public void onTrailerClick(String youtubeUrl) {
+        startActivity(PlaybackActivity.getIntent(getBaseContext(), youtubeUrl));
+    }
+
+    @Override
     public void onConvertClicked(Video video) {
         Putio.convertFile(getBaseContext(), video.getPutId(), new OnConvertResponse());
     }

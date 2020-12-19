@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -136,6 +137,39 @@ public class TmdbUtil {
                     genreIds.add(genreElement.getAsInt());
                 }
                 video.setGenreIds(genreIds);
+            }
+
+            if(jsonObject.has("videos")){
+                JsonObject videosJsonObject = jsonObject.getAsJsonObject("videos");
+
+                if(videosJsonObject.has("results")){
+                    JsonArray videosJson = videosJsonObject.getAsJsonArray("results");
+                    int size = 0;
+                    String key = null;
+
+                    for (JsonElement jsonElement : videosJson) {
+                        JsonUtil videoJson = new JsonUtil(jsonElement.getAsJsonObject());
+
+                        String type = videoJson.getString("type");
+                        String language = videoJson.getString("iso_639_1");
+                        String site = videoJson.getString("site");
+
+                        if(!TextUtils.isEmpty(type) && type.equalsIgnoreCase("trailer")
+                            && !TextUtils.isEmpty(language) && language.equalsIgnoreCase("en")
+                            && !TextUtils.isEmpty(site) && site.equalsIgnoreCase("youtube")) {
+
+                            int tempSize = videoJson.getInt("size");
+
+                            if (tempSize > size) {
+                                key = videoJson.getString("key");
+                            }
+                        }
+                    }
+
+                    if(!TextUtils.isEmpty(key)){
+                        video.setYoutubeTrailerKey(key);
+                    }
+                }
             }
 
             return video;

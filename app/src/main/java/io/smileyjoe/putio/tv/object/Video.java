@@ -71,6 +71,8 @@ public class Video implements Parcelable{
     private boolean mIsTmdbFound = false;
     @ColumnInfo(name = "genre_ids_json")
     private String mGenreIdsJson;
+    @ColumnInfo(name = "youtube_trailer_key")
+    private String mYoutubeTrailerKey;
     @Ignore
     private ArrayList<Integer> mGenreIds;
     @Ignore
@@ -252,6 +254,22 @@ public class Video implements Parcelable{
 
     public void setCharacters(ArrayList<Character> characters) {
         mCharacters = characters;
+    }
+
+    public void setYoutubeTrailerKey(String key){
+        mYoutubeTrailerKey = key;
+    }
+
+    public String getYoutubeTrailerKey() {
+        return mYoutubeTrailerKey;
+    }
+
+    public String getYoutubeTrailerUrl() {
+        if(!TextUtils.isEmpty(mYoutubeTrailerKey)) {
+            return "https://www.youtube.com/watch?v=" + mYoutubeTrailerKey;
+        } else {
+            return null;
+        }
     }
 
     public long getPutId() {
@@ -443,6 +461,7 @@ public class Video implements Parcelable{
                 ", mIsTmdbChecked=" + mIsTmdbChecked +
                 ", mIsTmdbFound=" + mIsTmdbFound +
                 ", mGenreIdsJson='" + mGenreIdsJson + '\'' +
+                ", mYoutubeTrailerKey='" + mYoutubeTrailerKey + '\'' +
                 ", mGenreIds=" + mGenreIds +
                 ", mSize=" + mSize +
                 ", mGenresFormatted='" + mGenresFormatted + '\'' +
@@ -493,6 +512,7 @@ public class Video implements Parcelable{
         dest.writeByte(this.mIsTmdbChecked ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mIsTmdbFound ? (byte) 1 : (byte) 0);
         dest.writeString(this.mGenreIdsJson);
+        dest.writeString(this.mYoutubeTrailerKey);
         dest.writeList(this.mGenreIds);
         dest.writeLong(this.mSize);
         dest.writeString(this.mGenresFormatted);
@@ -525,6 +545,7 @@ public class Video implements Parcelable{
         this.mIsTmdbChecked = in.readByte() != 0;
         this.mIsTmdbFound = in.readByte() != 0;
         this.mGenreIdsJson = in.readString();
+        this.mYoutubeTrailerKey = in.readString();
         this.mGenreIds = new ArrayList<Integer>();
         in.readList(this.mGenreIds, Integer.class.getClassLoader());
         this.mSize = in.readLong();

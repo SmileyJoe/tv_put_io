@@ -35,8 +35,10 @@ import androidx.leanback.app.VideoSupportFragmentGlueHost;
 import androidx.leanback.media.PlaybackGlue;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -62,9 +64,12 @@ import java.util.List;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
+import io.smileyjoe.putio.tv.util.MediaUtil;
 import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
+import io.smileyjoe.putio.tv.util.YoutubeUtil;
 
 /**
  * https://github.com/googlearchive/androidtv-Leanback/blob/master/app/src/main/java/com/example/android/tvleanback/ui/PlaybackFragment.java
@@ -72,13 +77,14 @@ import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
  * Plays selected video, loads playlist and related videos, and delegates playback to {@link
  * VideoPlayerGlue}.
  */
-public class PlaybackVideoFragment extends VideoSupportFragment implements VideoPlayerGlue.OnActionClickedListener{
+public class PlaybackVideoFragment extends VideoSupportFragment implements VideoPlayerGlue.OnActionClickedListener, YoutubeUtil.Listener {
 
     public interface Listener{
         void onPlayComplete(Video video);
         void onControlsVisibilityChanged(boolean isShown);
         void onSubtitlesClicked();
         void showSubtitle(String subTitle);
+        void showError();
     }
 
     private static final int UPDATE_DELAY = 16;
@@ -93,6 +99,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private Listener mListener;
     private BroadcastTick mBroadcastTick;
     private SubtitleOutput mSubtitleOutput;
+    private YoutubeUtil mYoutube;
+    private MediaUtil mMediaUtil;
+    private String mYoutubeUrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,6 +197,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
         mPlayerGlue.playWhenPrepared();
+
         mSubtitleOutput = new SubtitleOutput();
 
         mInitialized = true;
@@ -207,8 +217,37 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        mMediaUtil = new MediaUtil(context);
+        if(mVideo != null){
+            play(mVideo);
+        }
+
+        mYoutube = new YoutubeUtil(context);
+        mYoutube.setListener(this);
+        if(!TextUtils.isEmpty(mYoutubeUrl)){
+            play(mYoutubeUrl);
+            mYoutubeUrl = null;
+        }
+    }
+
+    public void play(String youtubeUrl){
+        if(mYoutube != null) {
+            mYoutube.extract(youtubeUrl);
+        } else {
+            mYoutubeUrl = youtubeUrl;
+        }
+    }
+
     public void play(Video video){
-        play(video, null);
+        if(mMediaUtil != null){
+            play(video, null);
+        } else {
+            mVideo = video;
+        }
     }
 
     private void play(Video video, Uri subtitleUri) {
@@ -216,6 +255,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
         if(mInitialized) {
             mPlayerGlue.setTitle(video.getTitleFormatted());
+            mPlayerGlue.setMediaType(MediaType.VIDEO);
 
             prepareMediaForPlaying(video.getStreamUri(), subtitleUri);
 
@@ -226,6 +266,31 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 // we only want to do this after the first load //
                 mShouldResume = false;
             }
+
+            mPlayerGlue.play();
+        }
+    }
+
+    @Override
+    public void onYoutubeExtracted(String title, String videoUrl, String audioUrl) {
+        play(title, videoUrl, audioUrl);
+    }
+
+    @Override
+    public void onYoutubeFailed() {
+        if(mListener != null){
+            mListener.showError();
+        }
+    }
+
+    private void play(String title, String videoUrl, String audioUrl) {
+        if(mInitialized) {
+            mPlayerGlue.setTitle(title);
+            mPlayerGlue.setMediaType(MediaType.YOUTUBE);
+
+            prepareMediaForPlaying(videoUrl, audioUrl);
+
+            mPlayerGlue.addPlayerCallback(new PlayerCallback());
 
             mPlayerGlue.play();
         }
@@ -254,38 +319,22 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         play(mVideo, uri);
     }
 
+    private void prepareMediaForPlaying(String youtubeVideoUrl, String youtubeAudioUrl) {
+        mMediaUtil.reset();
+        mMediaUtil.addMedia(youtubeVideoUrl);
+        mMediaUtil.addMedia(youtubeAudioUrl);
+
+        mPlayer.prepare(mMediaUtil.getSource());
+    }
+
     private void prepareMediaForPlaying(Uri mediaSourceUri, Uri subtitleUri) {
-        String userAgent = Util.getUserAgent(getActivity(), getContext().getString(R.string.app_name));
-        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), userAgent);
-
-        SingleSampleMediaSource subtitleSource = null;
-        MediaSource[] mediaSources = null;
-
-        MediaSource mediaSource =
-                new ExtractorMediaSource(
-                        mediaSourceUri,
-                        dataSourceFactory,
-                        new DefaultExtractorsFactory(),
-                        null,
-                        null);
+        mMediaUtil.reset();
+        mMediaUtil.addMedia(mediaSourceUri);
 
         if(subtitleUri != null){
-            mediaSources = new MediaSource[2];
-
-            subtitleSource = new SingleSampleMediaSource(
-                    subtitleUri,
-                    new DefaultDataSourceFactory(getActivity(), userAgent),
-                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, Format.NO_VALUE, "en", null),
-                    C.TIME_UNSET);
-
-            mediaSources[0] = mediaSource;
-            mediaSources[1] = subtitleSource;
-
+            mMediaUtil.addSubtitles(subtitleUri);
             mPlayer.addTextOutput(mSubtitleOutput);
         } else {
-            mediaSources = new MediaSource[1];
-            mediaSources[0] = mediaSource;
-
             mPlayer.removeTextOutput(mSubtitleOutput);
 
             if(mListener != null){
@@ -293,7 +342,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
             }
         }
 
-        mPlayer.prepare(new MergingMediaSource(mediaSources));
+        mPlayer.prepare(mMediaUtil.getSource());
     }
 
     private void populateEndTime(){
@@ -358,7 +407,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 } else {
                     getSurfaceView().setKeepScreenOn(false);
 
-                    Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition() / 1000, null);
+                    if(mVideo != null) {
+                        Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition() / 1000, null);
+                    }
                 }
             }
         }
