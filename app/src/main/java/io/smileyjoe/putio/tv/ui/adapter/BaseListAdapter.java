@@ -152,8 +152,10 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
     }
 
     public void clearSelected(){
-        if(mViewSelected != null){
+        mSelectedPosition = -1;
+        if(mViewSelected != null) {
             mViewSelected.setSelected(false);
+            mViewSelected = null;
         }
     }
 
