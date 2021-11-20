@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.Genre;
+import io.smileyjoe.putio.tv.util.TmdbUtil;
 
 public class Tmdb {
 
@@ -21,6 +22,8 @@ public class Tmdb {
     private static String BASE_IMAGE = "https://image.tmdb.org/t/p/original";
     private static String SEARCH = "/search";
     private static String MOVIE = "/movie";
+    private static String TV = "/tv";
+    private static String EPISODE = TV + "/{id}/season/{season}/episode/{episode}";
     private static String MOVIE_CREDITS = MOVIE + "/{id}/credits";
     private static String LIST = "/list";
     private static String GENRE = "/genre";
@@ -28,87 +31,132 @@ public class Tmdb {
     private static String PARAM_SEARCH = "query";
     private static String PARAM_YEAR = "primary_release_year";
 
-    private static String getUrl(String... paths) {
-        String url = BASE;
+    private static class Base{
+        protected static String getUrl(String... paths) {
+            String url = BASE;
 
-        for (String path : paths) {
-            url += path;
+            for (String path : paths) {
+                url += path;
+            }
+
+            url += "?" + PARAM_API_KEY + "=" + BuildConfig.TMDB_AUTH_TOKEN;
+
+            return url;
         }
 
-        url += "?" + PARAM_API_KEY + "=" + BuildConfig.TMDB_AUTH_TOKEN;
-
-        return url;
-    }
-
-    private static String addParam(String url, String key, String value) {
-        return url + "&" + key + "=" + URLEncoder.encode(value);
-    }
-
-    public static String getImageUrl(String url) {
-        return BASE_IMAGE + url;
-    }
-
-    public static void searchMovie(Context context, String title, int year, Response response) {
-
-        String url = getUrl(SEARCH, MOVIE);
-        url = addParam(url, PARAM_SEARCH, title);
-        url = addParam(url, PARAM_YEAR, Integer.toString(year));
-
-        Ion.with(context)
-                .load(url)
-                .asJsonObject()
-                .withResponse()
-                .setCallback(response);
-    }
-
-    public static void get(Context context, long id, Response response){
-        String url = getUrl(MOVIE, "/" + id) + "&append_to_response=credits,videos";
-
-        Ion.with(context)
-                .load(url)
-                .asJsonObject()
-                .withResponse()
-                .setCallback(response);
-    }
-
-    public static void updateMovieGenres(Context context){
-        Ion.with(context)
-                .load(getUrl(GENRE, MOVIE, LIST))
-                .asJsonObject()
-                .withResponse()
-                .setCallback(new OnGenreResponse(context));
-    }
-
-    private static class OnGenreResponse extends Response{
-        private Context mContext;
-
-        public OnGenreResponse(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public void onSuccess(JsonObject result) {
-            ProcessGenreResponse task = new ProcessGenreResponse(mContext, result);
-            task.execute();
+        protected static String addParam(String url, String key, String value) {
+            return url + "&" + key + "=" + URLEncoder.encode(value);
         }
     }
 
-    private static class ProcessGenreResponse extends AsyncTask<Void, Void, Void>{
-        private JsonObject mResult;
-        private Context mContext;
+    public static class Image extends Base{
+        public static String getUrl(String url) {
+            return BASE_IMAGE + url;
+        }
+    }
 
-        public ProcessGenreResponse(Context context, JsonObject result) {
-            mContext = context;
-            mResult = result;
+    public static class Genre extends Base{
+        public static void update(Context context){
+            Ion.with(context)
+                    .load(getUrl(GENRE, MOVIE, LIST))
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(new OnResponse(context));
         }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            ArrayList<Genre> genres = Genre.fromApi(mResult.get("genres").getAsJsonArray());
+        private static class OnResponse extends Response{
+            private Context mContext;
 
-            AppDatabase.getInstance(mContext).genreDao().insert(genres);
+            public OnResponse(Context context) {
+                mContext = context;
+            }
 
-            return null;
+            @Override
+            public void onSuccess(JsonObject result) {
+                ProcessResponse task = new ProcessResponse(mContext, result);
+                task.execute();
+            }
+        }
+
+        private static class ProcessResponse extends AsyncTask<Void, Void, Void>{
+            private JsonObject mResult;
+            private Context mContext;
+
+            public ProcessResponse(Context context, JsonObject result) {
+                mContext = context;
+                mResult = result;
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                ArrayList<io.smileyjoe.putio.tv.object.Genre> genres = io.smileyjoe.putio.tv.object.Genre.fromApi(mResult.get("genres").getAsJsonArray());
+
+                AppDatabase.getInstance(mContext).genreDao().insert(genres);
+
+                return null;
+            }
+        }
+    }
+
+    public static class Series extends Base{
+        public static void search(Context context, String title, TmdbUtil.OnTmdbSeriesSearchResponse response) {
+
+            String url = getUrl(SEARCH, TV);
+            url = addParam(url, PARAM_SEARCH, title);
+
+            Ion.with(context)
+                    .load(url)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(response);
+        }
+
+        public static void get(Context context, long id, Response response){
+            String url = getUrl(TV, "/" + id);
+
+            Ion.with(context)
+                    .load(url)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(response);
+        }
+
+        public static void getEpisode(Context context, long id, int season, int episode, Response response){
+            String url = getUrl(EPISODE)
+                    .replace("{id}", Long.toString(id))
+                    .replace("{season}", Integer.toString(season))
+                    .replace("{episode}", Integer.toString(episode));
+
+            Ion.with(context)
+                    .load(url)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(response);
+        }
+    }
+
+    public static class Movie extends Base{
+        public static void search(Context context, String title, int year, Response response) {
+
+            String url = getUrl(SEARCH, MOVIE);
+            url = addParam(url, PARAM_SEARCH, title);
+            url = addParam(url, PARAM_YEAR, Integer.toString(year));
+
+            Ion.with(context)
+                    .load(url)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(response);
+        }
+
+        public static void get(Context context, long id, Response response){
+            String url = getUrl(MOVIE, "/" + id) + "&append_to_response=credits,videos";
+
+            Ion.with(context)
+                    .load(url)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(response);
         }
     }
 

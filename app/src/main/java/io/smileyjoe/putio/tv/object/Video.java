@@ -12,6 +12,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.db.converter.VideoTypeConverter;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.util.Format;
 import io.smileyjoe.putio.tv.util.TimeUtil;
@@ -37,7 +39,8 @@ public class Video implements Parcelable{
     @ColumnInfo(name = "id_tmdb")
     private long mTmdbId;
     // general
-    @Ignore
+    @ColumnInfo(name = "video_type")
+    @TypeConverters(VideoTypeConverter.class)
     private VideoType mVideoType;
     @Ignore
     private FileType mFileType;
@@ -51,11 +54,11 @@ public class Video implements Parcelable{
     private boolean mIsConverted;
     @Ignore
     private long mResumeTime;
-    @Ignore
+    @ColumnInfo(name = "year")
     private int mYear;
-    @Ignore
+    @ColumnInfo(name = "season")
     private int mSeason;
-    @Ignore
+    @ColumnInfo(name = "episode")
     private int mEpisode;
     // images
     @ColumnInfo(name = "uri_poster")

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -31,6 +32,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
@@ -90,7 +92,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         hideFragment(mFragmentGenreList);
 
         // todo: this needs to be called when an id is not found in the db //
-        Tmdb.updateMovieGenres(getBaseContext());
+        Tmdb.Genre.update(getBaseContext());
     }
 
     @Override
@@ -289,12 +291,18 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private class VideoListListener extends HomeListener<Video> implements VideoGridFragment.Listener{
         @Override
         public void onItemClicked(View view, Video video) {
+            Log.d("VideoThings", "Video Clicked: " + video);
             switch (video.getFileType()){
                 case VIDEO:
                     showDetails(video);
                     break;
                 case FOLDER:
-                    mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
+                    // TODO: This should go to a season specific activity //
+//                    if(video.getVideoType() == VideoType.SEASON){
+//                        showDetails(video);
+//                    } else {
+                        mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
+//                    }
                     break;
             }
         }

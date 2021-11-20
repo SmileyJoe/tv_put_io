@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.torrent;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class Parse {
     public static HashMap<String, String> PATTERNS = new HashMap<>();
 
     static {
-        PATTERNS.put("season", "([Ss]?([0-9]{1,2}))[Eex]");
+        PATTERNS.put("season", "([Ss]([0-9]{1,2}))");
         PATTERNS.put("episode", "([Eex]([0-9]{2})(?:[^0-9]|$))");
         PATTERNS.put("year", "([\\[\\(]?((?:19[0-9]|20[0-9])[0-9])[\\]\\)]?)");
         PATTERNS.put("resolution", "([0-9]{3,4}p)");
@@ -56,20 +57,24 @@ public class Parse {
                     video.setVideoType(VideoType.EPISODE);
                 }
             }
-        } else {
-            video.setVideoType(VideoType.MOVIE);
-        }
 
-        if (details.containsKey("year")) {
-            video.setYear(Integer.parseInt(details.get("year")));
-        }
+            if(details.containsKey("is_season")){
+                if(Boolean.parseBoolean(details.get("is_season"))){
+                    video.setVideoType(VideoType.SEASON);
+                }
+            }
 
-        if (details.containsKey("season")) {
-            video.setSeason(Integer.parseInt(details.get("season")));
-        }
+            if (details.containsKey("year")) {
+                video.setYear(Integer.parseInt(details.get("year")));
+            }
 
-        if (details.containsKey("episode")) {
-            video.setEpisode(Integer.parseInt(details.get("episode")));
+            if (details.containsKey("season")) {
+                video.setSeason(Integer.parseInt(details.get("season")));
+            }
+
+            if (details.containsKey("episode")) {
+                video.setEpisode(Integer.parseInt(details.get("episode")));
+            }
         }
 
         return video;
@@ -139,8 +144,14 @@ public class Parse {
             isEpisode = true;
         }
 
+        boolean isSeason = false;
+        if(!isEpisode && matchesClean.containsKey("season")){
+            isSeason = true;
+        }
+
         matchesClean.put("is_movie", String.valueOf(isMovie));
         matchesClean.put("is_episode", String.valueOf(isEpisode));
+        matchesClean.put("is_season", String.valueOf(isSeason));
 
         if (titleEnd <= titleStart) {
             titleEnd = rawTitle.length();

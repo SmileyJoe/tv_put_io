@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -87,9 +88,17 @@ public class PutioHelper {
                         if (!video.isTmdbChecked()) {
                             TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
                             response.setListener(mListener);
-                            Tmdb.searchMovie(mContext, video.getTitle(), video.getYear(), response);
+                            Tmdb.Movie.search(mContext, video.getTitle(), video.getYear(), response);
                         }
                     case EPISODE:
+                        mVideos.add(video);
+                        break;
+                    case SEASON:
+                        if (!video.isTmdbChecked()) {
+                            TmdbUtil.OnTmdbSeriesSearchResponse response = new TmdbUtil.OnTmdbSeriesSearchResponse(mContext, video);
+                            response.setListener(mListener);
+                            Tmdb.Series.search(mContext, video.getTitle(), response);
+                        }
                         mVideos.add(video);
                         break;
                     case UNKNOWN:

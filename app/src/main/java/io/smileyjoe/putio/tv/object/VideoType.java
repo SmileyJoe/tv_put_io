@@ -4,6 +4,7 @@ public enum VideoType {
 
     MOVIE(),
     EPISODE(),
+    SEASON(),
     UNKNOWN();
 
 }

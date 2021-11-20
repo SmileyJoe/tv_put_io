@@ -207,7 +207,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         if(mVideo.isTmdbFound() && TextUtils.isEmpty(mVideo.getTagLine())) {
             TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(getContext(), mVideo);
             response.setListener(this);
-            Tmdb.get(getContext(), mVideo.getTmdbId(), response);
+            Tmdb.Movie.get(getContext(), mVideo.getTmdbId(), response);
         }
     }
 
