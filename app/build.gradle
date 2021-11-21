@@ -10,7 +10,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 9
-        versionName "1.6.0"
+        versionName "2.0.0"
         buildConfigField "String", "PUTIO_CLIENT_ID", putio_client_id
         buildConfigField "String", "PUTIO_CLIENT_SECRET", putio_client_secret
         buildConfigField "String", "TMDB_AUTH_TOKEN", tmdb_auth_token
