@@ -43,18 +43,6 @@ public class VideoComparator implements Comparator<Video> {
         int result;
 
         if(videoOne.getVideoType() == VideoType.EPISODE){
-            result = videoOne.getTitle().compareTo(videoTwo.getTitle());
-
-            if(result != 0){
-                return result;
-            }
-
-            result = Integer.compare(videoOne.getSeason(), videoTwo.getSeason());
-
-            if(result != 0){
-                return result;
-            }
-
             return Integer.compare(videoOne.getEpisode(), videoTwo.getEpisode());
         } else {
             switch (mOrder){

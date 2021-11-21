@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_overlay"
-        android:backgroundTint="@color/selector_overlay"
+        android:backgroundTint="@color/selector_bg_inverse_background"
         android:duplicateParentState="true"
         android:padding="@dimen/padding_general"/>
 

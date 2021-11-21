@@ -40,7 +40,7 @@ public class SeasonDetailsFragment extends Fragment {
         mImagePoster = view.findViewById(R.id.image_poster);
         mFrameDetailsLayoutListener = new FrameDetailsLayoutListener();
 
-        view.setSelected(true);
+
 
         return view;
     }
