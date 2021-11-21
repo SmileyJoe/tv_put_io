@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
@@ -35,6 +36,7 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
+import io.smileyjoe.putio.tv.ui.fragment.SeasonDetailsFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
@@ -53,8 +55,10 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private GenreListFragment mFragmentGenreList;
     private FilterFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
+    private SeasonDetailsFragment mFragmentSeasonDetails;
 
     private FrameLayout mFrameLoading;
+    private LinearLayout mLayoutFilters;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -71,6 +75,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         mTextTitle = findViewById(R.id.text_title);
         mFrameLoading = findViewById(R.id.frame_loading);
+        mLayoutFilters = findViewById(R.id.layout_filters);
 
         mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(FragmentType.FOLDER);
@@ -81,6 +86,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentFilter.setListener(new FilterListener());
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
         mFragmentGroup.setListener(new GroupListener());
+        mFragmentSeasonDetails = (SeasonDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_season_details);
 
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
@@ -156,12 +162,23 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
             mFragmentVideoList.setFullScreen(false);
             mFragmentVideoList.setVideos(videos);
-            mFragmentFilter.reset();
 
-            if(videos != null && !videos.isEmpty()){
-                showFragment(mFragmentFilter);
-            } else {
+            Video parent = mVideoLoader.getParent();
+
+            if(parent != null && parent.getVideoType() == VideoType.SEASON){
+                mFragmentSeasonDetails.update(parent);
                 hideFragment(mFragmentFilter);
+                hideFragment(mFragmentGenreList);
+                showFragment(mFragmentSeasonDetails);
+            } else {
+                hideFragment(mFragmentSeasonDetails);
+                mFragmentFilter.reset();
+
+                if (videos != null && !videos.isEmpty()) {
+                    showFragment(mFragmentFilter);
+                } else {
+                    hideFragment(mFragmentFilter);
+                }
             }
 
             switch (historyItem.getFolderType()){
@@ -291,18 +308,12 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private class VideoListListener extends HomeListener<Video> implements VideoGridFragment.Listener{
         @Override
         public void onItemClicked(View view, Video video) {
-            Log.d("VideoThings", "Video Clicked: " + video);
             switch (video.getFileType()){
                 case VIDEO:
                     showDetails(video);
                     break;
                 case FOLDER:
-                    // TODO: This should go to a season specific activity //
-//                    if(video.getVideoType() == VideoType.SEASON){
-//                        showDetails(video);
-//                    } else {
-                        mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
-//                    }
+                    mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
                     break;
             }
         }

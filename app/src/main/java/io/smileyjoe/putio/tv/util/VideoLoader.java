@@ -41,6 +41,15 @@ public class VideoLoader {
         mListener = listener;
     }
 
+    public Video getParent(){
+        if(mHistory != null && mHistory.size() > 0){
+            HistoryItem historyItem = mHistory.get(mHistory.size() - 1);
+            return mParents.get(historyItem.getId());
+        }
+
+        return null;
+    }
+
     public void loadDirectory(){
         getFromPut(Putio.NO_PARENT);
     }
