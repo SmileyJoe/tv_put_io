@@ -160,9 +160,13 @@ public class TmdbUtil {
             JsonUtil json = new JsonUtil(jsonObject);
 
             video.setTmdbId(json.getLong("id"));
-            video.setBackdrop(Tmdb.Image.getUrl(json.getString("backdrop_path")));
             video.setOverView(json.getString("overview"));
-            video.setPoster(Tmdb.Image.getUrl(json.getString("poster_path")));
+            if(json.isValid("backdrop_path")) {
+                video.setBackdrop(Tmdb.Image.getUrl(json.getString("backdrop_path")));
+            }
+            if(json.isValid("poster_path")) {
+                video.setPoster(Tmdb.Image.getUrl(json.getString("poster_path")));
+            }
             if(json.isValid("title")) {
                 video.setTitle(json.getString("title"));
             } else if(json.isValid("name")){
@@ -172,6 +176,8 @@ public class TmdbUtil {
                 video.setReleaseDate(Format.fromTmdbToMillies(json.getString("release_date")));
             } else if(json.isValid("first_air_date")){
                 video.setReleaseDate(Format.fromTmdbToMillies(json.getString("first_air_date")));
+            } else if(json.isValid("air_date")){
+                video.setReleaseDate(Format.fromTmdbToMillies(json.getString("air_date")));
             }
             video.setTagLine(json.getString("tagline"));
             video.setRuntime(json.getInt("runtime"));

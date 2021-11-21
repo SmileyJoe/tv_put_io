@@ -50,6 +50,7 @@ import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.object.Subtitle;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
@@ -204,7 +205,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
 
         mAdapter.add(mRow);
 
-        if(mVideo.isTmdbFound() && TextUtils.isEmpty(mVideo.getTagLine())) {
+        if(mVideo.getVideoType() == VideoType.MOVIE && mVideo.isTmdbFound() && TextUtils.isEmpty(mVideo.getTagLine())) {
             TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(getContext(), mVideo);
             response.setListener(this);
             Tmdb.Movie.get(getContext(), mVideo.getTmdbId(), response);

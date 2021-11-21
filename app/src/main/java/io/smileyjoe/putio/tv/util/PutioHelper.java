@@ -91,6 +91,11 @@ public class PutioHelper {
                             Tmdb.Movie.search(mContext, video.getTitle(), video.getYear(), response);
                         }
                     case EPISODE:
+                        if (!video.isTmdbChecked() && mCurrent.getTmdbId() > 0) {
+                            TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
+                            response.setListener(mListener);
+                            Tmdb.Series.getEpisode(mContext, mCurrent.getTmdbId(), video.getSeason(), video.getEpisode(), response);
+                        }
                         mVideos.add(video);
                         break;
                     case SEASON:
