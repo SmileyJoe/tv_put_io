@@ -1,12 +1,16 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.leanback.widget.Presenter;
+
+import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Character;
@@ -26,10 +30,13 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
     private LinearLayout mLayoutGenres;
     private LinearLayout mLayoutCast;
     private Context mContext;
+    private boolean mIsMinimized = false;
+    private ViewGroup mView;
+    private ArrayList<View> mToggledViews = new ArrayList<>();
 
-    public VideoDetailsViewHolder(View view) {
+    public VideoDetailsViewHolder(ViewGroup view) {
         super(view);
-
+        mView = view;
         mContext = view.getContext();
 
         mTextTitle = view.findViewById(R.id.text_title);
@@ -89,5 +96,37 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
             view.setText(text);
             view.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void toggleMinimized(){
+        setMinimized(!mIsMinimized);
+    }
+
+    public void setMinimized(boolean minimized){
+        if(mIsMinimized != minimized) {
+            ViewGroup viewGroup = (ViewGroup) mView.getChildAt(0);
+            if (minimized) {
+                mToggledViews = new ArrayList<>();
+                for(int i = 0; i < viewGroup.getChildCount(); i++){
+                    View child = viewGroup.getChildAt(i);
+
+                    if(child.getId() != mTextTitle.getId() && child.getVisibility() == View.VISIBLE) {
+                        child.setVisibility(View.GONE);
+                        mToggledViews.add(child);
+                    }
+                }
+            } else {
+                for(View view:mToggledViews){
+                    view.setVisibility(View.VISIBLE);
+                }
+                mToggledViews = null;
+            }
+
+            mIsMinimized = minimized;
+        }
+    }
+
+    public boolean isMinimized() {
+        return mIsMinimized;
     }
 }

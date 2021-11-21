@@ -87,6 +87,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
         mFragmentGroup.setListener(new GroupListener());
         mFragmentSeasonDetails = (SeasonDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_season_details);
+        mFragmentSeasonDetails.setListener(new SeasonDetailsListener());
 
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
@@ -268,6 +269,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
     }
 
+    private class SeasonDetailsListener extends HomeListener<Video> implements SeasonDetailsFragment.Listener{
+    }
+
     private class FilterListener extends HomeListener<Filter> implements ToggleFragment.Listener<Filter>{
         @Override
         public void onItemClicked(View view, Filter filter, boolean isSelected) {
@@ -326,15 +330,20 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             if(mVideoTypeFocus != type){
                 mVideoTypeFocus = type;
 
-                if(type == FragmentType.FOLDER){
-                    showFolders();
-                } else if(type == FragmentType.VIDEO) {
-                    hideFolders();
-                } else if(type == FragmentType.GROUP) {
-                    showFolders();
-                } else {
-                    mFragmentVideoList.hideDetails();
-                    hideFolders();
+                switch (type){
+                    case FOLDER:
+                        showFolders();
+                        break;
+                    case VIDEO:
+                        hideFolders();
+                        break;
+                    case GROUP:
+                        showFolders();
+                        break;
+                    default:
+                        mFragmentVideoList.hideDetails();
+                        hideFolders();
+                        break;
                 }
             }
         }
