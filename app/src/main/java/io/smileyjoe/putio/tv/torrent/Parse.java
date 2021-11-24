@@ -41,7 +41,7 @@ public class Parse {
     }
 
     public static Video update(Video video) {
-        HashMap<String, String> details = Parse.parse(video.getTitle());
+        HashMap<String, String> details = Parse.parse(video.getPutTitle());
 
         if(!video.isTmdbFound()) {
             video.setTitle(details.get("title"));

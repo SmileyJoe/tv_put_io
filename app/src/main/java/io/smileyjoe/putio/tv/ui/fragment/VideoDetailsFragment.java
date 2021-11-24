@@ -74,6 +74,8 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         void onResumeClick(Video video, ArrayList<Video> videos);
 
         void onTrailerClick(String youtubeUrl);
+
+        void onRefreshDataClicked(Video video);
     }
 
     private enum ActionOption {
@@ -81,7 +83,8 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         WATCH(1, R.string.action_watch),
         RESUME(2, R.string.action_resume),
         CONVERT(3, R.string.action_convert),
-        TRAILER(4, R.string.action_trailer);
+        TRAILER(4, R.string.action_trailer),
+        REFRESH_DATA(5, R.string.action_refresh);
 
         private long mId;
         private @StringRes
@@ -214,7 +217,11 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
 
     @Override
     public void update(Video video) {
-        mRow.setItem(video);
+        if(mRow.getItem() == null) {
+            mRow.setItem(video);
+        } else {
+            mRow.setItem(new Video(video));
+        }
 
         if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
             Action action = new Action(ActionOption.TRAILER.getId(), getResources().getString(ActionOption.TRAILER.getTitleResId()));
@@ -236,6 +243,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
             Action action = null;
 
             switch (option) {
+                case REFRESH_DATA:
                 case WATCH:
                     action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
                     break;
@@ -440,6 +448,10 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                         mListener.onTrailerClick(mVideo.getYoutubeTrailerUrl());
                     }
                     break;
+                case REFRESH_DATA:
+                    if(mListener != null){
+                        mListener.onRefreshDataClicked(mVideo);
+                    }
                 case UNKNOWN:
                     OnGroupClicked task = new OnGroupClicked(action);
                     task.execute();

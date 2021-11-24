@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
+import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
@@ -73,6 +74,14 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
     @Override
     public void onResumeClick(Video video, ArrayList<Video> videos) {
         play(video, videos, true);
+    }
+
+    @Override
+    public void onRefreshDataClicked(Video video) {
+        Tmdb.update(getBaseContext(), video, updatedVideo -> {
+            VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
+            detailsFragment.update(video);
+        });
     }
 
     private void play(Video video, ArrayList<Video> videos, boolean shouldResume){
