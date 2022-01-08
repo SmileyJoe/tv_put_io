@@ -41,10 +41,18 @@ public class VideoLoader {
         mListener = listener;
     }
 
+    public Video getVideo(HistoryItem historyItem){
+        if(historyItem != null && mParents.containsKey(historyItem.getId())) {
+            return mParents.get(historyItem.getId());
+        }
+
+        return null;
+    }
+
     public Video getParent(){
         if(mHistory != null && mHistory.size() > 0){
             HistoryItem historyItem = mHistory.get(mHistory.size() - 1);
-            return mParents.get(historyItem.getId());
+            return getVideo(historyItem);
         }
 
         return null;

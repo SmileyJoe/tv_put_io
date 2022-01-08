@@ -15,21 +15,25 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 
-public class VideoGridViewHolder extends BaseViewHolder<Video> {
+public class VideosViewHolder extends BaseViewHolder<Video> {
 
     private TextView mTextTitle;
+    private TextView mTextSummary;
     private ImageView mImagePoster;
+    private ImageView mImageWatched;
     private FrameLayout mFrameWatched;
     private View mItemView;
     private int mPosterPadding;
 
-    public VideoGridViewHolder(@NonNull View itemView, FragmentType fragmentType) {
+    public VideosViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);
 
         mItemView = itemView;
         mTextTitle = itemView.findViewById(R.id.text_title);
+        mTextSummary = itemView.findViewById(R.id.text_summary);
         mImagePoster = itemView.findViewById(R.id.image_poster);
         mFrameWatched = itemView.findViewById(R.id.frame_watched);
+        mImageWatched = itemView.findViewById(R.id.image_watched);
 
         mPosterPadding = itemView.getContext().getResources().getDimensionPixelOffset(R.dimen.file_grid_poster_padding);
     }
@@ -40,12 +44,22 @@ public class VideoGridViewHolder extends BaseViewHolder<Video> {
 
         Context context = mItemView.getContext();
         mTextTitle.setText(video.getTitleFormatted());
+        mTextSummary.setText(video.getOverView());
 
-        if (video.isWatched()) {
-            mFrameWatched.setVisibility(View.VISIBLE);
-        } else {
-            mFrameWatched.setVisibility(View.GONE);
+        if(mFrameWatched != null) {
+            if (video.isWatched()) {
+                mFrameWatched.setVisibility(View.VISIBLE);
+            } else {
+                mFrameWatched.setVisibility(View.GONE);
+            }
+        } else if(mImageWatched != null){
+            if(video.isWatched()){
+                mImageWatched.setVisibility(View.VISIBLE);
+            } else {
+                mImageWatched.setVisibility(View.INVISIBLE);
+            }
         }
+
         if (video.getPosterAsUri() != null) {
             mImagePoster.setPadding(0,0,0,0);
             Glide.with(context)

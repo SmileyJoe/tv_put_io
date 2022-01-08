@@ -331,7 +331,7 @@ public class Video implements Parcelable{
 
     public String getTitleFormatted() {
         if(mVideoType == VideoType.EPISODE){
-            return mTitle + " S" + String.format("%02d", getSeason()) + "E" + String.format("%02d", getEpisode());
+            return String.format("%02d", getEpisode()) + ". " + mTitle + " S" + String.format("%02d", getSeason());
         } else {
             return mTitle;
         }

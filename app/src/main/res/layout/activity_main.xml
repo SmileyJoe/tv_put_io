@@ -54,15 +54,10 @@
             </LinearLayout>
 
             <fragment
-                android:id="@+id/fragment_season_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.SeasonDetailsFragment"/>
-            <fragment
                 android:id="@+id/fragment_video_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.VideoGridFragment"/>
+                android:name="io.smileyjoe.putio.tv.ui.fragment.VideosFragment"/>
         </LinearLayout>
     </LinearLayout>
 

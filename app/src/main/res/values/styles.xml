@@ -143,4 +143,9 @@
         <item name="android:backgroundTint">@color/selector_bg_inverse</item>
     </style>
 
+    <style name="ListItem.Video">
+        <item name="android:padding">@dimen/padding_general</item>
+        <item name="android:backgroundTint">@color/selector_bg_row_poster</item>
+    </style>
+
 </resources>

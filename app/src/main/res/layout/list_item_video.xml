@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/ListItem.Video">
+
+    <ImageView
+        android:id="@+id/image_watched"
+        style="@style/Icon"
+        android:duplicateParentState="false"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/watched_ic_padding"
+        android:src="@drawable/ic_watched_24"
+        android:layout_marginRight="@dimen/padding_general"/>
+
+    <ImageView
+        android:id="@+id/image_poster"
+        android:layout_width="@dimen/list_poster_width"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_toRightOf="@id/image_watched"
+        android:layout_centerVertical="true"
+        app:srcCompat="@drawable/ic_movie_24" />
+
+    <LinearLayout
+        android:id="@+id/layout_details"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_general"
+        android:duplicateParentState="false"
+        android:layout_toRightOf="@id/image_poster">
+
+        <TextView
+            android:id="@+id/text_title"
+            style="@style/Text.Title.Video"/>
+
+        <TextView
+            android:id="@+id/text_release_date"
+            style="@style/Text.Date"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text_genres"
+            style="@style/Text.Genre.Video"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text_summary"
+            style="@style/Text" />
+    </LinearLayout>
+
+</RelativeLayout>
