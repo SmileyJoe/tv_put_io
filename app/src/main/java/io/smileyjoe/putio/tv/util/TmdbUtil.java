@@ -162,10 +162,18 @@ public class TmdbUtil {
             video.setTmdbId(json.getLong("id"));
             video.setOverView(json.getString("overview"));
 
-            json.setIfValid(path -> video.setBackdrop(Tmdb.Image.getUrl(path)), "backdrop_path");
-            json.setIfValid(path -> video.setPoster(Tmdb.Image.getUrl(path)), "poster_path");
-            json.setIfValid(title -> video.setTitle(title), "title", "name");
-            json.setIfValid(date -> video.setReleaseDate(Format.fromTmdbToMillies(date)), "release_date", "first_air_date", "air_date");
+            video.setBackdrop(Tmdb.Image.getUrl(json.getString("backdrop_path")));
+            video.setPoster(Tmdb.Image.getUrl(json.getString("poster_path")));
+
+            String title = json.getStringNotEmpty("title", "name");
+            if(!TextUtils.isEmpty(title)){
+                video.setTitle(title);
+            }
+
+            String releaseDate = json.getStringNotEmpty("release_date", "first_air_date", "air_date");
+            if(!TextUtils.isEmpty(releaseDate)){
+                video.setReleaseDate(Format.fromTmdbToMillies(releaseDate));
+            }
 
             video.setTagLine(json.getString("tagline"));
             video.setRuntime(json.getInt("runtime"));
@@ -233,9 +241,20 @@ public class TmdbUtil {
                         }
                         video.setTitle(video.getTitle() + ": " + name);
 
-                        json.setIfNotEmpty(overview -> video.setOverView(overview), "overview");
-                        json.setIfNotEmpty(path -> video.setPoster(Tmdb.Image.getUrl(path)), "poster_path");
-                        json.setIfNotEmpty(date -> video.setReleaseDate(Format.fromTmdbToMillies(date)), "air_date");
+                        String overView = json.getString("overview");
+                        if(!TextUtils.isEmpty(overView)){
+                            video.setOverView(overView);
+                        }
+
+                        String poster = json.getString("poster_path");
+                        if(!TextUtils.isEmpty(poster)){
+                            video.setPoster(Tmdb.Image.getUrl(poster));
+                        }
+
+                        String airDate = json.getString("air_date");
+                        if(!TextUtils.isEmpty(airDate)){
+                            video.setReleaseDate(Format.fromTmdbToMillies(airDate));
+                        }
 
                         break;
                     }

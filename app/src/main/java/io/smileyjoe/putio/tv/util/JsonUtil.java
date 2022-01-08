@@ -7,9 +7,9 @@ import com.google.gson.JsonObject;
 
 public class JsonUtil {
 
-    public interface SetListener<T>{
-        void set(T object);
-    }
+//    public interface SetListener<T>{
+//        void set(T object);
+//    }
 
     private JsonObject mJsonObject;
 
@@ -17,27 +17,38 @@ public class JsonUtil {
         mJsonObject = jsonObject;
     }
 
-    public boolean setIfValid(SetListener<String> setListener, String ...names){
-        for(String name : names) {
-            if (isValid(name)) {
-                setListener.set(getString(name));
-                return true;
+//    public boolean setIfValid(SetListener<String> setListener, String ...names){
+//        for(String name : names) {
+//            if (isValid(name)) {
+//                setListener.set(getString(name));
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
+
+//    public boolean setIfNotEmpty(SetListener<String> setListener, String ...names){
+//        for(String name : names) {
+//            String value = getString(name);
+//            if (!TextUtils.isEmpty(value)) {
+//                setListener.set(value);
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
+
+    public String getStringNotEmpty(String... names){
+        for(String name : names){
+            String string = getString(name);
+            if(!TextUtils.isEmpty(string)){
+                return string;
             }
         }
 
-        return false;
-    }
-
-    public boolean setIfNotEmpty(SetListener<String> setListener, String ...names){
-        for(String name : names) {
-            String value = getString(name);
-            if (!TextUtils.isEmpty(value)) {
-                setListener.set(value);
-                return true;
-            }
-        }
-
-        return false;
+        return null;
     }
 
     public String getString(String name) {

@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;

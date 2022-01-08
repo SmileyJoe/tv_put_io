@@ -31,13 +31,27 @@ public class VideoLoader {
     private HashMap<Long, Video> mParents;
     private ArrayList<HistoryItem> mHistory;
     private Listener mListener;
+    private static VideoLoader sInstance;
 
-    public VideoLoader(Context context, Listener listener) {
+    public static VideoLoader getInstance(Context context, Listener listener){
+        if(sInstance == null){
+            sInstance = new VideoLoader(context);
+        }
+
+        sInstance.setListener(listener);
+
+        return sInstance;
+    }
+
+    private VideoLoader(Context context) {
         mContext = context;
         mVideos = new HashMap<>();
         mFolders = new HashMap<>();
         mParents = new HashMap<>();
         mHistory = new ArrayList<>();
+    }
+
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 

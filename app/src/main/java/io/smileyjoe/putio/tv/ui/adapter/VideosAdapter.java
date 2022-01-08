@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;

@@ -39,6 +39,7 @@ import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
+import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
 /*
@@ -88,10 +89,10 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentFolderList.setListener(new FolderListListener());
         mFragmentGenreList.setListener(new GenreListListener());
 
-        mVideoLoader = new VideoLoader(getBaseContext(), this);
+        mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
         mVideoLoader.loadDirectory();
 
-        hideFragment(mFragmentGenreList);
+        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
 
         // todo: this needs to be called when an id is not found in the db //
         Tmdb.Genre.update(getBaseContext());
@@ -104,6 +105,15 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         if(!hasHistory){
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(mVideoLoader != null){
+            mVideoLoader.setListener(this);
         }
     }
 
@@ -122,18 +132,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList.update(video);
     }
 
-    private void hideFragment(Fragment fragment){
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.hide(fragment);
-        transaction.commit();
-    }
-
-    private void showFragment(Fragment fragment){
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.show(fragment);
-        transaction.commit();
-    }
-
     private void changeFragmentWidth(Fragment fragment, @DimenRes int widthResId){
         ViewGroup.LayoutParams params = fragment.getView().getLayoutParams();
         params.width = getResources().getDimensionPixelOffset(widthResId);
@@ -150,9 +148,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         } else {
             Video parent = mVideoLoader.getVideo(historyItem);
 
-            if(parent != null && parent.getVideoType() == VideoType.SEASON){
-                startActivity(SeriesActivity.getIntent(getBaseContext(), parent, videos));
-            } else {
+//            if(parent != null && parent.getVideoType() == VideoType.SEASON){
+//                startActivity(SeriesActivity.getIntent(getBaseContext(), parent, videos));
+//            } else {
 
                 if (shouldAddToHistory) {
                     mVideoLoader.addToHistory(historyItem);
@@ -167,33 +165,33 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
 //            Video parent = mVideoLoader.getParent();
 
-                if (parent != null && parent.getVideoType() == VideoType.SEASON) {
-                    hideFragment(mFragmentFilter);
-                    hideFragment(mFragmentGenreList);
-                } else {
+//                if (parent != null && parent.getVideoType() == VideoType.SEASON) {
+//                    hideFragment(mFragmentFilter);
+//                    hideFragment(mFragmentGenreList);
+//                } else {
                     mFragmentFilter.reset();
 
                     if (videos != null && !videos.isEmpty()) {
-                        showFragment(mFragmentFilter);
+                        FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentFilter);
                     } else {
-                        hideFragment(mFragmentFilter);
+                        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentFilter);
                     }
-                }
+//                }
 
                 switch (historyItem.getFolderType()) {
                     case GROUP:
-                        hideFragment(mFragmentGroup);
+                        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
                         break;
                     case DIRECTORY:
                         if (mVideoLoader.hasHistory()) {
-                            showFragment(mFragmentGroup);
+                            FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGroup);
                             mFragmentGroup.setCurrentPutId(historyItem.getId());
                         } else {
-                            hideFragment(mFragmentGroup);
+                            FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
                         }
                         break;
                 }
-            }
+//            }
         }
 
         mFrameLoading.setVisibility(View.GONE);
@@ -213,9 +211,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         ArrayList<Integer> genresAvailable = new ArrayList<>(temp);
 
         if(genresAvailable == null || genresAvailable.isEmpty()){
-            hideFragment(mFragmentGenreList);
+            FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
         } else {
-            showFragment(mFragmentGenreList);
+            FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGenreList);
             mFragmentGenreList.setGenreIds(genresAvailable);
         }
     }
@@ -313,7 +311,11 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     showDetails(video);
                     break;
                 case FOLDER:
-                    mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
+                    if(video.getVideoType() == VideoType.SEASON){
+                        startActivity(SeriesActivity.getIntent(getBaseContext(), video));
+                    } else {
+                        mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
+                    }
                     break;
             }
         }
