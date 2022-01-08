@@ -12,6 +12,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.db.converter.VideoTypeConverter;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.util.Format;
 import io.smileyjoe.putio.tv.util.TimeUtil;
@@ -37,7 +39,8 @@ public class Video implements Parcelable{
     @ColumnInfo(name = "id_tmdb")
     private long mTmdbId;
     // general
-    @Ignore
+    @ColumnInfo(name = "video_type")
+    @TypeConverters(VideoTypeConverter.class)
     private VideoType mVideoType;
     @Ignore
     private FileType mFileType;
@@ -51,11 +54,11 @@ public class Video implements Parcelable{
     private boolean mIsConverted;
     @Ignore
     private long mResumeTime;
-    @Ignore
+    @ColumnInfo(name = "year")
     private int mYear;
-    @Ignore
+    @ColumnInfo(name = "season")
     private int mSeason;
-    @Ignore
+    @ColumnInfo(name = "episode")
     private int mEpisode;
     // images
     @ColumnInfo(name = "uri_poster")
@@ -91,10 +94,44 @@ public class Video implements Parcelable{
     private int mRuntime;
     @Ignore
     private ArrayList<Character> mCharacters;
+    @Ignore
+    private String mPutTitle;
 
     public Video() {
         mVideoType = VideoType.UNKNOWN;
         mFileType = FileType.UNKNOWN;
+    }
+
+    public Video(Video video) {
+        this.mPutId = video.getPutId();
+        this.mTmdbId = video.getTmdbId();
+        this.mVideoType = video.getVideoType();
+        this.mFileType = video.getFileType();
+        this.mTitle = video.getTitle();
+        this.mOverView = video.getOverView();
+        this.mIsWatched = video.isWatched();
+        this.mIsConverted = video.isConverted();
+        this.mResumeTime = video.getResumeTime();
+        this.mYear = video.getYear();
+        this.mSeason = video.getSeason();
+        this.mEpisode = video.getEpisode();
+        this.mPoster = video.getPoster();
+        this.mBackdrop = video.getBackdrop();
+        this.mStreamUri = video.getStreamUri();
+        this.mIsTmdbChecked = video.isTmdbChecked();
+        this.mIsTmdbFound = video.isTmdbFound();
+        this.mGenreIdsJson = video.getGenreIdsJson();
+        this.mYoutubeTrailerKey = video.getYoutubeTrailerKey();
+        this.mGenreIds = video.getGenreIds();
+        this.mSize = video.getSize();
+        this.mGenresFormatted = video.getGenresFormatted();
+        this.mCreatedAt = video.getCreatedAt();
+        this.mUpdatedAt = video.getUpdatedAt();
+        this.mReleaseDate = video.getReleaseDate();
+        this.mTagLine = video.getTagLine();
+        this.mRuntime = video.getRuntime();
+        this.mCharacters = video.getCharacters();
+        this.mPutTitle = video.getPutTitle();
     }
 
     public void setPutId(long putId) {
@@ -260,6 +297,10 @@ public class Video implements Parcelable{
         mYoutubeTrailerKey = key;
     }
 
+    public void setPutTitle(String putTitle) {
+        mPutTitle = putTitle;
+    }
+
     public String getYoutubeTrailerKey() {
         return mYoutubeTrailerKey;
     }
@@ -290,7 +331,7 @@ public class Video implements Parcelable{
 
     public String getTitleFormatted() {
         if(mVideoType == VideoType.EPISODE){
-            return mTitle + " S" + String.format("%02d", getSeason()) + "E" + String.format("%02d", getEpisode());
+            return String.format("%02d", getEpisode()) + ". " + mTitle + " S" + String.format("%02d", getSeason());
         } else {
             return mTitle;
         }
@@ -440,38 +481,8 @@ public class Video implements Parcelable{
         return mCharacters;
     }
 
-    @Override
-    public String toString() {
-        return "Video{" +
-                "mPutId=" + mPutId +
-                ", mTmdbId=" + mTmdbId +
-                ", mVideoType=" + mVideoType +
-                ", mFileType=" + mFileType +
-                ", mTitle='" + mTitle + '\'' +
-                ", mOverView='" + mOverView + '\'' +
-                ", mIsWatched=" + mIsWatched +
-                ", mIsConverted=" + mIsConverted +
-                ", mResumeTime=" + mResumeTime +
-                ", mYear=" + mYear +
-                ", mSeason=" + mSeason +
-                ", mEpisode=" + mEpisode +
-                ", mPoster='" + mPoster + '\'' +
-                ", mBackdrop='" + mBackdrop + '\'' +
-                ", mStreamUri=" + mStreamUri +
-                ", mIsTmdbChecked=" + mIsTmdbChecked +
-                ", mIsTmdbFound=" + mIsTmdbFound +
-                ", mGenreIdsJson='" + mGenreIdsJson + '\'' +
-                ", mYoutubeTrailerKey='" + mYoutubeTrailerKey + '\'' +
-                ", mGenreIds=" + mGenreIds +
-                ", mSize=" + mSize +
-                ", mGenresFormatted='" + mGenresFormatted + '\'' +
-                ", mCreatedAt=" + mCreatedAt +
-                ", mUpdatedAt=" + mUpdatedAt +
-                ", mReleaseDate=" + mReleaseDate +
-                ", mTagLine='" + mTagLine + '\'' +
-                ", mRuntime=" + mRuntime +
-                ", mCharacters=" + mCharacters +
-                '}';
+    public String getPutTitle() {
+        return mPutTitle;
     }
 
     @Override
@@ -522,6 +533,7 @@ public class Video implements Parcelable{
         dest.writeString(this.mTagLine);
         dest.writeInt(this.mRuntime);
         dest.writeTypedList(this.mCharacters);
+        dest.writeString(this.mPutTitle);
     }
 
     protected Video(Parcel in) {
@@ -556,6 +568,7 @@ public class Video implements Parcelable{
         this.mTagLine = in.readString();
         this.mRuntime = in.readInt();
         this.mCharacters = in.createTypedArrayList(Character.CREATOR);
+        this.mPutTitle = in.readString();
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {
@@ -569,4 +582,39 @@ public class Video implements Parcelable{
             return new Video[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Video{" +
+                "mPutId=" + mPutId +
+                ", mTmdbId=" + mTmdbId +
+                ", mVideoType=" + mVideoType +
+                ", mFileType=" + mFileType +
+                ", mTitle='" + mTitle + '\'' +
+                ", mOverView='" + mOverView + '\'' +
+                ", mIsWatched=" + mIsWatched +
+                ", mIsConverted=" + mIsConverted +
+                ", mResumeTime=" + mResumeTime +
+                ", mYear=" + mYear +
+                ", mSeason=" + mSeason +
+                ", mEpisode=" + mEpisode +
+                ", mPoster='" + mPoster + '\'' +
+                ", mBackdrop='" + mBackdrop + '\'' +
+                ", mStreamUri=" + mStreamUri +
+                ", mIsTmdbChecked=" + mIsTmdbChecked +
+                ", mIsTmdbFound=" + mIsTmdbFound +
+                ", mGenreIdsJson='" + mGenreIdsJson + '\'' +
+                ", mYoutubeTrailerKey='" + mYoutubeTrailerKey + '\'' +
+                ", mGenreIds=" + mGenreIds +
+                ", mSize=" + mSize +
+                ", mGenresFormatted='" + mGenresFormatted + '\'' +
+                ", mCreatedAt=" + mCreatedAt +
+                ", mUpdatedAt=" + mUpdatedAt +
+                ", mReleaseDate=" + mReleaseDate +
+                ", mTagLine='" + mTagLine + '\'' +
+                ", mRuntime=" + mRuntime +
+                ", mCharacters=" + mCharacters +
+                ", mPutTitle='" + mPutTitle + '\'' +
+                '}';
+    }
 }

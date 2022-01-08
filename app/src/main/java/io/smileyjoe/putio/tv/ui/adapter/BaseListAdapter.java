@@ -13,9 +13,7 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
-import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.BaseViewHolder;
-import io.smileyjoe.putio.tv.ui.viewholder.VideoGridViewHolder;
 
 public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends RecyclerView.Adapter<U> implements BaseViewHolder.Listener<T> {
 

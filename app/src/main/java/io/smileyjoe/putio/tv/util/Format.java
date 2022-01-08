@@ -44,6 +44,8 @@ public class Format {
             return date.getTime();
         } catch (ParseException e){
             return -1;
+        } catch (NullPointerException e){
+            return -1;
         }
     }
 

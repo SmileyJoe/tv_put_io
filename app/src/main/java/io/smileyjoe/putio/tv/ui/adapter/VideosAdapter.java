@@ -1,26 +1,24 @@
 package io.smileyjoe.putio.tv.ui.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.ui.viewholder.BaseViewHolder;
-import io.smileyjoe.putio.tv.ui.viewholder.VideoGridViewHolder;
-import io.smileyjoe.putio.tv.ui.viewholder.FolderListViewHolder;
+import io.smileyjoe.putio.tv.ui.viewholder.VideosViewHolder;
 
-public class VideoGridAdapter extends BaseListAdapter<Video, BaseViewHolder<Video>> {
+public class VideosAdapter extends BaseListAdapter<Video, BaseViewHolder<Video>> {
 
-    public VideoGridAdapter(Context context) {
+    private VideosFragment.Style mStyle;
+
+    public VideosAdapter(Context context, VideosFragment.Style style) {
         super(context);
+        mStyle = style;
         setItems(new ArrayList<>());
     }
 
@@ -35,13 +33,17 @@ public class VideoGridAdapter extends BaseListAdapter<Video, BaseViewHolder<Vide
         }
     }
 
+    public void setStyle(VideosFragment.Style style) {
+        mStyle = style;
+    }
+
     @Override
     protected int getLayoutResId() {
-        return R.layout.grid_item_video;
+        return mStyle.getLayoutResId();
     }
 
     @Override
     protected BaseViewHolder<Video> getViewHolder(View view, FragmentType fragmentType) {
-        return new VideoGridViewHolder(view, fragmentType);
+        return new VideosViewHolder(view, fragmentType);
     }
 }

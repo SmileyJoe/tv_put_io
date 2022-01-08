@@ -11,11 +11,13 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
+import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Character;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 
 public class TmdbUtil {
 
@@ -24,6 +26,44 @@ public class TmdbUtil {
     }
 
     private TmdbUtil() {
+    }
+
+    public static class OnTmdbSeriesSearchResponse extends Response {
+
+        private Context mContext;
+        private Video mVideo;
+        private Listener mListener;
+
+        public OnTmdbSeriesSearchResponse(Context context, Video video) {
+            mContext = context;
+            mVideo = video;
+        }
+
+        public void setListener(Listener listener) {
+            mListener = listener;
+        }
+
+        @Override
+        public void onSuccess(JsonObject result) {
+            JsonObject jsonObject = null;
+            if(result.has("results")) {
+                JsonArray jsonArray = result.get("results").getAsJsonArray();
+
+                if(jsonArray.size() > 0){
+                    jsonObject = jsonArray.get(0).getAsJsonObject();
+                }
+            } else {
+                jsonObject = result.getAsJsonObject();
+            }
+
+            if(jsonObject != null) {
+                JsonUtil json = new JsonUtil(jsonObject);
+
+                TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, mVideo);
+                response.setListener(mListener);
+                Tmdb.Series.get(mContext, json.getLong("id"), response);
+            }
+        }
     }
 
     public static class OnTmdbResponse extends Response {
@@ -101,7 +141,7 @@ public class TmdbUtil {
                         character.setCastMemberTmdbId(json.getLong("id"));
                         character.setName(json.getString("character"));
                         character.setOrder(json.getInt("order"));
-                        character.setProfileImage(Tmdb.getImageUrl(json.getString("profile_path")));
+                        character.setProfileImage(Tmdb.Image.getUrl(json.getString("profile_path")));
                         character.setVideoTmdbId(video.getTmdbId());
 
                         characters.add(character);
@@ -120,11 +160,21 @@ public class TmdbUtil {
             JsonUtil json = new JsonUtil(jsonObject);
 
             video.setTmdbId(json.getLong("id"));
-            video.setBackdrop(Tmdb.getImageUrl(json.getString("backdrop_path")));
             video.setOverView(json.getString("overview"));
-            video.setPoster(Tmdb.getImageUrl(json.getString("poster_path")));
-            video.setTitle(json.getString("title"));
-            video.setReleaseDate(Format.fromTmdbToMillies(json.getString("release_date")));
+
+            video.setBackdrop(Tmdb.Image.getUrl(json.getString("backdrop_path")));
+            video.setPoster(Tmdb.Image.getUrl(json.getString("poster_path")));
+
+            String title = json.getStringNotEmpty("title", "name");
+            if(!TextUtils.isEmpty(title)){
+                video.setTitle(title);
+            }
+
+            String releaseDate = json.getStringNotEmpty("release_date", "first_air_date", "air_date");
+            if(!TextUtils.isEmpty(releaseDate)){
+                video.setReleaseDate(Format.fromTmdbToMillies(releaseDate));
+            }
+
             video.setTagLine(json.getString("tagline"));
             video.setRuntime(json.getInt("runtime"));
             video.isTmdbFound(true);
@@ -172,7 +222,40 @@ public class TmdbUtil {
                 }
             }
 
+            handleSeason(video, jsonObject);
+
             return video;
+        }
+
+        private void handleSeason(Video video, JsonObject jsonObject){
+            if(video.getVideoType() == VideoType.SEASON && video.getSeason() > 0 && jsonObject.has("seasons")){
+                JsonArray jsonArray = jsonObject.getAsJsonArray("seasons");
+
+                for (JsonElement jsonElement : jsonArray) {
+                    JsonUtil json = new JsonUtil(jsonElement.getAsJsonObject());
+
+                    if(video.getSeason() == json.getInt("season_number")){
+                        video.setTitle(video.getTitle());
+
+                        String overView = json.getString("overview");
+                        if(!TextUtils.isEmpty(overView)){
+                            video.setOverView(overView);
+                        }
+
+                        String poster = json.getString("poster_path");
+                        if(!TextUtils.isEmpty(poster)){
+                            video.setPoster(Tmdb.Image.getUrl(poster));
+                        }
+
+                        String airDate = json.getString("air_date");
+                        if(!TextUtils.isEmpty(airDate)){
+                            video.setReleaseDate(Format.fromTmdbToMillies(airDate));
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
 
         private Video update(Video video, JsonArray jsonArray) {

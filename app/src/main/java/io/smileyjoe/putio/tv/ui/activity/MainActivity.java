@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
@@ -31,12 +32,14 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
-import io.smileyjoe.putio.tv.ui.fragment.VideoGridFragment;
+import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
+import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
 /*
@@ -47,12 +50,13 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     private TextView mTextTitle;
 
     private FolderListFragment mFragmentFolderList;
-    private VideoGridFragment mFragmentVideoList;
+    private VideosFragment mFragmentVideoList;
     private GenreListFragment mFragmentGenreList;
     private FilterFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
 
     private FrameLayout mFrameLoading;
+    private LinearLayout mLayoutFilters;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -69,10 +73,11 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         mTextTitle = findViewById(R.id.text_title);
         mFrameLoading = findViewById(R.id.frame_loading);
+        mLayoutFilters = findViewById(R.id.layout_filters);
 
         mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(FragmentType.FOLDER);
-        mFragmentVideoList = (VideoGridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
+        mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(FragmentType.VIDEO);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
         mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
@@ -84,13 +89,13 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentFolderList.setListener(new FolderListListener());
         mFragmentGenreList.setListener(new GenreListListener());
 
-        mVideoLoader = new VideoLoader(getBaseContext(), this);
+        mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
         mVideoLoader.loadDirectory();
 
-        hideFragment(mFragmentGenreList);
+        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
 
         // todo: this needs to be called when an id is not found in the db //
-        Tmdb.updateMovieGenres(getBaseContext());
+        Tmdb.Genre.update(getBaseContext());
     }
 
     @Override
@@ -100,6 +105,15 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
         if(!hasHistory){
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(mVideoLoader != null){
+            mVideoLoader.setListener(this);
         }
     }
 
@@ -118,18 +132,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         mFragmentVideoList.update(video);
     }
 
-    private void hideFragment(Fragment fragment){
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.hide(fragment);
-        transaction.commit();
-    }
-
-    private void showFragment(Fragment fragment){
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.show(fragment);
-        transaction.commit();
-    }
-
     private void changeFragmentWidth(Fragment fragment, @DimenRes int widthResId){
         ViewGroup.LayoutParams params = fragment.getView().getLayoutParams();
         params.width = getResources().getDimensionPixelOffset(widthResId);
@@ -144,37 +146,52 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         if((folders == null || folders.isEmpty()) && (videos != null && videos.size() == 1) && historyItem.getFolderType() == FolderType.DIRECTORY){
             showDetails(videos.get(0));
         } else {
-            if(shouldAddToHistory) {
-                mVideoLoader.addToHistory(historyItem);
-            }
-            handleGenres(videos);
-            mTextTitle.setText(historyItem.getTitle());
+            Video parent = mVideoLoader.getVideo(historyItem);
 
-            mFragmentFolderList.setFolders(folders);
+//            if(parent != null && parent.getVideoType() == VideoType.SEASON){
+//                startActivity(SeriesActivity.getIntent(getBaseContext(), parent, videos));
+//            } else {
 
-            mFragmentVideoList.setFullScreen(false);
-            mFragmentVideoList.setVideos(videos);
-            mFragmentFilter.reset();
+                if (shouldAddToHistory) {
+                    mVideoLoader.addToHistory(historyItem);
+                }
+                handleGenres(videos);
+                mTextTitle.setText(historyItem.getTitle());
 
-            if(videos != null && !videos.isEmpty()){
-                showFragment(mFragmentFilter);
-            } else {
-                hideFragment(mFragmentFilter);
-            }
+                mFragmentFolderList.setFolders(folders);
 
-            switch (historyItem.getFolderType()){
-                case GROUP:
-                    hideFragment(mFragmentGroup);
-                    break;
-                case DIRECTORY:
-                    if(mVideoLoader.hasHistory()) {
-                        showFragment(mFragmentGroup);
-                        mFragmentGroup.setCurrentPutId(historyItem.getId());
+                mFragmentVideoList.setFullScreen(false);
+                mFragmentVideoList.setVideos(videos);
+
+//            Video parent = mVideoLoader.getParent();
+
+//                if (parent != null && parent.getVideoType() == VideoType.SEASON) {
+//                    hideFragment(mFragmentFilter);
+//                    hideFragment(mFragmentGenreList);
+//                } else {
+                    mFragmentFilter.reset();
+
+                    if (videos != null && !videos.isEmpty()) {
+                        FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentFilter);
                     } else {
-                        hideFragment(mFragmentGroup);
+                        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentFilter);
                     }
-                    break;
-            }
+//                }
+
+                switch (historyItem.getFolderType()) {
+                    case GROUP:
+                        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
+                        break;
+                    case DIRECTORY:
+                        if (mVideoLoader.hasHistory()) {
+                            FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGroup);
+                            mFragmentGroup.setCurrentPutId(historyItem.getId());
+                        } else {
+                            FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
+                        }
+                        break;
+                }
+//            }
         }
 
         mFrameLoading.setVisibility(View.GONE);
@@ -194,9 +211,9 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         ArrayList<Integer> genresAvailable = new ArrayList<>(temp);
 
         if(genresAvailable == null || genresAvailable.isEmpty()){
-            hideFragment(mFragmentGenreList);
+            FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
         } else {
-            showFragment(mFragmentGenreList);
+            FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGenreList);
             mFragmentGenreList.setGenreIds(genresAvailable);
         }
     }
@@ -286,7 +303,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
         }
     }
 
-    private class VideoListListener extends HomeListener<Video> implements VideoGridFragment.Listener{
+    private class VideoListListener extends HomeListener<Video> implements VideosFragment.Listener{
         @Override
         public void onItemClicked(View view, Video video) {
             switch (video.getFileType()){
@@ -294,7 +311,11 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     showDetails(video);
                     break;
                 case FOLDER:
-                    mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
+                    if(video.getVideoType() == VideoType.SEASON){
+                        startActivity(SeriesActivity.getIntent(getBaseContext(), video));
+                    } else {
+                        mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
+                    }
                     break;
             }
         }
@@ -307,15 +328,20 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
             if(mVideoTypeFocus != type){
                 mVideoTypeFocus = type;
 
-                if(type == FragmentType.FOLDER){
-                    showFolders();
-                } else if(type == FragmentType.VIDEO) {
-                    hideFolders();
-                } else if(type == FragmentType.GROUP) {
-                    showFolders();
-                } else {
-                    mFragmentVideoList.hideDetails();
-                    hideFolders();
+                switch (type){
+                    case FOLDER:
+                        showFolders();
+                        break;
+                    case VIDEO:
+                        hideFolders();
+                        break;
+                    case GROUP:
+                        showFolders();
+                        break;
+                    default:
+                        mFragmentVideoList.hideDetails();
+                        hideFolders();
+                        break;
                 }
             }
         }

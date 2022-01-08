@@ -9,6 +9,10 @@
         style="@style/Text.Details.Title"/>
 
     <TextView
+        android:id="@+id/text_season"
+        style="@style/Text.Details.Season"/>
+
+    <TextView
         android:id="@+id/text_tagline"
         style="@style/Text.Details.Tagline"/>
 

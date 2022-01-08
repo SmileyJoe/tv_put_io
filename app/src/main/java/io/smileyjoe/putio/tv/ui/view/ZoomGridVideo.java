@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.util.PopulateGenres;
 
 public class ZoomGridVideo extends RelativeLayout{
@@ -109,7 +110,11 @@ public class ZoomGridVideo extends RelativeLayout{
             mImagePoster.setImageDrawable(currentPoster);
         }
 
-        mTextTitle.setText(video.getTitleFormatted());
+        String title = video.getTitleFormatted();
+        if(video.getVideoType() == VideoType.SEASON){
+            title = title + ": " + getContext().getString(R.string.text_season) + " " + video.getSeason();
+        }
+        mTextTitle.setText(title);
         mTextTitle.setTypeface(null, Typeface.BOLD);
 
         if(!TextUtils.isEmpty(video.getOverView())) {

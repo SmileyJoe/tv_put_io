@@ -31,14 +31,45 @@ public class VideoLoader {
     private HashMap<Long, Video> mParents;
     private ArrayList<HistoryItem> mHistory;
     private Listener mListener;
+    private static VideoLoader sInstance;
 
-    public VideoLoader(Context context, Listener listener) {
+    public static VideoLoader getInstance(Context context, Listener listener){
+        if(sInstance == null){
+            sInstance = new VideoLoader(context);
+        }
+
+        sInstance.setListener(listener);
+
+        return sInstance;
+    }
+
+    private VideoLoader(Context context) {
         mContext = context;
         mVideos = new HashMap<>();
         mFolders = new HashMap<>();
         mParents = new HashMap<>();
         mHistory = new ArrayList<>();
+    }
+
+    public void setListener(Listener listener) {
         mListener = listener;
+    }
+
+    public Video getVideo(HistoryItem historyItem){
+        if(historyItem != null && mParents.containsKey(historyItem.getId())) {
+            return mParents.get(historyItem.getId());
+        }
+
+        return null;
+    }
+
+    public Video getParent(){
+        if(mHistory != null && mHistory.size() > 0){
+            HistoryItem historyItem = mHistory.get(mHistory.size() - 1);
+            return getVideo(historyItem);
+        }
+
+        return null;
     }
 
     public void loadDirectory(){
