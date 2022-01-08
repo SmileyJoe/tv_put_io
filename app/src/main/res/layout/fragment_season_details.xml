@@ -4,35 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/image_poster"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:visibility="gone"
-        android:scaleType="fitXY" />
-
-    <LinearLayout
-        android:id="@+id/layout_content"
+    <FrameLayout
+        android:id="@+id/frame_details"
+        android:padding="@dimen/padding_general"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:duplicateParentState="true"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_general">
-
-        <FrameLayout
-            android:id="@+id/frame_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/button_hide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:backgroundTint="@color/selector_overlay"
-            android:visibility="gone"
-            android:text="@string/text_hide" />
-    </LinearLayout>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

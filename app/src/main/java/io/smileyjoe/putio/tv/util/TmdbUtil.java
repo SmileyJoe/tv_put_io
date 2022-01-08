@@ -235,11 +235,7 @@ public class TmdbUtil {
                     JsonUtil json = new JsonUtil(jsonElement.getAsJsonObject());
 
                     if(video.getSeason() == json.getInt("season_number")){
-                        String name = json.getString("name");
-                        if(TextUtils.isEmpty(name)){
-                            name = mContext.getString(R.string.text_season) + " " + video.getSeason();
-                        }
-                        video.setTitle(video.getTitle() + ": " + name);
+                        video.setTitle(video.getTitle());
 
                         String overView = json.getString("overview");
                         if(!TextUtils.isEmpty(overView)){

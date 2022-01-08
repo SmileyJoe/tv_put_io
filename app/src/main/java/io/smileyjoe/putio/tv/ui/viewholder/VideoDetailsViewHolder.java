@@ -21,6 +21,7 @@ import io.smileyjoe.putio.tv.util.PopulateGenres;
 public class VideoDetailsViewHolder extends Presenter.ViewHolder {
 
     private TextView mTextTitle;
+    private TextView mTextSeason;
     private TextView mTextOverview;
     private TextView mTextTagline;
     private TextView mTextRuntime;
@@ -40,6 +41,7 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         mContext = view.getContext();
 
         mTextTitle = view.findViewById(R.id.text_title);
+        mTextSeason = view.findViewById(R.id.text_season);
         mTextOverview = view.findViewById(R.id.text_overview);
         mTextTagline = view.findViewById(R.id.text_tagline);
         mTextRuntime = view.findViewById(R.id.text_runtime);
@@ -59,6 +61,13 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
 
         if(video.getReleaseDate() > 0) {
             setText(mTextReleaseDate, mContext.getString(R.string.text_released_on, video.getReleaseDateFormatted()));
+        }
+
+        if(video.getSeason() > 0){
+            mTextSeason.setText(mContext.getString(R.string.text_season) + " " + video.getSeason());
+            mTextSeason.setVisibility(View.VISIBLE);
+        } else {
+            mTextSeason.setVisibility(View.GONE);
         }
 
         if(video.getCharacters() != null && !video.getCharacters().isEmpty()){

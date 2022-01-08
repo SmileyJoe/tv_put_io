@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 
 public class VideosViewHolder extends BaseViewHolder<Video> {
 
@@ -44,7 +45,13 @@ public class VideosViewHolder extends BaseViewHolder<Video> {
         super.bindView(video, position);
 
         Context context = mItemView.getContext();
-        mTextTitle.setText(video.getTitleFormatted());
+
+        String title = video.getTitleFormatted();
+        if(video.getVideoType() == VideoType.SEASON){
+            title = title + ": " + context.getString(R.string.text_season) + " " + video.getSeason();
+        }
+        mTextTitle.setText(title);
+
         mTextSummary.setText(video.getOverView());
 
         if(mFrameWatched != null) {

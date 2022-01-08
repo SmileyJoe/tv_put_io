@@ -94,6 +94,12 @@
         <item name="android:layout_marginBottom">0dp</item>
     </style>
 
+    <style name="Text.Details.Season">
+        <item name="android:textSize">@dimen/text_season_details</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginBottom">0dp</item>
+    </style>
+
     <style name="Text.Details.Runtime">
         <item name="android:textStyle">bold</item>
     </style>
