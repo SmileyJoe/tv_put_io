@@ -171,6 +171,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         if (Util.SDK_INT <= 23) {
             releasePlayer();
         }
+
+        mShouldResume = true;
     }
 
     @Override

@@ -82,6 +82,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
     private PlaybackControlsRow.FastForwardAction mFastForwardAction;
     private PlaybackControlsRow.RewindAction mRewindAction;
     private SubtitlesAction mSubtitlesAction;
+    private ReplayAction mReplayAction;
     private ArrayObjectAdapter mPrimaryActionsAdapter;
     private ArrayObjectAdapter mSecondaryActionsAdapter;
 
@@ -98,6 +99,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mFastForwardAction = new PlaybackControlsRow.FastForwardAction(context);
         mRewindAction = new PlaybackControlsRow.RewindAction(context);
         mSubtitlesAction = new SubtitlesAction();
+        mReplayAction = new ReplayAction();
 
         mThumbsUpAction = new PlaybackControlsRow.ThumbsUpAction(context);
         mThumbsUpAction.setIndex(PlaybackControlsRow.ThumbsUpAction.INDEX_OUTLINE);
@@ -147,6 +149,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         switch (mediaType){
             case VIDEO:
                 mSecondaryActionsAdapter.add(mSubtitlesAction);
+                mSecondaryActionsAdapter.add(mReplayAction);
                 break;
             case YOUTUBE:
                 break;
@@ -160,7 +163,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
                 || action == mThumbsDownAction
                 || action == mThumbsUpAction
                 || action == mRepeatAction
-                || action == mSubtitlesAction;
+                || action == mSubtitlesAction
+                || action == mReplayAction;
     }
 
     private void dispatchAction(Action action) {
@@ -173,6 +177,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             if(mActionListener != null){
                 mActionListener.onSubtitles();
             }
+        } else if(action == mReplayAction){
+            replay();
         } else if (action instanceof PlaybackControlsRow.MultiAction) {
             PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
             multiAction.nextIndex();
@@ -224,11 +230,23 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
     }
 
+    public void replay(){
+        getPlayerAdapter().seekTo(0);
+    }
+
     private class SubtitlesAction extends Action{
         public SubtitlesAction() {
             super(100);
             setLabel1(getContext().getString(R.string.action_subtitle));
             setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_subtitles_24));
+        }
+    }
+
+    private class ReplayAction extends Action{
+        public ReplayAction() {
+            super(101);
+            setLabel1(getContext().getString(R.string.action_replay));
+            setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_replay_24));
         }
     }
 }
