@@ -29,6 +29,10 @@ import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 
 public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener{
 
+    private enum PlayAction{
+        NEXT, PREVIOUS
+    }
+
     public static final String EXTRA_VIDEO = "video";
     public static final String EXTRA_VIDEOS = "videos";
     public static final String EXTRA_SHOULD_RESUME = "should_resume";
@@ -102,6 +106,10 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
                     .commit();
         }
 
+        if(mVideos != null && mVideos.size() > 1){
+            mPlaybackVideoFragment.showNextPrevious();
+        }
+
         play();
     }
 
@@ -151,6 +159,16 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
             mTextSubtitle.setVisibility(View.VISIBLE);
             mTextSubtitle.setText(subTitle);
         }
+    }
+
+    @Override
+    public void onNextClicked(Video current) {
+        play(current, PlayAction.NEXT);
+    }
+
+    @Override
+    public void onPreviousClicked(Video current) {
+        play(current, PlayAction.PREVIOUS);
     }
 
     @Override
@@ -215,6 +233,30 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
         mPlaybackVideoFragment.play(video);
     }
 
+    private boolean play(Video current, PlayAction action){
+        if(mVideos != null){
+            int nextEpisode = current.getEpisode();
+
+            switch (action){
+                case NEXT:
+                    nextEpisode = nextEpisode + 1;
+                    break;
+                case PREVIOUS:
+                    nextEpisode = nextEpisode - 1;
+                    break;
+            }
+
+            for(Video video:mVideos){
+                if(video.getEpisode() == nextEpisode){
+                    play(video);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public void showError() {
         @StringRes int message;
@@ -240,18 +282,11 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
     @Override
     public void onPlayComplete(Video videoCompleted) {
-        if(mVideos != null){
-            int nextEpisode = videoCompleted.getEpisode() + 1;
+        boolean playingNext = play(videoCompleted, PlayAction.NEXT);
 
-            for(Video video:mVideos){
-                if(video.getEpisode() == nextEpisode){
-                    play(video);
-                    return;
-                }
-            }
+        if(!playingNext) {
+            finish();
         }
-
-        finish();
     }
 
     private class BroadcastTick extends BroadcastReceiver{
