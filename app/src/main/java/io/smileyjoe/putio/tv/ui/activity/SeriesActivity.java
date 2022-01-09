@@ -24,6 +24,7 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.SeasonDetailsFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
+import io.smileyjoe.putio.tv.ui.viewholder.VideosViewHolder;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
@@ -55,7 +56,7 @@ public class SeriesActivity extends FragmentActivity implements VideoLoader.List
         mFrameLoading = findViewById(R.id.frame_loading);
         mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(FragmentType.VIDEO);
-        mFragmentVideoList.setStyle(VideosFragment.Style.LIST);
+        mFragmentVideoList.setStyle(VideosViewHolder.Style.LIST);
         mFragmentSeasonDetails = (SeasonDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_season_details);
 
         mFragmentVideoList.setListener(new VideoListListener());

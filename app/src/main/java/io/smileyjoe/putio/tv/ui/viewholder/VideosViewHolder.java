@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
@@ -16,23 +17,44 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
+import io.smileyjoe.putio.tv.util.ViewUtil;
 
 public class VideosViewHolder extends BaseViewHolder<Video> {
 
+    public enum Style{
+        GRID(R.layout.grid_item_video),
+        LIST(R.layout.list_item_video);
+
+        private @LayoutRes
+        int mLayoutResId;
+
+        Style(int layoutResId) {
+            mLayoutResId = layoutResId;
+        }
+
+        public @LayoutRes int getLayoutResId() {
+            return mLayoutResId;
+        }
+    }
+
     private TextView mTextTitle;
     private TextView mTextSummary;
+    private TextView mTextResumeTime;
     private ImageView mImagePoster;
     private ImageView mImageWatched;
     private FrameLayout mFrameWatched;
     private View mItemView;
     private int mPosterPadding;
+    private Style mStyle;
 
-    public VideosViewHolder(@NonNull View itemView, FragmentType fragmentType) {
+    public VideosViewHolder(@NonNull View itemView, FragmentType fragmentType, Style style) {
         super(itemView, fragmentType);
 
+        mStyle = style;
         mItemView = itemView;
         mTextTitle = itemView.findViewById(R.id.text_title);
         mTextSummary = itemView.findViewById(R.id.text_summary);
+        mTextResumeTime = itemView.findViewById(R.id.text_resume_time);
         mImagePoster = itemView.findViewById(R.id.image_poster);
         mFrameWatched = itemView.findViewById(R.id.frame_watched);
         mImageWatched = itemView.findViewById(R.id.image_watched);
@@ -53,6 +75,10 @@ public class VideosViewHolder extends BaseViewHolder<Video> {
         mTextTitle.setText(title);
 
         mTextSummary.setText(video.getOverView());
+
+        if(mStyle == Style.LIST) {
+            ViewUtil.populateResumeTime(mTextResumeTime, video);
+        }
 
         if(mFrameWatched != null) {
             if (video.isWatched()) {
