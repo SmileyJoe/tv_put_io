@@ -14,9 +14,9 @@ import io.smileyjoe.putio.tv.ui.viewholder.VideosViewHolder;
 
 public class VideosAdapter extends BaseListAdapter<Video, BaseViewHolder<Video>> {
 
-    private VideosFragment.Style mStyle;
+    private VideosViewHolder.Style mStyle;
 
-    public VideosAdapter(Context context, VideosFragment.Style style) {
+    public VideosAdapter(Context context, VideosViewHolder.Style style) {
         super(context);
         mStyle = style;
         setItems(new ArrayList<>());
@@ -33,7 +33,7 @@ public class VideosAdapter extends BaseListAdapter<Video, BaseViewHolder<Video>>
         }
     }
 
-    public void setStyle(VideosFragment.Style style) {
+    public void setStyle(VideosViewHolder.Style style) {
         mStyle = style;
     }
 
@@ -44,6 +44,6 @@ public class VideosAdapter extends BaseListAdapter<Video, BaseViewHolder<Video>>
 
     @Override
     protected BaseViewHolder<Video> getViewHolder(View view, FragmentType fragmentType) {
-        return new VideosViewHolder(view, fragmentType);
+        return new VideosViewHolder(view, fragmentType, mStyle);
     }
 }

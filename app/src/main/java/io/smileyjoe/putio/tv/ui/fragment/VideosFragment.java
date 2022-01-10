@@ -22,25 +22,10 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
+import io.smileyjoe.putio.tv.ui.viewholder.VideosViewHolder;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 public class VideosFragment extends Fragment {
-
-    public enum Style{
-        GRID(R.layout.grid_item_video),
-        LIST(R.layout.list_item_video);
-
-        private @LayoutRes
-        int mLayoutResId;
-
-        Style(int layoutResId) {
-            mLayoutResId = layoutResId;
-        }
-
-        public @LayoutRes int getLayoutResId() {
-            return mLayoutResId;
-        }
-    }
 
     public interface Listener extends VideosAdapter.Listener<Video> {
     }
@@ -55,7 +40,7 @@ public class VideosFragment extends Fragment {
     private ArrayList<Video> mVideosAll;
     private ArrayList<Filter> mAppliedFilters = new ArrayList<>();
     private Integer mAppliedGenreId = -1;
-    private Style mStyle = Style.GRID;
+    private VideosViewHolder.Style mStyle = VideosViewHolder.Style.GRID;
 
     @Nullable
     @Override
@@ -69,7 +54,7 @@ public class VideosFragment extends Fragment {
         return view;
     }
 
-    public void setStyle(Style style) {
+    public void setStyle(VideosViewHolder.Style style) {
         mStyle = style;
 
         if(mVideosAdapter != null){

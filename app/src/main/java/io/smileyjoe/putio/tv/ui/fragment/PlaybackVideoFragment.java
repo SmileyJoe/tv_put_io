@@ -85,6 +85,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         void onSubtitlesClicked();
         void showSubtitle(String subTitle);
         void showError();
+        void onNextClicked(Video current);
+        void onPreviousClicked(Video current);
     }
 
     private static final int UPDATE_DELAY = 16;
@@ -102,6 +104,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private YoutubeUtil mYoutube;
     private MediaUtil mMediaUtil;
     private String mYoutubeUrl;
+    private boolean mShowNextPrevious;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -157,6 +160,13 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
+    public void showNextPrevious(){
+        mShowNextPrevious = true;
+        if(mPlayerGlue != null) {
+            mPlayerGlue.showNextPrevious();
+        }
+    }
+
     /**
      * Pauses the player.
      */
@@ -171,6 +181,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         if (Util.SDK_INT <= 23) {
             releasePlayer();
         }
+
+        mShouldResume = true;
     }
 
     @Override
@@ -196,6 +208,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayerAdapter = new LeanbackPlayerAdapter(getActivity(), mPlayer, UPDATE_DELAY);
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
+        if(mShowNextPrevious){
+            mPlayerGlue.showNextPrevious();
+        }
         mPlayerGlue.playWhenPrepared();
 
         mSubtitleOutput = new SubtitleOutput();
@@ -298,12 +313,16 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
     @Override
     public void onPrevious() {
-        // todo: implement //
+        if(mListener != null){
+            mListener.onPreviousClicked(mVideo);
+        }
     }
 
     @Override
     public void onNext() {
-        // todo: implement //
+        if(mListener != null){
+            mListener.onNextClicked(mVideo);
+        }
     }
 
     @Override

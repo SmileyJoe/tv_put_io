@@ -21,12 +21,14 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.util.PopulateGenres;
+import io.smileyjoe.putio.tv.util.ViewUtil;
 
 public class ZoomGridVideo extends RelativeLayout{
 
     private RelativeLayout mLayoutContent;
     private TextView mTextSummary;
     private TextView mTextTitle;
+    private TextView mTextResumeTime;
     private TextView mTextReleaseDate;
     private ImageView mImagePoster;
     private FrameLayout mFrameWatched;
@@ -57,6 +59,7 @@ public class ZoomGridVideo extends RelativeLayout{
 
         mTextSummary = mLayoutContent.findViewById(R.id.text_summary);
         mTextTitle = mLayoutContent.findViewById(R.id.text_title);
+        mTextResumeTime = mLayoutContent.findViewById(R.id.text_resume_time);
         mTextReleaseDate = mLayoutContent.findViewById(R.id.text_release_date);
         mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
         mFrameWatched = mLayoutContent.findViewById(R.id.frame_watched);
@@ -136,6 +139,8 @@ public class ZoomGridVideo extends RelativeLayout{
         } else {
             mTextReleaseDate.setVisibility(View.GONE);
         }
+
+        ViewUtil.populateResumeTime(mTextResumeTime, video);
 
         mTextGenres.setText(null);
         PopulateGenres genresTask = new PopulateGenres(mTextGenres, video);

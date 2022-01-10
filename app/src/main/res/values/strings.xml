@@ -4,7 +4,8 @@
     <string name="error_fragment_message">An error occurred</string>
     <string name="action_watch">Watch</string>
     <string name="action_convert">Convert</string>
-    <string name="action_resume">Resume</string>
+    <string name="action_resume">@string/text_resume</string>
+    <string name="text_resume">Resume</string>
     <string name="text_no_files">Nothing to see here!</string>
     <string name="text_genres">Genres</string>
     <string name="text_all">All</string>
@@ -41,6 +42,7 @@
     <string name="text_hide">Hide</string>
     <string name="text_show">Show</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_replay">Replay</string>
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

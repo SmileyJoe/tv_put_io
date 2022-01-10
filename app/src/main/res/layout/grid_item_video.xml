@@ -42,7 +42,10 @@
         <TextView
             android:id="@+id/text_title"
             style="@style/Text.Title.Video"/>
-
+        <TextView
+            android:id="@+id/text_resume_time"
+            android:visibility="gone"
+            style="@style/Text.ResumeTime"/>
         <TextView
             android:id="@+id/text_release_date"
             android:visibility="gone"

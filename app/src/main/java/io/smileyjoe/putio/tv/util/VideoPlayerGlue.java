@@ -74,14 +74,10 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
 
     private final OnActionClickedListener mActionListener;
 
-    private PlaybackControlsRow.RepeatAction mRepeatAction;
-    private PlaybackControlsRow.ThumbsUpAction mThumbsUpAction;
-    private PlaybackControlsRow.ThumbsDownAction mThumbsDownAction;
     private PlaybackControlsRow.SkipPreviousAction mSkipPreviousAction;
     private PlaybackControlsRow.SkipNextAction mSkipNextAction;
-    private PlaybackControlsRow.FastForwardAction mFastForwardAction;
-    private PlaybackControlsRow.RewindAction mRewindAction;
     private SubtitlesAction mSubtitlesAction;
+    private ReplayAction mReplayAction;
     private ArrayObjectAdapter mPrimaryActionsAdapter;
     private ArrayObjectAdapter mSecondaryActionsAdapter;
 
@@ -95,15 +91,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
 
         mSkipPreviousAction = new PlaybackControlsRow.SkipPreviousAction(context);
         mSkipNextAction = new PlaybackControlsRow.SkipNextAction(context);
-        mFastForwardAction = new PlaybackControlsRow.FastForwardAction(context);
-        mRewindAction = new PlaybackControlsRow.RewindAction(context);
         mSubtitlesAction = new SubtitlesAction();
-
-        mThumbsUpAction = new PlaybackControlsRow.ThumbsUpAction(context);
-        mThumbsUpAction.setIndex(PlaybackControlsRow.ThumbsUpAction.INDEX_OUTLINE);
-        mThumbsDownAction = new PlaybackControlsRow.ThumbsDownAction(context);
-        mThumbsDownAction.setIndex(PlaybackControlsRow.ThumbsDownAction.INDEX_OUTLINE);
-        mRepeatAction = new PlaybackControlsRow.RepeatAction(context);
+        mReplayAction = new ReplayAction();
 
         setSeekEnabled(true);
         setControlsOverlayAutoHideEnabled(true);
@@ -117,19 +106,12 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         //   > /||      |<        <<        >>         >|
         super.onCreatePrimaryActions(adapter);
         mPrimaryActionsAdapter = adapter;
-//        adapter.add(mSkipPreviousAction);
-//        adapter.add(mRewindAction);
-//        adapter.add(mFastForwardAction);
-//        adapter.add(mSkipNextAction);
     }
 
     @Override
     protected void onCreateSecondaryActions(ArrayObjectAdapter adapter) {
         super.onCreateSecondaryActions(adapter);
         mSecondaryActionsAdapter = adapter;
-//        adapter.add(mThumbsDownAction);
-//        adapter.add(mThumbsUpAction);
-//        adapter.add(mRepeatAction);
     }
 
     @Override
@@ -142,11 +124,17 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         super.onActionClicked(action);
     }
 
+    public void showNextPrevious(){
+        mPrimaryActionsAdapter.add(mSkipPreviousAction);
+        mPrimaryActionsAdapter.add(mSkipNextAction);
+    }
+
     public void setMediaType(MediaType mediaType){
         mSecondaryActionsAdapter.clear();
         switch (mediaType){
             case VIDEO:
                 mSecondaryActionsAdapter.add(mSubtitlesAction);
+                mSecondaryActionsAdapter.add(mReplayAction);
                 break;
             case YOUTUBE:
                 break;
@@ -155,24 +143,24 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
 
     // Should dispatch actions that the super class does not supply callbacks for.
     private boolean shouldDispatchAction(Action action) {
-        return action == mRewindAction
-                || action == mFastForwardAction
-                || action == mThumbsDownAction
-                || action == mThumbsUpAction
-                || action == mRepeatAction
-                || action == mSubtitlesAction;
+        return action == mSkipNextAction
+                || action == mSkipPreviousAction
+                || action == mSubtitlesAction
+                || action == mReplayAction;
     }
 
     private void dispatchAction(Action action) {
         // Primary actions are handled manually.
-        if (action == mRewindAction) {
-            rewind();
-        } else if (action == mFastForwardAction) {
-            fastForward();
+        if (action == mSkipNextAction) {
+            next();
+        } else if (action == mSkipPreviousAction) {
+            previous();
         } else if(action == mSubtitlesAction){
             if(mActionListener != null){
                 mActionListener.onSubtitles();
             }
+        } else if(action == mReplayAction){
+            replay();
         } else if (action instanceof PlaybackControlsRow.MultiAction) {
             PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
             multiAction.nextIndex();
@@ -196,32 +184,20 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
 
     @Override
     public void next() {
-        mActionListener.onNext();
+        if(mActionListener != null) {
+            mActionListener.onNext();
+        }
     }
 
     @Override
     public void previous() {
-        mActionListener.onPrevious();
-    }
-
-    /**
-     * Skips backwards 10 seconds.
-     */
-    public void rewind() {
-        long newPosition = getCurrentPosition() - TEN_SECONDS;
-        newPosition = (newPosition < 0) ? 0 : newPosition;
-        getPlayerAdapter().seekTo(newPosition);
-    }
-
-    /**
-     * Skips forward 10 seconds.
-     */
-    public void fastForward() {
-        if (getDuration() > -1) {
-            long newPosition = getCurrentPosition() + TEN_SECONDS;
-            newPosition = (newPosition > getDuration()) ? getDuration() : newPosition;
-            getPlayerAdapter().seekTo(newPosition);
+        if(mActionListener != null) {
+            mActionListener.onPrevious();
         }
+    }
+
+    public void replay(){
+        getPlayerAdapter().seekTo(0);
     }
 
     private class SubtitlesAction extends Action{
@@ -229,6 +205,14 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             super(100);
             setLabel1(getContext().getString(R.string.action_subtitle));
             setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_subtitles_24));
+        }
+    }
+
+    private class ReplayAction extends Action{
+        public ReplayAction() {
+            super(101);
+            setLabel1(getContext().getString(R.string.action_replay));
+            setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_replay_24));
         }
     }
 }

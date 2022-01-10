@@ -34,7 +34,12 @@
 
         <TextView
             android:id="@+id/text_title"
-            style="@style/Text.Title.Video"/>
+            style="@style/Text.Title.Video"
+            android:lines="1"/>
+
+        <TextView
+            android:id="@+id/text_resume_time"
+            style="@style/Text.ResumeTime"/>
 
         <TextView
             android:id="@+id/text_release_date"
