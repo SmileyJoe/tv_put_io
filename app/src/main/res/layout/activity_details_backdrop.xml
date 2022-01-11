@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/image_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_overlay_poster"
+        android:padding="@dimen/padding_general">
+
+        <ImageView
+            android:id="@+id/image_poster"
+            android:layout_width="@dimen/home_fragment_width_expanded"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/padding_general"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/layout_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toRightOf="@id/image_poster"
+            android:layout_alignParentBottom="true">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_watch"
+                android:text="@string/action_watch"
+                style="@style/Button"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_resume"
+                android:text="@string/action_resume"
+                style="@style/Button"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <FrameLayout
+            android:id="@+id/frame_details"
+            android:padding="@dimen/padding_general"
+            android:layout_toRightOf="@id/image_poster"
+            android:layout_above="@id/layout_buttons"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+</RelativeLayout>

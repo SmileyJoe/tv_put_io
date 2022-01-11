@@ -16,6 +16,7 @@ import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
+import io.smileyjoe.putio.tv.util.VideoDetailsHelper;
 
 /*
  * Details activity class that loads LeanbackDetailsFragment class
@@ -52,7 +53,7 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
 
     @Override
     public void onWatchClicked(Video video, ArrayList<Video> videos) {
-        play(video, videos, false);
+        VideoDetailsHelper.play(this, video, videos, false);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
 
     @Override
     public void onResumeClick(Video video, ArrayList<Video> videos) {
-        play(video, videos, true);
+        VideoDetailsHelper.play(this, video, videos, true);
     }
 
     @Override
@@ -82,17 +83,6 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
             VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
             detailsFragment.update(video);
         });
-    }
-
-    private void play(Video video, ArrayList<Video> videos, boolean shouldResume){
-        if(video.getVideoType() == VideoType.EPISODE){
-            if(videos != null && !videos.isEmpty()) {
-                startActivity(PlaybackActivity.getIntent(getBaseContext(), videos, video, shouldResume));
-                return;
-            }
-        }
-
-        startActivity(PlaybackActivity.getIntent(getBaseContext(), video, shouldResume));
     }
 
     private class OnConvertResponse extends Response {

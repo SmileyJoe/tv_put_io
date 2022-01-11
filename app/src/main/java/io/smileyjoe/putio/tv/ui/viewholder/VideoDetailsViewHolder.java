@@ -52,6 +52,22 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         mTextCast = view.findViewById(R.id.text_cast);
     }
 
+    public void addTextShadow(){
+        addTextShadow(mTextTitle);
+        addTextShadow(mTextSeason);
+        addTextShadow(mTextOverview);
+        addTextShadow(mTextTagline);
+        addTextShadow(mTextRuntime);
+        addTextShadow(mTextReleaseDate);
+        addTextShadow(mTextCreatedAt);
+        addTextShadow(mTextCast);
+        addTextShadow(mView.findViewById(R.id.text_cast_title));
+    }
+
+    private void addTextShadow(TextView view){
+        view.setShadowLayer(2, 1, 1, Color.BLACK);
+    }
+
     public void bind(Video video){
         setText(mTextTitle, video.getTitleFormatted());
         setText(mTextOverview, video.getOverView());

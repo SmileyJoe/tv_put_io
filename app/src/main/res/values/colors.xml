@@ -9,6 +9,8 @@
     <color name="text_selected">@color/color_selected</color>
     <color name="text_selected_inverse">@color/color_primary</color>
     <color name="text_grid_details">#222222</color>
+    <color name="text_button_backdrop">#FFFFFF</color>
+    <color name="text_button_backdrop_selected">#000000</color>
 
     <!-- backgrounds -->
     <color name="bg_overlay">#E6000000</color>
@@ -25,4 +27,8 @@
     <color name="ic_tint_selected">@color/color_selected</color>
     <color name="ic_tint_selected_inverse">@color/color_primary</color>
     <color name="ic_bg_launcher">#3D3D3D</color>
+
+    <!-- buttons -->
+    <color name="button_backdrop">#4D000000</color>
+    <color name="button_backdrop_selected">#90FFFFFF</color>
 </resources>
