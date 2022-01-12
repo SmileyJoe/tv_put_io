@@ -116,7 +116,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
                         break;
                 }
 
-                MaterialButton button = addActionButton(title, option.getId(), option.getPosition());
+                MaterialButton button = addActionButton(title, option.getId());
                 button.setOnClickListener(new VideoAction.OnActionButtonClicked(option, this));
                 if (!option.shouldShow() || !shouldAdd) {
                     button.setVisibility(View.GONE);
@@ -125,7 +125,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
         }
 
         addGroupActions((group, verb, title) -> {
-            MaterialButton button = addActionButton(verb + " " + title, group.getId() + 100);
+            MaterialButton button = addActionButton(verb + " " + title, getGroupActionId(group.getId()));
             button.setOnClickListener(view -> {
                 onGroupActionClicked(group.getId());
             });
@@ -134,10 +134,6 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
     }
 
     private MaterialButton addActionButton(String title, long tag){
-        return addActionButton(title, tag, -1);
-    }
-
-    private MaterialButton addActionButton(String title, long tag, int position){
         MaterialButton button = (MaterialButton) LayoutInflater.from(getBaseContext()).inflate(R.layout.include_button_backdrop, null);
         button.setText(title);
         button.setTag(tag);
@@ -179,7 +175,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
     @Override
     public void updateActionGroup(long groupId, int verb) {
         Group group = mHashGroups.get(groupId);
-        ((MaterialButton) mLayoutButtons.findViewWithTag(groupId + 100)).setText(getString(verb) + " " + group.getTitle());
+        ((MaterialButton) mLayoutButtons.findViewWithTag(getGroupActionId(groupId))).setText(getString(verb) + " " + group.getTitle());
     }
 
     @Override

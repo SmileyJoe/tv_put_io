@@ -87,7 +87,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
             initializeBackground(mVideo);
             setOnItemViewClickedListener(new OnRelatedItemClick());
             addGroupActions((group, verb, title) -> {
-                Action action = new Action(group.getId() + 100, verb, title);
+                Action action = new Action(getGroupActionId(group.getId()), verb, title);
                 mActionAdapter.add(action);
             });
         } else {
@@ -266,7 +266,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
 
     @Override
     public void updateActionGroup(long groupId, int verb) {
-        long actionId = groupId + 100;
+        long actionId = getGroupActionId(groupId);
         Action action = getAction(actionId);
         action.setLabel1(getString(verb));
         updateActions(action);

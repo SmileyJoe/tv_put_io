@@ -72,6 +72,14 @@ public class VideoAction {
         default void getResumeTime() {
             Putio.getResumeTime(getBaseContext(), getVideo().getPutId(), new OnResumeResponse(getVideo(), this));
         }
+
+        default long getGroupActionId(long groupId){
+            return groupId + 100;
+        }
+
+        default long getGroupId(long actionId){
+            return actionId - 100;
+        }
     }
 
     public enum Option {
@@ -162,7 +170,7 @@ public class VideoAction {
         public void onActionClicked(Action action) {
             Option option = Option.fromId(action.getId());
             if(option == Option.UNKNOWN){
-                mListener.onGroupActionClicked(action.getId() - 100);
+                mListener.onGroupActionClicked(mListener.getGroupId(action.getId()));
             } else {
                 VideoAction.handleActionClick(Option.fromId(action.getId()), mListener);
             }
