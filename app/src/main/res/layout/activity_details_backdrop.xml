@@ -23,29 +23,25 @@
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/padding_general"/>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/layout_buttons"
+        <HorizontalScrollView
+            android:id="@+id/scroll_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_toRightOf="@id/image_poster"
             android:layout_alignParentBottom="true">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_watch"
-                android:text="@string/action_watch"
-                style="@style/Button"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_resume"
-                android:text="@string/action_resume"
-                style="@style/Button"/>
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/layout_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </HorizontalScrollView>
 
         <FrameLayout
             android:id="@+id/frame_details"
             android:padding="@dimen/padding_general"
             android:layout_toRightOf="@id/image_poster"
-            android:layout_above="@id/layout_buttons"
+            android:layout_above="@id/scroll_buttons"
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

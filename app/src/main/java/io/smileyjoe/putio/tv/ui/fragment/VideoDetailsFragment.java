@@ -46,6 +46,7 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Character;
+import io.smileyjoe.putio.tv.object.DetailsAction;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.object.Subtitle;
@@ -56,13 +57,14 @@ import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
+import io.smileyjoe.putio.tv.util.VideoDetailsHelper;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
  * It shows a detailed view of video and its meta plus related videos.
  */
-public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Listener{
+public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Listener, VideoDetailsHelper.ActionListener{
 
     public interface Listener {
         void onWatchClicked(Video video, ArrayList<Video> videos);
@@ -76,42 +78,6 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         void onTrailerClick(String youtubeUrl);
 
         void onRefreshDataClicked(Video video);
-    }
-
-    private enum ActionOption {
-        UNKNOWN(0, 0),
-        WATCH(1, R.string.action_watch),
-        RESUME(2, R.string.action_resume),
-        CONVERT(3, R.string.action_convert),
-        TRAILER(4, R.string.action_trailer),
-        REFRESH_DATA(5, R.string.action_refresh);
-
-        private long mId;
-        private @StringRes
-        int mTitleResId;
-
-        ActionOption(long id, int titleResId) {
-            mId = id;
-            mTitleResId = titleResId;
-        }
-
-        public long getId() {
-            return mId;
-        }
-
-        public int getTitleResId() {
-            return mTitleResId;
-        }
-
-        public static ActionOption fromId(long id) {
-            for (ActionOption option : values()) {
-                if (option.getId() == id) {
-                    return option;
-                }
-            }
-
-            return UNKNOWN;
-        }
     }
 
     private Video mVideo;
@@ -140,15 +106,17 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                 getResumeTime();
             }
 
-            getConversionStatus();
+//            getConversionStatus();
             mPresenterSelector = new ClassPresenterSelector();
             mAdapter = new ArrayObjectAdapter(mPresenterSelector);
             populate();
             setAdapter(mAdapter);
             initializeBackground(mVideo);
             setOnItemViewClickedListener(new OnRelatedItemClick());
-            GetGroups groupsTask = new GetGroups();
-            groupsTask.execute();
+            addGroupActions((group, verb, title) -> {
+                Action action = new Action(group.getId() + 100, verb, title);
+                mActionAdapter.add(action);
+            });
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
@@ -159,11 +127,11 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         Putio.getResumeTime(getContext(), mVideo.getPutId(), new OnResumeResponse());
     }
 
-    private void getConversionStatus() {
-        if (!mVideo.isConverted()) {
-            Putio.getConversionStatus(getContext(), mVideo.getPutId(), new OnConvertResponse());
-        }
-    }
+//    private void getConversionStatus() {
+//        if (!mVideo.isConverted()) {
+//            Putio.getConversionStatus(getContext(), mVideo.getPutId(), new OnConvertResponse());
+//        }
+//    }
 
     private void populate() {
         setupDetailsOverviewRow();
@@ -224,7 +192,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         }
 
         if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
-            Action action = new Action(ActionOption.TRAILER.getId(), getResources().getString(ActionOption.TRAILER.getTitleResId()));
+            Action action = new Action(DetailsAction.TRAILER.getId(), getResources().getString(DetailsAction.TRAILER.getTitleResId()));
             mActionAdapter.add(action);
         }
     }
@@ -239,7 +207,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     private void addActions(DetailsOverviewRow row) {
         mActionAdapter = new ArrayObjectAdapter();
 
-        for (ActionOption option : ActionOption.values()) {
+        for (DetailsAction option : DetailsAction.values()) {
             Action action = null;
 
             switch (option) {
@@ -283,7 +251,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         detailsPresenter.setListener(sharedElementHelper);
         detailsPresenter.setParticipatingEntranceTransition(true);
 
-        detailsPresenter.setOnActionClickedListener(new OnActionClicked());
+        detailsPresenter.setOnActionClickedListener(new VideoDetailsHelper.OnActionClicked(this));
         mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
     }
 
@@ -303,9 +271,9 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         }
     }
 
-    public void conversionStarted() {
-        getConversionStatus();
-    }
+//    public void conversionStarted() {
+//        getConversionStatus();
+//    }
 
     private int convertDpToPixel(Context context, int dp) {
         float density = context.getResources().getDisplayMetrics().density;
@@ -333,67 +301,80 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         mActionAdapter.notifyItemRangeChanged(position, position);
     }
 
-    private class GetGroups extends AsyncTask<Void, Void, List<Group>>{
-        @Override
-        protected List<Group> doInBackground(Void... voids) {
-            return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.VIDEO.getId());
-        }
-
-        @Override
-        protected void onPostExecute(List<Group> groups) {
-            super.onPostExecute(groups);
-
-            if(groups != null && !groups.isEmpty()){
-                for(Group group:groups){
-                    @StringRes int subTextResId;
-
-                    if(group.getPutIds().contains(mVideo.getPutId())){
-                        subTextResId = R.string.text_remove_from;
-                    } else {
-                        subTextResId = R.string.text_add_to;
-                    }
-
-                    Action action = new Action(group.getId() + 100, getString(subTextResId), group.getTitle());
-                    mActionAdapter.add(action);
-                }
-            }
-        }
+    @Override
+    public Video getVideo() {
+        return mVideo;
     }
 
-    private class OnConvertResponse extends Response {
-        @Override
-        public void onSuccess(JsonObject result) {
-            int percentDone = -1;
-
-            try {
-                percentDone = result.get("mp4").getAsJsonObject().get("percent_done").getAsInt();
-            } catch (UnsupportedOperationException | NullPointerException e) {
-
-            }
-
-            if (percentDone >= 0) {
-                Action action = getAction(ActionOption.CONVERT.getId());
-
-                if (action != null) {
-                    if (percentDone < 100) {
-                        action.setLabel2(percentDone + "%");
-                        updateActions(action);
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                getConversionStatus();
-                            }
-                        }, 1000);
-                    } else {
-                        mActionAdapter.remove(action);
-                        updateActions(action);
-                        mVideo.setConverted(true);
-                    }
-                }
-            }
-        }
+    @Override
+    public void updateGroupAction(long groupId, int verb) {
+        long actionId = groupId + 100;
+        Action action = getAction(actionId);
+        action.setLabel1(getString(verb));
+        updateActions(action);
     }
+
+//    private class GetGroups extends AsyncTask<Void, Void, List<Group>>{
+//        @Override
+//        protected List<Group> doInBackground(Void... voids) {
+//            return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.VIDEO.getId());
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<Group> groups) {
+//            super.onPostExecute(groups);
+//
+//            if(groups != null && !groups.isEmpty()){
+//                for(Group group:groups){
+//                    @StringRes int subTextResId;
+//
+//                    if(group.getPutIds().contains(mVideo.getPutId())){
+//                        subTextResId = R.string.text_remove_from;
+//                    } else {
+//                        subTextResId = R.string.text_add_to;
+//                    }
+//
+//                    Action action = new Action(group.getId() + 100, getString(subTextResId), group.getTitle());
+//                    mActionAdapter.add(action);
+//                }
+//            }
+//        }
+//    }
+
+//    private class OnConvertResponse extends Response {
+//        @Override
+//        public void onSuccess(JsonObject result) {
+//            int percentDone = -1;
+//
+//            try {
+//                percentDone = result.get("mp4").getAsJsonObject().get("percent_done").getAsInt();
+//            } catch (UnsupportedOperationException | NullPointerException e) {
+//
+//            }
+//
+//            if (percentDone >= 0) {
+//                Action action = getAction(DetailsAction.CONVERT.getId());
+//
+//                if (action != null) {
+//                    if (percentDone < 100) {
+//                        action.setLabel2(percentDone + "%");
+//                        updateActions(action);
+//
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                getConversionStatus();
+//                            }
+//                        }, 1000);
+//                    } else {
+//                        mActionAdapter.remove(action);
+//                        updateActions(action);
+//                        mVideo.setConverted(true);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private class OnResumeResponse extends Response {
         @Override
@@ -406,11 +387,11 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
             }
 
             if (mVideo.getResumeTime() > 0) {
-                Action action = getAction(ActionOption.RESUME.getId());
+                Action action = getAction(DetailsAction.RESUME.getId());
 
                 if (action == null) {
                     int currentRange = mActionAdapter.size() - 1;
-                    action = new Action(ActionOption.RESUME.getId(), getResources().getString(ActionOption.RESUME.getTitleResId()), mVideo.getResumeTimeFormatted());
+                    action = new Action(DetailsAction.RESUME.getId(), getResources().getString(DetailsAction.RESUME.getTitleResId()), mVideo.getResumeTimeFormatted());
 
                     mActionAdapter.add(action);
                     mActionAdapter.notifyItemRangeChanged(currentRange, currentRange + 1);
@@ -425,7 +406,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     private class OnActionClicked implements OnActionClickedListener {
         @Override
         public void onActionClicked(Action action) {
-            ActionOption option = ActionOption.fromId(action.getId());
+            DetailsAction option = DetailsAction.fromId(action.getId());
 
             switch (option) {
                 case WATCH:
@@ -452,55 +433,55 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                     if(mListener != null){
                         mListener.onRefreshDataClicked(mVideo);
                     }
-                case UNKNOWN:
-                    OnGroupClicked task = new OnGroupClicked(action);
-                    task.execute();
-                    break;
+//                case UNKNOWN:
+//                    OnGroupClicked task = new OnGroupClicked(action);
+//                    task.execute();
+//                    break;
             }
         }
     }
 
-    private class OnGroupClicked extends AsyncTask<Void, Void, Action>{
-        private Action mAction;
-
-        public OnGroupClicked(Action action) {
-            mAction = action;
-        }
-
-        @Override
-        protected Action doInBackground(Void... voids) {
-            final long id = mAction.getId() - 100;
-
-            if(id == Group.DEFAULT_ID_WATCH_LATER
-                || id == Group.DEFAULT_ID_FAVOURITE) {
-                long putId = mVideo.getPutId();
-                @StringRes int labelOne;
-
-                GroupDao groupDao = AppDatabase.getInstance(getContext()).groupDao();
-                Group group = groupDao.get(id);
-
-                if(group.getPutIds().contains(putId)){
-                    group.removePutId(putId);
-                    labelOne = R.string.text_add_to;
-                } else {
-                    group.addPutId(putId);
-                    labelOne = R.string.text_remove_from;
-                }
-
-                mAction.setLabel1(getString(labelOne));
-                groupDao.insert(group);
-            }
-
-            return mAction;
-        }
-
-        @Override
-        protected void onPostExecute(Action action) {
-            super.onPostExecute(action);
-
-            updateActions(action);
-        }
-    }
+//    private class OnGroupClicked extends AsyncTask<Void, Void, Action>{
+//        private Action mAction;
+//
+//        public OnGroupClicked(Action action) {
+//            mAction = action;
+//        }
+//
+//        @Override
+//        protected Action doInBackground(Void... voids) {
+//            final long id = mAction.getId() - 100;
+//
+//            if(id == Group.DEFAULT_ID_WATCH_LATER
+//                || id == Group.DEFAULT_ID_FAVOURITE) {
+//                long putId = mVideo.getPutId();
+//                @StringRes int labelOne;
+//
+//                GroupDao groupDao = AppDatabase.getInstance(getContext()).groupDao();
+//                Group group = groupDao.get(id);
+//
+//                if(group.getPutIds().contains(putId)){
+//                    group.removePutId(putId);
+//                    labelOne = R.string.text_add_to;
+//                } else {
+//                    group.addPutId(putId);
+//                    labelOne = R.string.text_remove_from;
+//                }
+//
+//                mAction.setLabel1(getString(labelOne));
+//                groupDao.insert(group);
+//            }
+//
+//            return mAction;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Action action) {
+//            super.onPostExecute(action);
+//
+//            updateActions(action);
+//        }
+//    }
 
     private class OnRelatedItemClick implements OnItemViewClickedListener {
         @Override

@@ -63,7 +63,7 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
 
     @Override
     public void onConvertClicked(Video video) {
-        Putio.convertFile(getBaseContext(), video.getPutId(), new OnConvertResponse());
+//        Putio.convertFile(getBaseContext(), video.getPutId(), new OnConvertResponse());
     }
 
     @Override
@@ -85,12 +85,12 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
         });
     }
 
-    private class OnConvertResponse extends Response {
-        @Override
-        public void onSuccess(JsonObject result) {
-            // todo: this isn't working correctly //
-            VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
-            detailsFragment.conversionStarted();
-        }
-    }
+//    private class OnConvertResponse extends Response {
+//        @Override
+//        public void onSuccess(JsonObject result) {
+//            // todo: this isn't working correctly //
+//            VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
+//            detailsFragment.conversionStarted();
+//        }
+//    }
 }
