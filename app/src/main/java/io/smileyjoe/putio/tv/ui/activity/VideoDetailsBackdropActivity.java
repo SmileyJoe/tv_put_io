@@ -3,43 +3,35 @@ package io.smileyjoe.putio.tv.ui.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.leanback.widget.Action;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Tmdb;
-import io.smileyjoe.putio.tv.object.DetailsAction;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
-import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsViewHolder;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
-import io.smileyjoe.putio.tv.util.VideoDetailsHelper;
+import io.smileyjoe.putio.tv.util.VideoAction;
 
-public class VideoDetailsBackdropActivity extends FragmentActivity implements TmdbUtil.Listener, VideoDetailsHelper.ActionListener{
+public class VideoDetailsBackdropActivity extends FragmentActivity implements TmdbUtil.Listener, VideoAction.Listener {
 
     private static final String EXTRA_VIDEO = "video";
 
@@ -110,11 +102,11 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
     private void addButtons(){
         mLayoutButtons.removeAllViews();
 
-        for(DetailsAction action:DetailsAction.values()){
-            if(action != DetailsAction.UNKNOWN) {
+        for(VideoAction.Option option: VideoAction.Option.values()){
+            if(option != VideoAction.Option.UNKNOWN) {
                 boolean shouldAdd = true;
-                String title = getString(action.getTitleResId());
-                switch (action) {
+                String title = getString(option.getTitleResId());
+                switch (option) {
                     case RESUME:
                         if (mVideo.getResumeTime() > 0) {
                             title = title + " : " + mVideo.getResumeTimeFormatted();
@@ -124,9 +116,9 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
                         break;
                 }
 
-                MaterialButton button = addActionButton(title, action.getId(), action.getPosition());
-                button.setOnClickListener(new VideoDetailsHelper.OnActionButtonClicked(action, this));
-                if (!action.shouldShow() || !shouldAdd) {
+                MaterialButton button = addActionButton(title, option.getId(), option.getPosition());
+                button.setOnClickListener(new VideoAction.OnActionButtonClicked(option, this));
+                if (!option.shouldShow() || !shouldAdd) {
                     button.setVisibility(View.GONE);
                 }
             }
@@ -135,7 +127,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
         addGroupActions((group, verb, title) -> {
             MaterialButton button = addActionButton(verb + " " + title, group.getId() + 100);
             button.setOnClickListener(view -> {
-                onGroupClicked(group.getId());
+                onGroupActionClicked(group.getId());
             });
             mHashGroups.put(group.getIdAsLong(), group);
         });
@@ -185,16 +177,16 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
     }
 
     @Override
-    public void updateGroupAction(long groupId, int verb) {
+    public void updateActionGroup(long groupId, int verb) {
         Group group = mHashGroups.get(groupId);
         ((MaterialButton) mLayoutButtons.findViewWithTag(groupId + 100)).setText(getString(verb) + " " + group.getTitle());
     }
 
     @Override
-    public void updateResumeAction() {
-        DetailsAction action = DetailsAction.RESUME;
-        MaterialButton button = mLayoutButtons.findViewWithTag(action.getId());
-        String title = getString(action.getTitleResId()) + " : " + mVideo.getResumeTimeFormatted();
+    public void updateActionResume() {
+        VideoAction.Option option = VideoAction.Option.RESUME;
+        MaterialButton button = mLayoutButtons.findViewWithTag(option.getId());
+        String title = getString(option.getTitleResId()) + " : " + mVideo.getResumeTimeFormatted();
 
         if(button.getVisibility() != View.VISIBLE) {
             button.setVisibility(View.VISIBLE);

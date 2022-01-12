@@ -1,18 +1,13 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.leanback.app.DetailsFragment;
 import androidx.leanback.app.DetailsFragmentBackgroundController;
 import androidx.leanback.widget.Action;
@@ -24,7 +19,6 @@ import androidx.leanback.widget.FullWidthDetailsOverviewSharedElementHelper;
 import androidx.leanback.widget.HeaderItem;
 import androidx.leanback.widget.ListRow;
 import androidx.leanback.widget.ListRowPresenter;
-import androidx.leanback.widget.OnActionClickedListener;
 import androidx.leanback.widget.OnItemViewClickedListener;
 import androidx.leanback.widget.Presenter;
 import androidx.leanback.widget.Row;
@@ -34,22 +28,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.db.GroupDao;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
-import io.smileyjoe.putio.tv.object.Character;
-import io.smileyjoe.putio.tv.object.DetailsAction;
-import io.smileyjoe.putio.tv.object.Group;
-import io.smileyjoe.putio.tv.object.GroupType;
-import io.smileyjoe.putio.tv.object.Subtitle;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
@@ -57,14 +40,14 @@ import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
-import io.smileyjoe.putio.tv.util.VideoDetailsHelper;
+import io.smileyjoe.putio.tv.util.VideoAction;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
  * It shows a detailed view of video and its meta plus related videos.
  */
-public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Listener, VideoDetailsHelper.ActionListener{
+public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Listener, VideoAction.Listener {
 
     public interface Listener {
         void onRelatedClicked(Video video, ArrayList<Video> relatedVideos);
@@ -178,7 +161,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         }
 
         if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
-            Action action = new Action(DetailsAction.TRAILER.getId(), getResources().getString(DetailsAction.TRAILER.getTitleResId()));
+            Action action = new Action(VideoAction.Option.TRAILER.getId(), getResources().getString(VideoAction.Option.TRAILER.getTitleResId()));
             mActionAdapter.add(action);
         }
     }
@@ -193,7 +176,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     private void addActions(DetailsOverviewRow row) {
         mActionAdapter = new ArrayObjectAdapter();
 
-        for (DetailsAction option : DetailsAction.values()) {
+        for (VideoAction.Option option : VideoAction.Option.values()) {
             if(option.shouldShow()) {
                 Action action = null;
 
@@ -239,7 +222,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         detailsPresenter.setListener(sharedElementHelper);
         detailsPresenter.setParticipatingEntranceTransition(true);
 
-        detailsPresenter.setOnActionClickedListener(new VideoDetailsHelper.OnActionClicked(this));
+        detailsPresenter.setOnActionClickedListener(new VideoAction.OnActionClicked(this));
         mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
     }
 
@@ -282,7 +265,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     }
 
     @Override
-    public void updateGroupAction(long groupId, int verb) {
+    public void updateActionGroup(long groupId, int verb) {
         long actionId = groupId + 100;
         Action action = getAction(actionId);
         action.setLabel1(getString(verb));
@@ -290,12 +273,12 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     }
 
     @Override
-    public void updateResumeAction() {
-        Action action = getAction(DetailsAction.RESUME.getId());
+    public void updateActionResume() {
+        Action action = getAction(VideoAction.Option.RESUME.getId());
 
         if (action == null) {
             int currentRange = mActionAdapter.size() - 1;
-            action = new Action(DetailsAction.RESUME.getId(), getResources().getString(DetailsAction.RESUME.getTitleResId()), mVideo.getResumeTimeFormatted());
+            action = new Action(VideoAction.Option.RESUME.getId(), getResources().getString(VideoAction.Option.RESUME.getTitleResId()), mVideo.getResumeTimeFormatted());
 
             mActionAdapter.add(action);
             mActionAdapter.notifyItemRangeChanged(currentRange, currentRange + 1);

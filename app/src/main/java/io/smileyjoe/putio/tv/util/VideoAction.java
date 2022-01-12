@@ -3,8 +3,6 @@ package io.smileyjoe.putio.tv.util;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.telecom.Call;
 import android.view.View;
 
 import androidx.annotation.StringRes;
@@ -22,42 +20,38 @@ import io.smileyjoe.putio.tv.db.GroupDao;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
-import io.smileyjoe.putio.tv.object.DetailsAction;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
-import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
-import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
 
-public class VideoDetailsHelper {
+public class VideoAction {
 
-    public interface ActionListener{
-
+    public interface Listener {
         Activity getActivity();
         Video getVideo();
         void update(Video video);
-        void updateGroupAction(long groupId, @StringRes int verb);
-        void updateResumeAction();
+        void updateActionGroup(long groupId, @StringRes int verb);
+        void updateActionResume();
 
         default Context getBaseContext(){
             return getActivity().getBaseContext();
         }
 
-        default void onResumeVideo(){
+        default void resumeVideo(){
             play(getActivity(), getVideo(), true);
         }
 
-        default void onWatchVideo(){
+        default void playVideo(){
             play(getActivity(), getVideo(), false);
         }
 
-        default void onTrailer(){
+        default void playTrailer(){
             getActivity().startActivity(PlaybackActivity.getIntent(getBaseContext(), getVideo().getYoutubeTrailerUrl()));
         }
 
-        default void onRefreshData(){
+        default void refreshData(){
             Tmdb.update(getBaseContext(), getVideo(), updatedVideo -> update(updatedVideo));
         }
 
@@ -66,17 +60,64 @@ public class VideoDetailsHelper {
 //        }
 
         default void addGroupActions(GetGroups.Listener listener){
-            VideoDetailsHelper.GetGroups groupsTask = new VideoDetailsHelper.GetGroups(getBaseContext(), getVideo(), listener);
+            VideoAction.GetGroups groupsTask = new VideoAction.GetGroups(getBaseContext(), getVideo(), listener);
             groupsTask.execute();
         }
 
-        default void onGroupClicked(long groupId){
+        default void onGroupActionClicked(long groupId){
             OnGroupClicked task = new OnGroupClicked(groupId, getBaseContext(), getVideo(), this);
             task.execute();
         }
 
         default void getResumeTime() {
             Putio.getResumeTime(getBaseContext(), getVideo().getPutId(), new OnResumeResponse(getVideo(), this));
+        }
+    }
+
+    public enum Option {
+        UNKNOWN(0, 0, false, -1),
+        WATCH(1, R.string.action_watch, true, 0),
+        RESUME(2, R.string.action_resume, true, 1),
+        CONVERT(3, R.string.action_convert, false, 2),
+        TRAILER(4, R.string.action_trailer, false, 3),
+        REFRESH_DATA(5, R.string.action_refresh, true, 4);
+
+        private long mId;
+        private @StringRes int mTitleResId;
+        private boolean mShow;
+        private int mPosition;
+
+        Option(long id, int titleResId, boolean show, int position) {
+            mId = id;
+            mTitleResId = titleResId;
+            mShow = show;
+            mPosition = position;
+        }
+
+        public long getId() {
+            return mId;
+        }
+
+        public int getTitleResId() {
+            return mTitleResId;
+        }
+
+        public boolean shouldShow() {
+            return mShow;
+        }
+
+        public int getPosition() {
+            return mPosition;
+        }
+
+        public static Option fromId(long id) {
+            for (Option option : Option.values()) {
+                if (option.getId() == id) {
+                    return option;
+                }
+            }
+
+            return UNKNOWN;
         }
     }
 
@@ -96,52 +137,52 @@ public class VideoDetailsHelper {
     }
 
     public static class OnActionButtonClicked implements View.OnClickListener {
-        private ActionListener mListener;
-        private DetailsAction mAction;
+        private Listener mListener;
+        private Option mOption;
 
-        public OnActionButtonClicked(DetailsAction action, ActionListener listener) {
-            mAction = action;
+        public OnActionButtonClicked(Option option, Listener listener) {
+            mOption = option;
             mListener = listener;
         }
 
         @Override
         public void onClick(View v) {
-            VideoDetailsHelper.handleActionClick(mAction, mListener);
+            VideoAction.handleActionClick(mOption, mListener);
         }
     }
 
     public static class OnActionClicked implements OnActionClickedListener {
-        private ActionListener mListener;
+        private Listener mListener;
 
-        public OnActionClicked(ActionListener listener) {
+        public OnActionClicked(Listener listener) {
             mListener = listener;
         }
 
         @Override
         public void onActionClicked(Action action) {
-            DetailsAction option = DetailsAction.fromId(action.getId());
-            if(option == DetailsAction.UNKNOWN){
-                mListener.onGroupClicked(action.getId() - 100);
+            Option option = Option.fromId(action.getId());
+            if(option == Option.UNKNOWN){
+                mListener.onGroupActionClicked(action.getId() - 100);
             } else {
-                VideoDetailsHelper.handleActionClick(DetailsAction.fromId(action.getId()), mListener);
+                VideoAction.handleActionClick(Option.fromId(action.getId()), mListener);
             }
         }
     }
 
-    public static void handleActionClick(DetailsAction action, ActionListener listener){
+    public static void handleActionClick(Option option, Listener listener){
         if(listener != null){
-            switch (action){
+            switch (option){
                 case WATCH:
-                    listener.onWatchVideo();
+                    listener.playVideo();
                     break;
                 case RESUME:
-                    listener.onResumeVideo();
+                    listener.resumeVideo();
                     break;
                 case TRAILER:
-                    listener.onTrailer();
+                    listener.playTrailer();
                     break;
                 case REFRESH_DATA:
-                    listener.onRefreshData();
+                    listener.refreshData();
                     break;
 //                case CONVERT:
 //                    listener.onConvert();
@@ -195,9 +236,9 @@ public class VideoDetailsHelper {
         private long mGroupId;
         private Context mContext;
         private Video mVideo;
-        private ActionListener mListener;
+        private Listener mListener;
 
-        public OnGroupClicked(long groupId, Context context, Video video, ActionListener listener) {
+        public OnGroupClicked(long groupId, Context context, Video video, Listener listener) {
             mGroupId = groupId;
             mContext = context;
             mVideo = video;
@@ -233,17 +274,17 @@ public class VideoDetailsHelper {
         protected void onPostExecute(Integer verb) {
             super.onPostExecute(verb);
 
-            if(verb > 0) {
-                mListener.updateGroupAction(mGroupId, verb);
+            if(verb > 0 && mListener != null) {
+                mListener.updateActionGroup(mGroupId, verb);
             }
         }
     }
 
     public static class OnResumeResponse extends Response {
         private Video mVideo;
-        private ActionListener mListener;
+        private Listener mListener;
 
-        public OnResumeResponse(Video video, ActionListener listener) {
+        public OnResumeResponse(Video video, Listener listener) {
             mVideo = video;
             mListener = listener;
         }
@@ -259,7 +300,7 @@ public class VideoDetailsHelper {
 
             if (mVideo.getResumeTime() > 0) {
                 if(mListener != null) {
-                    mListener.updateResumeAction();
+                    mListener.updateActionResume();
                 }
             }
         }
@@ -308,5 +349,4 @@ public class VideoDetailsHelper {
 //            }
 //        }
 //    }
-
 }
