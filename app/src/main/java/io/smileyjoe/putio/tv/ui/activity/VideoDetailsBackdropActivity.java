@@ -47,7 +47,6 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
     private VideoDetailsViewHolder mVideoDetailsViewHolder;
     private LinearLayoutCompat mLayoutButtons;
     private int mButtonMargin;
-    private HashMap<Long, MaterialButton> mHashButtonGroups;
     private HashMap<Long, Group> mHashGroups;
 
     public static Intent getIntent(Context context, Video video){
@@ -64,7 +63,6 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
 
         setContentView(R.layout.activity_details_backdrop);
 
-        mHashButtonGroups = new HashMap<>();
         mHashGroups = new HashMap<>();
         mLayoutButtons = findViewById(R.id.layout_buttons);
         mButtonMargin = getResources().getDimensionPixelOffset(R.dimen.padding_general);
@@ -72,6 +70,12 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
         handleExtras();
         populate();
         getData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getResumeTime();
     }
 
     private void getData(){
@@ -90,10 +94,6 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
     private void populate(){
         setImage(findViewById(R.id.image_poster), mVideo.getPosterAsUri());
         setImage(findViewById(R.id.image_backdrop), mVideo.getBackdropAsUri());
-//        findViewById(R.id.button_watch).setOnClickListener(view -> VideoDetailsHelper.play(this, mVideo, false));
-//        MaterialButton buttonResume = findViewById(R.id.button_resume);
-//        buttonResume.setText(buttonResume.getText().toString() + " - " + mVideo.getResumeTimeFormatted());
-//        buttonResume.setOnClickListener(view -> VideoDetailsHelper.play(this, mVideo, true));
         addButtons();
 
         if(mVideoDetailsViewHolder == null) {
@@ -111,12 +111,12 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
         mLayoutButtons.removeAllViews();
 
         for(DetailsAction action:DetailsAction.values()){
-            if(action.shouldShow()){
+            if(action != DetailsAction.UNKNOWN) {
                 boolean shouldAdd = true;
                 String title = getString(action.getTitleResId());
-                switch (action){
+                switch (action) {
                     case RESUME:
-                        if(mVideo.getResumeTime() > 0){
+                        if (mVideo.getResumeTime() > 0) {
                             title = title + " : " + mVideo.getResumeTimeFormatted();
                         } else {
                             shouldAdd = false;
@@ -124,26 +124,31 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
                         break;
                 }
 
-                if(shouldAdd) {
-                    MaterialButton button = addActionButton(title);
-                    button.setOnClickListener(new VideoDetailsHelper.OnActionButtonClicked(action, this));
+                MaterialButton button = addActionButton(title, action.getId(), action.getPosition());
+                button.setOnClickListener(new VideoDetailsHelper.OnActionButtonClicked(action, this));
+                if (!action.shouldShow() || !shouldAdd) {
+                    button.setVisibility(View.GONE);
                 }
             }
         }
 
         addGroupActions((group, verb, title) -> {
-            MaterialButton button = addActionButton(verb + " " + title);
+            MaterialButton button = addActionButton(verb + " " + title, group.getId() + 100);
             button.setOnClickListener(view -> {
                 onGroupClicked(group.getId());
             });
-            mHashButtonGroups.put(group.getIdAsLong(), button);
             mHashGroups.put(group.getIdAsLong(), group);
         });
     }
 
-    private MaterialButton addActionButton(String title){
+    private MaterialButton addActionButton(String title, long tag){
+        return addActionButton(title, tag, -1);
+    }
+
+    private MaterialButton addActionButton(String title, long tag, int position){
         MaterialButton button = (MaterialButton) LayoutInflater.from(getBaseContext()).inflate(R.layout.include_button_backdrop, null);
         button.setText(title);
+        button.setTag(tag);
         mLayoutButtons.addView(button);
         LinearLayoutCompat.LayoutParams params = (LinearLayoutCompat.LayoutParams) button.getLayoutParams();
         params.leftMargin = mButtonMargin;
@@ -181,8 +186,20 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
 
     @Override
     public void updateGroupAction(long groupId, int verb) {
-        MaterialButton button = mHashButtonGroups.get(groupId);
         Group group = mHashGroups.get(groupId);
-        button.setText(getString(verb) + " " + group.getTitle());
+        ((MaterialButton) mLayoutButtons.findViewWithTag(groupId + 100)).setText(getString(verb) + " " + group.getTitle());
+    }
+
+    @Override
+    public void updateResumeAction() {
+        DetailsAction action = DetailsAction.RESUME;
+        MaterialButton button = mLayoutButtons.findViewWithTag(action.getId());
+        String title = getString(action.getTitleResId()) + " : " + mVideo.getResumeTimeFormatted();
+
+        if(button.getVisibility() != View.VISIBLE) {
+            button.setVisibility(View.VISIBLE);
+        }
+
+        button.setText(title);
     }
 }

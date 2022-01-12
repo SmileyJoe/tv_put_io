@@ -39,6 +39,7 @@ public class VideoDetailsHelper {
         Video getVideo();
         void update(Video video);
         void updateGroupAction(long groupId, @StringRes int verb);
+        void updateResumeAction();
 
         default Context getBaseContext(){
             return getActivity().getBaseContext();
@@ -72,6 +73,10 @@ public class VideoDetailsHelper {
         default void onGroupClicked(long groupId){
             OnGroupClicked task = new OnGroupClicked(groupId, getBaseContext(), getVideo(), this);
             task.execute();
+        }
+
+        default void getResumeTime() {
+            Putio.getResumeTime(getBaseContext(), getVideo().getPutId(), new OnResumeResponse(getVideo(), this));
         }
     }
 
@@ -230,6 +235,32 @@ public class VideoDetailsHelper {
 
             if(verb > 0) {
                 mListener.updateGroupAction(mGroupId, verb);
+            }
+        }
+    }
+
+    public static class OnResumeResponse extends Response {
+        private Video mVideo;
+        private ActionListener mListener;
+
+        public OnResumeResponse(Video video, ActionListener listener) {
+            mVideo = video;
+            mListener = listener;
+        }
+
+        @Override
+        public void onSuccess(JsonObject result) {
+            try {
+                long resumeTime = result.get("start_from").getAsLong();
+                mVideo.setResumeTime(resumeTime);
+            } catch (UnsupportedOperationException | NullPointerException e) {
+                mVideo.setResumeTime(0);
+            }
+
+            if (mVideo.getResumeTime() > 0) {
+                if(mListener != null) {
+                    mListener.updateResumeAction();
+                }
             }
         }
     }

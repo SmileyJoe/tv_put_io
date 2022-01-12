@@ -52,45 +52,8 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
     }
 
     @Override
-    public void onWatchClicked(Video video, ArrayList<Video> videos) {
-        VideoDetailsHelper.play(this, video, videos, false);
-    }
-
-    @Override
-    public void onTrailerClick(String youtubeUrl) {
-        startActivity(PlaybackActivity.getIntent(getBaseContext(), youtubeUrl));
-    }
-
-    @Override
-    public void onConvertClicked(Video video) {
-//        Putio.convertFile(getBaseContext(), video.getPutId(), new OnConvertResponse());
-    }
-
-    @Override
     public void onRelatedClicked(Video video, ArrayList<Video> relatedVideos) {
         startActivity(getIntent(getBaseContext(), video, relatedVideos));
         finish();
     }
-
-    @Override
-    public void onResumeClick(Video video, ArrayList<Video> videos) {
-        VideoDetailsHelper.play(this, video, videos, true);
-    }
-
-    @Override
-    public void onRefreshDataClicked(Video video) {
-        Tmdb.update(getBaseContext(), video, updatedVideo -> {
-            VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
-            detailsFragment.update(video);
-        });
-    }
-
-//    private class OnConvertResponse extends Response {
-//        @Override
-//        public void onSuccess(JsonObject result) {
-//            // todo: this isn't working correctly //
-//            VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
-//            detailsFragment.conversionStarted();
-//        }
-//    }
 }
