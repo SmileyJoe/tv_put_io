@@ -122,7 +122,7 @@ public class ZoomGridVideo extends RelativeLayout{
 
         if(!TextUtils.isEmpty(video.getOverView())) {
             mTextSummary.setText(video.getOverView());
-            mTextSummary.setVisibility(View.VISIBLE);
+            mTextSummary.setVisibility(View.GONE);
         } else {
             mTextSummary.setVisibility(GONE);
         }
