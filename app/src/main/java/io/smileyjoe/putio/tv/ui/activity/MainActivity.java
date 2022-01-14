@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.DimenRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -139,7 +138,11 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     private void showDetails(Video video){
-        startActivity(VideoDetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
+        if(video.isTmdbFound()){
+            startActivity(VideoDetailsBackdropActivity.getIntent(getBaseContext(), video));
+        } else {
+            startActivity(VideoDetailsActivity.getIntent(getBaseContext(), video, mFragmentVideoList.getVideos()));
+        }
     }
 
     private void populate(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {

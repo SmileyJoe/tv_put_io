@@ -37,6 +37,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/text_cast_title"
             android:text="@string/title_cast"
             style="@style/Text.Details.CastTitle"/>
 

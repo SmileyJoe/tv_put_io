@@ -5,16 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.gson.JsonObject;
-
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
-import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.fragment.VideoDetailsFragment;
 
 /*
@@ -51,56 +45,8 @@ public class VideoDetailsActivity extends Activity implements VideoDetailsFragme
     }
 
     @Override
-    public void onWatchClicked(Video video, ArrayList<Video> videos) {
-        play(video, videos, false);
-    }
-
-    @Override
-    public void onTrailerClick(String youtubeUrl) {
-        startActivity(PlaybackActivity.getIntent(getBaseContext(), youtubeUrl));
-    }
-
-    @Override
-    public void onConvertClicked(Video video) {
-        Putio.convertFile(getBaseContext(), video.getPutId(), new OnConvertResponse());
-    }
-
-    @Override
     public void onRelatedClicked(Video video, ArrayList<Video> relatedVideos) {
         startActivity(getIntent(getBaseContext(), video, relatedVideos));
         finish();
-    }
-
-    @Override
-    public void onResumeClick(Video video, ArrayList<Video> videos) {
-        play(video, videos, true);
-    }
-
-    @Override
-    public void onRefreshDataClicked(Video video) {
-        Tmdb.update(getBaseContext(), video, updatedVideo -> {
-            VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
-            detailsFragment.update(video);
-        });
-    }
-
-    private void play(Video video, ArrayList<Video> videos, boolean shouldResume){
-        if(video.getVideoType() == VideoType.EPISODE){
-            if(videos != null && !videos.isEmpty()) {
-                startActivity(PlaybackActivity.getIntent(getBaseContext(), videos, video, shouldResume));
-                return;
-            }
-        }
-
-        startActivity(PlaybackActivity.getIntent(getBaseContext(), video, shouldResume));
-    }
-
-    private class OnConvertResponse extends Response {
-        @Override
-        public void onSuccess(JsonObject result) {
-            // todo: this isn't working correctly //
-            VideoDetailsFragment detailsFragment = (VideoDetailsFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
-            detailsFragment.conversionStarted();
-        }
     }
 }

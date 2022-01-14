@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/image_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_backdrop_overlay"
+        android:padding="@dimen/padding_general">
+
+        <ImageView
+            android:id="@+id/image_poster"
+            android:layout_width="@dimen/home_fragment_width_expanded"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/padding_general"/>
+
+        <HorizontalScrollView
+            android:id="@+id/scroll_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/image_poster"
+            android:scrollbars="none"
+            android:layout_alignParentBottom="true">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/layout_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:id="@+id/frame_details"
+            android:padding="@dimen/padding_general"
+            android:layout_toRightOf="@id/image_poster"
+            android:layout_above="@id/scroll_buttons"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+</RelativeLayout>
