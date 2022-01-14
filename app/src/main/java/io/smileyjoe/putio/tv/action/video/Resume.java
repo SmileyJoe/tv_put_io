@@ -22,18 +22,11 @@ public interface Resume extends Action{
         Video video = getVideo();
 
         boolean shouldShow = true;
-        String title = getBaseContext().getString(option.getTitleResId());
-        switch (option) {
-            case RESUME:
-                if (video.getResumeTime() > 0) {
-                    title = title + " : " + video.getResumeTimeFormatted();
-                } else {
-                    shouldShow = false;
-                }
-                break;
+        if (video.getResumeTime() <= 0) {
+            shouldShow = false;
         }
 
-        addAction(ActionOption.RESUME, shouldShow);
+        addAction(ActionOption.RESUME, getBaseContext().getString(option.getTitleResId()), video.getResumeTimeFormatted(), shouldShow);
     }
 
     @Override

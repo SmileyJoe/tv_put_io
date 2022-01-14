@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.action.video;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.leanback.widget.OnActionClickedListener;
@@ -16,7 +17,7 @@ public interface Action {
     Activity getActivity();
     Video getVideo();
     void handleClick(ActionOption option);
-    void addAction(ActionOption option, String title, boolean shouldShow);
+    void addAction(ActionOption option, String title, String subtitle, boolean shouldShow);
     void setupActions();
 
     default void handleClick(androidx.leanback.widget.Action action){
@@ -28,7 +29,15 @@ public interface Action {
     }
 
     default void addAction(ActionOption option, boolean shouldShow){
-        addAction(option, getBaseContext().getString(option.getTitleResId()), shouldShow);
+        addAction(option, getBaseContext().getString(option.getTitleResId()), null, shouldShow);
+    }
+
+    default String getTitleFormatted(String title, String subtitle){
+        if(!TextUtils.isEmpty(subtitle)){
+            return title + ": " + subtitle;
+        } else {
+            return title;
+        }
     }
 
     class OnButtonClicked implements View.OnClickListener {

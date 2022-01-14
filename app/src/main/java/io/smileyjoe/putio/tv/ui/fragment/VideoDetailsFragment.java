@@ -1,5 +1,6 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import io.smileyjoe.putio.tv.action.video.GroupAction;
 import io.smileyjoe.putio.tv.action.video.Play;
 import io.smileyjoe.putio.tv.action.video.Refresh;
 import io.smileyjoe.putio.tv.action.video.Resume;
+import io.smileyjoe.putio.tv.interfaces.VideoDetails;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
@@ -52,7 +54,7 @@ import io.smileyjoe.putio.tv.util.VideoUtil;
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
  * It shows a detailed view of video and its meta plus related videos.
  */
-public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Listener, Play, Resume, Refresh, GroupAction {
+public class VideoDetailsFragment extends DetailsFragment implements VideoDetails, Play, Resume, Refresh, GroupAction {
 
     public interface Listener {
         void onRelatedClicked(Video video, ArrayList<Video> relatedVideos);
@@ -132,9 +134,9 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     }
 
     @Override
-    public void addAction(ActionOption option, String title, boolean shouldShow) {
+    public void addAction(ActionOption option, String title, String subtitle, boolean shouldShow) {
         if(shouldShow) {
-            mActionAdapter.add(new Action(option.getId(), title));
+            mActionAdapter.add(new Action(option.getId(), title, subtitle));
         }
     }
 
@@ -142,6 +144,11 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
     public void addActionGroup(Group group, String verb, String title) {
         Action action = new Action(getGroupActionId(group.getId()), verb, title);
         mActionAdapter.add(action);
+    }
+
+    @Override
+    public Context getBaseContext() {
+        return getContext();
     }
 
     private void populate() {
@@ -187,11 +194,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
 
         mAdapter.add(mRow);
 
-        if(mVideo.getVideoType() == VideoType.MOVIE && mVideo.isTmdbFound() && TextUtils.isEmpty(mVideo.getTagLine())) {
-            TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(getContext(), mVideo);
-            response.setListener(this);
-            Tmdb.Movie.get(getContext(), mVideo.getTmdbId(), response);
-        }
+        getData();
     }
 
     @Override

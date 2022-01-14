@@ -28,6 +28,7 @@ import io.smileyjoe.putio.tv.action.video.GroupAction;
 import io.smileyjoe.putio.tv.action.video.Play;
 import io.smileyjoe.putio.tv.action.video.Refresh;
 import io.smileyjoe.putio.tv.action.video.Resume;
+import io.smileyjoe.putio.tv.interfaces.VideoDetails;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
@@ -35,7 +36,7 @@ import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsViewHolder;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
 
-public class VideoDetailsBackdropActivity extends FragmentActivity implements TmdbUtil.Listener, Play, Resume, Refresh, GroupAction {
+public class VideoDetailsBackdropActivity extends FragmentActivity implements VideoDetails, Play, Resume, Refresh, GroupAction {
 
     private static final String EXTRA_VIDEO = "video";
 
@@ -83,14 +84,6 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
         getResumeTime();
     }
 
-    private void getData(){
-        if(mVideo.getVideoType() == VideoType.MOVIE && mVideo.isTmdbFound() && TextUtils.isEmpty(mVideo.getTagLine())) {
-            TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(getBaseContext(), mVideo);
-            response.setListener(this);
-            Tmdb.Movie.get(getBaseContext(), mVideo.getTmdbId(), response);
-        }
-    }
-
     @Override
     public void update(Video video) {
         populate();
@@ -128,8 +121,8 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Tm
     }
 
     @Override
-    public void addAction(ActionOption option, String title, boolean shouldShow) {
-        MaterialButton button = addActionButton(title, option.getId());
+    public void addAction(ActionOption option, String title, String subtitle, boolean shouldShow) {
+        MaterialButton button = addActionButton(getTitleFormatted(title, subtitle), option.getId());
         button.setOnClickListener(new OnButtonClicked(option, this));
         if (!shouldShow) {
             button.setVisibility(View.GONE);
