@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,18 +24,15 @@ import java.util.HashMap;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
 import io.smileyjoe.putio.tv.action.video.GroupAction;
-import io.smileyjoe.putio.tv.action.video.Play;
-import io.smileyjoe.putio.tv.action.video.Refresh;
-import io.smileyjoe.putio.tv.action.video.Resume;
+import io.smileyjoe.putio.tv.action.video.PlayAction;
+import io.smileyjoe.putio.tv.action.video.RefreshAction;
+import io.smileyjoe.putio.tv.action.video.ResumeAction;
 import io.smileyjoe.putio.tv.interfaces.VideoDetails;
-import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsViewHolder;
-import io.smileyjoe.putio.tv.util.TmdbUtil;
 
-public class VideoDetailsBackdropActivity extends FragmentActivity implements VideoDetails, Play, Resume, Refresh, GroupAction {
+public class VideoDetailsBackdropActivity extends FragmentActivity implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction {
 
     private static final String EXTRA_VIDEO = "video";
 
@@ -72,10 +68,10 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     @Override
     public void setupActions() {
         mLayoutButtons.removeAllViews();
-        Play.super.setupActions();
-        Resume.super.setupActions();
+        PlayAction.super.setupActions();
+        ResumeAction.super.setupActions();
         GroupAction.super.setupActions();
-        Refresh.super.setupActions();
+        RefreshAction.super.setupActions();
     }
 
     @Override
@@ -93,13 +89,13 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     public void handleClick(ActionOption option) {
         switch (option){
             case RESUME:
-                Resume.super.handleClick(option);
+                ResumeAction.super.handleClick(option);
                 break;
             case WATCH:
-                Play.super.handleClick(option);
+                PlayAction.super.handleClick(option);
                 break;
             case REFRESH_DATA:
-                Refresh.super.handleClick(option);
+                RefreshAction.super.handleClick(option);
                 break;
         }
     }

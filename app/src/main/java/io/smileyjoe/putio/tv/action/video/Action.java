@@ -15,25 +15,29 @@ import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 
 public interface Action {
     Activity getActivity();
+
     Video getVideo();
+
     void handleClick(ActionOption option);
+
     void addAction(ActionOption option, String title, String subtitle, boolean shouldShow);
+
     void setupActions();
 
-    default void handleClick(androidx.leanback.widget.Action action){
+    default void handleClick(androidx.leanback.widget.Action action) {
         // do nothing //
     }
 
-    default Context getBaseContext(){
+    default Context getBaseContext() {
         return getActivity().getBaseContext();
     }
 
-    default void addAction(ActionOption option, boolean shouldShow){
+    default void addAction(ActionOption option, boolean shouldShow) {
         addAction(option, getBaseContext().getString(option.getTitleResId()), null, shouldShow);
     }
 
-    default String getTitleFormatted(String title, String subtitle){
-        if(!TextUtils.isEmpty(subtitle)){
+    default String getTitleFormatted(String title, String subtitle) {
+        if (!TextUtils.isEmpty(subtitle)) {
             return title + ": " + subtitle;
         } else {
             return title;
@@ -68,13 +72,13 @@ public interface Action {
         }
     }
 
-    default void play(Activity activity, Video video, boolean shouldResume){
+    default void play(Activity activity, Video video, boolean shouldResume) {
         play(activity, video, null, shouldResume);
     }
 
-    default void play(Activity activity, Video video, ArrayList<Video> videos, boolean shouldResume){
-        if(video.getVideoType() == VideoType.EPISODE){
-            if(videos != null && !videos.isEmpty()) {
+    default void play(Activity activity, Video video, ArrayList<Video> videos, boolean shouldResume) {
+        if (video.getVideoType() == VideoType.EPISODE) {
+            if (videos != null && !videos.isEmpty()) {
                 activity.startActivity(PlaybackActivity.getIntent(activity.getBaseContext(), videos, video, shouldResume));
                 return;
             }

@@ -1,23 +1,21 @@
 package io.smileyjoe.putio.tv.action.video;
 
-import android.util.Log;
-
 import com.google.gson.JsonObject;
 
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Video;
 
-public interface Resume extends Action{
+public interface ResumeAction extends Action {
 
     void updateActionResume();
 
-    default void resumeVideo(){
+    default void resumeVideo() {
         play(getActivity(), getVideo(), true);
     }
 
     @Override
-    default void setupActions(){
+    default void setupActions() {
         ActionOption option = ActionOption.RESUME;
         Video video = getVideo();
 
@@ -30,7 +28,7 @@ public interface Resume extends Action{
     }
 
     @Override
-    default void handleClick(ActionOption option){
+    default void handleClick(ActionOption option) {
         resumeVideo();
     }
 
@@ -40,9 +38,9 @@ public interface Resume extends Action{
 
     class OnResumeResponse extends Response {
         private Video mVideo;
-        private Resume mListener;
+        private ResumeAction mListener;
 
-        public OnResumeResponse(Video video, Resume listener) {
+        public OnResumeResponse(Video video, ResumeAction listener) {
             mVideo = video;
             mListener = listener;
         }
@@ -57,7 +55,7 @@ public interface Resume extends Action{
             }
 
             if (mVideo.getResumeTime() > 0) {
-                if(mListener != null) {
+                if (mListener != null) {
                     mListener.updateActionResume();
                 }
             }

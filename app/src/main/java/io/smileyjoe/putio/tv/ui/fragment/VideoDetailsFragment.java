@@ -35,26 +35,23 @@ import java.util.ArrayList;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
 import io.smileyjoe.putio.tv.action.video.GroupAction;
-import io.smileyjoe.putio.tv.action.video.Play;
-import io.smileyjoe.putio.tv.action.video.Refresh;
-import io.smileyjoe.putio.tv.action.video.Resume;
+import io.smileyjoe.putio.tv.action.video.PlayAction;
+import io.smileyjoe.putio.tv.action.video.RefreshAction;
+import io.smileyjoe.putio.tv.action.video.ResumeAction;
 import io.smileyjoe.putio.tv.interfaces.VideoDetails;
-import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
-import io.smileyjoe.putio.tv.util.TmdbUtil;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
  * It shows a detailed view of video and its meta plus related videos.
  */
-public class VideoDetailsFragment extends DetailsFragment implements VideoDetails, Play, Resume, Refresh, GroupAction {
+public class VideoDetailsFragment extends DetailsFragment implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction {
 
     public interface Listener {
         void onRelatedClicked(Video video, ArrayList<Video> relatedVideos);
@@ -102,13 +99,13 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     public void handleClick(ActionOption option) {
         switch (option){
             case RESUME:
-                Resume.super.handleClick(option);
+                ResumeAction.super.handleClick(option);
                 break;
             case WATCH:
-                Play.super.handleClick(option);
+                PlayAction.super.handleClick(option);
                 break;
             case REFRESH_DATA:
-                Refresh.super.handleClick(option);
+                RefreshAction.super.handleClick(option);
                 break;
         }
     }
@@ -126,9 +123,9 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     @Override
     public void setupActions() {
         mActionAdapter = new ArrayObjectAdapter();
-        Play.super.setupActions();
-        Resume.super.setupActions();
-        Refresh.super.setupActions();
+        PlayAction.super.setupActions();
+        ResumeAction.super.setupActions();
+        RefreshAction.super.setupActions();
         GroupAction.super.setupActions();
         mRow.setActionsAdapter(mActionAdapter);
     }

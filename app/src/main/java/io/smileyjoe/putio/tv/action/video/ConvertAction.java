@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.action.video;
 
-public interface Convert {
+// todo: bring this back //
+public interface ConvertAction {
 
     //        default void onConvert(){
 //            Putio.convertFile(getBaseContext(), getVideo().getPutId(), result -> Putio.getConversionStatus(getBaseContext(), getVideo().getPutId(), new VideoDetailsFragment.OnConvertResponse()););
