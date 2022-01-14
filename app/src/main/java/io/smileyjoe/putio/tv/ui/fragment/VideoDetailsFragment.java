@@ -32,7 +32,13 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.action.video.ActionOption;
+import io.smileyjoe.putio.tv.action.video.GroupAction;
+import io.smileyjoe.putio.tv.action.video.Play;
+import io.smileyjoe.putio.tv.action.video.Refresh;
+import io.smileyjoe.putio.tv.action.video.Resume;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
@@ -40,14 +46,13 @@ import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
-import io.smileyjoe.putio.tv.util.VideoAction;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
  * It shows a detailed view of video and its meta plus related videos.
  */
-public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Listener, VideoAction.Listener {
+public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Listener, Play, Resume, Refresh, GroupAction {
 
     public interface Listener {
         void onRelatedClicked(Video video, ArrayList<Video> relatedVideos);
@@ -79,28 +84,65 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                 getResumeTime();
             }
 
-//            getConversionStatus();
             mPresenterSelector = new ClassPresenterSelector();
             mAdapter = new ArrayObjectAdapter(mPresenterSelector);
             populate();
             setAdapter(mAdapter);
             initializeBackground(mVideo);
             setOnItemViewClickedListener(new OnRelatedItemClick());
-            addGroupActions((group, verb, title) -> {
-                Action action = new Action(getGroupActionId(group.getId()), verb, title);
-                mActionAdapter.add(action);
-            });
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
         }
     }
 
-//    private void getConversionStatus() {
-//        if (!mVideo.isConverted()) {
-//            Putio.getConversionStatus(getContext(), mVideo.getPutId(), new OnConvertResponse());
-//        }
-//    }
+    @Override
+    public void handleClick(ActionOption option) {
+        switch (option){
+            case RESUME:
+                Resume.super.handleClick(option);
+                break;
+            case WATCH:
+                Play.super.handleClick(option);
+                break;
+            case REFRESH_DATA:
+                Refresh.super.handleClick(option);
+                break;
+        }
+    }
+
+    @Override
+    public void handleClick(Action action) {
+        ActionOption option = ActionOption.fromId(action.getId());
+        if(option == ActionOption.UNKNOWN){
+            onGroupActionClicked(getGroupId(action.getId()));
+        } else {
+            handleClick(ActionOption.fromId(action.getId()));
+        }
+    }
+
+    @Override
+    public void setupActions() {
+        mActionAdapter = new ArrayObjectAdapter();
+        Play.super.setupActions();
+        Resume.super.setupActions();
+        Refresh.super.setupActions();
+        GroupAction.super.setupActions();
+        mRow.setActionsAdapter(mActionAdapter);
+    }
+
+    @Override
+    public void addAction(ActionOption option, String title, boolean shouldShow) {
+        if(shouldShow) {
+            mActionAdapter.add(new Action(option.getId(), title));
+        }
+    }
+
+    @Override
+    public void addActionGroup(Group group, String verb, String title) {
+        Action action = new Action(getGroupActionId(group.getId()), verb, title);
+        mActionAdapter.add(action);
+    }
 
     private void populate() {
         setupDetailsOverviewRow();
@@ -141,7 +183,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         mRow = new DetailsOverviewRow(mVideo);
 
         loadThumb(mRow);
-        addActions(mRow);
+        setupActions();
 
         mAdapter.add(mRow);
 
@@ -161,7 +203,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         }
 
         if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
-            Action action = new Action(VideoAction.Option.TRAILER.getId(), getResources().getString(VideoAction.Option.TRAILER.getTitleResId()));
+            Action action = new Action(ActionOption.TRAILER.getId(), getResources().getString(ActionOption.TRAILER.getTitleResId()));
             mActionAdapter.add(action);
         }
     }
@@ -171,44 +213,6 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
                 .load(mVideo.getPosterAsUri())
                 .centerCrop()
                 .into(new OnThumbLoaded(row));
-    }
-
-    private void addActions(DetailsOverviewRow row) {
-        mActionAdapter = new ArrayObjectAdapter();
-
-        for (VideoAction.Option option : VideoAction.Option.values()) {
-            if(option.shouldShow()) {
-                Action action = null;
-
-                switch (option) {
-                    case REFRESH_DATA:
-                    case WATCH:
-                        action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
-                        break;
-                    case RESUME:
-                        if (mVideo.getResumeTime() > 0) {
-                            action = new Action(option.getId(), getResources().getString(option.getTitleResId()), mVideo.getResumeTimeFormatted());
-                        }
-                        break;
-                    case TRAILER:
-                        if (!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())) {
-                            action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
-                        }
-                        break;
-//                case CONVERT:
-//                    if (!mVideo.isConverted()) {
-//                        action = new Action(option.getId(), getResources().getString(option.getTitleResId()));
-//                    }
-//                    break;
-                }
-
-                if (action != null) {
-                    mActionAdapter.add(action);
-                }
-            }
-        }
-
-        row.setActionsAdapter(mActionAdapter);
     }
 
     private void setupDetailsOverviewRowPresenter() {
@@ -222,7 +226,7 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
         detailsPresenter.setListener(sharedElementHelper);
         detailsPresenter.setParticipatingEntranceTransition(true);
 
-        detailsPresenter.setOnActionClickedListener(new VideoAction.OnActionClicked(this));
+        detailsPresenter.setOnActionClickedListener(new OnActionClicked(this));
         mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
     }
 
@@ -274,11 +278,11 @@ public class VideoDetailsFragment extends DetailsFragment implements TmdbUtil.Li
 
     @Override
     public void updateActionResume() {
-        Action action = getAction(VideoAction.Option.RESUME.getId());
+        Action action = getAction(ActionOption.RESUME.getId());
 
         if (action == null) {
             int currentRange = mActionAdapter.size() - 1;
-            action = new Action(VideoAction.Option.RESUME.getId(), getResources().getString(VideoAction.Option.RESUME.getTitleResId()), mVideo.getResumeTimeFormatted());
+            action = new Action(ActionOption.RESUME.getId(), getResources().getString(ActionOption.RESUME.getTitleResId()), mVideo.getResumeTimeFormatted());
 
             mActionAdapter.add(action);
             mActionAdapter.notifyItemRangeChanged(currentRange, currentRange + 1);
