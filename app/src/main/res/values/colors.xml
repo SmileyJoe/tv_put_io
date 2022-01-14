@@ -3,6 +3,7 @@
     <color name="color_primary">#01BB46</color>
     <color name="color_black">#000000</color>
     <color name="color_selected">#222222</color>
+    <color name="color_transparent">#00000000</color>
 
     <!-- text -->
     <color name="text">#FFFFFF</color>

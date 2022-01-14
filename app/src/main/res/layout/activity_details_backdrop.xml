@@ -12,7 +12,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_overlay_poster"
+        android:background="@drawable/bg_backdrop_overlay"
         android:padding="@dimen/padding_general">
 
         <ImageView
@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/image_poster"
+            android:scrollbars="none"
             android:layout_alignParentBottom="true">
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/layout_buttons"

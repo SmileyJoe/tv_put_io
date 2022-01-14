@@ -9,5 +9,5 @@
     <item
         android:color="@color/button_backdrop_selected"
         android:state_selected="true"/>
-    <item android:color="@color/button_backdrop"/>
+    <item android:color="@color/color_transparent"/>
 </selector>
