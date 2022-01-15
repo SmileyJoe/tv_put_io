@@ -59,6 +59,7 @@ public class ZoomGridVideo extends RelativeLayout{
 
         mTextSummary = mLayoutContent.findViewById(R.id.text_summary);
         mTextTitle = mLayoutContent.findViewById(R.id.text_title);
+        mTextTitle.setMaxLines(2);
         mTextResumeTime = mLayoutContent.findViewById(R.id.text_resume_time);
         mTextReleaseDate = mLayoutContent.findViewById(R.id.text_release_date);
         mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
@@ -122,7 +123,7 @@ public class ZoomGridVideo extends RelativeLayout{
 
         if(!TextUtils.isEmpty(video.getOverView())) {
             mTextSummary.setText(video.getOverView());
-            mTextSummary.setVisibility(View.VISIBLE);
+            mTextSummary.setVisibility(View.GONE);
         } else {
             mTextSummary.setVisibility(GONE);
         }

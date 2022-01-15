@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:elevation="@dimen/elevation_zoom_video"
         android:background="@color/bg_default"
-        app:multiplier="1.5"
+        app:multiplier="1.25"
         android:visibility="invisible"/>
 
 </RelativeLayout>
