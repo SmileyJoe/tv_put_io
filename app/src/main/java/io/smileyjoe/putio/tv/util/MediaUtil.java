@@ -6,7 +6,6 @@ import android.net.Uri;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MergingMediaSource;
 import com.google.android.exoplayer2.source.SingleSampleMediaSource;
@@ -34,13 +33,13 @@ public class MediaUtil {
     }
 
     public void addSubtitles(Uri uri){
-        MediaSource source = new SingleSampleMediaSource(
-                uri,
-                mDataSourceFactory,
-                com.google.android.exoplayer2.Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, Format.NO_VALUE, "en", null),
-                C.TIME_UNSET);
-
-        mSources.add(source);
+//        MediaSource source = new SingleSampleMediaSource(
+//                uri,
+//                mDataSourceFactory,
+//                com.google.android.exoplayer2.Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, Format.NO_VALUE, "en", null),
+//                C.TIME_UNSET);
+//
+//        mSources.add(source);
     }
 
     public MediaSource getSource(){
@@ -56,14 +55,14 @@ public class MediaUtil {
     }
 
     public void addMedia(Uri uri){
-        MediaSource source =
-                new ExtractorMediaSource(
-                        uri,
-                        mDataSourceFactory,
-                        new DefaultExtractorsFactory(),
-                        null,
-                        null);
-
-        mSources.add(source);
+//        MediaSource source =
+//                new ExtractorMediaSource(
+//                        uri,
+//                        mDataSourceFactory,
+//                        new DefaultExtractorsFactory(),
+//                        null,
+//                        null);
+//
+//        mSources.add(source);
     }
 }

@@ -36,27 +36,37 @@ import androidx.leanback.media.PlaybackGlue;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MergingMediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.SingleSampleMediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides;
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+import com.google.common.collect.ImmutableList;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -93,16 +103,14 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
     private VideoPlayerGlue mPlayerGlue;
     private LeanbackPlayerAdapter mPlayerAdapter;
-    private SimpleExoPlayer mPlayer;
+    private ExoPlayer mPlayer;
     private TrackSelector mTrackSelector;
     private Video mVideo;
     private boolean mShouldResume;
     private boolean mInitialized = false;
     private Listener mListener;
     private BroadcastTick mBroadcastTick;
-    private SubtitleOutput mSubtitleOutput;
     private YoutubeUtil mYoutube;
-    private MediaUtil mMediaUtil;
     private String mYoutubeUrl;
     private boolean mShowNextPrevious;
 
@@ -198,13 +206,20 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     private void initializePlayer() {
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        mTrackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+        mPlayer = new ExoPlayer.Builder(getContext())
+                .build();
 
-        mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), mTrackSelector);
-        mPlayer.addVideoListener(new VideoListener());
+        mPlayer.setTrackSelectionParameters(
+                mPlayer.getTrackSelectionParameters()
+                        .buildUpon()
+                        .setPreferredAudioMimeType("audio/ac3")
+                        .setPreferredAudioLanguage("en")
+                        .setMaxAudioChannelCount(6)
+                        .build());
+
+        mPlayer.addAnalyticsListener(new EventLogger(null));
+        mPlayer.addListener(new PlayerListener());
+
         mPlayerAdapter = new LeanbackPlayerAdapter(getActivity(), mPlayer, UPDATE_DELAY);
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
@@ -212,8 +227,6 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
             mPlayerGlue.showNextPrevious();
         }
         mPlayerGlue.playWhenPrepared();
-
-        mSubtitleOutput = new SubtitleOutput();
 
         mInitialized = true;
 
@@ -236,7 +249,6 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        mMediaUtil = new MediaUtil(context);
         if(mVideo != null){
             play(mVideo);
         }
@@ -258,7 +270,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     public void play(Video video){
-        if(mMediaUtil != null){
+        if(mPlayer != null){
             play(video, null);
         } else {
             mVideo = video;
@@ -339,29 +351,56 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     private void prepareMediaForPlaying(String youtubeVideoUrl, String youtubeAudioUrl) {
-        mMediaUtil.reset();
-        mMediaUtil.addMedia(youtubeVideoUrl);
-        mMediaUtil.addMedia(youtubeAudioUrl);
-
-        mPlayer.prepare(mMediaUtil.getSource());
+//        mMediaUtil.reset();
+//        mMediaUtil.addMedia(youtubeVideoUrl);
+//        mMediaUtil.addMedia(youtubeAudioUrl);
+//
+//        mPlayer.prepare(mMediaUtil.getSource());
     }
 
     private void prepareMediaForPlaying(Uri mediaSourceUri, Uri subtitleUri) {
-        mMediaUtil.reset();
-        mMediaUtil.addMedia(mediaSourceUri);
-
+        MediaItem.Builder mediaBuilder = new MediaItem.Builder()
+                        .setUri(mediaSourceUri);
+Log.d("SubThings", "Uri: " + subtitleUri);
         if(subtitleUri != null){
-            mMediaUtil.addSubtitles(subtitleUri);
-            mPlayer.addTextOutput(mSubtitleOutput);
+            MediaItem.SubtitleConfiguration subtitle =
+                    new MediaItem.SubtitleConfiguration.Builder(subtitleUri)
+                            .setMimeType(MimeTypes.APPLICATION_SUBRIP) // The correct MIME type (required).
+                            .build();
+            mediaBuilder.setSubtitleConfigurations(ImmutableList.of(subtitle));
         } else {
-            mPlayer.removeTextOutput(mSubtitleOutput);
-
             if(mListener != null){
                 mListener.showSubtitle(null);
             }
         }
 
-        mPlayer.prepare(mMediaUtil.getSource());
+        mPlayer.setMediaItem(mediaBuilder.build());
+
+        mPlayer.prepare();
+    }
+
+    private void getTracks(){
+        TracksInfo tracksInfo = mPlayer.getCurrentTracksInfo();
+        for (TracksInfo.TrackGroupInfo groupInfo : tracksInfo.getTrackGroupInfos()) {
+            // Group level information.
+            @C.TrackType int trackType = groupInfo.getTrackType();
+            boolean trackInGroupIsSelected = groupInfo.isSelected();
+            boolean trackInGroupIsSupported = groupInfo.isSupported();
+            TrackGroup group = groupInfo.getTrackGroup();
+            for (int i = 0; i < group.length; i++) {
+                // Individual track information.
+                boolean isSupported = groupInfo.isTrackSupported(i);
+                boolean isSelected = groupInfo.isTrackSelected(i);
+                Format trackFormat = group.getFormat(i);
+
+                Log.d("EventLogger", trackType +
+                        " : " + trackInGroupIsSelected +
+                        " : " + trackInGroupIsSupported +
+                        " : " + isSupported +
+                        " : " + isSelected +
+                        " : " + trackFormat);
+            }
+        }
     }
 
     private void populateEndTime(){
@@ -375,25 +414,6 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayerGlue.setSubtitle(getString(R.string.text_ends_at, dateFormat.format(now)));
     }
 
-    private class SubtitleOutput implements TextOutput{
-        @Override
-        public void onCues(List<Cue> subtitles) {
-            String subtitle = null;
-
-            if(subtitles != null && !subtitles.isEmpty()){
-                String text = subtitles.get(0).text.toString();
-
-                if(!TextUtils.isEmpty(text)){
-                    subtitle = text;
-                }
-            }
-
-            if(mListener != null){
-                mListener.showSubtitle(subtitle);
-            }
-        }
-    }
-
     private class BroadcastTick extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -405,10 +425,28 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
-    private class VideoListener implements com.google.android.exoplayer2.video.VideoListener{
+    private class PlayerListener implements Player.Listener{
         @Override
         public void onRenderedFirstFrame() {
+            getTracks();
             populateEndTime();
+        }
+
+        @Override
+        public void onCues(List<Cue> subtitles) {
+            String subtitle = null;
+Log.i("SubThings", "Subtitles: " + subtitles);
+            if(subtitles != null && !subtitles.isEmpty()){
+                String text = subtitles.get(0).text.toString();
+
+                if(!TextUtils.isEmpty(text)){
+                    subtitle = text;
+                }
+            }
+
+            if(mListener != null){
+                mListener.showSubtitle(subtitle);
+            }
         }
     }
 
