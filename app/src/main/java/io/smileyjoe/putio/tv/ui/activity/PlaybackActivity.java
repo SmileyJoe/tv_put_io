@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.ui.SubtitleView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,9 +52,9 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     private SubtitleFragment mSubtitleFragment;
     private TrackGroupSelectionFragment mTrackGroupSelectionFragment;
     private Video mVideo;
-    private TextView mTextSubtitle;
     private String mYoutubeUrl;
     private MediaType mMediaType;
+    private SubtitleView mSubtitleView;
 
     public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
@@ -91,7 +92,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
         handleExtras();
 
-        mTextSubtitle = findViewById(R.id.text_subtitle);
+        mSubtitleView = findViewById(R.id.exo_subtitle);
 
         mTextTime = findViewById(R.id.text_time);
         mTextTime.setText(mFormatWatchTime.format(new Date()));
@@ -164,8 +165,13 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
     @Override
     public void showSubtitles(Uri uri) {
-        setFragmentVisibility(mSubtitleFragment, false);
-        mPlaybackVideoFragment.showSubtitles(uri);
+        if(uri != null) {
+            mSubtitleView.setVisibility(View.VISIBLE);
+            setFragmentVisibility(mSubtitleFragment, false);
+            mPlaybackVideoFragment.showSubtitles(uri);
+        } else {
+            mSubtitleView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -175,13 +181,8 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     }
 
     @Override
-    public void showSubtitle(String subTitle) {
-        if(TextUtils.isEmpty(subTitle)){
-            mTextSubtitle.setVisibility(View.GONE);
-        } else {
-            mTextSubtitle.setVisibility(View.VISIBLE);
-            mTextSubtitle.setText(subTitle);
-        }
+    public SubtitleView getSubtitleView() {
+        return mSubtitleView;
     }
 
     @Override

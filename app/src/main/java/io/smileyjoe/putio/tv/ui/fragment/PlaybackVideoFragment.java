@@ -58,6 +58,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides;
 import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -94,11 +95,11 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         void onPlayComplete(Video video);
         void onControlsVisibilityChanged(boolean isShown);
         void onSubtitlesClicked();
-        void showSubtitle(String subTitle);
         void showError();
         void onNextClicked(Video current);
         void onPreviousClicked(Video current);
         void onAudioTracksClicked(TracksInfo tracksInfo);
+        SubtitleView getSubtitleView();
     }
 
     private static final int UPDATE_DELAY = 16;
@@ -106,7 +107,6 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private VideoPlayerGlue mPlayerGlue;
     private LeanbackPlayerAdapter mPlayerAdapter;
     private ExoPlayer mPlayer;
-    private TrackSelector mTrackSelector;
     private Video mVideo;
     private boolean mShouldResume;
     private boolean mInitialized = false;
@@ -215,12 +215,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 mPlayer.getTrackSelectionParameters()
                         .buildUpon()
                         .setPreferredAudioLanguage("en")
-                        .setDisabledTrackTypes(ImmutableSet.of(C.TRACK_TYPE_TEXT))
                         .setMaxAudioChannelCount(6)
                         .build());
 
         mPlayer.addAnalyticsListener(new EventLogger(null));
         mPlayer.addListener(new PlayerListener());
+        mPlayer.addListener(mListener.getSubtitleView());
 
         mPlayerAdapter = new LeanbackPlayerAdapter(getActivity(), mPlayer, UPDATE_DELAY);
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
@@ -241,7 +241,6 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         if (mPlayer != null) {
             mPlayer.release();
             mPlayer = null;
-            mTrackSelector = null;
             mPlayerGlue = null;
             mPlayerAdapter = null;
         }
@@ -380,21 +379,21 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 //
 //        mPlayer.prepare(mMediaUtil.getSource());
     }
-
+    
     private void prepareMediaForPlaying(Uri mediaSourceUri, Uri subtitleUri) {
+        mPlayerGlue.resetActions();
+
         MediaItem.Builder mediaBuilder = new MediaItem.Builder()
                         .setUri(mediaSourceUri);
-Log.d("SubThings", "Uri: " + subtitleUri);
+
         if(subtitleUri != null){
             MediaItem.SubtitleConfiguration subtitle =
                     new MediaItem.SubtitleConfiguration.Builder(subtitleUri)
                             .setMimeType(MimeTypes.APPLICATION_SUBRIP) // The correct MIME type (required).
+                            .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                            .setRoleFlags(C.ROLE_FLAG_SUBTITLE)
                             .build();
             mediaBuilder.setSubtitleConfigurations(ImmutableList.of(subtitle));
-        } else {
-            if(mListener != null){
-                mListener.showSubtitle(null);
-            }
         }
 
         mPlayer.setMediaItem(mediaBuilder.build());
@@ -429,26 +428,6 @@ Log.d("SubThings", "Uri: " + subtitleUri);
         public void onRenderedFirstFrame() {
             mPlayerGlue.showAudioTrackSelection();
             populateEndTime();
-        }
-
-        @Override
-        public void onCues(List<Cue> subtitles) {
-            String subtitle = "";
-Log.i("SubThings", "Subtitles: " + subtitles);
-            if(subtitles != null && !subtitles.isEmpty()){
-                for(Cue cue:subtitles) {
-                    CharSequence charSequence = cue.text;
-                    Log.d("SubThings", "Cue: " + charSequence);
-
-                    if (!TextUtils.isEmpty(charSequence)) {
-                        subtitle += charSequence.toString();
-                    }
-                }
-            }
-
-            if(mListener != null){
-                mListener.showSubtitle(subtitle);
-            }
         }
     }
 

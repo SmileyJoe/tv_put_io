@@ -140,6 +140,10 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
     }
 
+    public void resetActions(){
+        mAudioTrackAction.setAdded(false);
+    }
+
     public void setMediaType(MediaType mediaType){
         mSecondaryActionsAdapter.clear();
         switch (mediaType){

@@ -36,7 +36,7 @@ public class TrackGroupSelectionFragment extends Fragment implements BaseListAda
     private ProgressBar mProgressLoading;
     private TextView mTextEmpty;
     private TextView mTextTitle;
-    private TrackGroupSelectionFragment.Listener mListener;
+    private Listener mListener;
     @C.TrackType int mTrackType;
 
     @Nullable
@@ -62,7 +62,7 @@ public class TrackGroupSelectionFragment extends Fragment implements BaseListAda
         mRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
     }
 
-    public void setListener(TrackGroupSelectionFragment.Listener listener) {
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 
