@@ -199,6 +199,8 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     public void onBackPressed() {
         if(mSubtitleFragment.isVisible()){
             setFragmentVisibility(mSubtitleFragment, false);
+        } else if(mTrackGroupSelectionFragment.isVisible()) {
+            setFragmentVisibility(mTrackGroupSelectionFragment, false);
         } else {
             super.onBackPressed();
         }
