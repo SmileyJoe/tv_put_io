@@ -300,8 +300,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     @Override
-    public void onYoutubeExtracted(String title, String videoUrl, String audioUrl) {
-        play(title, videoUrl, audioUrl);
+    public void onYoutubeExtracted(String title, String videoUrl) {
+        play(title, videoUrl);
     }
 
     @Override
@@ -311,12 +311,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
-    private void play(String title, String videoUrl, String audioUrl) {
+    private void play(String title, String videoUrl) {
         if(mInitialized) {
             mPlayerGlue.setTitle(title);
             mPlayerGlue.setMediaType(MediaType.YOUTUBE);
 
-            prepareMediaForPlaying(videoUrl, audioUrl);
+            prepareMediaForPlaying(videoUrl);
 
             mPlayerGlue.addPlayerCallback(new PlayerCallback());
 
@@ -372,12 +372,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
-    private void prepareMediaForPlaying(String youtubeVideoUrl, String youtubeAudioUrl) {
-//        mMediaUtil.reset();
-//        mMediaUtil.addMedia(youtubeVideoUrl);
-//        mMediaUtil.addMedia(youtubeAudioUrl);
-//
-//        mPlayer.prepare(mMediaUtil.getSource());
+    private void prepareMediaForPlaying(String youtubeVideoUrl) {
+        mPlayer.setMediaItem(new MediaItem.Builder()
+                .setUri(Uri.parse(youtubeVideoUrl))
+                .build());
+
+        mPlayer.prepare();
     }
     
     private void prepareMediaForPlaying(Uri mediaSourceUri, Uri subtitleUri) {

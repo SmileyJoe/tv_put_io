@@ -13,7 +13,7 @@ import at.huber.youtubeExtractor.YtFile;
 public class YoutubeUtil {
 
     public interface Listener{
-        void onYoutubeExtracted(String title, String videoUrl, String audioUrl);
+        void onYoutubeExtracted(String title, String videoUrl);
         void onYoutubeFailed();
     }
 
@@ -41,30 +41,27 @@ public class YoutubeUtil {
         @Override
         protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
             if(ytFiles != null && videoMeta != null) {
-                int maxHeight = -1;
-                int maxBitrate = -1;
+                YtFile ytFile = ytFiles.get(22);
                 String videoUrl = null;
-                String audioUrl = null;
 
+                if(ytFile != null){
+                    videoUrl = ytFile.getUrl();
+                } else {
+                    int maxHeight = -1;
+                    for (int i = 0; i < ytFiles.size(); i++) {
+                        int key = ytFiles.keyAt(i);
+                        // get the object by the key.
+                        YtFile file = ytFiles.get(key);
 
-                for (int i = 0; i < ytFiles.size(); i++) {
-                    int key = ytFiles.keyAt(i);
-                    // get the object by the key.
-                    YtFile file = ytFiles.get(key);
-
-                    if (file.getFormat().getHeight() > maxHeight) {
-                        videoUrl = file.getUrl();
-                        maxHeight = file.getFormat().getHeight();
-                    }
-
-                    if (file.getFormat().getAudioBitrate() > maxBitrate) {
-                        audioUrl = file.getUrl();
-                        maxBitrate = file.getFormat().getAudioBitrate();
+                        if (file.getFormat().getHeight() > maxHeight && file.getFormat().getAudioBitrate() > 0) {
+                            videoUrl = file.getUrl();
+                            maxHeight = file.getFormat().getHeight();
+                        }
                     }
                 }
 
                 if(mListener != null){
-                    mListener.onYoutubeExtracted(videoMeta.getTitle(), videoUrl, audioUrl);
+                    mListener.onYoutubeExtracted(videoMeta.getTitle(), videoUrl);
                 }
             } else {
                 if(mListener != null){
