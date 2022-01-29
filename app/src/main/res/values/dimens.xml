@@ -25,5 +25,6 @@
     <dimen name="logo_full_width">200dp</dimen>
     <dimen name="logo_full_height">@dimen/logo_full_width</dimen>
     <dimen name="subtitle_fragment_playback_width">@dimen/home_fragment_width_expanded</dimen>
+    <dimen name="audio_selection_fragment_playback_width">@dimen/home_fragment_width_expanded</dimen>
     <dimen name="list_poster_width">150dp</dimen>
 </resources>

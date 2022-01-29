@@ -67,6 +67,7 @@ import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -97,6 +98,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         void showError();
         void onNextClicked(Video current);
         void onPreviousClicked(Video current);
+        void onAudioTracksClicked(TracksInfo tracksInfo);
     }
 
     private static final int UPDATE_DELAY = 16;
@@ -212,8 +214,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayer.setTrackSelectionParameters(
                 mPlayer.getTrackSelectionParameters()
                         .buildUpon()
-                        .setPreferredAudioMimeType("audio/ac3")
                         .setPreferredAudioLanguage("en")
+                        .setDisabledTrackTypes(ImmutableSet.of(C.TRACK_TYPE_TEXT))
                         .setMaxAudioChannelCount(6)
                         .build());
 
@@ -344,10 +346,31 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
+    @Override
+    public void onAudioTrack() {
+        if(mListener != null){
+            mListener.onAudioTracksClicked(mPlayer.getCurrentTracksInfo());
+        }
+    }
+
     public void showSubtitles(Uri uri){
         mShouldResume = true;
         mVideo.setResumeTime(mPlayer.getCurrentPosition()/1000);
         play(mVideo, uri);
+    }
+
+    public void loadTrack(TrackGroup trackGroup){
+        if(trackGroup != null){
+            TrackSelectionOverrides overrides =
+                    new TrackSelectionOverrides.Builder()
+                            .setOverrideForType(new TrackSelectionOverrides.TrackSelectionOverride(trackGroup))
+                            .build();
+
+
+            mPlayer.setTrackSelectionParameters(
+                    mPlayer.getTrackSelectionParameters()
+                            .buildUpon().setTrackSelectionOverrides(overrides).build());
+        }
     }
 
     private void prepareMediaForPlaying(String youtubeVideoUrl, String youtubeAudioUrl) {
@@ -379,30 +402,6 @@ Log.d("SubThings", "Uri: " + subtitleUri);
         mPlayer.prepare();
     }
 
-    private void getTracks(){
-        TracksInfo tracksInfo = mPlayer.getCurrentTracksInfo();
-        for (TracksInfo.TrackGroupInfo groupInfo : tracksInfo.getTrackGroupInfos()) {
-            // Group level information.
-            @C.TrackType int trackType = groupInfo.getTrackType();
-            boolean trackInGroupIsSelected = groupInfo.isSelected();
-            boolean trackInGroupIsSupported = groupInfo.isSupported();
-            TrackGroup group = groupInfo.getTrackGroup();
-            for (int i = 0; i < group.length; i++) {
-                // Individual track information.
-                boolean isSupported = groupInfo.isTrackSupported(i);
-                boolean isSelected = groupInfo.isTrackSelected(i);
-                Format trackFormat = group.getFormat(i);
-
-                Log.d("EventLogger", trackType +
-                        " : " + trackInGroupIsSelected +
-                        " : " + trackInGroupIsSupported +
-                        " : " + isSupported +
-                        " : " + isSelected +
-                        " : " + trackFormat);
-            }
-        }
-    }
-
     private void populateEndTime(){
         long current = mPlayerGlue.getCurrentPosition();
         long total = mPlayerGlue.getDuration();
@@ -428,19 +427,22 @@ Log.d("SubThings", "Uri: " + subtitleUri);
     private class PlayerListener implements Player.Listener{
         @Override
         public void onRenderedFirstFrame() {
-            getTracks();
+            mPlayerGlue.showAudioTrackSelection();
             populateEndTime();
         }
 
         @Override
         public void onCues(List<Cue> subtitles) {
-            String subtitle = null;
+            String subtitle = "";
 Log.i("SubThings", "Subtitles: " + subtitles);
             if(subtitles != null && !subtitles.isEmpty()){
-                String text = subtitles.get(0).text.toString();
+                for(Cue cue:subtitles) {
+                    CharSequence charSequence = cue.text;
+                    Log.d("SubThings", "Cue: " + charSequence);
 
-                if(!TextUtils.isEmpty(text)){
-                    subtitle = text;
+                    if (!TextUtils.isEmpty(charSequence)) {
+                        subtitle += charSequence.toString();
+                    }
                 }
             }
 

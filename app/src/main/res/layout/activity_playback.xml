@@ -33,4 +33,11 @@
         android:name="io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment"
         android:layout_alignParentRight="true" />
 
+    <fragment
+        android:id="@+id/fragment_track_group_selection"
+        android:layout_width="@dimen/audio_selection_fragment_playback_width"
+        android:layout_height="match_parent"
+        android:name="io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment"
+        android:layout_alignParentRight="true" />
+
 </RelativeLayout>
