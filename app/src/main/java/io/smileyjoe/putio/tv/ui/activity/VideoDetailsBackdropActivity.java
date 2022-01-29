@@ -27,12 +27,13 @@ import io.smileyjoe.putio.tv.action.video.GroupAction;
 import io.smileyjoe.putio.tv.action.video.PlayAction;
 import io.smileyjoe.putio.tv.action.video.RefreshAction;
 import io.smileyjoe.putio.tv.action.video.ResumeAction;
+import io.smileyjoe.putio.tv.action.video.TrailerAction;
 import io.smileyjoe.putio.tv.interfaces.VideoDetails;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsViewHolder;
 
-public class VideoDetailsBackdropActivity extends FragmentActivity implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction {
+public class VideoDetailsBackdropActivity extends FragmentActivity implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction, TrailerAction {
 
     private static final String EXTRA_VIDEO = "video";
 
@@ -72,6 +73,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
         ResumeAction.super.setupActions();
         GroupAction.super.setupActions();
         RefreshAction.super.setupActions();
+        TrailerAction.super.setupActions();
     }
 
     @Override
@@ -96,6 +98,9 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
                 break;
             case REFRESH_DATA:
                 RefreshAction.super.handleClick(option);
+                break;
+            case TRAILER:
+                TrailerAction.super.handleClick(option);
                 break;
         }
     }

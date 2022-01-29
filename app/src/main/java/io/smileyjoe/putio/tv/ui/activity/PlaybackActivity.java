@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -16,6 +15,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.TracksInfo;
+import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.ui.SubtitleView;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,11 +27,12 @@ import java.util.Date;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 
-public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener{
+public class PlaybackActivity extends FragmentActivity implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener {
 
     private enum PlayAction{
         NEXT, PREVIOUS
@@ -45,10 +50,11 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     private BroadcastTick mBroadcastTick;
     private final SimpleDateFormat mFormatWatchTime = new SimpleDateFormat("HH:mm");
     private SubtitleFragment mSubtitleFragment;
+    private TrackGroupSelectionFragment mTrackGroupSelectionFragment;
     private Video mVideo;
-    private TextView mTextSubtitle;
     private String mYoutubeUrl;
     private MediaType mMediaType;
+    private SubtitleView mSubtitleView;
 
     public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
@@ -86,7 +92,7 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
 
         handleExtras();
 
-        mTextSubtitle = findViewById(R.id.text_subtitle);
+        mSubtitleView = findViewById(R.id.exo_subtitle);
 
         mTextTime = findViewById(R.id.text_time);
         mTextTime.setText(mFormatWatchTime.format(new Date()));
@@ -97,6 +103,10 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
             mSubtitleFragment.setPutId(mVideo.getPutId());
             mSubtitleFragment.setListener(this);
         }
+
+        mTrackGroupSelectionFragment = (TrackGroupSelectionFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_track_group_selection);
+        mTrackGroupSelectionFragment.setListener(this);
+        setFragmentVisibility(mTrackGroupSelectionFragment, false);
 
         if (savedInstanceState == null) {
             mPlaybackVideoFragment = new PlaybackVideoFragment();
@@ -143,22 +153,36 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     @Override
     public void onSubtitlesClicked() {
         setFragmentVisibility(mSubtitleFragment, !mSubtitleFragment.isVisible());
+        setFragmentVisibility(mTrackGroupSelectionFragment, false);
+    }
+
+    @Override
+    public void onAudioTracksClicked(TracksInfo tracksInfo) {
+        mTrackGroupSelectionFragment.setTracksInfo(C.TRACK_TYPE_AUDIO, tracksInfo);
+        setFragmentVisibility(mTrackGroupSelectionFragment, !mTrackGroupSelectionFragment.isVisible());
+        setFragmentVisibility(mSubtitleFragment, false);
     }
 
     @Override
     public void showSubtitles(Uri uri) {
-        setFragmentVisibility(mSubtitleFragment, false);
-        mPlaybackVideoFragment.showSubtitles(uri);
+        if(uri != null) {
+            mSubtitleView.setVisibility(View.VISIBLE);
+            setFragmentVisibility(mSubtitleFragment, false);
+            mPlaybackVideoFragment.showSubtitles(uri);
+        } else {
+            mSubtitleView.setVisibility(View.GONE);
+        }
     }
 
     @Override
-    public void showSubtitle(String subTitle) {
-        if(TextUtils.isEmpty(subTitle)){
-            mTextSubtitle.setVisibility(View.GONE);
-        } else {
-            mTextSubtitle.setVisibility(View.VISIBLE);
-            mTextSubtitle.setText(subTitle);
-        }
+    public void onTrackSelected(@C.TrackType int trackType,  TrackGroup item) {
+        setFragmentVisibility(mTrackGroupSelectionFragment, false);
+        mPlaybackVideoFragment.loadTrack(item);
+    }
+
+    @Override
+    public SubtitleView getSubtitleView() {
+        return mSubtitleView;
     }
 
     @Override
@@ -175,6 +199,8 @@ public class PlaybackActivity extends FragmentActivity implements PlaybackVideoF
     public void onBackPressed() {
         if(mSubtitleFragment.isVisible()){
             setFragmentVisibility(mSubtitleFragment, false);
+        } else if(mTrackGroupSelectionFragment.isVisible()) {
+            setFragmentVisibility(mTrackGroupSelectionFragment, false);
         } else {
             super.onBackPressed();
         }

@@ -70,6 +70,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         void onNext();
 
         void onSubtitles();
+
+        void onAudioTrack();
     }
 
     private final OnActionClickedListener mActionListener;
@@ -78,6 +80,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
     private PlaybackControlsRow.SkipNextAction mSkipNextAction;
     private SubtitlesAction mSubtitlesAction;
     private ReplayAction mReplayAction;
+    private AudioTrackAction mAudioTrackAction;
     private ArrayObjectAdapter mPrimaryActionsAdapter;
     private ArrayObjectAdapter mSecondaryActionsAdapter;
 
@@ -93,6 +96,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mSkipNextAction = new PlaybackControlsRow.SkipNextAction(context);
         mSubtitlesAction = new SubtitlesAction();
         mReplayAction = new ReplayAction();
+        mAudioTrackAction = new AudioTrackAction();
 
         setSeekEnabled(true);
         setControlsOverlayAutoHideEnabled(true);
@@ -129,6 +133,17 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mPrimaryActionsAdapter.add(mSkipNextAction);
     }
 
+    public void showAudioTrackSelection(){
+        if(!mAudioTrackAction.isAdded()) {
+            mAudioTrackAction.setAdded(true);
+            mSecondaryActionsAdapter.add(mAudioTrackAction);
+        }
+    }
+
+    public void resetActions(){
+        mAudioTrackAction.setAdded(false);
+    }
+
     public void setMediaType(MediaType mediaType){
         mSecondaryActionsAdapter.clear();
         switch (mediaType){
@@ -146,7 +161,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         return action == mSkipNextAction
                 || action == mSkipPreviousAction
                 || action == mSubtitlesAction
-                || action == mReplayAction;
+                || action == mReplayAction
+                || action == mAudioTrackAction;
     }
 
     private void dispatchAction(Action action) {
@@ -161,6 +177,10 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             }
         } else if(action == mReplayAction){
             replay();
+        } else if(action == mAudioTrackAction) {
+            if(mActionListener != null){
+                mActionListener.onAudioTrack();
+            }
         } else if (action instanceof PlaybackControlsRow.MultiAction) {
             PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
             multiAction.nextIndex();
@@ -213,6 +233,25 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             super(101);
             setLabel1(getContext().getString(R.string.action_replay));
             setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_replay_24));
+        }
+    }
+
+    private class AudioTrackAction extends Action{
+
+        private boolean mIsAdded = false;
+
+        public void setAdded(boolean added) {
+            mIsAdded = added;
+        }
+
+        public boolean isAdded() {
+            return mIsAdded;
+        }
+
+        public AudioTrackAction() {
+            super(102);
+            setLabel1(getContext().getString(R.string.action_audio_tracks));
+            setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_audiotrack_24));
         }
     }
 }

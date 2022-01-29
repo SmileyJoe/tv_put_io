@@ -200,10 +200,10 @@ public class Video implements Parcelable{
 
     public void setStreamUri(String streamUri, String streamMp4Uri) {
         String uri;
-        if (!TextUtils.isEmpty(streamMp4Uri)) {
-            uri = streamMp4Uri;
-        } else {
+        if (!TextUtils.isEmpty(streamUri)) {
             uri = streamUri;
+        } else {
+            uri = streamMp4Uri;
         }
 
         if (!TextUtils.isEmpty(uri)) {

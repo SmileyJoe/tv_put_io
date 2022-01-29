@@ -18,12 +18,13 @@
         android:textSize="@dimen/text_time_video_playback"
         android:textStyle="bold"/>
 
-    <TextView
-        android:id="@+id/text_subtitle"
-        style="@style/Text.Subtitle"
-        android:visibility="gone"
+    <com.google.android.exoplayer2.ui.SubtitleView
+        android:id="@+id/exo_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:visibility="gone"
         android:layout_marginBottom="@dimen/padding_general"/>
 
     <fragment
@@ -31,6 +32,13 @@
         android:layout_width="@dimen/subtitle_fragment_playback_width"
         android:layout_height="match_parent"
         android:name="io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment"
+        android:layout_alignParentRight="true" />
+
+    <fragment
+        android:id="@+id/fragment_track_group_selection"
+        android:layout_width="@dimen/audio_selection_fragment_playback_width"
+        android:layout_height="match_parent"
+        android:name="io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment"
         android:layout_alignParentRight="true" />
 
 </RelativeLayout>
