@@ -30,6 +30,7 @@ public class TrackGroupListAdapter extends BaseListAdapter<TracksInfo.TrackGroup
         for(int i = 0; i < items.size(); i++){
             if(items.get(i).isSelected()){
                 setSelectedPosition(i);
+                break;
             }
         }
     }
