@@ -170,9 +170,11 @@ public class VideosFragment extends Fragment {
         if(!isSelected){
             mAppliedFilters.remove(filter);
         } else {
-            for(Filter applied:mAppliedFilters){
-                if(applied.isSort()){
-                    mAppliedFilters.remove(applied);
+            if(filter.getGroup().isUnique()) {
+                for (Filter applied : mAppliedFilters) {
+                    if (applied.getGroup() == filter.getGroup()) {
+                        mAppliedFilters.remove(applied);
+                    }
                 }
             }
             mAppliedFilters.add(filter);
@@ -213,7 +215,7 @@ public class VideosFragment extends Fragment {
 
         Filter filterSort = null;
         for(Filter filter : mAppliedFilters){
-            if(filter.isSort()){
+            if(filter.getGroup() == Filter.Group.SORT){
                 filterSort = filter;
                 break;
             }

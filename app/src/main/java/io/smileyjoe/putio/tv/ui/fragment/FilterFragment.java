@@ -28,14 +28,16 @@ public class FilterFragment extends ToggleFragment<Filter> {
 
     @Override
     protected void onItemClick(View view, Filter item) {
-        for(View optionView:getOptionViews()){
-            int tag = (Integer) optionView.getTag();
+        if(item.getGroup().isUnique()) {
+            for (View optionView : getOptionViews()) {
+                int tag = (Integer) optionView.getTag();
 
-            if(tag != item.getId()) {
-                Filter filter = Filter.getById(tag);
+                if (tag != item.getId()) {
+                    Filter filter = Filter.getById(tag);
 
-                if(filter != null && filter.isSort()){
-                    optionView.setSelected(false);
+                    if (filter != null && filter.getGroup() == item.getGroup()) {
+                        optionView.setSelected(false);
+                    }
                 }
             }
         }
