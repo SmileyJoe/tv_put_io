@@ -21,35 +21,24 @@ import com.google.android.exoplayer2.source.TrackGroup;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.FragmentTrackSelectionBinding;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.ui.adapter.BaseListAdapter;
 import io.smileyjoe.putio.tv.ui.adapter.TrackGroupListAdapter;
 
-public class TrackGroupSelectionFragment extends Fragment implements BaseListAdapter.Listener<TracksInfo.TrackGroupInfo> {
+public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelectionBinding> implements BaseListAdapter.Listener<TracksInfo.TrackGroupInfo> {
 
     public interface Listener{
         void onTrackSelected(@C.TrackType int trackType, TrackGroup item);
     }
 
     private TrackGroupListAdapter mAdapter;
-    private RecyclerView mRecycler;
-    private ProgressBar mProgressLoading;
-    private TextView mTextEmpty;
-    private TextView mTextTitle;
     private Listener mListener;
     @C.TrackType int mTrackType;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_audio_track_selection, null);
-
-        mRecycler = layout.findViewById(R.id.recycler_audio_tracks);
-        mProgressLoading = layout.findViewById(R.id.progress_loading);
-        mTextEmpty = layout.findViewById(R.id.text_empty);
-        mTextTitle = layout.findViewById(R.id.text_title);
-
-        return layout;
+    protected FragmentTrackSelectionBinding inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState) {
+        return FragmentTrackSelectionBinding.inflate(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -58,8 +47,8 @@ public class TrackGroupSelectionFragment extends Fragment implements BaseListAda
         mAdapter = new TrackGroupListAdapter(getContext());
         mAdapter.setListener(this);
 
-        mRecycler.setAdapter(mAdapter);
-        mRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        mView.recycler.setAdapter(mAdapter);
+        mView.recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
     }
 
     public void setListener(Listener listener) {
@@ -71,7 +60,8 @@ public class TrackGroupSelectionFragment extends Fragment implements BaseListAda
 
         switch (trackType){
             case C.TRACK_TYPE_AUDIO:
-                mTextTitle.setText(R.string.title_audio_track_selection);
+                mView.textTitle.setText(R.string.title_audio_track_selection);
+                mView.textEmpty.setText(R.string.text_no_audio_tracks);
                 break;
         }
 
@@ -86,15 +76,15 @@ public class TrackGroupSelectionFragment extends Fragment implements BaseListAda
             }
         }
 
-        mProgressLoading.setVisibility(View.GONE);
+        mView.progressLoading.setVisibility(View.GONE);
 
         if(!validGroups.isEmpty()){
             mAdapter.setItems(validGroups);
-            mRecycler.setVisibility(View.VISIBLE);
-            mTextEmpty.setVisibility(View.GONE);
+            mView.recycler.setVisibility(View.VISIBLE);
+            mView.textEmpty.setVisibility(View.GONE);
         } else {
-            mRecycler.setVisibility(View.GONE);
-            mTextEmpty.setVisibility(View.VISIBLE);
+            mView.recycler.setVisibility(View.GONE);
+            mView.textEmpty.setVisibility(View.VISIBLE);
         }
     }
 

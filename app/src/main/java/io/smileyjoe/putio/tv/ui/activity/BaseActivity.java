@@ -20,4 +20,9 @@ public abstract class BaseActivity<T extends ViewBinding> extends FragmentActivi
         setContentView(mView.getRoot());
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mView = null;
+    }
 }

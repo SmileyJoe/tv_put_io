@@ -22,23 +22,25 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.FragmentSeasonDetailsBinding;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsViewHolder;
 
-public class SeasonDetailsFragment extends Fragment {
+public class SeasonDetailsFragment extends BaseFragment<FragmentSeasonDetailsBinding> {
 
     private VideoDetailsViewHolder mVideoDetailsViewHolder;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_season_details, null);
+    protected FragmentSeasonDetailsBinding inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState) {
+        return FragmentSeasonDetailsBinding.inflate(inflater, container, savedInstanceState);
+    }
 
-        mVideoDetailsViewHolder = VideoDetailsViewHolder.getInstance(getContext(), view.findViewById(R.id.frame_details), true);
-
-        return view;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mVideoDetailsViewHolder = VideoDetailsViewHolder.getInstance(getContext(), mView.frameDetails, true);
     }
 
     public void update(Video video){

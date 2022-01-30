@@ -50,7 +50,7 @@ public class ErrorFragment extends ErrorSupportFragment implements View.OnClickL
         if(getActivity() instanceof Listener){
             ((Listener) getActivity()).onErrorDismissed();
         } else {
-            getFragmentManager().beginTransaction().remove(this).commit();
+            getParentFragmentManager().beginTransaction().remove(this).commit();
         }
     }
 }

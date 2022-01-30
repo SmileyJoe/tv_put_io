@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.FragmentSubtitleBinding;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.ResponseString;
@@ -29,7 +30,7 @@ import io.smileyjoe.putio.tv.object.Subtitle;
 import io.smileyjoe.putio.tv.ui.adapter.SubtitleListAdapter;
 import io.smileyjoe.putio.tv.util.FileUtil;
 
-public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Listener<Subtitle>{
+public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> implements SubtitleListAdapter.Listener<Subtitle>{
 
     public interface Listener{
         void showSubtitles(Uri uri);
@@ -37,21 +38,11 @@ public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Li
 
     private long mPutId;
     private SubtitleListAdapter mAdapter;
-    private RecyclerView mRecycler;
-    private ProgressBar mProgressLoading;
-    private TextView mTextEmpty;
     private Listener mListener;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_subtitle, null);
-
-        mRecycler = layout.findViewById(R.id.recycler_subtitle);
-        mProgressLoading = layout.findViewById(R.id.progress_loading);
-        mTextEmpty = layout.findViewById(R.id.text_empty);
-
-        return layout;
+    protected FragmentSubtitleBinding inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState) {
+        return FragmentSubtitleBinding.inflate(inflater, container, savedInstanceState);
     }
 
     public void setListener(Listener listener) {
@@ -64,9 +55,9 @@ public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Li
     }
 
     private void getSubtitles(){
-        mProgressLoading.setVisibility(View.VISIBLE);
-        mRecycler.setVisibility(View.GONE);
-        mTextEmpty.setVisibility(View.GONE);
+        mView.progressLoading.setVisibility(View.VISIBLE);
+        mView.recyclerSubtitle.setVisibility(View.GONE);
+        mView.textEmpty.setVisibility(View.GONE);
 
         Putio.getAvailableSubtitles(getContext(), mPutId, new OnAvailableSubtitlesGetResponse());
     }
@@ -77,8 +68,8 @@ public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Li
         mAdapter = new SubtitleListAdapter(getContext());
         mAdapter.setListener(this);
 
-        mRecycler.setAdapter(mAdapter);
-        mRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        mView.recyclerSubtitle.setAdapter(mAdapter);
+        mView.recyclerSubtitle.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
     }
 
     @Override
@@ -114,11 +105,11 @@ public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Li
             if(result != null && result.has("subtitles")) {
                 ArrayList<Subtitle> subtitles = Subtitle.fromApi(result.getAsJsonArray("subtitles"), mPutId);
 
-                mProgressLoading.setVisibility(View.GONE);
+                mView.progressLoading.setVisibility(View.GONE);
 
                 if(subtitles == null || subtitles.isEmpty()){
-                    mRecycler.setVisibility(View.GONE);
-                    mTextEmpty.setVisibility(View.VISIBLE);
+                    mView.recyclerSubtitle.setVisibility(View.GONE);
+                    mView.textEmpty.setVisibility(View.VISIBLE);
                 } else {
                     Subtitle subtitleEmpty = new Subtitle();
                     subtitleEmpty.setLanguage(getString(R.string.text_none));
@@ -129,8 +120,8 @@ public class SubtitleFragment extends Fragment implements SubtitleListAdapter.Li
                     mAdapter.setItems(subtitles);
                     mAdapter.notifyDataSetChanged();
 
-                    mRecycler.setVisibility(View.VISIBLE);
-                    mTextEmpty.setVisibility(View.GONE);
+                    mView.recyclerSubtitle.setVisibility(View.VISIBLE);
+                    mView.textEmpty.setVisibility(View.GONE);
                 }
             }
         }

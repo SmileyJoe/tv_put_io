@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.FragmentVideoListBinding;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
@@ -24,14 +25,10 @@ import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
 import io.smileyjoe.putio.tv.ui.viewholder.BaseVideosViewHolder;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
-public class VideosFragment extends Fragment {
+public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
 
     public interface Listener extends VideosAdapter.Listener<Video> {
     }
-
-    private RecyclerView mRecycler;
-    private LinearLayout mLayoutEmpty;
-    private ZoomGridVideo mZoomGridVideo;
 
     private VideosAdapter mVideosAdapter;
     private boolean mIsFullScreen = false;
@@ -41,16 +38,9 @@ public class VideosFragment extends Fragment {
     private Integer mAppliedGenreId = -1;
     private VideosAdapter.Style mStyle = VideosAdapter.Style.GRID;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_video_list, null);
-
-        mRecycler = view.findViewById(R.id.recycler);
-        mLayoutEmpty = view.findViewById(R.id.layout_empty);
-        mZoomGridVideo = view.findViewById(R.id.zoom_grid_video);
-
-        return view;
+    protected FragmentVideoListBinding inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState) {
+        return FragmentVideoListBinding.inflate(inflater, container, savedInstanceState);
     }
 
     public void setStyle(VideosAdapter.Style style) {
@@ -75,7 +65,7 @@ public class VideosFragment extends Fragment {
     public void setFullScreen(boolean fullScreen) {
         if(mIsFullScreen != fullScreen) {
             mIsFullScreen = fullScreen;
-            mZoomGridVideo.reset();
+            mView.zoomGridVideo.reset();
             boolean created = setLayoutManager(false);
 
             if (!created && mLayoutManager instanceof GridLayoutManager) {
@@ -89,12 +79,12 @@ public class VideosFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mVideosAdapter = new VideosAdapter(getContext(), mStyle);
 
-        mRecycler.setAdapter(mVideosAdapter);
+        mView.recycler.setAdapter(mVideosAdapter);
         setLayoutManager(false);
     }
 
     public void hideDetails(){
-        mZoomGridVideo.hide();
+        mView.zoomGridVideo.hide();
     }
 
     public void setListener(Listener listener) {
@@ -125,7 +115,7 @@ public class VideosFragment extends Fragment {
 
     private boolean setLayoutManager(boolean force){
         boolean created = false;
-        if(mRecycler != null) {
+        if(mView.recycler != null) {
             if(mLayoutManager == null || force) {
                 switch (mStyle){
                     case GRID:
@@ -136,7 +126,7 @@ public class VideosFragment extends Fragment {
                         break;
                 }
 
-                mRecycler.setLayoutManager(mLayoutManager);
+                mView.recycler.setLayoutManager(mLayoutManager);
                 created = true;
             }
         }
@@ -154,11 +144,11 @@ public class VideosFragment extends Fragment {
         ArrayList<Video> videos = applyFilters();
 
         if (videos == null || videos.isEmpty()) {
-            mLayoutEmpty.setVisibility(View.VISIBLE);
-            mRecycler.setVisibility(View.GONE);
+            mView.layoutEmpty.setVisibility(View.VISIBLE);
+            mView.recycler.setVisibility(View.GONE);
         } else {
-            mLayoutEmpty.setVisibility(View.GONE);
-            mRecycler.setVisibility(View.VISIBLE);
+            mView.layoutEmpty.setVisibility(View.GONE);
+            mView.recycler.setVisibility(View.VISIBLE);
 
             mVideosAdapter.setItems(videos);
             mVideosAdapter.notifyDataSetChanged();
@@ -268,7 +258,7 @@ public class VideosFragment extends Fragment {
 
         @Override
         public void hasFocus(FragmentType type, Video item, View view, int position) {
-            mZoomGridVideo.show(view, item);
+            mView.zoomGridVideo.show(view, item);
 
             if(mListener != null){
                 mListener.hasFocus(type, item, view, position);
