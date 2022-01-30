@@ -168,36 +168,39 @@ public class VideoUtil {
 
     private static ArrayList<Video> getRelatedMovie(Video videoPrimary, ArrayList<Video> videoList){
         ArrayList<Video> relatedVideos = new ArrayList<>();
-        HashMap<Integer, ArrayList<Video>> relatedVideosMap = new HashMap<>();
 
-        for(Video video:videoList){
-            if(video.getPutId() != videoPrimary.getPutId() && video.getVideoType() == VideoType.MOVIE) {
-                int count = 0;
-                for (int genreId : video.getGenreIds()) {
-                    if (videoPrimary.getGenreIds().contains(genreId)) {
-                        count++;
-                    }
-                }
+        if(videoList != null && !videoList.isEmpty()) {
+            HashMap<Integer, ArrayList<Video>> relatedVideosMap = new HashMap<>();
 
-                if (count > 0) {
-                    ArrayList<Video> videosFromMap;
-
-                    if (relatedVideosMap.containsKey(count)) {
-                        videosFromMap = relatedVideosMap.get(count);
-                    } else {
-                        videosFromMap = new ArrayList<>();
+            for (Video video : videoList) {
+                if (video.getPutId() != videoPrimary.getPutId() && video.getVideoType() == VideoType.MOVIE) {
+                    int count = 0;
+                    for (int genreId : video.getGenreIds()) {
+                        if (videoPrimary.getGenreIds().contains(genreId)) {
+                            count++;
+                        }
                     }
 
-                    videosFromMap.add(video);
+                    if (count > 0) {
+                        ArrayList<Video> videosFromMap;
 
-                    relatedVideosMap.put(count, videosFromMap);
+                        if (relatedVideosMap.containsKey(count)) {
+                            videosFromMap = relatedVideosMap.get(count);
+                        } else {
+                            videosFromMap = new ArrayList<>();
+                        }
+
+                        videosFromMap.add(video);
+
+                        relatedVideosMap.put(count, videosFromMap);
+                    }
                 }
             }
-        }
 
-        for(int i = videoPrimary.getGenreIds().size(); i >= 1; i--){
-            if(relatedVideosMap.containsKey(i)){
-                relatedVideos.addAll(relatedVideosMap.get(i));
+            for (int i = videoPrimary.getGenreIds().size(); i >= 1; i--) {
+                if (relatedVideosMap.containsKey(i)) {
+                    relatedVideos.addAll(relatedVideosMap.get(i));
+                }
             }
         }
 

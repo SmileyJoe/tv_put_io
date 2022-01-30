@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
+
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.interfaces.ToggleItem;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
@@ -24,6 +26,8 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
 
     private LinearLayout mLayoutRoot;
     private Listener<T> mListener;
+    private ArrayList<View> mOptionViews = new ArrayList<>();
+    private ArrayList<T> mOptions = new ArrayList<>();
 
     protected abstract FragmentType getFragmentType();
 
@@ -45,6 +49,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
     }
 
     protected View addOption(T filter){
+        mOptions.add(filter);
         View view = LayoutInflater.from(getContext()).inflate(R.layout.item_filter, null);
         OnFilterListener listener = new OnFilterListener(filter);
 
@@ -55,14 +60,34 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
         view.setSelected(filter.isSelected());
         view.setOnClickListener(listener);
         view.setOnFocusChangeListener(listener);
+        view.setTag(filter.getId());
+        mOptionViews.add(view);
         mLayoutRoot.addView(view);
         return view;
+    }
+
+    public ArrayList<T> getOptions() {
+        return mOptions;
     }
 
     public void reset(){
         for(int i = 0; i < mLayoutRoot.getChildCount(); i++){
             mLayoutRoot.getChildAt(i).setSelected(false);
         }
+    }
+
+    protected void onItemClick(View view, T item){
+        boolean newState = !view.isSelected();
+
+        view.setSelected(newState);
+
+        if(mListener != null){
+            mListener.onItemClicked(view, item, newState);
+        }
+    }
+
+    protected ArrayList<View> getOptionViews() {
+        return mOptionViews;
     }
 
     private class OnFilterListener implements View.OnClickListener, View.OnFocusChangeListener {
@@ -81,13 +106,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
 
         @Override
         public void onClick(View v) {
-            boolean newState = !v.isSelected();
-
-            v.setSelected(newState);
-
-            if(mListener != null){
-                mListener.onItemClicked(v, mFilter, newState);
-            }
+            onItemClick(v, mFilter);
         }
     }
 }
