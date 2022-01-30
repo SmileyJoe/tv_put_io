@@ -108,8 +108,8 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
     }
 
     private void populate(){
-        setImage(findViewById(R.id.image_poster), mVideo.getPosterAsUri());
-        setImage(findViewById(R.id.image_backdrop), mVideo.getBackdropAsUri());
+        setImage(mView.imagePoster, mVideo.getPosterAsUri());
+        setImage(mView.imageBackdrop, mVideo.getBackdropAsUri());
         setupActions();
 
         if(mVideoDetailsViewHolder == null) {

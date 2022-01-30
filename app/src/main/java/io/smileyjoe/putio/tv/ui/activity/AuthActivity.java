@@ -83,7 +83,7 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
 
         Spannable spanInstructions = new SpannableString(instructions.replace("{url}", url));
         spanInstructions.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), R.color.color_primary)), urlStart, urlStart + urlLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ((TextView) findViewById(R.id.text_instructions)).setText(spanInstructions);
+        mView.textInstructions.setText(spanInstructions);
     }
 
     private void populateCode(){
