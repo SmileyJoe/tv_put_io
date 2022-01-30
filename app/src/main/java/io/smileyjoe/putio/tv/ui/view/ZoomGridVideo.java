@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.GridItemVideoBinding;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.util.PopulateGenres;
@@ -25,16 +26,9 @@ import io.smileyjoe.putio.tv.util.ViewUtil;
 
 public class ZoomGridVideo extends RelativeLayout{
 
-    private RelativeLayout mLayoutContent;
-    private TextView mTextSummary;
-    private TextView mTextTitle;
-    private TextView mTextResumeTime;
-    private TextView mTextReleaseDate;
-    private ImageView mImagePoster;
-    private FrameLayout mFrameWatched;
     private float mMultiplier;
     private boolean mSizeSet = false;
-    private TextView mTextGenres;
+    private GridItemVideoBinding mView;
 
     public ZoomGridVideo(Context context) {
         super(context);
@@ -53,18 +47,11 @@ public class ZoomGridVideo extends RelativeLayout{
 
     private void init(AttributeSet attrs){
         handleAttributes(attrs);
-        mLayoutContent = (RelativeLayout) LayoutInflater.from(getContext()).inflate(R.layout.grid_item_video, this, false);
-        mLayoutContent.setSelected(true);
-        addView(mLayoutContent);
+        mView = GridItemVideoBinding.inflate(LayoutInflater.from(getContext()));
+        mView.getRoot().setSelected(true);
+        addView(mView.getRoot());
 
-        mTextSummary = mLayoutContent.findViewById(R.id.text_summary);
-        mTextTitle = mLayoutContent.findViewById(R.id.text_title);
-        mTextTitle.setMaxLines(2);
-        mTextResumeTime = mLayoutContent.findViewById(R.id.text_resume_time);
-        mTextReleaseDate = mLayoutContent.findViewById(R.id.text_release_date);
-        mImagePoster = mLayoutContent.findViewById(R.id.image_poster);
-        mFrameWatched = mLayoutContent.findViewById(R.id.frame_watched);
-        mTextGenres = mLayoutContent.findViewById(R.id.text_genres);
+        mView.textTitle.setMaxLines(2);
 
         getViewTreeObserver().addOnGlobalLayoutListener(new OnContentLayoutListener());
     }
@@ -97,10 +84,10 @@ public class ZoomGridVideo extends RelativeLayout{
 
     public void show(View view, Video video){
         if(!mSizeSet){
-            ViewGroup.LayoutParams params = mLayoutContent.getLayoutParams();
+            ViewGroup.LayoutParams params = mView.getRoot().getLayoutParams();
             params.width = (int) (view.getWidth() * mMultiplier);
             params.height = (int) (view.getHeight() * mMultiplier);
-            mLayoutContent.setLayoutParams(params);
+            mView.getRoot().setLayoutParams(params);
             mSizeSet = true;
         }
 
@@ -109,42 +96,42 @@ public class ZoomGridVideo extends RelativeLayout{
         if(currentPoster == null){
             Glide.with(getContext())
                     .load(video.getPosterAsUri())
-                    .into(mImagePoster);
+                    .into(mView.imagePoster);
         } else {
-            mImagePoster.setImageDrawable(currentPoster);
+            mView.imagePoster.setImageDrawable(currentPoster);
         }
 
         String title = video.getTitleFormatted();
         if(video.getVideoType() == VideoType.SEASON){
             title = title + ": " + getContext().getString(R.string.text_season) + " " + video.getSeason();
         }
-        mTextTitle.setText(title);
-        mTextTitle.setTypeface(null, Typeface.BOLD);
+        mView.textTitle.setText(title);
+        mView.textTitle.setTypeface(null, Typeface.BOLD);
 
         if(!TextUtils.isEmpty(video.getOverView())) {
-            mTextSummary.setText(video.getOverView());
-            mTextSummary.setVisibility(View.GONE);
+            mView.textSummary.setText(video.getOverView());
+            mView.textSummary.setVisibility(View.GONE);
         } else {
-            mTextSummary.setVisibility(GONE);
+            mView.textSummary.setVisibility(GONE);
         }
 
         if(video.isWatched()){
-            mFrameWatched.setVisibility(View.VISIBLE);
+            mView.frameWatched.setVisibility(View.VISIBLE);
         } else {
-            mFrameWatched.setVisibility(View.GONE);
+            mView.frameWatched.setVisibility(View.GONE);
         }
 
         if(video.getReleaseDate() > 0){
-            mTextReleaseDate.setVisibility(View.VISIBLE);
-            mTextReleaseDate.setText(video.getReleaseDateFormatted());
+            mView.textReleaseDate.setVisibility(View.VISIBLE);
+            mView.textReleaseDate.setText(video.getReleaseDateFormatted());
         } else {
-            mTextReleaseDate.setVisibility(View.GONE);
+            mView.textReleaseDate.setVisibility(View.GONE);
         }
 
-        ViewUtil.populateResumeTime(mTextResumeTime, video);
+        ViewUtil.populateResumeTime(mView.textResumeTime, video);
 
-        mTextGenres.setText(null);
-        PopulateGenres genresTask = new PopulateGenres(mTextGenres, video);
+        mView.textGenres.setText(null);
+        PopulateGenres genresTask = new PopulateGenres(mView.textGenres, video);
         genresTask.setHideOnEmpty(true);
         genresTask.execute();
 
@@ -172,16 +159,16 @@ public class ZoomGridVideo extends RelativeLayout{
         }
 
         private void setSummaryLines(){
-            int lineSize = mTextSummary.getLineHeight();
+            int lineSize = mView.textSummary.getLineHeight();
             int numLines = (getHeight()/2)/lineSize;
-            mTextSummary.setLines(numLines);
+            mView.textSummary.setLines(numLines);
         }
 
         private void setViewDimensions(){
-            ViewGroup.LayoutParams params = mLayoutContent.getLayoutParams();
+            ViewGroup.LayoutParams params = mView.getRoot().getLayoutParams();
             params.height = getHeight();
             params.width = getWidth();
-            mLayoutContent.setLayoutParams(params);
+            mView.getRoot().setLayoutParams(params);
         }
     }
 }
