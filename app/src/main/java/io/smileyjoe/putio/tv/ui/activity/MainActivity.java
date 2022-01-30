@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
@@ -44,18 +45,13 @@ import io.smileyjoe.putio.tv.util.VideoLoader;
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends FragmentActivity implements VideoLoader.Listener {
-
-    private TextView mTextTitle;
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements VideoLoader.Listener {
 
     private FolderListFragment mFragmentFolderList;
     private VideosFragment mFragmentVideoList;
     private GenreListFragment mFragmentGenreList;
     private FilterFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
-
-    private FrameLayout mFrameLoading;
-    private LinearLayout mLayoutFilters;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -68,11 +64,6 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mTextTitle = findViewById(R.id.text_title);
-        mFrameLoading = findViewById(R.id.frame_loading);
-        mLayoutFilters = findViewById(R.id.layout_filters);
 
         mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentFolderList.setType(FragmentType.FOLDER);
@@ -98,6 +89,11 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     @Override
+    protected ActivityMainBinding inflate() {
+        return ActivityMainBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void onBackPressed() {
         boolean hasHistory = mVideoLoader.back();
         mFragmentVideoList.hideDetails();
@@ -118,7 +114,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 
     @Override
     public void onVideosLoadStarted() {
-        mFrameLoading.setVisibility(View.VISIBLE);
+        mView.frameLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -159,7 +155,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
                     mVideoLoader.addToHistory(historyItem);
                 }
                 handleGenres(videos);
-                mTextTitle.setText(historyItem.getTitle());
+                mView.textTitle.setText(historyItem.getTitle());
 
                 mFragmentFolderList.setFolders(folders);
 
@@ -197,7 +193,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
 //            }
         }
 
-        mFrameLoading.setVisibility(View.GONE);
+        mView.frameLoading.setVisibility(View.GONE);
     }
 
     private void handleGenres(ArrayList<Video> videos){
@@ -222,7 +218,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     private void showFolders(){
-        mTextTitle.setVisibility(View.VISIBLE);
+        mView.textTitle.setVisibility(View.VISIBLE);
         changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_expanded);
         mFragmentVideoList.setFullScreen(false);
         mFragmentVideoList.hideDetails();
@@ -233,7 +229,7 @@ public class MainActivity extends FragmentActivity implements VideoLoader.Listen
     }
 
     private void hideFolders(){
-        mTextTitle.setVisibility(View.GONE);
+        mView.textTitle.setVisibility(View.GONE);
         changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_contracted);
         mFragmentVideoList.setFullScreen(true);
         changeFragmentWidth(mFragmentGroup, R.dimen.home_fragment_width_contracted);

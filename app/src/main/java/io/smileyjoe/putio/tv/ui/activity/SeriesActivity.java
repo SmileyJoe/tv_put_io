@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.ActivitySeriesBinding;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.HistoryItem;
@@ -28,15 +29,13 @@ import io.smileyjoe.putio.tv.ui.viewholder.VideosViewHolder;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
-public class SeriesActivity extends FragmentActivity implements VideoLoader.Listener{
+public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implements VideoLoader.Listener{
 
     private static final String EXTRA_SERIES = "series";
 
     private SeasonDetailsFragment mFragmentSeasonDetails;
     private VideosFragment mFragmentVideoList;
-    private ImageView mImagePoster;
     private VideoLoader mVideoLoader;
-    private FrameLayout mFrameLoading;
 
     public static Intent getIntent(Context context, Video series){
         Intent intent = new Intent(context, SeriesActivity.class);
@@ -50,10 +49,6 @@ public class SeriesActivity extends FragmentActivity implements VideoLoader.List
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_series);
-
-        mImagePoster = findViewById(R.id.image_poster);
-        mFrameLoading = findViewById(R.id.frame_loading);
         mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(FragmentType.VIDEO);
         mFragmentVideoList.setStyle(VideosViewHolder.Style.LIST);
@@ -64,6 +59,11 @@ public class SeriesActivity extends FragmentActivity implements VideoLoader.List
         mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
 
         handleExtras();
+    }
+
+    @Override
+    protected ActivitySeriesBinding inflate() {
+        return ActivitySeriesBinding.inflate(getLayoutInflater());
     }
 
     private void handleExtras(){
@@ -78,7 +78,7 @@ public class SeriesActivity extends FragmentActivity implements VideoLoader.List
                         .load(series.getPosterAsUri())
                         .dontAnimate()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(mImagePoster);
+                        .into(mView.imagePoster);
 
                 mVideoLoader.loadDirectory(series.getPutId(), series.getTitle());
             }
@@ -92,13 +92,13 @@ public class SeriesActivity extends FragmentActivity implements VideoLoader.List
 
     @Override
     public void onVideosLoadStarted() {
-        mFrameLoading.setVisibility(View.VISIBLE);
+        mView.frameLoading.setVisibility(View.VISIBLE);
         FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentVideoList);
     }
 
     @Override
     public void onVideosLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
-        mFrameLoading.setVisibility(View.GONE);
+        mView.frameLoading.setVisibility(View.GONE);
         FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentVideoList);
         mFragmentVideoList.setVideos(videos);
     }

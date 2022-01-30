@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.ActivityAuthBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
@@ -32,10 +33,8 @@ import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.util.JsonUtil;
 import io.smileyjoe.putio.tv.util.SharedPrefs;
 
-public class AuthActivity extends Activity {
+public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
 
-    private TextView mTextCode;
-    private ProgressBar mProgressCode;
     private SharedPrefs mPrefs;
     private String mCode;
     private boolean mIsPaused = false;
@@ -56,14 +55,14 @@ public class AuthActivity extends Activity {
             authComplete();
             return;
         }
-
-        setContentView(R.layout.activity_auth);
-
-        mTextCode = findViewById(R.id.text_code);
-        mProgressCode = findViewById(R.id.progress_code);
         populateInstructions();
 
         Putio.getAuthCode(getBaseContext(), new OnCodeResponse());
+    }
+
+    @Override
+    protected ActivityAuthBinding inflate() {
+        return ActivityAuthBinding.inflate(getLayoutInflater());
     }
 
     private void authComplete(){
@@ -88,9 +87,9 @@ public class AuthActivity extends Activity {
     }
 
     private void populateCode(){
-        mProgressCode.setVisibility(View.GONE);
-        mTextCode.setText(mCode);
-        mTextCode.setVisibility(View.VISIBLE);
+        mView.progressCode.setVisibility(View.GONE);
+        mView.textCode.setText(mCode);
+        mView.textCode.setVisibility(View.VISIBLE);
     }
 
     private void getToken(){

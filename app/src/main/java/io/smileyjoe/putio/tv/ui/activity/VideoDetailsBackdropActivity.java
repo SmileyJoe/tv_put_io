@@ -28,18 +28,18 @@ import io.smileyjoe.putio.tv.action.video.PlayAction;
 import io.smileyjoe.putio.tv.action.video.RefreshAction;
 import io.smileyjoe.putio.tv.action.video.ResumeAction;
 import io.smileyjoe.putio.tv.action.video.TrailerAction;
+import io.smileyjoe.putio.tv.databinding.ActivityDetailsBackdropBinding;
 import io.smileyjoe.putio.tv.interfaces.VideoDetails;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsViewHolder;
 
-public class VideoDetailsBackdropActivity extends FragmentActivity implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction, TrailerAction {
+public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBackdropBinding> implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction, TrailerAction {
 
     private static final String EXTRA_VIDEO = "video";
 
     private Video mVideo;
     private VideoDetailsViewHolder mVideoDetailsViewHolder;
-    private LinearLayoutCompat mLayoutButtons;
     private int mButtonMargin;
     private HashMap<Long, Group> mHashGroups;
 
@@ -55,10 +55,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_details_backdrop);
-
         mHashGroups = new HashMap<>();
-        mLayoutButtons = findViewById(R.id.layout_buttons);
         mButtonMargin = getResources().getDimensionPixelOffset(R.dimen.padding_general);
 
         handleExtras();
@@ -67,8 +64,13 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     }
 
     @Override
+    protected ActivityDetailsBackdropBinding inflate() {
+        return ActivityDetailsBackdropBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void setupActions() {
-        mLayoutButtons.removeAllViews();
+        mView.layoutButtons.removeAllViews();
         PlayAction.super.setupActions();
         ResumeAction.super.setupActions();
         GroupAction.super.setupActions();
@@ -143,7 +145,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
         MaterialButton button = (MaterialButton) LayoutInflater.from(getBaseContext()).inflate(R.layout.include_button_backdrop, null);
         button.setText(title);
         button.setTag(tag);
-        mLayoutButtons.addView(button);
+        mView.layoutButtons.addView(button);
         LinearLayoutCompat.LayoutParams params = (LinearLayoutCompat.LayoutParams) button.getLayoutParams();
         params.leftMargin = mButtonMargin;
         params.rightMargin = mButtonMargin;
@@ -181,13 +183,13 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     @Override
     public void updateActionGroup(long groupId, int verb) {
         Group group = mHashGroups.get(groupId);
-        ((MaterialButton) mLayoutButtons.findViewWithTag(getGroupActionId(groupId))).setText(getString(verb) + " " + group.getTitle());
+        ((MaterialButton) mView.layoutButtons.findViewWithTag(getGroupActionId(groupId))).setText(getString(verb) + " " + group.getTitle());
     }
 
     @Override
     public void updateActionResume() {
         ActionOption option = ActionOption.RESUME;
-        MaterialButton button = mLayoutButtons.findViewWithTag(option.getId());
+        MaterialButton button = mView.layoutButtons.findViewWithTag(option.getId());
         String title = getString(option.getTitleResId()) + " : " + mVideo.getResumeTimeFormatted();
 
         if(button.getVisibility() != View.VISIBLE) {
