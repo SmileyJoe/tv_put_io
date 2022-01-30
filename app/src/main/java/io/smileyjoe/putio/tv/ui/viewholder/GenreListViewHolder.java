@@ -3,27 +3,33 @@ package io.smileyjoe.putio.tv.ui.viewholder;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.viewbinding.ViewBinding;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.ListItemGenreBinding;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.ui.view.PillView;
 
-public class GenreListViewHolder extends BaseViewHolder<Genre> {
+public class GenreListViewHolder extends BaseViewHolder<Genre, ListItemGenreBinding> {
 
-    private PillView mPillTitle;
+    public static final @LayoutRes int VIEW = R.layout.list_item_genre;
 
     public GenreListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);
+    }
 
-        mPillTitle = itemView.findViewById(R.id.text_title);
+    @Override
+    protected ListItemGenreBinding inflate(View itemView) {
+        return ListItemGenreBinding.bind(itemView);
     }
 
     @Override
     public void bindView(Genre item, int position) {
         super.bindView(item, position);
 
-        mPillTitle.setText(item.getTitle());
+        mView.textTitle.setText(item.getTitle());
     }
 }

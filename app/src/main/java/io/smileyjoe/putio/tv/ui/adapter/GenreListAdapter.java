@@ -22,7 +22,7 @@ public class GenreListAdapter extends BaseListAdapter<Genre, GenreListViewHolder
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.list_item_genre;
+        return GenreListViewHolder.VIEW;
     }
 
     @Override

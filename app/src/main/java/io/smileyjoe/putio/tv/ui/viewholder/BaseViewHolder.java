@@ -1,5 +1,6 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -7,13 +8,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewbinding.ViewBinding;
 
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 
-public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
+public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
 
     public interface Listener<T> extends HomeFragmentListener<T> {
         void onItemClicked(View view, T item, int position);
@@ -22,13 +24,21 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder implemen
     private T mItem;
     private FragmentType mFragmentType;
     private int mPosition;
+    protected V mView;
+
+    protected abstract V inflate(View itemView);
 
     public BaseViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView);
 
+        mView = inflate(itemView);
         mFragmentType = fragmentType;
         itemView.setOnClickListener(this);
         itemView.setOnFocusChangeListener(this);
+    }
+
+    protected Context getContext(){
+        return itemView.getContext();
     }
 
     private Listener<T> mListener;

@@ -4,12 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -25,7 +21,7 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.SeasonDetailsFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
-import io.smileyjoe.putio.tv.ui.viewholder.VideosViewHolder;
+import io.smileyjoe.putio.tv.ui.viewholder.BaseVideosViewHolder;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
@@ -51,7 +47,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
 
         mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(FragmentType.VIDEO);
-        mFragmentVideoList.setStyle(VideosViewHolder.Style.LIST);
+        mFragmentVideoList.setStyle(VideosAdapter.Style.LIST);
         mFragmentSeasonDetails = (SeasonDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_season_details);
 
         mFragmentVideoList.setListener(new VideoListListener());

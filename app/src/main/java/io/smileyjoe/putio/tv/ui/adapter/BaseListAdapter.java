@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewbinding.ViewBinding;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.ui.viewholder.BaseViewHolder;
 
-public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends RecyclerView.Adapter<U> implements BaseViewHolder.Listener<T> {
+public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends ViewBinding>> extends RecyclerView.Adapter<U> implements BaseViewHolder.Listener<T> {
 
     public interface Listener<T> extends HomeFragmentListener<T> {
         void onItemClicked(View view, T item);

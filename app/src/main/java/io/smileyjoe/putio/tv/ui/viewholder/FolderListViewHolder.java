@@ -7,38 +7,37 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.ListItemFolderBinding;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
-public class FolderListViewHolder extends BaseViewHolder<Folder> {
+public class FolderListViewHolder extends BaseViewHolder<Folder, ListItemFolderBinding> {
 
-    private TextView mTextTitle;
-    private TextView mTextSize;
-    private TextView mTextUpdatedAt;
-    private ImageView mImageIcon;
+    public static final @LayoutRes int VIEW = R.layout.list_item_folder;
 
     public FolderListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);
+    }
 
-        mTextTitle = itemView.findViewById(R.id.text_title);
-        mImageIcon = itemView.findViewById(R.id.image_icon);
-        mTextSize = itemView.findViewById(R.id.text_size);
-        mTextUpdatedAt = itemView.findViewById(R.id.text_updated_at);
+    @Override
+    protected ListItemFolderBinding inflate(View view) {
+        return ListItemFolderBinding.bind(view);
     }
 
     @Override
     public void bindView(Folder folder, int position) {
         super.bindView(folder, position);
 
-        mTextTitle.setText(folder.getTitle());
-        mImageIcon.setImageResource(folder.getIconResId());
+        mView.textTitle.setText(folder.getTitle());
+        mView.imageIcon.setImageResource(folder.getIconResId());
 
-        setText(mTextSize, folder.getSubTextOne(mTextSize.getContext()));
-        setText(mTextUpdatedAt, folder.getSubTextTwo(mTextUpdatedAt.getContext()));
+        setText(mView.textSize, folder.getSubTextOne(mView.textSize.getContext()));
+        setText(mView.textUpdatedAt, folder.getSubTextTwo(mView.textUpdatedAt.getContext()));
     }
 }

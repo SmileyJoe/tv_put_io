@@ -24,7 +24,7 @@ public class SubtitleListAdapter extends BaseListAdapter<Subtitle, SubtitleViewH
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.list_item_subtitle;
+        return SubtitleViewHolder.VIEW;
     }
 
     @Override

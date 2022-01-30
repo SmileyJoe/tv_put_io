@@ -3,10 +3,7 @@ package io.smileyjoe.putio.tv.ui.adapter;
 import android.content.Context;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-
 import com.google.android.exoplayer2.TracksInfo;
-import com.google.android.exoplayer2.source.TrackGroup;
 
 import java.util.ArrayList;
 
@@ -37,7 +34,7 @@ public class TrackGroupListAdapter extends BaseListAdapter<TracksInfo.TrackGroup
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.list_item_audio_track;
+        return TrackGroupViewHolder.VIEW;
     }
 
     @Override

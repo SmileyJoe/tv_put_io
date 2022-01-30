@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -22,7 +21,7 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
-import io.smileyjoe.putio.tv.ui.viewholder.VideosViewHolder;
+import io.smileyjoe.putio.tv.ui.viewholder.BaseVideosViewHolder;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 public class VideosFragment extends Fragment {
@@ -40,7 +39,7 @@ public class VideosFragment extends Fragment {
     private ArrayList<Video> mVideosAll;
     private ArrayList<Filter> mAppliedFilters = new ArrayList<>();
     private Integer mAppliedGenreId = -1;
-    private VideosViewHolder.Style mStyle = VideosViewHolder.Style.GRID;
+    private VideosAdapter.Style mStyle = VideosAdapter.Style.GRID;
 
     @Nullable
     @Override
@@ -54,7 +53,7 @@ public class VideosFragment extends Fragment {
         return view;
     }
 
-    public void setStyle(VideosViewHolder.Style style) {
+    public void setStyle(VideosAdapter.Style style) {
         mStyle = style;
 
         if(mVideosAdapter != null){
