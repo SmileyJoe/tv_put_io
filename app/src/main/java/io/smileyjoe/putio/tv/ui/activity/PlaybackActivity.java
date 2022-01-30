@@ -102,13 +102,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         mTrackGroupSelectionFragment.setListener(this);
         setFragmentVisibility(mTrackGroupSelectionFragment, false);
 
-        if (savedInstanceState == null) {
-            mPlaybackVideoFragment = new PlaybackVideoFragment();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.frame_content, mPlaybackVideoFragment)
-                    .commit();
-        }
+        mPlaybackVideoFragment = (PlaybackVideoFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_playback);
 
         if(mVideos != null && mVideos.size() > 1){
             mPlaybackVideoFragment.showNextPrevious();

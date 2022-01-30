@@ -4,10 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/frame_content"
+    <fragment
+        android:id="@+id/fragment_video_playback"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:name="io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment" />
 
     <TextView
         android:id="@+id/text_time"

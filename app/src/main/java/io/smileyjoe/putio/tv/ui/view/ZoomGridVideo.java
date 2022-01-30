@@ -91,7 +91,7 @@ public class ZoomGridVideo extends RelativeLayout{
             mSizeSet = true;
         }
 
-        Drawable currentPoster = mView.imagePoster.getDrawable();
+        Drawable currentPoster = ((ImageView) view.findViewById(R.id.image_poster)).getDrawable();
 
         if(currentPoster == null){
             Glide.with(getContext())
