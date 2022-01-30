@@ -46,6 +46,8 @@
     <string name="action_audio_tracks">Audio Tracks</string>
     <string name="title_audio_track_selection">Audio Tracks</string>
     <string name="text_no_audio_tracks">No audio tracks available!</string>
+    <string name="text_sort_released_ascending">Oldest release first</string>
+    <string name="text_sort_released_descending">Newest release first</string>
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

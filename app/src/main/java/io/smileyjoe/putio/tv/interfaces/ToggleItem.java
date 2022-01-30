@@ -6,4 +6,5 @@ public interface ToggleItem {
 
     @DrawableRes int getIconResId();
     boolean isSelected();
+    int getId();
 }

@@ -170,6 +170,11 @@ public class VideosFragment extends Fragment {
         if(!isSelected){
             mAppliedFilters.remove(filter);
         } else {
+            for(Filter applied:mAppliedFilters){
+                if(applied.isSort()){
+                    mAppliedFilters.remove(applied);
+                }
+            }
             mAppliedFilters.add(filter);
         }
 
@@ -206,8 +211,16 @@ public class VideosFragment extends Fragment {
             }
         }
 
-        if(mAppliedFilters.contains(Filter.SORT_CREATED)) {
-            VideoUtil.sort(filtered, Filter.SORT_CREATED);
+        Filter filterSort = null;
+        for(Filter filter : mAppliedFilters){
+            if(filter.isSort()){
+                filterSort = filter;
+                break;
+            }
+        }
+
+        if(filterSort != null) {
+            VideoUtil.sort(filtered, filterSort);
         } else {
             VideoUtil.sort(filtered);
         }
