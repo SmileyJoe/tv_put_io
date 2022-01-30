@@ -113,10 +113,8 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
         setupActions();
 
         if(mVideoDetailsViewHolder == null) {
-            FrameLayout frameDetails = findViewById(R.id.frame_details);
-            frameDetails.removeAllViews();
-            ViewGroup viewDetails = (ViewGroup) LayoutInflater.from(getBaseContext()).inflate(R.layout.item_video_details, frameDetails, true);
-            mVideoDetailsViewHolder = new VideoDetailsViewHolder(viewDetails);
+            mView.frameDetails.removeAllViews();
+            mVideoDetailsViewHolder = VideoDetailsViewHolder.getInstance(getBaseContext(), mView.frameDetails, true);
             mVideoDetailsViewHolder.addTextShadow();
         }
 

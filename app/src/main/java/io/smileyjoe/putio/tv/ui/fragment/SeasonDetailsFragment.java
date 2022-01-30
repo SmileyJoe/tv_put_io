@@ -36,8 +36,7 @@ public class SeasonDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_season_details, null);
 
-        ViewGroup viewDetails = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.item_video_details, view.findViewById(R.id.frame_details), true);
-        mVideoDetailsViewHolder = new VideoDetailsViewHolder(viewDetails);
+        mVideoDetailsViewHolder = VideoDetailsViewHolder.getInstance(getContext(), view.findViewById(R.id.frame_details), true);
 
         return view;
     }

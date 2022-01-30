@@ -13,8 +13,7 @@ public class VideoDetailsDescriptionPresenter extends Presenter {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
-        ViewGroup view = (ViewGroup) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_details, parent, false);
-        return new VideoDetailsViewHolder(view);
+        return VideoDetailsViewHolder.getInstance(parent.getContext(), parent, false);
     }
 
     @Override
