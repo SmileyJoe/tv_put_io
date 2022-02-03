@@ -19,6 +19,8 @@ import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.source.TrackGroup;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.FragmentTrackSelectionBinding;
@@ -33,7 +35,7 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
     }
 
     private TrackGroupListAdapter mAdapter;
-    private Listener mListener;
+    private Optional<Listener> mListener;
     @C.TrackType int mTrackType;
 
     @Override
@@ -52,7 +54,7 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
     }
 
     public void setListener(Listener listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
     public void setTracksInfo(@C.TrackType int trackType, TracksInfo tracksInfo){
@@ -65,16 +67,14 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
                 break;
         }
 
-        ArrayList<TracksInfo.TrackGroupInfo> validGroups = new ArrayList<>();
-        for (TracksInfo.TrackGroupInfo groupInfo : tracksInfo.getTrackGroupInfos()) {
-            if(groupInfo.getTrackType() == trackType && groupInfo.isSupported()) {
-                TrackGroup group = groupInfo.getTrackGroup();
-
-                if(group != null && group.length > 0){
-                    validGroups.add(groupInfo);
-                }
-            }
-        }
+        ArrayList<TracksInfo.TrackGroupInfo> validGroups = new ArrayList<>(
+                tracksInfo.getTrackGroupInfos().stream()
+                        .filter(groupInfo -> groupInfo.getTrackType() == trackType && groupInfo.isSupported())
+                        .filter(groupInfo -> {
+                            TrackGroup group = groupInfo.getTrackGroup();
+                            return group != null && group.length > 0;
+                        })
+                        .collect(Collectors.toList()));
 
         mView.progressLoading.setVisibility(View.GONE);
 
@@ -90,9 +90,7 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
 
     @Override
     public void onItemClicked(View view, TracksInfo.TrackGroupInfo item) {
-        if(mListener != null){
-            mListener.onTrackSelected(mTrackType, item.getTrackGroup());
-        }
+        mListener.ifPresent(listener -> listener.onTrackSelected(mTrackType, item.getTrackGroup()));
     }
 
     @Override

@@ -31,6 +31,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
@@ -68,7 +70,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     private DetailsFragmentBackgroundController mDetailsBackground;
 
-    private Listener mListener;
+    private Optional<Listener> mListener = Optional.empty();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -164,7 +166,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
         super.onViewCreated(view, savedInstanceState);
 
         if (getActivity() instanceof Listener) {
-            mListener = (Listener) getActivity();
+            mListener = Optional.ofNullable((Listener) getActivity());
         }
     }
 
@@ -235,10 +237,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
         if (relatedVideos != null && !relatedVideos.isEmpty()) {
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new RelatedVideoCardPresenter());
-
-            for (Video video : relatedVideos) {
-                listRowAdapter.add(video);
-            }
+            relatedVideos.forEach(listRowAdapter::add);
 
             HeaderItem header = new HeaderItem(0, getString(R.string.related_videos));
             mAdapter.add(new ListRow(header, listRowAdapter));
@@ -247,15 +246,11 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     }
 
     private Action getAction(long id) {
-        for (int i = 0; i < mActionAdapter.size(); i++) {
-            Action action = (Action) mActionAdapter.get(i);
-
-            if (action.getId() == id) {
-                return action;
-            }
-        }
-
-        return null;
+        return IntStream.range(0, mActionAdapter.size())
+                .filter(i -> ((Action) mActionAdapter.get(i)).getId() == id)
+                .mapToObj(i -> ((Action) mActionAdapter.get(i)))
+                .findFirst()
+                .orElse(null);
     }
 
     private void updateActions(Action action) {
@@ -300,8 +295,8 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
                 RowPresenter.ViewHolder rowViewHolder,
                 Row row) {
 
-            if (mListener != null && item instanceof Video) {
-                mListener.onRelatedClicked((Video) item, mRelatedVideos);
+            if (mListener.isPresent() && item instanceof Video) {
+                mListener.get().onRelatedClicked((Video) item, mRelatedVideos);
             }
         }
     }

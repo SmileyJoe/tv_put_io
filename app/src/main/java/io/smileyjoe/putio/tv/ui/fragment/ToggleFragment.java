@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.FragmentFilterBinding;
@@ -26,7 +28,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
         void onItemClicked(View view, T filter, boolean isSelected);
     }
 
-    private Listener<T> mListener;
+    private Optional<Listener<T>> mListener = Optional.empty();
     private ArrayList<View> mOptionViews = new ArrayList<>();
     private ArrayList<T> mOptions = new ArrayList<>();
 
@@ -43,7 +45,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
     }
 
     public void setListener(Listener listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
     protected View addOption(T filter){
@@ -69,9 +71,8 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
     }
 
     public void reset(){
-        for(int i = 0; i < mView.getRoot().getChildCount(); i++){
-            mView.getRoot().getChildAt(i).setSelected(false);
-        }
+        IntStream.range(0, mView.getRoot().getChildCount())
+                .forEach(i -> mView.getRoot().getChildAt(i).setSelected(false));
     }
 
     protected void onItemClick(View view, T item){
@@ -79,9 +80,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
 
         view.setSelected(newState);
 
-        if(mListener != null){
-            mListener.onItemClicked(view, item, newState);
-        }
+        mListener.ifPresent(listener -> listener.onItemClicked(view, item, newState));
     }
 
     protected ArrayList<View> getOptionViews() {
@@ -97,9 +96,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if(mListener != null){
-                mListener.hasFocus(getFragmentType(), mFilter, v, 0);
-            }
+            mListener.ifPresent(listener -> listener.hasFocus(getFragmentType(), mFilter, v, 0));
         }
 
         @Override

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.FragmentSubtitleBinding;
@@ -38,7 +39,7 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
 
     private long mPutId;
     private SubtitleListAdapter mAdapter;
-    private Listener mListener;
+    private Optional<Listener> mListener = Optional.empty();
 
     @Override
     protected FragmentSubtitleBinding inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState) {
@@ -46,7 +47,7 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
     }
 
     public void setListener(Listener listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
     public void setPutId(long putId) {
@@ -77,9 +78,7 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
         if(item.getPutId() != 0) {
             Putio.getSubtitles(getContext(), item.getPutId(), item.getKey(), new OnSubtitlesGetResponse());
         } else {
-            if(mListener != null){
-                mListener.showSubtitles(null);
-            }
+            mListener.ifPresent(listener -> listener.showSubtitles(null));
         }
     }
 
@@ -93,8 +92,8 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
         public void onSuccess(String result) {
             Uri uri = FileUtil.saveSubtitle(getContext(), mPutId, result);
 
-            if(uri != null && mListener != null){
-                mListener.showSubtitles(uri);
+            if(uri != null && mListener.isPresent()){
+                mListener.get().showSubtitles(uri);
             }
         }
     }

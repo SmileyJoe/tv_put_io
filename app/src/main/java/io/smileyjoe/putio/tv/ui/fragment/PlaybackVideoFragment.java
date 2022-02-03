@@ -49,6 +49,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
@@ -85,7 +86,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private Video mVideo;
     private boolean mShouldResume;
     private boolean mInitialized = false;
-    private Listener mListener;
+    private Optional<Listener> mListener = Optional.empty();
     private BroadcastTick mBroadcastTick;
     private YoutubeUtil mYoutube;
     private String mYoutubeUrl;
@@ -103,7 +104,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         super.onViewCreated(view, savedInstanceState);
 
         if(getActivity() instanceof Listener){
-            mListener = (Listener) getActivity();
+            mListener = Optional.of((Listener) getActivity());
         }
     }
 
@@ -131,18 +132,14 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     public void showControlsOverlay(boolean runAnimation) {
         super.showControlsOverlay(runAnimation);
 
-        if(mListener != null){
-            mListener.onControlsVisibilityChanged(true);
-        }
+        mListener.ifPresent(listener -> listener.onControlsVisibilityChanged(true));
     }
 
     @Override
     public void hideControlsOverlay(boolean runAnimation) {
         super.hideControlsOverlay(runAnimation);
 
-        if(mListener != null){
-            mListener.onControlsVisibilityChanged(false);
-        }
+        mListener.ifPresent(listener -> listener.onControlsVisibilityChanged(false));
     }
 
     public void showNextPrevious(){
@@ -195,7 +192,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
         mPlayer.addAnalyticsListener(new EventLogger(null));
         mPlayer.addListener(new PlayerListener());
-        mPlayer.addListener(mListener.getSubtitleView());
+        mListener.ifPresent(listener -> mPlayer.addListener(listener.getSubtitleView()));
 
         mPlayerAdapter = new LeanbackPlayerAdapter(getActivity(), mPlayer, UPDATE_DELAY);
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
@@ -281,9 +278,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
     @Override
     public void onYoutubeFailed() {
-        if(mListener != null){
-            mListener.showError();
-        }
+        mListener.ifPresent(listener -> listener.showError());
     }
 
     private void play(String title, String videoUrl) {
@@ -301,30 +296,22 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
     @Override
     public void onPrevious() {
-        if(mListener != null){
-            mListener.onPreviousClicked(mVideo);
-        }
+        mListener.ifPresent(listener -> listener.onPreviousClicked(mVideo));
     }
 
     @Override
     public void onNext() {
-        if(mListener != null){
-            mListener.onNextClicked(mVideo);
-        }
+        mListener.ifPresent(listener -> listener.onNextClicked(mVideo));
     }
 
     @Override
     public void onSubtitles() {
-        if(mListener != null){
-            mListener.onSubtitlesClicked();
-        }
+        mListener.ifPresent(listener -> listener.onSubtitlesClicked());
     }
 
     @Override
     public void onAudioTrack() {
-        if(mListener != null){
-            mListener.onAudioTracksClicked(mPlayer.getCurrentTracksInfo());
-        }
+        mListener.ifPresent(listener -> listener.onAudioTracksClicked(mPlayer.getCurrentTracksInfo()));
     }
 
     public void showSubtitles(Uri uri){
@@ -433,8 +420,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
             if(mPlayerGlue.getDuration() < 0){
                 mPlayer.retry();
-            } else if(mListener != null){
-                mListener.onPlayComplete(mVideo);
+            } else if(mListener.isPresent()){
+                mListener.get().onPlayComplete(mVideo);
             }
         }
     }
