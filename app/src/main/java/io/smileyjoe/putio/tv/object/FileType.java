@@ -1,5 +1,7 @@
 package io.smileyjoe.putio.tv.object;
 
+import java.util.stream.Stream;
+
 public enum FileType {
 
     FOLDER("FOLDER"),
@@ -17,11 +19,9 @@ public enum FileType {
     }
 
     public static FileType fromPut(String apiValue){
-        for(FileType type:values()){
-            if(type.getPutValue().equals(apiValue)){
-                return type;
-            }
-        }
-        return UNKNOWN;
+        return Stream.of(values())
+                .filter(type -> type.getPutValue().equals(apiValue))
+                .findFirst()
+                .orElse(UNKNOWN);
     }
 }

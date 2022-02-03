@@ -1,5 +1,7 @@
 package io.smileyjoe.putio.tv.object;
 
+import java.util.stream.Stream;
+
 public enum GroupType {
 
     UNKNOWN(0), DIRECTORY(1), VIDEO(2), DIRECTORY_VIDEO(3);
@@ -15,13 +17,10 @@ public enum GroupType {
     }
 
     public static GroupType fromId(int id){
-        for(GroupType type:values()){
-            if(type.getId() == id){
-                return type;
-            }
-        }
-
-        return UNKNOWN;
+        return Stream.of(values())
+                .filter(type -> type.getId() == id)
+                .findFirst()
+                .orElse(UNKNOWN);
     }
 
 }
