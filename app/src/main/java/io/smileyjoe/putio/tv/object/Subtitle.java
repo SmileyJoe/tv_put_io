@@ -9,6 +9,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import io.smileyjoe.putio.tv.util.JsonUtil;
 
@@ -74,13 +76,10 @@ public class Subtitle implements Parcelable {
     }
 
     public static ArrayList<Subtitle> fromApi(JsonArray jsonArray, long putId){
-        ArrayList<Subtitle> subtitles = new ArrayList<>();
-
-        for (JsonElement jsonElement : jsonArray) {
-            subtitles.add(fromApi(jsonElement.getAsJsonObject(), putId));
-        }
-
-        return subtitles;
+        return new ArrayList<>(
+                StreamSupport.stream(jsonArray.spliterator(), false)
+                .map(jsonElement -> fromApi(jsonElement.getAsJsonObject(), putId))
+                .collect(Collectors.toList()));
     }
 
     @Override

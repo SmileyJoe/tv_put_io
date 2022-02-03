@@ -13,6 +13,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import io.smileyjoe.putio.tv.util.JsonUtil;
 
@@ -60,13 +63,10 @@ public class Genre implements Parcelable {
     }
 
     public static ArrayList<Genre> fromApi(JsonArray jsonArray){
-        ArrayList<Genre> genres = new ArrayList<>();
-
-        for (JsonElement jsonElement : jsonArray) {
-            genres.add(fromApi(jsonElement.getAsJsonObject()));
-        }
-
-        return genres;
+        return new ArrayList<>(
+                StreamSupport.stream(jsonArray.spliterator(), false)
+                .map(jsonElement -> fromApi(jsonElement.getAsJsonObject()))
+                .collect(Collectors.toList()));
     }
 
     @Override
