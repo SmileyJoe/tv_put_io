@@ -94,12 +94,9 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
 
     private void getToken(){
         if(!mIsPaused) {
-            (new Handler()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Putio.getAuthToken(getBaseContext(), mCode, new OnTokenResponse());
-                }
-            }, 5000);
+            (new Handler()).postDelayed(() ->
+                    Putio.getAuthToken(getBaseContext(), mCode, new OnTokenResponse()),
+                    5000);
         }
     }
 

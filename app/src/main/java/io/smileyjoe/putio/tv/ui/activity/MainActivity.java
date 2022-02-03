@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -15,8 +16,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
@@ -145,69 +148,52 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         if((folders == null || folders.isEmpty()) && (videos != null && videos.size() == 1) && historyItem.getFolderType() == FolderType.DIRECTORY){
             showDetails(videos.get(0));
         } else {
-            Video parent = mVideoLoader.getVideo(historyItem);
+            if (shouldAddToHistory) {
+                mVideoLoader.addToHistory(historyItem);
+            }
+            handleGenres(videos);
+            mView.textTitle.setText(historyItem.getTitle());
 
-//            if(parent != null && parent.getVideoType() == VideoType.SEASON){
-//                startActivity(SeriesActivity.getIntent(getBaseContext(), parent, videos));
-//            } else {
+            mFragmentFolderList.setFolders(folders);
 
-                if (shouldAddToHistory) {
-                    mVideoLoader.addToHistory(historyItem);
-                }
-                handleGenres(videos);
-                mView.textTitle.setText(historyItem.getTitle());
+            mFragmentVideoList.setFullScreen(false);
+            mFragmentVideoList.setVideos(videos);
+            mFragmentFilter.reset();
 
-                mFragmentFolderList.setFolders(folders);
+            if (videos != null && !videos.isEmpty()) {
+                FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentFilter);
+            } else {
+                FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentFilter);
+            }
 
-                mFragmentVideoList.setFullScreen(false);
-                mFragmentVideoList.setVideos(videos);
-
-//            Video parent = mVideoLoader.getParent();
-
-//                if (parent != null && parent.getVideoType() == VideoType.SEASON) {
-//                    hideFragment(mFragmentFilter);
-//                    hideFragment(mFragmentGenreList);
-//                } else {
-                    mFragmentFilter.reset();
-
-                    if (videos != null && !videos.isEmpty()) {
-                        FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentFilter);
+            switch (historyItem.getFolderType()) {
+                case GROUP:
+                    FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
+                    break;
+                case DIRECTORY:
+                    if (mVideoLoader.hasHistory()) {
+                        FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGroup);
+                        mFragmentGroup.setCurrentPutId(historyItem.getId());
                     } else {
-                        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentFilter);
-                    }
-//                }
-
-                switch (historyItem.getFolderType()) {
-                    case GROUP:
                         FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
-                        break;
-                    case DIRECTORY:
-                        if (mVideoLoader.hasHistory()) {
-                            FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGroup);
-                            mFragmentGroup.setCurrentPutId(historyItem.getId());
-                        } else {
-                            FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
-                        }
-                        break;
-                }
-//            }
+                    }
+                    break;
+            }
         }
 
         mView.frameLoading.setVisibility(View.GONE);
     }
 
     private void handleGenres(ArrayList<Video> videos){
-        Set<Integer> temp = new HashSet<>();
-
-        for(Video video:videos){
-            ArrayList<Integer> genres = video.getGenreIds();
-
-            if(genres != null && !genres.isEmpty()){
-                temp.addAll(genres);
-            }
-        }
-
-        ArrayList<Integer> genresAvailable = new ArrayList<>(temp);
+        ArrayList<Integer> genresAvailable = new ArrayList(videos.stream()
+                .filter(video -> {
+                    ArrayList<Integer> genreIds = video.getGenreIds();
+                    return genreIds != null && !genreIds.isEmpty();
+                })
+                .map(video -> video.getGenreIds())
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.toList()));
 
         if(genresAvailable == null || genresAvailable.isEmpty()){
             FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);

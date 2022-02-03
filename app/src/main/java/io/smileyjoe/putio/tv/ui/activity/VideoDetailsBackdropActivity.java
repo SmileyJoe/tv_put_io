@@ -133,9 +133,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
     @Override
     public void addActionGroup(Group group, String verb, String title) {
         MaterialButton button = addActionButton(verb + " " + title, getGroupActionId(group.getId()));
-        button.setOnClickListener(view -> {
-            onGroupActionClicked(group.getId());
-        });
+        button.setOnClickListener(view -> onGroupActionClicked(group.getId()));
         mHashGroups.put(group.getIdAsLong(), group);
     }
 
