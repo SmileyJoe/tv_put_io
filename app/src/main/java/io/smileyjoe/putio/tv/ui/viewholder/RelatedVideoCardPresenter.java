@@ -12,6 +12,8 @@ import androidx.leanback.widget.Presenter;
 
 import com.bumptech.glide.Glide;
 
+import java.util.stream.IntStream;
+
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 
@@ -41,13 +43,10 @@ public class RelatedVideoCardPresenter extends Presenter {
         int color = selected ? sSelectedTextColor : sDefaultTextColor;
         ViewGroup viewInfo = imageCardView.findViewById(R.id.info_field);
 
-        for (int i = 0; i < viewInfo.getChildCount(); i++) {
-            View view = viewInfo.getChildAt(i);
-
-            if (view instanceof TextView) {
-                ((TextView) view).setTextColor(color);
-            }
-        }
+        IntStream.range(0, viewInfo.getChildCount())
+                .mapToObj(viewInfo::getChildAt)
+                .filter(view -> view instanceof TextView)
+                .forEach(view -> ((TextView) view).setTextColor(color));
     }
 
     @Override

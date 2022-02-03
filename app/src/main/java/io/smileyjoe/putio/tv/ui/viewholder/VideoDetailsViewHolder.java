@@ -126,9 +126,7 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
                     }
                 }
             } else {
-                for(View view:mToggledViews){
-                    view.setVisibility(View.VISIBLE);
-                }
+                mToggledViews.forEach(v -> v.setVisibility(View.GONE));
                 mToggledViews = null;
             }
 

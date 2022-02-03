@@ -104,7 +104,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         super.onViewCreated(view, savedInstanceState);
 
         if(getActivity() instanceof Listener){
-            mListener = Optional.of((Listener) getActivity());
+            mListener = Optional.ofNullable((Listener) getActivity());
         }
     }
 

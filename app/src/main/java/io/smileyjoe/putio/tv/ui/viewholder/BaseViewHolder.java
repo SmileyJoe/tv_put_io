@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
+import java.util.Optional;
+
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
@@ -25,6 +27,7 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
     private FragmentType mFragmentType;
     private int mPosition;
     protected V mView;
+    private Optional<Listener<T>> mListener = Optional.empty();
 
     protected abstract V inflate(View itemView);
 
@@ -41,10 +44,8 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
         return itemView.getContext();
     }
 
-    private Listener<T> mListener;
-
     public void setListener(Listener<T> listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
     public void bindView(T item, int position){
@@ -58,16 +59,14 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if(hasFocus && mListener != null){
-            mListener.hasFocus(mFragmentType, mItem, v, mPosition);
+        if(hasFocus && mListener.isPresent()){
+            mListener.get().hasFocus(mFragmentType, mItem, v, mPosition);
         }
     }
 
     @Override
     public void onClick(View v) {
-        if(mListener != null){
-            mListener.onItemClicked(v, mItem, mPosition);
-        }
+        mListener.ifPresent(listener -> listener.onItemClicked(v, mItem, mPosition));
     }
 
     protected void setText(TextView textView, String text){
