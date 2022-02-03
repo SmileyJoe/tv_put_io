@@ -8,7 +8,8 @@ import io.smileyjoe.putio.tv.object.FolderType;
 
 public interface Folder {
 
-    @DrawableRes int getIconResId();
+    @DrawableRes
+    int getIconResId();
     String getTitle();
     String getSubTextOne(Context context);
     String getSubTextTwo(Context context);

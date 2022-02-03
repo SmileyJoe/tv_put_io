@@ -15,7 +15,8 @@ import io.smileyjoe.putio.tv.ui.view.PillView;
 
 public class GenreListViewHolder extends BaseViewHolder<Genre, ListItemGenreBinding> {
 
-    public static final @LayoutRes int VIEW = R.layout.list_item_genre;
+    @LayoutRes
+    public static final int VIEW = R.layout.list_item_genre;
 
     public GenreListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);

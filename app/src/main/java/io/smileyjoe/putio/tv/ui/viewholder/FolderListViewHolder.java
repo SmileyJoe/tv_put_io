@@ -19,7 +19,8 @@ import io.smileyjoe.putio.tv.object.Video;
 
 public class FolderListViewHolder extends BaseViewHolder<Folder, ListItemFolderBinding> {
 
-    public static final @LayoutRes int VIEW = R.layout.list_item_folder;
+    @LayoutRes
+    public static final int VIEW = R.layout.list_item_folder;
 
     public FolderListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);

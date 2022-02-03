@@ -13,10 +13,10 @@ public enum ActionOption {
     REFRESH_DATA(5, R.string.action_refresh);
 
     private long mId;
-    private @StringRes
-    int mTitleResId;
+    @StringRes
+    private int mTitleResId;
 
-    ActionOption(long id, int titleResId) {
+    ActionOption(long id, @StringRes int titleResId) {
         mId = id;
         mTitleResId = titleResId;
     }

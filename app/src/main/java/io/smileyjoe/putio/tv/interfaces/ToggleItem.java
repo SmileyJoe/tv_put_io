@@ -4,7 +4,8 @@ import androidx.annotation.DrawableRes;
 
 public interface ToggleItem {
 
-    @DrawableRes int getIconResId();
+    @DrawableRes
+    int getIconResId();
     boolean isSelected();
     int getId();
 }

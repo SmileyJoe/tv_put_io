@@ -32,13 +32,16 @@ public enum Filter implements ToggleItem {
     }
 
     private int mId;
-    @DrawableRes private int mIconResId;
-    @StringRes private int mTextResId;
-    @StringRes private int mSelectedTextResId;
+    @DrawableRes
+    private int mIconResId;
+    @StringRes
+    private int mTextResId;
+    @StringRes
+    private int mSelectedTextResId;
     private boolean mDefaultSelected;
     private Group mGroup;
 
-    Filter(int id, int iconResId, int textResId, int selectedTextResId, boolean defaultSelected, Group group) {
+    Filter(int id, @DrawableRes int iconResId, @StringRes int textResId, @StringRes int selectedTextResId, boolean defaultSelected, Group group) {
         mId = id;
         mIconResId = iconResId;
         mTextResId = textResId;

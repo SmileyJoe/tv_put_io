@@ -13,7 +13,8 @@ import io.smileyjoe.putio.tv.object.Subtitle;
 
 public class SubtitleViewHolder extends BaseViewHolder<Subtitle, ListItemSubtitleBinding> {
 
-    public static final @LayoutRes int VIEW = R.layout.list_item_subtitle;
+    @LayoutRes
+    public static final int VIEW = R.layout.list_item_subtitle;
 
     public SubtitleViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);

@@ -17,7 +17,8 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 
 public class TrackGroupViewHolder extends BaseViewHolder<TracksInfo.TrackGroupInfo, ListItemTrackBinding> {
 
-    public static final @LayoutRes int VIEW = R.layout.list_item_track;
+    @LayoutRes
+    public static final int VIEW = R.layout.list_item_track;
 
     public TrackGroupViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);

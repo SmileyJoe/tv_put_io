@@ -32,7 +32,8 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends V
     private boolean mMarkSelected = false;
     private boolean mAllowDeselect = false;
 
-    protected abstract @LayoutRes int getLayoutResId();
+    @LayoutRes
+    protected abstract int getLayoutResId();
     protected abstract U getViewHolder(View view, FragmentType fragmentType);
 
     public BaseListAdapter(Context context) {
