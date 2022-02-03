@@ -8,6 +8,8 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
@@ -30,7 +32,7 @@ public class VideoLoader {
     private HashMap<Long, ArrayList<Folder>> mFolders;
     private HashMap<Long, Video> mParents;
     private ArrayList<HistoryItem> mHistory;
-    private Listener mListener;
+    private Optional<Listener> mListener = Optional.empty();
     private static VideoLoader sInstance;
 
     public static VideoLoader getInstance(Context context, Listener listener){
@@ -52,7 +54,7 @@ public class VideoLoader {
     }
 
     public void setListener(Listener listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
     public Video getVideo(HistoryItem historyItem){
@@ -99,7 +101,7 @@ public class VideoLoader {
     }
 
     public void loadGroup(Long id, boolean shouldAddToHistory){
-        mListener.onVideosLoadStarted();
+        mListener.ifPresent(listener -> listener.onVideosLoadStarted());
         GetGroup task = new GetGroup(id, shouldAddToHistory);
         task.execute();
     }
@@ -145,11 +147,11 @@ public class VideoLoader {
     }
 
     private void onVideosLoaded(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory){
-        mListener.onVideosLoadFinished(item, videos, folders, shouldAddToHistory);
+        mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, folders, shouldAddToHistory));
     }
 
     private void getFromPut(long putId){
-        mListener.onVideosLoadStarted();
+        mListener.ifPresent(listener -> listener.onVideosLoadStarted());
         Putio.getFiles(mContext, putId, new OnPutResponse(putId));
     }
 
@@ -188,14 +190,13 @@ public class VideoLoader {
         }
 
         private void handleVideos(ArrayList<Long> putIds){
-            PutioHelper helper;
             for (long id:putIds){
                 ArrayList<Video> videos = getVideos(id);
                 ArrayList<Folder> folders = getFolders(id);
 
                 if(videos == null) {
-                    helper = new PutioHelper(mContext);
-                    helper.setListener(mListener);
+                    PutioHelper helper = new PutioHelper(mContext);
+                    mListener.ifPresent(helper::setListener);
 
                     JsonObject result = Putio.getFiles(mContext, id);
 
@@ -209,27 +210,20 @@ public class VideoLoader {
                     mFolders.put(id, folders);
                 }
 
-                ArrayList<Folder> foldersClean = new ArrayList<>();
-
-                for(Folder folder:folders){
-                    if(!putIds.contains(((Directory) folder).getPutId())){
-                        foldersClean.add(folder);
-                    }
-                }
-
                 mGroupVideos.addAll(videos);
-                mGroupFolders.addAll(foldersClean);
+                mGroupFolders.addAll(folders.stream()
+                        .filter(folder -> !putIds.contains(((Directory) folder).getPutId()))
+                        .collect(Collectors.toList()));
             }
         }
 
         private void handleParents(ArrayList<Long> putIds){
-            PutioHelper helper;
             for (long id:putIds){
                 Video parent = mParents.get(id);
 
                 if(parent == null) {
-                    helper = new PutioHelper(mContext);
-                    helper.setListener(mListener);
+                    PutioHelper helper = new PutioHelper(mContext);
+                    mListener.ifPresent(helper::setListener);
 
                     JsonObject result = Putio.getFiles(mContext, id);
 
@@ -288,7 +282,7 @@ public class VideoLoader {
         @Override
         protected Void doInBackground(Void... params) {
             PutioHelper helper = new PutioHelper(mContext);
-            helper.setListener(mListener);
+            mListener.ifPresent(helper::setListener);
             helper.parse(mPutId, mResult);
 
             mCurrentPutId = helper.getCurrent().getPutId();

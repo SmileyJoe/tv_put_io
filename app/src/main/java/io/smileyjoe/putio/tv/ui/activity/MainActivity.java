@@ -185,7 +185,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     }
 
     private void handleGenres(ArrayList<Video> videos){
-        ArrayList<Integer> genresAvailable = new ArrayList(videos.stream()
+        ArrayList<Integer> genresAvailable = videos.stream()
                 .filter(video -> {
                     ArrayList<Integer> genreIds = video.getGenreIds();
                     return genreIds != null && !genreIds.isEmpty();
@@ -193,7 +193,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                 .map(video -> video.getGenreIds())
                 .flatMap(Collection::stream)
                 .distinct()
-                .collect(Collectors.toList()));
+                .collect(Collectors.toCollection(ArrayList::new));
 
         if(genresAvailable == null || genresAvailable.isEmpty()){
             FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);

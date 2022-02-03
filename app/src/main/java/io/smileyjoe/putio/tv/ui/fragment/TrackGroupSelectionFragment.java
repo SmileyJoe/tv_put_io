@@ -67,14 +67,13 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
                 break;
         }
 
-        ArrayList<TracksInfo.TrackGroupInfo> validGroups = new ArrayList<>(
-                tracksInfo.getTrackGroupInfos().stream()
+        ArrayList<TracksInfo.TrackGroupInfo> validGroups = tracksInfo.getTrackGroupInfos().stream()
                         .filter(groupInfo -> groupInfo.getTrackType() == trackType && groupInfo.isSupported())
                         .filter(groupInfo -> {
                             TrackGroup group = groupInfo.getTrackGroup();
                             return group != null && group.length > 0;
                         })
-                        .collect(Collectors.toList()));
+                .collect(Collectors.toCollection(ArrayList::new));
 
         mView.progressLoading.setVisibility(View.GONE);
 

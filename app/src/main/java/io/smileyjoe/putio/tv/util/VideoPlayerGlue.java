@@ -26,6 +26,7 @@ import androidx.leanback.widget.PlaybackControlsRow;
 
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import io.smileyjoe.putio.tv.R;
@@ -74,7 +75,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         void onAudioTrack();
     }
 
-    private final OnActionClickedListener mActionListener;
+    private final Optional<OnActionClickedListener> mActionListener;
 
     private PlaybackControlsRow.SkipPreviousAction mSkipPreviousAction;
     private PlaybackControlsRow.SkipNextAction mSkipNextAction;
@@ -90,7 +91,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             OnActionClickedListener actionListener) {
         super(context, playerAdapter);
 
-        mActionListener = actionListener;
+        mActionListener = Optional.ofNullable(actionListener);
 
         mSkipPreviousAction = new PlaybackControlsRow.SkipPreviousAction(context);
         mSkipNextAction = new PlaybackControlsRow.SkipNextAction(context);
@@ -172,15 +173,11 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         } else if (action == mSkipPreviousAction) {
             previous();
         } else if(action == mSubtitlesAction){
-            if(mActionListener != null){
-                mActionListener.onSubtitles();
-            }
+            mActionListener.ifPresent(listener -> listener.onSubtitles());
         } else if(action == mReplayAction){
             replay();
         } else if(action == mAudioTrackAction) {
-            if(mActionListener != null){
-                mActionListener.onAudioTrack();
-            }
+            mActionListener.ifPresent(listener -> listener.onAudioTrack());
         } else if (action instanceof PlaybackControlsRow.MultiAction) {
             PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
             multiAction.nextIndex();
@@ -192,8 +189,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
     }
 
-    private void notifyActionChanged(
-            PlaybackControlsRow.MultiAction action, ArrayObjectAdapter adapter) {
+    private void notifyActionChanged(PlaybackControlsRow.MultiAction action, ArrayObjectAdapter adapter) {
         if (adapter != null) {
             int index = adapter.indexOf(action);
             if (index >= 0) {
@@ -204,16 +200,12 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
 
     @Override
     public void next() {
-        if(mActionListener != null) {
-            mActionListener.onNext();
-        }
+        mActionListener.ifPresent(listener -> listener.onNext());
     }
 
     @Override
     public void previous() {
-        if(mActionListener != null) {
-            mActionListener.onPrevious();
-        }
+        mActionListener.ifPresent(listener -> listener.onPrevious());
     }
 
     public void replay(){

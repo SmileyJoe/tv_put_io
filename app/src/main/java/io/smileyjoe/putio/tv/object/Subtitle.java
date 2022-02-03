@@ -76,10 +76,9 @@ public class Subtitle implements Parcelable {
     }
 
     public static ArrayList<Subtitle> fromApi(JsonArray jsonArray, long putId){
-        return new ArrayList<>(
-                StreamSupport.stream(jsonArray.spliterator(), false)
+        return StreamSupport.stream(jsonArray.spliterator(), false)
                 .map(jsonElement -> fromApi(jsonElement.getAsJsonObject(), putId))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

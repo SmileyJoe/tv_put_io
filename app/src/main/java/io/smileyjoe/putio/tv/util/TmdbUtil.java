@@ -10,6 +10,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -94,7 +97,7 @@ public class TmdbUtil {
         private Context mContext;
         private JsonObject mResult;
         private Video mVideo;
-        private Listener mListener;
+        private Optional<Listener> mListener = Optional.empty();
 
         public ProcessTmdbResponse(Context context, Video video, JsonObject result) {
             mContext = context;
@@ -103,7 +106,7 @@ public class TmdbUtil {
         }
 
         public void setListener(Listener listener) {
-            mListener = listener;
+            mListener = Optional.ofNullable(listener);
         }
 
         @Override
@@ -120,9 +123,7 @@ public class TmdbUtil {
 
         @Override
         protected void onPostExecute(Video video) {
-            if(mListener != null) {
-                mListener.update(video);
-            }
+            mListener.ifPresent(listener -> listener.update(video));
         }
 
         private void handleCast(Video video, JsonObject jsonObject){
@@ -182,11 +183,9 @@ public class TmdbUtil {
             JsonArray genreJson = json.getJsonArray("genre_ids");
 
             if(genreJson != null) {
-                ArrayList<Integer> genreIds = new ArrayList<>();
-                for (JsonElement genreElement : genreJson) {
-                    genreIds.add(genreElement.getAsInt());
-                }
-                video.setGenreIds(genreIds);
+                video.setGenreIds(StreamSupport.stream(genreJson.spliterator(), false)
+                        .map(JsonElement::getAsInt)
+                        .collect(Collectors.toCollection(ArrayList::new)));
             }
 
             if(jsonObject.has("videos")){

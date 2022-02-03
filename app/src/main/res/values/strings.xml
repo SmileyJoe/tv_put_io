@@ -23,7 +23,7 @@
     <string name="title_group_series">Series</string>
     <string name="text_added_on">Added on: %1$s</string>
     <string name="text_released_on">Released on: %1$s</string>
-    <string name="text_runtime">%1$sh %2$sm</string>
+    <string name="text_runtime">%1$dh %2$dm</string>
     <string name="text_add_to">Add to</string>
     <string name="text_remove_from">Remove from</string>
     <string name="title_cast">Cast:</string>

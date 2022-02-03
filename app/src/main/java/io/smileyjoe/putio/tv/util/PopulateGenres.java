@@ -102,18 +102,13 @@ public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
 
         if(isVisible) {
             mLayout.removeAllViews();
-            int marginRight = mContext.getResources().getDimensionPixelOffset(R.dimen.padding_general);
 
-            for (Genre genre : genres) {
+            genres.forEach(genre -> {
                 PillView pill = (PillView) LayoutInflater.from(mContext).inflate(R.layout.item_video_details_genre, mLayout, false);
-//                PillView pill = (PillView) LayoutInflater.from(mContext).inflate(R.layout.item_video_details_genre, null);
                 pill.setText(genre.getTitle());
 
                 mLayout.addView(pill);
-
-//                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) pill.getLayoutParams();
-//                params.rightMargin = marginRight;
-            }
+            });
         }
     }
 

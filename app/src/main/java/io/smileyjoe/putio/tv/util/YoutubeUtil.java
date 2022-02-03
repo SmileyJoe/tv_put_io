@@ -6,6 +6,8 @@ import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 
+import java.util.Optional;
+
 import at.huber.youtubeExtractor.VideoMeta;
 import at.huber.youtubeExtractor.YouTubeExtractor;
 import at.huber.youtubeExtractor.YtFile;
@@ -18,14 +20,14 @@ public class YoutubeUtil {
     }
 
     private Extractor mExtractor;
-    private Listener mListener;
+    private Optional<Listener> mListener = Optional.empty();
 
     public YoutubeUtil(Context context) {
         mExtractor = new Extractor(context);
     }
 
     public void setListener(Listener listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
     public void extract(String url){
@@ -60,13 +62,11 @@ public class YoutubeUtil {
                     }
                 }
 
-                if(mListener != null){
-                    mListener.onYoutubeExtracted(videoMeta.getTitle(), videoUrl);
+                if(mListener.isPresent()){
+                    mListener.get().onYoutubeExtracted(videoMeta.getTitle(), videoUrl);
                 }
             } else {
-                if(mListener != null){
-                    mListener.onYoutubeFailed();
-                }
+                mListener.ifPresent(listener -> listener.onYoutubeFailed());
             }
         }
     }

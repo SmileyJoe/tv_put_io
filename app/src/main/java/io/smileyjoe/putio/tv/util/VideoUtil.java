@@ -11,9 +11,14 @@ import com.google.gson.JsonObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 import io.smileyjoe.putio.tv.comparator.VideoComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -41,15 +46,9 @@ public class VideoUtil {
     }
 
     public static ArrayList<Video> filter(ArrayList<Video> videos) {
-        ArrayList<Video> videosFiltered = new ArrayList<>();
-
-        for (Video video : videos) {
-            if (video.getFileType() != FileType.UNKNOWN && video.getSize() > 0) {
-                videosFiltered.add(video);
-            }
-        }
-
-        return videosFiltered;
+        return videos.stream()
+                .filter(video -> video.getFileType() != FileType.UNKNOWN && video.getSize() > 0)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static void sort(ArrayList<Video> videos) {
@@ -117,13 +116,9 @@ public class VideoUtil {
     }
 
     public static ArrayList<Video> parseFromPut(Context context, JsonArray jsonArray) {
-        ArrayList<Video> videos = new ArrayList<>();
-
-        for (JsonElement jsonElement : jsonArray) {
-            videos.add(parseFromPut(context, jsonElement.getAsJsonObject()));
-        }
-
-        return videos;
+        return StreamSupport.stream(jsonArray.spliterator(), false)
+                .map(jsonElement -> parseFromPut(context, jsonElement.getAsJsonObject()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static Video updateFromDb(Video putVideo, Video dbVideo){
@@ -153,17 +148,11 @@ public class VideoUtil {
     }
 
     private static ArrayList<Video> getRelatedSeries(Video videoPrimary, ArrayList<Video> videoList){
-        ArrayList<Video> relatedVideos = new ArrayList<>();
-
-        for(Video video:videoList) {
-            if (video.getPutId() != videoPrimary.getPutId()
-                    && video.getVideoType() == VideoType.EPISODE
-                    && video.getTitle().equalsIgnoreCase(videoPrimary.getTitle())) {
-                relatedVideos.add(video);
-            }
-        }
-
-        return relatedVideos;
+        return videoList.stream()
+                .filter(video -> video.getPutId() != videoPrimary.getPutId()
+                        && video.getVideoType() == VideoType.EPISODE
+                        && video.getTitle().equalsIgnoreCase(videoPrimary.getTitle()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static ArrayList<Video> getRelatedMovie(Video videoPrimary, ArrayList<Video> videoList){
@@ -174,12 +163,9 @@ public class VideoUtil {
 
             for (Video video : videoList) {
                 if (video.getPutId() != videoPrimary.getPutId() && video.getVideoType() == VideoType.MOVIE) {
-                    int count = 0;
-                    for (int genreId : video.getGenreIds()) {
-                        if (videoPrimary.getGenreIds().contains(genreId)) {
-                            count++;
-                        }
-                    }
+                    int count = Math.toIntExact(video.getGenreIds().stream()
+                            .filter(id -> videoPrimary.getGenreIds().contains(id))
+                            .count());
 
                     if (count > 0) {
                         ArrayList<Video> videosFromMap;
@@ -197,11 +183,11 @@ public class VideoUtil {
                 }
             }
 
-            for (int i = videoPrimary.getGenreIds().size(); i >= 1; i--) {
-                if (relatedVideosMap.containsKey(i)) {
-                    relatedVideos.addAll(relatedVideosMap.get(i));
-                }
-            }
+            relatedVideos = IntStream.range(0, videoPrimary.getGenreIds().size())
+                    .filter(relatedVideosMap::containsKey)
+                    .mapToObj(relatedVideosMap::get)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toCollection(ArrayList::new));
         }
 
         return relatedVideos;

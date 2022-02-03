@@ -63,10 +63,9 @@ public class Genre implements Parcelable {
     }
 
     public static ArrayList<Genre> fromApi(JsonArray jsonArray){
-        return new ArrayList<>(
-                StreamSupport.stream(jsonArray.spliterator(), false)
+        return StreamSupport.stream(jsonArray.spliterator(), false)
                 .map(jsonElement -> fromApi(jsonElement.getAsJsonObject()))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
