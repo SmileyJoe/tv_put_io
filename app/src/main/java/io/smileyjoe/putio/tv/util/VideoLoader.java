@@ -23,7 +23,6 @@ public class VideoLoader {
 
     public interface Listener extends PutioHelper.Listener {
         void onVideosLoadStarted();
-
         void onVideosLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
     }
 

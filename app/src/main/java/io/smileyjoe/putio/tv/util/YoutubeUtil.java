@@ -15,7 +15,6 @@ public class YoutubeUtil {
 
     public interface Listener {
         void onYoutubeExtracted(String title, String videoUrl);
-
         void onYoutubeFailed();
     }
 

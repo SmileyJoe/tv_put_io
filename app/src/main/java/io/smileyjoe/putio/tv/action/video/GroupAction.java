@@ -18,7 +18,6 @@ import io.smileyjoe.putio.tv.object.Video;
 public interface GroupAction extends Action {
 
     void updateActionGroup(long groupId, @StringRes int verb);
-
     void addActionGroup(Group group, String verb, String title);
 
     default void addGroupActions(Get.Listener listener) {

@@ -11,7 +11,6 @@ import io.smileyjoe.putio.tv.util.TmdbUtil;
 public interface VideoDetails extends TmdbUtil.Listener {
 
     Context getBaseContext();
-
     Video getVideo();
 
     default void getData() {

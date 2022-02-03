@@ -14,14 +14,11 @@ import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 
 public interface Action {
+
     Activity getActivity();
-
     Video getVideo();
-
     void handleClick(ActionOption option);
-
     void addAction(ActionOption option, String title, String subtitle, boolean shouldShow);
-
     void setupActions();
 
     default void handleClick(androidx.leanback.widget.Action action) {

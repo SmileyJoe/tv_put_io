@@ -69,9 +69,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
          * Skip to the next item in the queue.
          */
         void onNext();
-
         void onSubtitles();
-
         void onAudioTrack();
     }
 

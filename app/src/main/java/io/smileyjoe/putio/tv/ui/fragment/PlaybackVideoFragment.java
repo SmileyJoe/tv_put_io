@@ -69,19 +69,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
     public interface Listener {
         void onPlayComplete(Video video);
-
         void onControlsVisibilityChanged(boolean isShown);
-
         void onSubtitlesClicked();
-
         void showError();
-
         void onNextClicked(Video current);
-
         void onPreviousClicked(Video current);
-
         void onAudioTracksClicked(TracksInfo tracksInfo);
-
         SubtitleView getSubtitleView();
     }
 
