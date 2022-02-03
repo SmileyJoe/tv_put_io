@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.comparator;
 
 import java.util.Comparator;
+import java.util.stream.Stream;
 
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.Video;
@@ -25,13 +26,10 @@ public class VideoComparator implements Comparator<Video> {
         }
 
         public static Order fromFilter(Filter filter){
-            for(Order order:values()){
-                if(order.getFilter() != null && order.getFilter() == filter){
-                    return order;
-                }
-            }
-
-            return ALPHABETICAL;
+            return Stream.of(values())
+                    .filter(order -> order.getFilter() != null && order.getFilter() == filter)
+                    .findFirst()
+                    .orElse(ALPHABETICAL);
         }
     }
 

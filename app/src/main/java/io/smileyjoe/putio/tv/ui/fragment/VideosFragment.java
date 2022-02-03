@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.FragmentVideoListBinding;
@@ -160,11 +161,10 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
             mAppliedFilters.remove(filter);
         } else {
             if(filter.getGroup().isUnique()) {
-                for (Filter applied : mAppliedFilters) {
-                    if (applied.getGroup() == filter.getGroup()) {
-                        mAppliedFilters.remove(applied);
-                    }
-                }
+                mAppliedFilters.stream()
+                        .filter(applied -> applied.getGroup() == filter.getGroup())
+                        .collect(Collectors.toList())
+                        .forEach(applied -> mAppliedFilters.remove(applied));
             }
             mAppliedFilters.add(filter);
         }
@@ -202,13 +202,10 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
             }
         }
 
-        Filter filterSort = null;
-        for(Filter filter : mAppliedFilters){
-            if(filter.getGroup() == Filter.Group.SORT){
-                filterSort = filter;
-                break;
-            }
-        }
+        Filter filterSort = mAppliedFilters.stream()
+                .filter(filter -> filter.getGroup() == Filter.Group.SORT)
+                .findFirst()
+                .orElse(null);
 
         if(filterSort != null) {
             VideoUtil.sort(filtered, filterSort);

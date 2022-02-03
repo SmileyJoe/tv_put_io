@@ -3,6 +3,9 @@ package io.smileyjoe.putio.tv.object;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.interfaces.ToggleItem;
 
@@ -72,12 +75,9 @@ public enum Filter implements ToggleItem {
     }
 
     public static Filter getById(int id){
-        for(Filter filter:values()){
-            if(filter.getId() == id){
-                return filter;
-            }
-        }
-
-        return null;
+        return Stream.of(values())
+                .filter(filter -> filter.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 }
