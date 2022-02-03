@@ -6,6 +6,7 @@ import android.view.View;
 import com.google.android.exoplayer2.TracksInfo;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -24,12 +25,9 @@ public class TrackGroupListAdapter extends BaseListAdapter<TracksInfo.TrackGroup
     public void setItems(ArrayList<TracksInfo.TrackGroupInfo> items) {
         super.setItems(items);
 
-        for(int i = 0; i < items.size(); i++){
-            if(items.get(i).isSelected()){
-                setSelectedPosition(i);
-                break;
-            }
-        }
+        IntStream.range(0, items.size())
+                .filter(i -> items.get(i).isSelected())
+                .forEach(this::setSelectedPosition);
     }
 
     @Override

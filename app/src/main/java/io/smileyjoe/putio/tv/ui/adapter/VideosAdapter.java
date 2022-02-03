@@ -7,6 +7,7 @@ import androidx.annotation.LayoutRes;
 import androidx.viewbinding.ViewBinding;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -54,14 +55,12 @@ public class VideosAdapter extends BaseListAdapter<Video, BaseVideosViewHolder<?
     }
 
     public void update(Video video){
-        ArrayList<Video> videos = getItems();
-        for(int i = 0; i < videos.size(); i++){
-            if(videos.get(i).getPutId() == video.getPutId()){
-                videos.set(i, video);
-                notifyItemChanged(i);
-                break;
-            }
-        }
+        IntStream.range(0, getItems().size())
+                .filter(i -> getItem(i).getPutId() == video.getPutId())
+                .forEach(i -> {
+                    getItems().set(i, video);
+                    notifyItemChanged(i);
+                });
     }
 
     public void setStyle(Style style) {
