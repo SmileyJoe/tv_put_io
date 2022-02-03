@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
@@ -240,26 +241,21 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     }
 
     private class AdapterListener implements VideosAdapter.Listener<Video>{
-        private Listener mListener;
+        private Optional<Listener> mListener;
 
         public AdapterListener(Listener listener) {
-            mListener = listener;
+            mListener = Optional.ofNullable(listener);
         }
 
         @Override
         public void onItemClicked(View view, Video item) {
-            if(mLayoutManager != null){
-                mListener.onItemClicked(view, item);
-            }
+            mListener.ifPresent(listener -> listener.onItemClicked(view, item));
         }
 
         @Override
         public void hasFocus(FragmentType type, Video item, View view, int position) {
             mView.zoomGridVideo.show(view, item);
-
-            if(mListener != null){
-                mListener.hasFocus(type, item, view, position);
-            }
+            mListener.ifPresent(listener -> listener.hasFocus(type, item, view, position));
         }
     }
 }

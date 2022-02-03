@@ -22,14 +22,15 @@ public class VideosAdapter extends BaseListAdapter<Video, BaseVideosViewHolder<?
         GRID(R.layout.grid_item_video),
         LIST(R.layout.list_item_video);
 
-        private @LayoutRes
-        int mLayoutResId;
+        @LayoutRes
+        private int mLayoutResId;
 
-        Style(int layoutResId) {
+        Style(@LayoutRes int layoutResId) {
             mLayoutResId = layoutResId;
         }
 
-        public @LayoutRes int getLayoutResId() {
+        @LayoutRes
+        public int getLayoutResId() {
             return mLayoutResId;
         }
 

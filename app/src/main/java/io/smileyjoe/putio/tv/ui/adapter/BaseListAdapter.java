@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -23,7 +24,7 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends V
     }
 
     private Context mContext;
-    private Listener<T> mListener;
+    private Optional<Listener<T>> mListener;
     private ArrayList<T> mItems = new ArrayList<>();
     private FragmentType mFragmentType;
     private View mViewSelected;
@@ -43,7 +44,7 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends V
     }
 
     public void setListener(Listener<T> listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
     public void setItems(ArrayList<T> items) {
@@ -62,7 +63,7 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends V
         return mItems;
     }
 
-    public Listener<T> getListener() {
+    public Optional<Listener<T>> getListener() {
         return mListener;
     }
 
@@ -145,8 +146,8 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends V
             callListener = true;
         }
 
-        if(callListener && mListener != null){
-            mListener.onItemClicked(view, item);
+        if(callListener && mListener.isPresent()){
+            mListener.get().onItemClicked(view, item);
         }
     }
 
@@ -160,8 +161,6 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends V
 
     @Override
     public void hasFocus(FragmentType type, T item, View view, int position) {
-        if(mListener != null){
-            mListener.hasFocus(type, item, view, position);
-        }
+        mListener.ifPresent(listener -> listener.hasFocus(type, item, view, position));
     }
 }
