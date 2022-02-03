@@ -1,8 +1,6 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -89,7 +87,7 @@ public class RelatedVideoCardPresenter extends Presenter {
                     .error(mDefaultCardImage)
                     .into(cardView.getMainImageView());
         } else {
-            cardView.getMainImageView().setPadding(sPosterPadding,sPosterPadding,sPosterPadding,sPosterPadding);
+            cardView.getMainImageView().setPadding(sPosterPadding, sPosterPadding, sPosterPadding, sPosterPadding);
             cardView.getMainImageView().setImageResource(R.drawable.ic_movie_24);
         }
 

@@ -4,17 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.FragmentFolderListBinding;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -35,7 +31,7 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
 
     public void setType(FragmentType fragmentType) {
 
-        if(mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.setFragmentType(fragmentType);
         }
 
@@ -55,10 +51,10 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
         mAdapter.setListener(listener);
     }
 
-    private boolean setLayoutManager(boolean force){
+    private boolean setLayoutManager(boolean force) {
         boolean created = false;
-        if(mView.recycler != null) {
-            if(mLayoutManager == null || force) {
+        if (mView.recycler != null) {
+            if (mLayoutManager == null || force) {
                 mLayoutManager = new LinearLayoutManager(getContext());
                 mView.recycler.setLayoutManager(mLayoutManager);
                 created = true;

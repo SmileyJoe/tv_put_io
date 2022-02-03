@@ -29,7 +29,7 @@ public class VideosListViewHolder extends BaseVideosViewHolder<ListItemVideoBind
         populatePoster(video, mView.imagePoster);
         ViewUtil.populateResumeTime(mView.textResumeTime, video);
 
-        if(video.isWatched()){
+        if (video.isWatched()) {
             mView.imageWatched.setVisibility(View.VISIBLE);
         } else {
             mView.imageWatched.setVisibility(View.INVISIBLE);

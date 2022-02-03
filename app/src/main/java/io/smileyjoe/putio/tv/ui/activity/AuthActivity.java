@@ -1,35 +1,25 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
-
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.ActivityAuthBinding;
-import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
-import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.util.JsonUtil;
 import io.smileyjoe.putio.tv.util.SharedPrefs;
 
@@ -39,9 +29,9 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
     private String mCode;
     private boolean mIsPaused = false;
 
-    public static Intent getIntent(Context context){
+    public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, AuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
 
@@ -51,7 +41,7 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
 
         mPrefs = SharedPrefs.getInstance(getBaseContext());
 
-        if(!TextUtils.isEmpty(Application.getPutToken())){
+        if (!TextUtils.isEmpty(Application.getPutToken())) {
             authComplete();
             return;
         }
@@ -65,16 +55,16 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
         return ActivityAuthBinding.inflate(getLayoutInflater());
     }
 
-    private void authComplete(){
+    private void authComplete() {
         startNext();
     }
 
-    public void startNext(){
+    public void startNext() {
         startActivity(MainActivity.getIntent(getBaseContext()));
         finish();
     }
 
-    private void populateInstructions(){
+    private void populateInstructions() {
         String instructions = getString(R.string.text_auth_instructions);
         String url = getString(R.string.text_auth_link_url);
 
@@ -86,16 +76,16 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
         mView.textInstructions.setText(spanInstructions);
     }
 
-    private void populateCode(){
+    private void populateCode() {
         mView.progressCode.setVisibility(View.GONE);
         mView.textCode.setText(mCode);
         mView.textCode.setVisibility(View.VISIBLE);
     }
 
-    private void getToken(){
-        if(!mIsPaused) {
+    private void getToken() {
+        if (!mIsPaused) {
             (new Handler()).postDelayed(() ->
-                    Putio.getAuthToken(getBaseContext(), mCode, new OnTokenResponse()),
+                            Putio.getAuthToken(getBaseContext(), mCode, new OnTokenResponse()),
                     5000);
         }
     }
@@ -111,18 +101,18 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
         super.onResume();
         mIsPaused = false;
 
-        if(!TextUtils.isEmpty(mCode)){
+        if (!TextUtils.isEmpty(mCode)) {
             getToken();
         }
     }
 
-    private class OnTokenResponse extends Response{
+    private class OnTokenResponse extends Response {
         @Override
         public void onSuccess(JsonObject result) {
             JsonUtil json = new JsonUtil(result);
             String token = json.getString("oauth_token");
 
-            if(TextUtils.isEmpty(token)){
+            if (TextUtils.isEmpty(token)) {
                 getToken();
             } else {
                 mPrefs.savePutToken(token);
@@ -132,7 +122,7 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
         }
     }
 
-    private class OnCodeResponse extends Response{
+    private class OnCodeResponse extends Response {
         @Override
         public void onSuccess(JsonObject result) {
             JsonUtil json = new JsonUtil(result);

@@ -2,7 +2,6 @@ package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,8 +13,6 @@ import java.util.Optional;
 
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
-import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 
 public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
 
@@ -40,7 +37,7 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
         itemView.setOnFocusChangeListener(this);
     }
 
-    protected Context getContext(){
+    protected Context getContext() {
         return itemView.getContext();
     }
 
@@ -48,18 +45,18 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
         mListener = Optional.ofNullable(listener);
     }
 
-    public void bindView(T item, int position){
+    public void bindView(T item, int position) {
         mItem = item;
         mPosition = position;
     }
 
-    public View getView(){
+    public View getView() {
         return itemView;
     }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if(hasFocus && mListener.isPresent()){
+        if (hasFocus && mListener.isPresent()) {
             mListener.get().hasFocus(mFragmentType, mItem, v, mPosition);
         }
     }
@@ -69,8 +66,8 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
         mListener.ifPresent(listener -> listener.onItemClicked(v, mItem, mPosition));
     }
 
-    protected void setText(TextView textView, String text){
-        if(!TextUtils.isEmpty(text)) {
+    protected void setText(TextView textView, String text) {
+        if (!TextUtils.isEmpty(text)) {
             textView.setText(text);
             textView.setVisibility(View.VISIBLE);
         } else {

@@ -5,10 +5,8 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.object.FragmentType;
-import io.smileyjoe.putio.tv.ui.viewholder.BaseViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.FolderListViewHolder;
 
 public class FolderListAdapter extends BaseListAdapter<Folder, FolderListViewHolder> {

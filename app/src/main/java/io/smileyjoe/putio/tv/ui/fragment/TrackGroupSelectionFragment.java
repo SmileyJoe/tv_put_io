@@ -4,13 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,7 +26,7 @@ import io.smileyjoe.putio.tv.ui.adapter.TrackGroupListAdapter;
 
 public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelectionBinding> implements BaseListAdapter.Listener<TracksInfo.TrackGroupInfo> {
 
-    public interface Listener{
+    public interface Listener {
         void onTrackSelected(@C.TrackType int trackType, TrackGroup item);
     }
 
@@ -57,10 +53,10 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
         mListener = Optional.ofNullable(listener);
     }
 
-    public void setTracksInfo(@C.TrackType int trackType, TracksInfo tracksInfo){
+    public void setTracksInfo(@C.TrackType int trackType, TracksInfo tracksInfo) {
         mTrackType = trackType;
 
-        switch (trackType){
+        switch (trackType) {
             case C.TRACK_TYPE_AUDIO:
                 mView.textTitle.setText(R.string.title_audio_track_selection);
                 mView.textEmpty.setText(R.string.text_no_audio_tracks);
@@ -68,16 +64,16 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
         }
 
         ArrayList<TracksInfo.TrackGroupInfo> validGroups = tracksInfo.getTrackGroupInfos().stream()
-                        .filter(groupInfo -> groupInfo.getTrackType() == trackType && groupInfo.isSupported())
-                        .filter(groupInfo -> {
-                            TrackGroup group = groupInfo.getTrackGroup();
-                            return group != null && group.length > 0;
-                        })
+                .filter(groupInfo -> groupInfo.getTrackType() == trackType && groupInfo.isSupported())
+                .filter(groupInfo -> {
+                    TrackGroup group = groupInfo.getTrackGroup();
+                    return group != null && group.length > 0;
+                })
                 .collect(Collectors.toCollection(ArrayList::new));
 
         mView.progressLoading.setVisibility(View.GONE);
 
-        if(!validGroups.isEmpty()){
+        if (!validGroups.isEmpty()) {
             mAdapter.setItems(validGroups);
             mView.recycler.setVisibility(View.VISIBLE);
             mView.textEmpty.setVisibility(View.GONE);

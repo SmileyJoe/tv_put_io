@@ -40,10 +40,10 @@ public class JsonUtil {
 //        return false;
 //    }
 
-    public String getStringNotEmpty(String... names){
-        for(String name : names){
+    public String getStringNotEmpty(String... names) {
+        for (String name : names) {
             String string = getString(name);
-            if(!TextUtils.isEmpty(string)){
+            if (!TextUtils.isEmpty(string)) {
                 return string;
             }
         }
@@ -99,8 +99,8 @@ public class JsonUtil {
         return defaultValue;
     }
 
-    public JsonArray getJsonArray(String name){
-        if(isValid(name)){
+    public JsonArray getJsonArray(String name) {
+        if (isValid(name)) {
             return mJsonObject.get(name).getAsJsonArray();
         }
 

@@ -43,8 +43,8 @@ import io.smileyjoe.putio.tv.action.video.ResumeAction;
 import io.smileyjoe.putio.tv.interfaces.VideoDetails;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
+import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.util.VideoUtil;
@@ -99,7 +99,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void handleClick(ActionOption option) {
-        switch (option){
+        switch (option) {
             case RESUME:
                 ResumeAction.super.handleClick(option);
                 break;
@@ -115,7 +115,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     @Override
     public void handleClick(Action action) {
         ActionOption option = ActionOption.fromId(action.getId());
-        if(option == ActionOption.UNKNOWN){
+        if (option == ActionOption.UNKNOWN) {
             onGroupActionClicked(getGroupId(action.getId()));
         } else {
             handleClick(ActionOption.fromId(action.getId()));
@@ -134,7 +134,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void addAction(ActionOption option, String title, String subtitle, boolean shouldShow) {
-        if(shouldShow) {
+        if (shouldShow) {
             mActionAdapter.add(new Action(option.getId(), title, subtitle));
         }
     }
@@ -198,13 +198,13 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void update(Video video) {
-        if(mRow.getItem() == null) {
+        if (mRow.getItem() == null) {
             mRow.setItem(video);
         } else {
             mRow.setItem(new Video(video));
         }
 
-        if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
+        if (!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())) {
             Action action = new Action(ActionOption.TRAILER.getId(), getResources().getString(ActionOption.TRAILER.getTitleResId()));
             mActionAdapter.add(action);
         }
@@ -233,7 +233,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     }
 
     private void setupRelatedVideoListRow() {
-        ArrayList<Video> relatedVideos = VideoUtil.getRelated(mVideo,mRelatedVideos);
+        ArrayList<Video> relatedVideos = VideoUtil.getRelated(mVideo, mRelatedVideos);
 
         if (relatedVideos != null && !relatedVideos.isEmpty()) {
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new RelatedVideoCardPresenter());

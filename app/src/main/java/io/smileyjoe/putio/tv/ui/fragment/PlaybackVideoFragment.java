@@ -67,14 +67,21 @@ import io.smileyjoe.putio.tv.util.YoutubeUtil;
  */
 public class PlaybackVideoFragment extends VideoSupportFragment implements VideoPlayerGlue.OnActionClickedListener, YoutubeUtil.Listener {
 
-    public interface Listener{
+    public interface Listener {
         void onPlayComplete(Video video);
+
         void onControlsVisibilityChanged(boolean isShown);
+
         void onSubtitlesClicked();
+
         void showError();
+
         void onNextClicked(Video current);
+
         void onPreviousClicked(Video current);
+
         void onAudioTracksClicked(TracksInfo tracksInfo);
+
         SubtitleView getSubtitleView();
     }
 
@@ -103,7 +110,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(getActivity() instanceof Listener){
+        if (getActivity() instanceof Listener) {
             mListener = Optional.ofNullable((Listener) getActivity());
         }
     }
@@ -142,9 +149,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mListener.ifPresent(listener -> listener.onControlsVisibilityChanged(false));
     }
 
-    public void showNextPrevious(){
+    public void showNextPrevious() {
         mShowNextPrevious = true;
-        if(mPlayerGlue != null) {
+        if (mPlayerGlue != null) {
             mPlayerGlue.showNextPrevious();
         }
     }
@@ -197,14 +204,14 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayerAdapter = new LeanbackPlayerAdapter(getActivity(), mPlayer, UPDATE_DELAY);
         mPlayerGlue = new VideoPlayerGlue(getActivity(), mPlayerAdapter, this);
         mPlayerGlue.setHost(new VideoSupportFragmentGlueHost(this));
-        if(mShowNextPrevious){
+        if (mShowNextPrevious) {
             mPlayerGlue.showNextPrevious();
         }
         mPlayerGlue.playWhenPrepared();
 
         mInitialized = true;
 
-        if(mVideo != null) {
+        if (mVideo != null) {
             play(mVideo);
         }
     }
@@ -222,28 +229,28 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if(mVideo != null){
+        if (mVideo != null) {
             play(mVideo);
         }
 
         mYoutube = new YoutubeUtil(context);
         mYoutube.setListener(this);
-        if(!TextUtils.isEmpty(mYoutubeUrl)){
+        if (!TextUtils.isEmpty(mYoutubeUrl)) {
             play(mYoutubeUrl);
             mYoutubeUrl = null;
         }
     }
 
-    public void play(String youtubeUrl){
-        if(mYoutube != null) {
+    public void play(String youtubeUrl) {
+        if (mYoutube != null) {
             mYoutube.extract(youtubeUrl);
         } else {
             mYoutubeUrl = youtubeUrl;
         }
     }
 
-    public void play(Video video){
-        if(mPlayer != null){
+    public void play(Video video) {
+        if (mPlayer != null) {
             play(video, null);
         } else {
             mVideo = video;
@@ -253,7 +260,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private void play(Video video, Uri subtitleUri) {
         mVideo = video;
 
-        if(mInitialized) {
+        if (mInitialized) {
             mPlayerGlue.setTitle(video.getTitleFormatted());
             mPlayerGlue.setMediaType(MediaType.VIDEO);
 
@@ -282,7 +289,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     private void play(String title, String videoUrl) {
-        if(mInitialized) {
+        if (mInitialized) {
             mPlayerGlue.setTitle(title);
             mPlayerGlue.setMediaType(MediaType.YOUTUBE);
 
@@ -314,14 +321,14 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mListener.ifPresent(listener -> listener.onAudioTracksClicked(mPlayer.getCurrentTracksInfo()));
     }
 
-    public void showSubtitles(Uri uri){
+    public void showSubtitles(Uri uri) {
         mShouldResume = true;
-        mVideo.setResumeTime(mPlayer.getCurrentPosition()/1000);
+        mVideo.setResumeTime(mPlayer.getCurrentPosition() / 1000);
         play(mVideo, uri);
     }
 
-    public void loadTrack(TrackGroup trackGroup){
-        if(trackGroup != null){
+    public void loadTrack(TrackGroup trackGroup) {
+        if (trackGroup != null) {
             TrackSelectionOverrides overrides =
                     new TrackSelectionOverrides.Builder()
                             .setOverrideForType(new TrackSelectionOverrides.TrackSelectionOverride(trackGroup))
@@ -341,14 +348,14 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
         mPlayer.prepare();
     }
-    
+
     private void prepareMediaForPlaying(Uri mediaSourceUri, Uri subtitleUri) {
         mPlayerGlue.resetActions();
 
         MediaItem.Builder mediaBuilder = new MediaItem.Builder()
-                        .setUri(mediaSourceUri);
+                .setUri(mediaSourceUri);
 
-        if(subtitleUri != null){
+        if (subtitleUri != null) {
             MediaItem.SubtitleConfiguration subtitle =
                     new MediaItem.SubtitleConfiguration.Builder(subtitleUri)
                             .setMimeType(MimeTypes.APPLICATION_SUBRIP) // The correct MIME type (required).
@@ -363,7 +370,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayer.prepare();
     }
 
-    private void populateEndTime(){
+    private void populateEndTime() {
         long current = mPlayerGlue.getCurrentPosition();
         long total = mPlayerGlue.getDuration();
         long left = total - current;
@@ -378,14 +385,14 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().compareTo(Intent.ACTION_TIME_TICK) == 0) {
-                if(mPlayerGlue != null && !mPlayerGlue.isPlaying()){
+                if (mPlayerGlue != null && !mPlayerGlue.isPlaying()) {
                     populateEndTime();
                 }
             }
         }
     }
 
-    private class PlayerListener implements Player.Listener{
+    private class PlayerListener implements Player.Listener {
         @Override
         public void onRenderedFirstFrame() {
             mPlayerGlue.showAudioTrackSelection();
@@ -407,7 +414,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 } else {
                     getSurfaceView().setKeepScreenOn(false);
 
-                    if(mVideo != null) {
+                    if (mVideo != null) {
                         Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition() / 1000, null);
                     }
                 }
@@ -418,9 +425,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         public void onPlayCompleted(PlaybackGlue glue) {
             super.onPlayCompleted(glue);
 
-            if(mPlayerGlue.getDuration() < 0){
+            if (mPlayerGlue.getDuration() < 0) {
                 mPlayer.retry();
-            } else if(mListener.isPresent()){
+            } else if (mListener.isPresent()) {
                 mListener.get().onPlayComplete(mVideo);
             }
         }

@@ -16,31 +16,31 @@ public class SharedPrefs {
         mPrefs = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
     }
 
-    public static SharedPrefs getInstance(Context context){
-        if(sInstance == null){
+    public static SharedPrefs getInstance(Context context) {
+        if (sInstance == null) {
             sInstance = new SharedPrefs(context);
         }
 
         return sInstance;
     }
 
-    public void savePutToken(String token){
+    public void savePutToken(String token) {
         mPrefs.edit().putString(KEY_PUT_IO_TOKEN, token).apply();
     }
 
-    public void clearPutToken(){
+    public void clearPutToken() {
         mPrefs.edit().remove(KEY_PUT_IO_TOKEN).apply();
     }
 
-    public String getPutToken(){
+    public String getPutToken() {
         return mPrefs.getString(KEY_PUT_IO_TOKEN, null);
     }
 
-    public void groupsSetup(){
+    public void groupsSetup() {
         mPrefs.edit().putBoolean(KEY_GROUPS_SETUP, true).apply();
     }
 
-    public boolean isGroupsSetup(){
+    public boolean isGroupsSetup() {
         return mPrefs.getBoolean(KEY_GROUPS_SETUP, false);
     }
 }

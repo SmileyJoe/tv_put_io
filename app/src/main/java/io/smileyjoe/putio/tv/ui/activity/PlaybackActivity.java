@@ -6,13 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.exoplayer2.C;
@@ -28,14 +25,14 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.ActivityPlaybackBinding;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
+import io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment;
 
 public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener {
 
-    private enum PlayAction{
+    private enum PlayAction {
         NEXT, PREVIOUS
     }
 
@@ -76,7 +73,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         return intent;
     }
 
-    public static Intent getIntent(Context context, String youtubeUrl){
+    public static Intent getIntent(Context context, String youtubeUrl) {
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_YOUTUBE_URL, youtubeUrl);
         intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.YOUTUBE);
@@ -93,7 +90,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
         mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
         setFragmentVisibility(mSubtitleFragment, false);
-        if(mMediaType == MediaType.VIDEO) {
+        if (mMediaType == MediaType.VIDEO) {
             mSubtitleFragment.setPutId(mVideo.getPutId());
             mSubtitleFragment.setListener(this);
         }
@@ -104,7 +101,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
         mPlaybackVideoFragment = (PlaybackVideoFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_playback);
 
-        if(mVideos != null && mVideos.size() > 1){
+        if (mVideos != null && mVideos.size() > 1) {
             mPlaybackVideoFragment.showNextPrevious();
         }
 
@@ -135,7 +132,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void onControlsVisibilityChanged(boolean isShown) {
-        if(isShown){
+        if (isShown) {
             mView.textTime.setVisibility(View.VISIBLE);
         } else {
             mView.textTime.setVisibility(View.GONE);
@@ -158,7 +155,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void showSubtitles(Uri uri) {
-        if(uri != null) {
+        if (uri != null) {
             mView.exoSubtitle.setVisibility(View.VISIBLE);
             setFragmentVisibility(mSubtitleFragment, false);
             mPlaybackVideoFragment.showSubtitles(uri);
@@ -168,7 +165,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     }
 
     @Override
-    public void onTrackSelected(@C.TrackType int trackType,  TrackGroup item) {
+    public void onTrackSelected(@C.TrackType int trackType, TrackGroup item) {
         setFragmentVisibility(mTrackGroupSelectionFragment, false);
         mPlaybackVideoFragment.loadTrack(item);
     }
@@ -190,19 +187,19 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void onBackPressed() {
-        if(mSubtitleFragment.isVisible()){
+        if (mSubtitleFragment.isVisible()) {
             setFragmentVisibility(mSubtitleFragment, false);
-        } else if(mTrackGroupSelectionFragment.isVisible()) {
+        } else if (mTrackGroupSelectionFragment.isVisible()) {
             setFragmentVisibility(mTrackGroupSelectionFragment, false);
         } else {
             super.onBackPressed();
         }
     }
 
-    private void setFragmentVisibility(Fragment fragment, boolean visible){
+    private void setFragmentVisibility(Fragment fragment, boolean visible) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if(!visible){
+        if (!visible) {
             transaction.hide(fragment);
         } else {
             transaction.show(fragment);
@@ -211,30 +208,30 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         transaction.commit();
     }
 
-    private void handleExtras(){
+    private void handleExtras() {
         Bundle extras = getIntent().getExtras();
 
-        if(extras != null){
-            if(extras.containsKey(EXTRA_MEDIA_TYPE)){
+        if (extras != null) {
+            if (extras.containsKey(EXTRA_MEDIA_TYPE)) {
                 mMediaType = (MediaType) extras.getSerializable(EXTRA_MEDIA_TYPE);
             }
 
-            if(extras.containsKey(EXTRA_VIDEOS)){
+            if (extras.containsKey(EXTRA_VIDEOS)) {
                 mVideos = extras.getParcelableArrayList(EXTRA_VIDEOS);
             }
 
-            if(extras.containsKey(EXTRA_VIDEO)){
+            if (extras.containsKey(EXTRA_VIDEO)) {
                 mVideo = getIntent().getParcelableExtra(PlaybackActivity.EXTRA_VIDEO);
             }
 
-            if(extras.containsKey(EXTRA_YOUTUBE_URL)){
+            if (extras.containsKey(EXTRA_YOUTUBE_URL)) {
                 mYoutubeUrl = getIntent().getStringExtra(EXTRA_YOUTUBE_URL);
             }
         }
     }
 
-    private void play(){
-        switch (mMediaType){
+    private void play() {
+        switch (mMediaType) {
             case YOUTUBE:
                 play(mYoutubeUrl);
                 break;
@@ -244,19 +241,19 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         }
     }
 
-    private void play(String youtubeUrl){
+    private void play(String youtubeUrl) {
         mPlaybackVideoFragment.play(youtubeUrl);
     }
 
-    private void play(Video video){
+    private void play(Video video) {
         mPlaybackVideoFragment.play(video);
     }
 
-    private boolean play(Video current, PlayAction action){
-        if(mVideos != null){
+    private boolean play(Video current, PlayAction action) {
+        if (mVideos != null) {
             int nextEpisode = current.getEpisode();
 
-            switch (action){
+            switch (action) {
                 case NEXT:
                     nextEpisode = nextEpisode + 1;
                     break;
@@ -265,8 +262,8 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
                     break;
             }
 
-            for(Video video:mVideos){
-                if(video.getEpisode() == nextEpisode){
+            for (Video video : mVideos) {
+                if (video.getEpisode() == nextEpisode) {
                     play(video);
                     return true;
                 }
@@ -279,7 +276,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     @Override
     public void showError() {
         @StringRes int message;
-        switch (mMediaType){
+        switch (mMediaType) {
             case YOUTUBE:
                 message = R.string.error_trailer;
                 break;
@@ -303,12 +300,12 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     public void onPlayComplete(Video videoCompleted) {
         boolean playingNext = play(videoCompleted, PlayAction.NEXT);
 
-        if(!playingNext) {
+        if (!playingNext) {
             finish();
         }
     }
 
-    private class BroadcastTick extends BroadcastReceiver{
+    private class BroadcastTick extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().compareTo(Intent.ACTION_TIME_TICK) == 0) {

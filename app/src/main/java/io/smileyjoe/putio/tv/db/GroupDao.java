@@ -8,7 +8,6 @@ import androidx.room.Query;
 import java.util.List;
 
 import io.smileyjoe.putio.tv.object.Group;
-import io.smileyjoe.putio.tv.object.Video;
 
 @Dao
 public interface GroupDao {

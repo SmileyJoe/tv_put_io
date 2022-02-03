@@ -9,12 +9,10 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import io.smileyjoe.putio.tv.util.JsonUtil;
@@ -46,13 +44,13 @@ public class Genre implements Parcelable {
         mTitle = title;
     }
 
-    public static Genre fromApi(JsonObject jsonObject){
+    public static Genre fromApi(JsonObject jsonObject) {
         Genre genre = new Genre();
         JsonUtil json = new JsonUtil(jsonObject);
 
         String name = json.getString("name");
 
-        if(!TextUtils.isEmpty(name)){
+        if (!TextUtils.isEmpty(name)) {
             name = name.trim();
         }
 
@@ -62,7 +60,7 @@ public class Genre implements Parcelable {
         return genre;
     }
 
-    public static ArrayList<Genre> fromApi(JsonArray jsonArray){
+    public static ArrayList<Genre> fromApi(JsonArray jsonArray) {
         return StreamSupport.stream(jsonArray.spliterator(), false)
                 .map(jsonElement -> fromApi(jsonElement.getAsJsonObject()))
                 .collect(Collectors.toCollection(ArrayList::new));

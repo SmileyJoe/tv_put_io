@@ -1,13 +1,11 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import io.smileyjoe.putio.tv.object.Filter;
@@ -30,7 +28,7 @@ public class FilterFragment extends ToggleFragment<Filter> {
 
     @Override
     protected void onItemClick(View view, Filter item) {
-        if(item.getGroup().isUnique()) {
+        if (item.getGroup().isUnique()) {
             getOptionViews()
                     .stream()
                     .filter(v -> ((Integer) v.getTag()) != item.getId())

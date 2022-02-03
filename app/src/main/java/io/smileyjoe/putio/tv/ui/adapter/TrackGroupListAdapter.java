@@ -8,7 +8,6 @@ import com.google.android.exoplayer2.TracksInfo;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.ui.viewholder.TrackGroupViewHolder;
 

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.comparator.GenreComparator;
 import io.smileyjoe.putio.tv.databinding.FragmentGenreListBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -42,7 +40,7 @@ public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
 
         Listener listener = null;
 
-        if(getActivity() instanceof Listener){
+        if (getActivity() instanceof Listener) {
             listener = (Listener) getActivity();
         }
 
@@ -54,20 +52,20 @@ public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
         mView.recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
     }
 
-    public void clearSelected(){
+    public void clearSelected() {
         mAdapter.clearSelected();
     }
 
-    public void setListener(Listener listener){
+    public void setListener(Listener listener) {
         mAdapter.setListener(listener);
     }
 
-    public void setGenres(ArrayList<Genre> genres){
+    public void setGenres(ArrayList<Genre> genres) {
         mAdapter.setItems(genres);
         mAdapter.notifyDataSetChanged();
     }
 
-    public void setGenreIds(ArrayList<Integer> genreIds){
+    public void setGenreIds(ArrayList<Integer> genreIds) {
         GetGenresTask task = new GetGenresTask(genreIds);
         task.execute();
     }

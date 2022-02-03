@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;

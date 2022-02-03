@@ -2,7 +2,6 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 
@@ -22,8 +21,9 @@ import io.smileyjoe.putio.tv.object.Video;
 
 public class VideoLoader {
 
-    public interface Listener extends PutioHelper.Listener{
+    public interface Listener extends PutioHelper.Listener {
         void onVideosLoadStarted();
+
         void onVideosLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
     }
 
@@ -35,8 +35,8 @@ public class VideoLoader {
     private Optional<Listener> mListener = Optional.empty();
     private static VideoLoader sInstance;
 
-    public static VideoLoader getInstance(Context context, Listener listener){
-        if(sInstance == null){
+    public static VideoLoader getInstance(Context context, Listener listener) {
+        if (sInstance == null) {
             sInstance = new VideoLoader(context);
         }
 
@@ -57,16 +57,16 @@ public class VideoLoader {
         mListener = Optional.ofNullable(listener);
     }
 
-    public Video getVideo(HistoryItem historyItem){
-        if(historyItem != null && mParents.containsKey(historyItem.getId())) {
+    public Video getVideo(HistoryItem historyItem) {
+        if (historyItem != null && mParents.containsKey(historyItem.getId())) {
             return mParents.get(historyItem.getId());
         }
 
         return null;
     }
 
-    public Video getParent(){
-        if(mHistory != null && mHistory.size() > 0){
+    public Video getParent() {
+        if (mHistory != null && mHistory.size() > 0) {
             HistoryItem historyItem = mHistory.get(mHistory.size() - 1);
             return getVideo(historyItem);
         }
@@ -74,45 +74,45 @@ public class VideoLoader {
         return null;
     }
 
-    public void loadDirectory(){
+    public void loadDirectory() {
         getFromPut(Putio.NO_PARENT);
     }
 
-    public void loadDirectory(Long putId, String title){
+    public void loadDirectory(Long putId, String title) {
         loadDirectory(putId, title, true);
     }
 
-    public void loadDirectory(Long putId, String title, boolean shouldAddToHistory){
+    public void loadDirectory(Long putId, String title, boolean shouldAddToHistory) {
         ArrayList<Video> videos = getVideos(putId);
 
-        if(videos == null){
+        if (videos == null) {
             getFromPut(putId);
         } else {
             onVideosLoaded(HistoryItem.directory(putId, title), videos, getFolders(putId), shouldAddToHistory);
         }
     }
 
-    public void loadGroup(Integer id){
+    public void loadGroup(Integer id) {
         loadGroup(new Long(id), true);
     }
 
-    public void loadGroup(Long id){
+    public void loadGroup(Long id) {
         loadGroup(id, true);
     }
 
-    public void loadGroup(Long id, boolean shouldAddToHistory){
+    public void loadGroup(Long id, boolean shouldAddToHistory) {
         mListener.ifPresent(listener -> listener.onVideosLoadStarted());
         GetGroup task = new GetGroup(id, shouldAddToHistory);
         task.execute();
     }
 
-    public boolean back(){
-        if(mHistory != null && mHistory.size() >= 2) {
+    public boolean back() {
+        if (mHistory != null && mHistory.size() >= 2) {
             HistoryItem current = getCurrentHistory();
             mHistory.remove(current);
             current = getCurrentHistory();
 
-            switch (current.getFolderType()){
+            switch (current.getFolderType()) {
                 case DIRECTORY:
                     loadDirectory(current.getId(), current.getTitle(), false);
                     break;
@@ -126,40 +126,40 @@ public class VideoLoader {
         return false;
     }
 
-    public boolean hasHistory(){
-        if(mHistory == null || mHistory.size() <= 1){
+    public boolean hasHistory() {
+        if (mHistory == null || mHistory.size() <= 1) {
             return false;
         } else {
             return true;
         }
     }
 
-    public HistoryItem getCurrentHistory(){
+    public HistoryItem getCurrentHistory() {
         return mHistory.get(mHistory.size() - 1);
     }
 
-    private ArrayList<Video> getVideos(long putId){
+    private ArrayList<Video> getVideos(long putId) {
         return mVideos.get(putId);
     }
 
-    private ArrayList<Folder> getFolders(long putId){
+    private ArrayList<Folder> getFolders(long putId) {
         return mFolders.get(putId);
     }
 
-    private void onVideosLoaded(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory){
+    private void onVideosLoaded(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
         mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, folders, shouldAddToHistory));
     }
 
-    private void getFromPut(long putId){
+    private void getFromPut(long putId) {
         mListener.ifPresent(listener -> listener.onVideosLoadStarted());
         Putio.getFiles(mContext, putId, new OnPutResponse(putId));
     }
 
-    public void addToHistory(HistoryItem item){
+    public void addToHistory(HistoryItem item) {
         mHistory.add(item);
     }
 
-    private class GetGroup extends AsyncTask<Void, Void, Void>{
+    private class GetGroup extends AsyncTask<Void, Void, Void> {
         private Long mId;
         private Group mGroup;
         private ArrayList<Video> mGroupVideos;
@@ -178,8 +178,8 @@ public class VideoLoader {
             mGroup = AppDatabase.getInstance(mContext).groupDao().get(mId);
             ArrayList<Long> putIds = mGroup.getPutIds();
 
-            if(putIds != null && !putIds.isEmpty()) {
-                if(mGroup.isUseParent()){
+            if (putIds != null && !putIds.isEmpty()) {
+                if (mGroup.isUseParent()) {
                     handleParents(putIds);
                 } else {
                     handleVideos(putIds);
@@ -189,12 +189,12 @@ public class VideoLoader {
             return null;
         }
 
-        private void handleVideos(ArrayList<Long> putIds){
-            for (long id:putIds){
+        private void handleVideos(ArrayList<Long> putIds) {
+            for (long id : putIds) {
                 ArrayList<Video> videos = getVideos(id);
                 ArrayList<Folder> folders = getFolders(id);
 
-                if(videos == null) {
+                if (videos == null) {
                     PutioHelper helper = new PutioHelper(mContext);
                     mListener.ifPresent(helper::setListener);
 
@@ -217,11 +217,11 @@ public class VideoLoader {
             }
         }
 
-        private void handleParents(ArrayList<Long> putIds){
-            for (long id:putIds){
+        private void handleParents(ArrayList<Long> putIds) {
+            for (long id : putIds) {
                 Video parent = mParents.get(id);
 
-                if(parent == null) {
+                if (parent == null) {
                     PutioHelper helper = new PutioHelper(mContext);
                     mListener.ifPresent(helper::setListener);
 

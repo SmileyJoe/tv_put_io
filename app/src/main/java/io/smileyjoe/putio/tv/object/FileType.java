@@ -18,7 +18,7 @@ public enum FileType {
         return mPutValue;
     }
 
-    public static FileType fromPut(String apiValue){
+    public static FileType fromPut(String apiValue) {
         return Stream.of(values())
                 .filter(type -> type.getPutValue().equals(apiValue))
                 .findFirst()

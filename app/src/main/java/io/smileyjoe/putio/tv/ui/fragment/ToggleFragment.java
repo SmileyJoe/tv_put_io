@@ -4,27 +4,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.FragmentFilterBinding;
 import io.smileyjoe.putio.tv.databinding.ItemFilterBinding;
-import io.smileyjoe.putio.tv.interfaces.ToggleItem;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
+import io.smileyjoe.putio.tv.interfaces.ToggleItem;
 import io.smileyjoe.putio.tv.object.FragmentType;
 
 public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<FragmentFilterBinding> {
 
-    public interface Listener<T> extends HomeFragmentListener<T>{
+    public interface Listener<T> extends HomeFragmentListener<T> {
         void onItemClicked(View view, T filter, boolean isSelected);
     }
 
@@ -48,7 +44,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
         mListener = Optional.ofNullable(listener);
     }
 
-    protected View addOption(T filter){
+    protected View addOption(T filter) {
         mOptions.add(filter);
         ItemFilterBinding binding = ItemFilterBinding.inflate(LayoutInflater.from(getContext()));
         ViewGroup root = binding.getRoot();
@@ -70,12 +66,12 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
         return mOptions;
     }
 
-    public void reset(){
+    public void reset() {
         IntStream.range(0, mView.getRoot().getChildCount())
                 .forEach(i -> mView.getRoot().getChildAt(i).setSelected(false));
     }
 
-    protected void onItemClick(View view, T item){
+    protected void onItemClick(View view, T item) {
         boolean newState = !view.isSelected();
 
         view.setSelected(newState);

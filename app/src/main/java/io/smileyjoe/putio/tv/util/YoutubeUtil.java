@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
@@ -14,8 +13,9 @@ import at.huber.youtubeExtractor.YtFile;
 
 public class YoutubeUtil {
 
-    public interface Listener{
+    public interface Listener {
         void onYoutubeExtracted(String title, String videoUrl);
+
         void onYoutubeFailed();
     }
 
@@ -30,11 +30,11 @@ public class YoutubeUtil {
         mListener = Optional.ofNullable(listener);
     }
 
-    public void extract(String url){
+    public void extract(String url) {
         mExtractor.extract(url, false, true);
     }
 
-    private class Extractor extends YouTubeExtractor{
+    private class Extractor extends YouTubeExtractor {
 
         public Extractor(@NonNull Context context) {
             super(context);
@@ -42,11 +42,11 @@ public class YoutubeUtil {
 
         @Override
         protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
-            if(ytFiles != null && videoMeta != null) {
+            if (ytFiles != null && videoMeta != null) {
                 YtFile ytFile = ytFiles.get(22);
                 String videoUrl = null;
 
-                if(ytFile != null){
+                if (ytFile != null) {
                     videoUrl = ytFile.getUrl();
                 } else {
                     int maxHeight = -1;
@@ -62,7 +62,7 @@ public class YoutubeUtil {
                     }
                 }
 
-                if(mListener.isPresent()){
+                if (mListener.isPresent()) {
                     mListener.get().onYoutubeExtracted(videoMeta.getTitle(), videoUrl);
                 }
             } else {

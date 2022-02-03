@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.facebook.stetho.Stetho;
 
@@ -27,7 +26,7 @@ public class Application extends android.app.Application {
         return sPutToken;
     }
 
-    public static void setPutToken(String putToken){
+    public static void setPutToken(String putToken) {
         sPutToken = putToken;
     }
 }

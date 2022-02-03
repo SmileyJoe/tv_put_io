@@ -21,11 +21,10 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.SeasonDetailsFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
-import io.smileyjoe.putio.tv.ui.viewholder.BaseVideosViewHolder;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
-public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implements VideoLoader.Listener{
+public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implements VideoLoader.Listener {
 
     private static final String EXTRA_SERIES = "series";
 
@@ -33,7 +32,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     private VideosFragment mFragmentVideoList;
     private VideoLoader mVideoLoader;
 
-    public static Intent getIntent(Context context, Video series){
+    public static Intent getIntent(Context context, Video series) {
         Intent intent = new Intent(context, SeriesActivity.class);
 
         intent.putExtra(EXTRA_SERIES, series);
@@ -62,11 +61,11 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
         return ActivitySeriesBinding.inflate(getLayoutInflater());
     }
 
-    private void handleExtras(){
+    private void handleExtras() {
         Bundle extras = getIntent().getExtras();
 
-        if(extras != null){
-            if(extras.containsKey(EXTRA_SERIES)){
+        if (extras != null) {
+            if (extras.containsKey(EXTRA_SERIES)) {
                 Video series = extras.getParcelable(EXTRA_SERIES);
                 mFragmentSeasonDetails.update(series);
 
@@ -99,7 +98,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
         mFragmentVideoList.setVideos(videos);
     }
 
-    private class VideoListListener implements VideosAdapter.Listener<Video>{
+    private class VideoListListener implements VideosAdapter.Listener<Video> {
         @Override
         public void onItemClicked(View view, Video item) {
             startActivity(PlaybackActivity.getIntent(getBaseContext(), mFragmentVideoList.getVideos(), item, true));

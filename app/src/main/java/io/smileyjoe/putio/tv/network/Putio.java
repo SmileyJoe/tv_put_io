@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
@@ -25,7 +24,7 @@ public class Putio {
     private static final String SUBTITLES_AVAILABLE = "/files/{id}/subtitles";
     private static final String SUBTITLES = SUBTITLES_AVAILABLE + "/{key}";
 
-    public static void getAuthCode(Context context, Response response){
+    public static void getAuthCode(Context context, Response response) {
         String url = BASE + AUTH_GET_CODE + "?app_id=" + BuildConfig.PUTIO_CLIENT_ID;
 
         Ion.with(context)
@@ -35,18 +34,18 @@ public class Putio {
                 .setCallback(response);
     }
 
-    public static void getAuthToken(Context context, String code, Response response){
+    public static void getAuthToken(Context context, String code, Response response) {
         String url = BASE + AUTH_GET_TOKEN;
         url = url.replace("{code}", code);
         execute(context, url, response);
     }
 
-    public static void getAvailableSubtitles(Context context, long id, Response response){
+    public static void getAvailableSubtitles(Context context, long id, Response response) {
         String url = BASE + SUBTITLES_AVAILABLE.replace("{id}", Long.toString(id));
         execute(context, url, response);
     }
 
-    public static void getSubtitles(Context context, long id, String key, ResponseString response){
+    public static void getSubtitles(Context context, long id, String key, ResponseString response) {
         String url = BASE + SUBTITLES
                 .replace("{id}", Long.toString(id))
                 .replace("{key}", key);
@@ -82,7 +81,7 @@ public class Putio {
             return getBaseCall(context, url)
                     .asJsonObject()
                     .get();
-        } catch (InterruptedException | ExecutionException e){
+        } catch (InterruptedException | ExecutionException e) {
             return null;
         }
     }
@@ -135,7 +134,7 @@ public class Putio {
         execute(context, url, response);
     }
 
-    private static Builders.Any.B getBaseCall(Context context, String url){
+    private static Builders.Any.B getBaseCall(Context context, String url) {
         return Ion.with(context)
                 .load(url)
                 .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)

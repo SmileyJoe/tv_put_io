@@ -16,7 +16,7 @@ public enum GroupType {
         return mId;
     }
 
-    public static GroupType fromId(int id){
+    public static GroupType fromId(int id) {
         return Stream.of(values())
                 .filter(type -> type.getId() == id)
                 .findFirst()

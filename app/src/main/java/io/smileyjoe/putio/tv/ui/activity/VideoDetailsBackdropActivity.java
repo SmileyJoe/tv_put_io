@@ -7,13 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -43,7 +40,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
     private int mButtonMargin;
     private HashMap<Long, Group> mHashGroups;
 
-    public static Intent getIntent(Context context, Video video){
+    public static Intent getIntent(Context context, Video video) {
         Intent intent = new Intent(context, VideoDetailsBackdropActivity.class);
 
         intent.putExtra(EXTRA_VIDEO, video);
@@ -91,7 +88,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
 
     @Override
     public void handleClick(ActionOption option) {
-        switch (option){
+        switch (option) {
             case RESUME:
                 ResumeAction.super.handleClick(option);
                 break;
@@ -107,12 +104,12 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
         }
     }
 
-    private void populate(){
+    private void populate() {
         setImage(mView.imagePoster, mVideo.getPosterAsUri());
         setImage(mView.imageBackdrop, mVideo.getBackdropAsUri());
         setupActions();
 
-        if(mVideoDetailsViewHolder == null) {
+        if (mVideoDetailsViewHolder == null) {
             mView.frameDetails.removeAllViews();
             mVideoDetailsViewHolder = VideoDetailsViewHolder.getInstance(getBaseContext(), mView.frameDetails, true);
             mVideoDetailsViewHolder.addTextShadow();
@@ -137,7 +134,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
         mHashGroups.put(group.getIdAsLong(), group);
     }
 
-    private MaterialButton addActionButton(String title, long tag){
+    private MaterialButton addActionButton(String title, long tag) {
         MaterialButton button = (MaterialButton) LayoutInflater.from(getBaseContext()).inflate(R.layout.include_button_backdrop, null);
         button.setText(title);
         button.setTag(tag);
@@ -148,7 +145,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
         return button;
     }
 
-    private void setImage(ImageView image, Uri uri){
+    private void setImage(ImageView image, Uri uri) {
         Glide.with(getBaseContext())
                 .load(uri)
                 .dontAnimate()
@@ -159,8 +156,8 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
     private void handleExtras() {
         Bundle extras = getIntent().getExtras();
 
-        if(extras != null){
-            if(extras.containsKey(EXTRA_VIDEO)){
+        if (extras != null) {
+            if (extras.containsKey(EXTRA_VIDEO)) {
                 mVideo = extras.getParcelable(EXTRA_VIDEO);
             }
         }
@@ -188,7 +185,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
         MaterialButton button = mView.layoutButtons.findViewWithTag(option.getId());
         String title = getString(option.getTitleResId()) + " : " + mVideo.getResumeTimeFormatted();
 
-        if(button.getVisibility() != View.VISIBLE) {
+        if (button.getVisibility() != View.VISIBLE) {
             button.setVisibility(View.VISIBLE);
         }
 

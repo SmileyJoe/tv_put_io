@@ -8,9 +8,9 @@ import io.smileyjoe.putio.tv.object.Video;
 
 public class ViewUtil {
 
-    public static void populateResumeTime(TextView view, Video video){
-        if(view != null){
-            if(video.getResumeTime() > 0){
+    public static void populateResumeTime(TextView view, Video video) {
+        if (view != null) {
+            if (video.getResumeTime() > 0) {
                 view.setVisibility(View.VISIBLE);
                 view.setText(view.getContext().getString(R.string.text_resume) + ": " + video.getResumeTimeFormatted());
             } else {

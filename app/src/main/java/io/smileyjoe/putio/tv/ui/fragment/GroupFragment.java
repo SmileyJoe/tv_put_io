@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -43,7 +42,7 @@ public class GroupFragment extends ToggleFragment<Group> {
                 .forEach(i -> mViews.get(i).setSelected(mGroups.get(i).getPutIds().contains(currentPutId)));
     }
 
-    private class GetGroups extends AsyncTask<Void, Void, List<Group>>{
+    private class GetGroups extends AsyncTask<Void, Void, List<Group>> {
         @Override
         protected List<Group> doInBackground(Void... voids) {
             return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId());

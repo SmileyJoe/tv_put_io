@@ -10,7 +10,7 @@ public class FolderComparator implements Comparator<Folder> {
     public int compare(Folder folderOne, Folder folderTwo) {
         int result = Integer.compare(folderOne.getFolderType().getOrder(), folderTwo.getFolderType().getOrder());
 
-        if(result != 0){
+        if (result != 0) {
             return result;
         }
 

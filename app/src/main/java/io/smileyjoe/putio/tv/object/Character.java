@@ -77,7 +77,7 @@ public class Character implements Parcelable {
     }
 
     public Uri getProfileImageAsUri() {
-        if(!TextUtils.isEmpty(mProfileImage)) {
+        if (!TextUtils.isEmpty(mProfileImage)) {
             return Uri.parse(mProfileImage);
         } else {
             return null;

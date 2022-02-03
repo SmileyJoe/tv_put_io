@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.leanback.widget.Presenter;
@@ -27,7 +26,7 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
     private ItemVideoDetailsBinding mView;
     private ArrayList<View> mToggledViews = new ArrayList<>();
 
-    public static VideoDetailsViewHolder getInstance(Context context, ViewGroup parent, boolean attach){
+    public static VideoDetailsViewHolder getInstance(Context context, ViewGroup parent, boolean attach) {
         return new VideoDetailsViewHolder(ItemVideoDetailsBinding.inflate(LayoutInflater.from(context), parent, attach));
     }
 
@@ -37,7 +36,7 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         mContext = view.getRoot().getContext();
     }
 
-    public void addTextShadow(){
+    public void addTextShadow() {
         addTextShadow(mView.textTitle);
         addTextShadow(mView.textSeason);
         addTextShadow(mView.textOverview);
@@ -49,42 +48,42 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         addTextShadow(mView.textCastTitle);
     }
 
-    private void addTextShadow(TextView view){
+    private void addTextShadow(TextView view) {
         view.setShadowLayer(2, 1, 1, Color.BLACK);
     }
 
-    public void bind(Video video){
+    public void bind(Video video) {
         setText(mView.textTitle, video.getTitleFormatted());
         setText(mView.textOverview, video.getOverView());
         setText(mView.textTagline, video.getTagLine());
         setText(mView.textRuntime, Format.runtime(mContext, video.getRuntime()));
         setText(mView.textCreatedAt, mContext.getString(R.string.text_added_on, video.getCreatedAtFormatted()));
 
-        if(video.getReleaseDate() > 0) {
+        if (video.getReleaseDate() > 0) {
             setText(mView.textReleaseDate, mContext.getString(R.string.text_released_on, video.getReleaseDateFormatted()));
         }
 
-        if(video.getSeason() > 0){
+        if (video.getSeason() > 0) {
             mView.textSeason.setText(mContext.getString(R.string.text_season) + " " + video.getSeason());
             mView.textSeason.setVisibility(View.VISIBLE);
         } else {
             mView.textSeason.setVisibility(View.GONE);
         }
 
-        if(video.getCharacters() != null && !video.getCharacters().isEmpty()){
+        if (video.getCharacters() != null && !video.getCharacters().isEmpty()) {
             mView.layoutCast.setVisibility(View.VISIBLE);
             String cast = "";
 
             int count = 0;
-            for(Character character:video.getCharacters()){
+            for (Character character : video.getCharacters()) {
                 count++;
-                if(!TextUtils.isEmpty(cast)){
+                if (!TextUtils.isEmpty(cast)) {
                     cast += ", ";
                 }
 
                 cast += character.getCastMemberName();
 
-                if(count >= 10){
+                if (count >= 10) {
                     break;
                 }
             }
@@ -99,8 +98,8 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         task.execute();
     }
 
-    private void setText(TextView view, String text){
-        if(TextUtils.isEmpty(text)){
+    private void setText(TextView view, String text) {
+        if (TextUtils.isEmpty(text)) {
             view.setVisibility(View.GONE);
         } else {
             view.setText(text);
@@ -108,19 +107,19 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
         }
     }
 
-    public void toggleMinimized(){
+    public void toggleMinimized() {
         setMinimized(!mIsMinimized);
     }
 
-    public void setMinimized(boolean minimized){
-        if(mIsMinimized != minimized) {
+    public void setMinimized(boolean minimized) {
+        if (mIsMinimized != minimized) {
             ViewGroup viewGroup = (ViewGroup) mView.getRoot().getChildAt(0);
             if (minimized) {
                 mToggledViews = new ArrayList<>();
-                for(int i = 0; i < viewGroup.getChildCount(); i++){
+                for (int i = 0; i < viewGroup.getChildCount(); i++) {
                     View child = viewGroup.getChildAt(i);
 
-                    if(child.getId() != mView.textTitle.getId() && child.getVisibility() == View.VISIBLE) {
+                    if (child.getId() != mView.textTitle.getId() && child.getVisibility() == View.VISIBLE) {
                         child.setVisibility(View.GONE);
                         mToggledViews.add(child);
                     }

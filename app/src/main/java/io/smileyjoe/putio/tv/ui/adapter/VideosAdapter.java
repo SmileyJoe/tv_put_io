@@ -12,14 +12,13 @@ import java.util.stream.IntStream;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.viewholder.BaseViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.BaseVideosViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.VideosGridViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.VideosListViewHolder;
 
 public class VideosAdapter extends BaseListAdapter<Video, BaseVideosViewHolder<? extends ViewBinding>> {
 
-    public enum Style{
+    public enum Style {
         GRID(R.layout.grid_item_video),
         LIST(R.layout.list_item_video);
 
@@ -35,8 +34,8 @@ public class VideosAdapter extends BaseListAdapter<Video, BaseVideosViewHolder<?
             return mLayoutResId;
         }
 
-        public BaseVideosViewHolder<? extends ViewBinding> getViewHolder(View view, FragmentType fragmentType){
-            switch (this){
+        public BaseVideosViewHolder<? extends ViewBinding> getViewHolder(View view, FragmentType fragmentType) {
+            switch (this) {
                 case GRID:
                     return new VideosGridViewHolder(view, fragmentType);
                 case LIST:
@@ -54,7 +53,7 @@ public class VideosAdapter extends BaseListAdapter<Video, BaseVideosViewHolder<?
         setItems(new ArrayList<>());
     }
 
-    public void update(Video video){
+    public void update(Video video) {
         IntStream.range(0, getItems().size())
                 .filter(i -> getItem(i).getPutId() == video.getPutId())
                 .forEach(i -> {

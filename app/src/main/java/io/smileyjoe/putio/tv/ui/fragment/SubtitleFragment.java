@@ -2,17 +2,12 @@ package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,9 +26,9 @@ import io.smileyjoe.putio.tv.object.Subtitle;
 import io.smileyjoe.putio.tv.ui.adapter.SubtitleListAdapter;
 import io.smileyjoe.putio.tv.util.FileUtil;
 
-public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> implements SubtitleListAdapter.Listener<Subtitle>{
+public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> implements SubtitleListAdapter.Listener<Subtitle> {
 
-    public interface Listener{
+    public interface Listener {
         void showSubtitles(Uri uri);
     }
 
@@ -55,7 +50,7 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
         getSubtitles();
     }
 
-    private void getSubtitles(){
+    private void getSubtitles() {
         mView.progressLoading.setVisibility(View.VISIBLE);
         mView.recyclerSubtitle.setVisibility(View.GONE);
         mView.textEmpty.setVisibility(View.GONE);
@@ -75,7 +70,7 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
 
     @Override
     public void onItemClicked(View view, Subtitle item) {
-        if(item.getPutId() != 0) {
+        if (item.getPutId() != 0) {
             Putio.getSubtitles(getContext(), item.getPutId(), item.getKey(), new OnSubtitlesGetResponse());
         } else {
             mListener.ifPresent(listener -> listener.showSubtitles(null));
@@ -92,7 +87,7 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
         public void onSuccess(String result) {
             Uri uri = FileUtil.saveSubtitle(getContext(), mPutId, result);
 
-            if(uri != null && mListener.isPresent()){
+            if (uri != null && mListener.isPresent()) {
                 mListener.get().showSubtitles(uri);
             }
         }
@@ -101,12 +96,12 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
     private class OnAvailableSubtitlesGetResponse extends Response {
         @Override
         public void onSuccess(JsonObject result) {
-            if(result != null && result.has("subtitles")) {
+            if (result != null && result.has("subtitles")) {
                 ArrayList<Subtitle> subtitles = Subtitle.fromApi(result.getAsJsonArray("subtitles"), mPutId);
 
                 mView.progressLoading.setVisibility(View.GONE);
 
-                if(subtitles == null || subtitles.isEmpty()){
+                if (subtitles == null || subtitles.isEmpty()) {
                     mView.recyclerSubtitle.setVisibility(View.GONE);
                     mView.textEmpty.setVisibility(View.VISIBLE);
                 } else {

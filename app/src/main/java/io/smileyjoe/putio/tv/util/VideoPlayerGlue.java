@@ -129,25 +129,25 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         super.onActionClicked(action);
     }
 
-    public void showNextPrevious(){
+    public void showNextPrevious() {
         mPrimaryActionsAdapter.add(mSkipPreviousAction);
         mPrimaryActionsAdapter.add(mSkipNextAction);
     }
 
-    public void showAudioTrackSelection(){
-        if(!mAudioTrackAction.isAdded()) {
+    public void showAudioTrackSelection() {
+        if (!mAudioTrackAction.isAdded()) {
             mAudioTrackAction.setAdded(true);
             mSecondaryActionsAdapter.add(mAudioTrackAction);
         }
     }
 
-    public void resetActions(){
+    public void resetActions() {
         mAudioTrackAction.setAdded(false);
     }
 
-    public void setMediaType(MediaType mediaType){
+    public void setMediaType(MediaType mediaType) {
         mSecondaryActionsAdapter.clear();
-        switch (mediaType){
+        switch (mediaType) {
             case VIDEO:
                 mSecondaryActionsAdapter.add(mSubtitlesAction);
                 mSecondaryActionsAdapter.add(mReplayAction);
@@ -172,11 +172,11 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             next();
         } else if (action == mSkipPreviousAction) {
             previous();
-        } else if(action == mSubtitlesAction){
+        } else if (action == mSubtitlesAction) {
             mActionListener.ifPresent(listener -> listener.onSubtitles());
-        } else if(action == mReplayAction){
+        } else if (action == mReplayAction) {
             replay();
-        } else if(action == mAudioTrackAction) {
+        } else if (action == mAudioTrackAction) {
             mActionListener.ifPresent(listener -> listener.onAudioTrack());
         } else if (action instanceof PlaybackControlsRow.MultiAction) {
             PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
@@ -208,11 +208,11 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mActionListener.ifPresent(listener -> listener.onPrevious());
     }
 
-    public void replay(){
+    public void replay() {
         getPlayerAdapter().seekTo(0);
     }
 
-    private class SubtitlesAction extends Action{
+    private class SubtitlesAction extends Action {
         public SubtitlesAction() {
             super(100);
             setLabel1(getContext().getString(R.string.action_subtitle));
@@ -220,7 +220,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
     }
 
-    private class ReplayAction extends Action{
+    private class ReplayAction extends Action {
         public ReplayAction() {
             super(101);
             setLabel1(getContext().getString(R.string.action_replay));
@@ -228,7 +228,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
     }
 
-    private class AudioTrackAction extends Action{
+    private class AudioTrackAction extends Action {
 
         private boolean mIsAdded = false;
 

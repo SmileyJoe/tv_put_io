@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -22,7 +21,8 @@ import io.smileyjoe.putio.tv.object.Video;
 
 public class PutioHelper {
 
-    public interface Listener extends TmdbUtil.Listener{}
+    public interface Listener extends TmdbUtil.Listener {
+    }
 
     private ArrayList<Folder> mFolders;
     private ArrayList<Video> mVideos;
@@ -36,7 +36,7 @@ public class PutioHelper {
         mVideos = new ArrayList<>();
     }
 
-    public void setListener(Listener listener){
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 
@@ -52,16 +52,16 @@ public class PutioHelper {
         return mCurrent;
     }
 
-    public void parse(long putId, JsonObject jsonObject){
+    public void parse(long putId, JsonObject jsonObject) {
 
         JsonArray filesJson = jsonObject.getAsJsonArray("files");
         JsonObject parentObject = jsonObject.getAsJsonObject("parent");
 
-        if(putId == Putio.NO_PARENT){
+        if (putId == Putio.NO_PARENT) {
             List<Group> groups = AppDatabase.getInstance(mContext).groupDao().getAll();
 
-            if(groups != null && !groups.isEmpty()){
-                for(Group group:groups){
+            if (groups != null && !groups.isEmpty()) {
+                for (Group group : groups) {
                     mFolders.add(group);
                 }
             }
@@ -69,7 +69,7 @@ public class PutioHelper {
 
         mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
 
-        if(mCurrent.getFileType() == FileType.FOLDER) {
+        if (mCurrent.getFileType() == FileType.FOLDER) {
 
             ArrayList<Video> videos = VideoUtil.filter(VideoUtil.parseFromPut(mContext, filesJson));
 

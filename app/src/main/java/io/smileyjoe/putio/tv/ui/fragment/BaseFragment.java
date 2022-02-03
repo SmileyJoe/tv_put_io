@@ -15,9 +15,9 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment {
     protected abstract T inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState);
 
     @Override
-    public View onCreateView (LayoutInflater inflater,
-                              ViewGroup container,
-                              Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         mView = inflate(inflater, container, false);
         return mView.getRoot();
     }

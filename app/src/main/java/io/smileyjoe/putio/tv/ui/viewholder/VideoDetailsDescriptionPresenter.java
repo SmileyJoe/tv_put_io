@@ -1,12 +1,9 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.leanback.widget.Presenter;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 
 public class VideoDetailsDescriptionPresenter extends Presenter {

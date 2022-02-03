@@ -55,7 +55,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
         return mId;
     }
 
-    public Long getIdAsLong(){
+    public Long getIdAsLong() {
         return new Long(mId);
     }
 
@@ -84,13 +84,13 @@ public class Group implements ToggleItem, Folder, Parcelable {
     public int getIconResId() {
         @DrawableRes int iconResId;
 
-        if(getId() == DEFAULT_ID_MOVIES){
+        if (getId() == DEFAULT_ID_MOVIES) {
             iconResId = R.drawable.ic_movie_24;
         } else if (getId() == DEFAULT_ID_SERIES) {
             iconResId = R.drawable.ic_series_24;
-        } else if(getId() == DEFAULT_ID_WATCH_LATER) {
+        } else if (getId() == DEFAULT_ID_WATCH_LATER) {
             iconResId = R.drawable.ic_watch_later_24;
-        } else if(getId() == DEFAULT_ID_FAVOURITE) {
+        } else if (getId() == DEFAULT_ID_FAVOURITE) {
             iconResId = R.drawable.ic_favourite_24;
         } else {
             iconResId = R.drawable.ic_folder_24;
@@ -123,13 +123,13 @@ public class Group implements ToggleItem, Folder, Parcelable {
     public void setPutIds(ArrayList<Long> putIds) {
         mPutIds = putIds;
 
-        if(TextUtils.isEmpty(mPutIdsJson)) {
+        if (TextUtils.isEmpty(mPutIdsJson)) {
             setPutIdsJson();
         }
     }
 
-    public void addPutId(Long putId){
-        if(mPutIds == null){
+    public void addPutId(Long putId) {
+        if (mPutIds == null) {
             mPutIds = new ArrayList<>();
         }
 
@@ -138,14 +138,14 @@ public class Group implements ToggleItem, Folder, Parcelable {
         setPutIdsJson();
     }
 
-    public void removePutId(Long putId){
-        if(mPutIds != null && mPutIds.contains(putId)){
+    public void removePutId(Long putId) {
+        if (mPutIds != null && mPutIds.contains(putId)) {
             mPutIds.remove(mPutIds.indexOf(putId));
         }
         setPutIdsJson();
     }
 
-    private void setPutIdsJson(){
+    private void setPutIdsJson() {
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<Integer>>() {
         }.getType();
@@ -155,7 +155,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
     public void setPutIdsJson(String putIdsJson) {
         mPutIdsJson = putIdsJson;
 
-        if(mPutIds == null || mPutIds.isEmpty()) {
+        if (mPutIds == null || mPutIds.isEmpty()) {
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<Long>>() {
             }.getType();
@@ -166,7 +166,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
     public void setType(GroupType type) {
         mType = type;
 
-        if(mTypeId != type.getId()){
+        if (mTypeId != type.getId()) {
             setTypeId(type.getId());
         }
     }
@@ -175,7 +175,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
         mTypeId = typeId;
         GroupType type = GroupType.fromId(typeId);
 
-        if(mType != type){
+        if (mType != type) {
             setType(type);
         }
 

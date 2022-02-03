@@ -3,15 +3,13 @@ package io.smileyjoe.putio.tv.object;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 public class HistoryItem implements Parcelable {
 
     private long mId;
     private String mTitle;
     private FolderType mFolderType;
 
-    public static HistoryItem directory(Long id, String title){
+    public static HistoryItem directory(Long id, String title) {
         HistoryItem item = new HistoryItem();
         item.setId(id);
         item.setTitle(title);
@@ -19,7 +17,7 @@ public class HistoryItem implements Parcelable {
         return item;
     }
 
-    public static HistoryItem group(Long id, String title){
+    public static HistoryItem group(Long id, String title) {
         HistoryItem item = new HistoryItem();
         item.setId(id);
         item.setTitle(title);

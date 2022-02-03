@@ -1,12 +1,10 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.source.TrackGroup;

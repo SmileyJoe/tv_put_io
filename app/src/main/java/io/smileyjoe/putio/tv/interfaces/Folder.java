@@ -10,9 +10,13 @@ public interface Folder {
 
     @DrawableRes
     int getIconResId();
+
     String getTitle();
+
     String getSubTextOne(Context context);
+
     String getSubTextTwo(Context context);
+
     FolderType getFolderType();
 
 }
