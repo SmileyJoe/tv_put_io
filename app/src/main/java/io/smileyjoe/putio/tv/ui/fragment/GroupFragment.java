@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -38,16 +38,11 @@ public class GroupFragment extends ToggleFragment<Group> {
     }
 
     public void setCurrentPutId(long currentPutId) {
-        for(int i = 0; i < mGroups.size(); i++){
-            if(mGroups.get(i).getPutIds().contains(currentPutId)){
-                mViews.get(i).setSelected(true);
-            } else {
-                mViews.get(i).setSelected(false);
-            }
-        }
+        IntStream.range(0, mGroups.size())
+                .forEach(i -> mViews.get(i).setSelected(mGroups.get(i).getPutIds().contains(currentPutId)));
     }
 
-    private class GetGroups extends AsyncTask<Void, Void, List<Group>>{
+    private class GetGroups extends AsyncTask<Void, Void, List<Group>> {
         @Override
         protected List<Group> doInBackground(Void... voids) {
             return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId());
@@ -59,9 +54,7 @@ public class GroupFragment extends ToggleFragment<Group> {
 
             mGroups.addAll(groups);
 
-            for(Group group:groups){
-                mViews.add(addOption(group));
-            }
+            groups.forEach(group -> mViews.add(addOption(group)));
         }
     }
 }

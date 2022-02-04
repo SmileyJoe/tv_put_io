@@ -4,35 +4,28 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.databinding.FragmentVideoListBinding;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
-import io.smileyjoe.putio.tv.ui.view.ZoomGridVideo;
-import io.smileyjoe.putio.tv.ui.viewholder.VideosViewHolder;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
-public class VideosFragment extends Fragment {
+public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
 
     public interface Listener extends VideosAdapter.Listener<Video> {
     }
-
-    private RecyclerView mRecycler;
-    private LinearLayout mLayoutEmpty;
-    private ZoomGridVideo mZoomGridVideo;
 
     private VideosAdapter mVideosAdapter;
     private boolean mIsFullScreen = false;
@@ -40,24 +33,17 @@ public class VideosFragment extends Fragment {
     private ArrayList<Video> mVideosAll;
     private ArrayList<Filter> mAppliedFilters = new ArrayList<>();
     private Integer mAppliedGenreId = -1;
-    private VideosViewHolder.Style mStyle = VideosViewHolder.Style.GRID;
+    private VideosAdapter.Style mStyle = VideosAdapter.Style.GRID;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_video_list, null);
-
-        mRecycler = view.findViewById(R.id.recycler);
-        mLayoutEmpty = view.findViewById(R.id.layout_empty);
-        mZoomGridVideo = view.findViewById(R.id.zoom_grid_video);
-
-        return view;
+    protected FragmentVideoListBinding inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState) {
+        return FragmentVideoListBinding.inflate(inflater, container, savedInstanceState);
     }
 
-    public void setStyle(VideosViewHolder.Style style) {
+    public void setStyle(VideosAdapter.Style style) {
         mStyle = style;
 
-        if(mVideosAdapter != null){
+        if (mVideosAdapter != null) {
             mVideosAdapter.setStyle(style);
         }
 
@@ -66,7 +52,7 @@ public class VideosFragment extends Fragment {
 
     public void setType(FragmentType fragmentType) {
 
-        if(mVideosAdapter != null){
+        if (mVideosAdapter != null) {
             mVideosAdapter.setFragmentType(fragmentType);
         }
 
@@ -74,9 +60,9 @@ public class VideosFragment extends Fragment {
     }
 
     public void setFullScreen(boolean fullScreen) {
-        if(mIsFullScreen != fullScreen) {
+        if (mIsFullScreen != fullScreen) {
             mIsFullScreen = fullScreen;
-            mZoomGridVideo.reset();
+            mView.zoomGridVideo.reset();
             boolean created = setLayoutManager(false);
 
             if (!created && mLayoutManager instanceof GridLayoutManager) {
@@ -90,29 +76,29 @@ public class VideosFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mVideosAdapter = new VideosAdapter(getContext(), mStyle);
 
-        mRecycler.setAdapter(mVideosAdapter);
+        mView.recycler.setAdapter(mVideosAdapter);
         setLayoutManager(false);
     }
 
-    public void hideDetails(){
-        mZoomGridVideo.hide();
+    public void hideDetails() {
+        mView.zoomGridVideo.hide();
     }
 
     public void setListener(Listener listener) {
         setListener(new AdapterListener(listener));
     }
 
-    public void setListener(VideosAdapter.Listener<Video> listener){
+    public void setListener(VideosAdapter.Listener<Video> listener) {
         mVideosAdapter.setListener(listener);
     }
 
-    public void update(Video video){
-        if(mVideosAdapter != null){
+    public void update(Video video) {
+        if (mVideosAdapter != null) {
             mVideosAdapter.update(video);
         }
     }
 
-    private int getSpanCount(){
+    private int getSpanCount() {
         int spanCount;
 
         if (mIsFullScreen) {
@@ -124,11 +110,11 @@ public class VideosFragment extends Fragment {
         return spanCount;
     }
 
-    private boolean setLayoutManager(boolean force){
+    private boolean setLayoutManager(boolean force) {
         boolean created = false;
-        if(mRecycler != null) {
-            if(mLayoutManager == null || force) {
-                switch (mStyle){
+        if (mView.recycler != null) {
+            if (mLayoutManager == null || force) {
+                switch (mStyle) {
                     case GRID:
                         mLayoutManager = new GridLayoutManager(getContext(), getSpanCount());
                         break;
@@ -137,7 +123,7 @@ public class VideosFragment extends Fragment {
                         break;
                 }
 
-                mRecycler.setLayoutManager(mLayoutManager);
+                mView.recycler.setLayoutManager(mLayoutManager);
                 created = true;
             }
         }
@@ -151,31 +137,30 @@ public class VideosFragment extends Fragment {
         populate();
     }
 
-    private void populate(){
+    private void populate() {
         ArrayList<Video> videos = applyFilters();
 
         if (videos == null || videos.isEmpty()) {
-            mLayoutEmpty.setVisibility(View.VISIBLE);
-            mRecycler.setVisibility(View.GONE);
+            mView.layoutEmpty.setVisibility(View.VISIBLE);
+            mView.recycler.setVisibility(View.GONE);
         } else {
-            mLayoutEmpty.setVisibility(View.GONE);
-            mRecycler.setVisibility(View.VISIBLE);
+            mView.layoutEmpty.setVisibility(View.GONE);
+            mView.recycler.setVisibility(View.VISIBLE);
 
             mVideosAdapter.setItems(videos);
             mVideosAdapter.notifyDataSetChanged();
         }
     }
 
-    public void filter(Filter filter, boolean isSelected){
-        if(!isSelected){
+    public void filter(Filter filter, boolean isSelected) {
+        if (!isSelected) {
             mAppliedFilters.remove(filter);
         } else {
-            if(filter.getGroup().isUnique()) {
-                for (Filter applied : mAppliedFilters) {
-                    if (applied.getGroup() == filter.getGroup()) {
-                        mAppliedFilters.remove(applied);
-                    }
-                }
+            if (filter.getGroup().isUnique()) {
+                mAppliedFilters.stream()
+                        .filter(applied -> applied.getGroup() == filter.getGroup())
+                        .collect(Collectors.toList())
+                        .forEach(applied -> mAppliedFilters.remove(applied));
             }
             mAppliedFilters.add(filter);
         }
@@ -183,24 +168,24 @@ public class VideosFragment extends Fragment {
         populate();
     }
 
-    private ArrayList<Video> applyFilters(){
+    private ArrayList<Video> applyFilters() {
         ArrayList<Video> filtered = new ArrayList<>();
 
-        for(Video video:mVideosAll){
+        for (Video video : mVideosAll) {
             boolean includeVideo = true;
 
-            if(mAppliedGenreId > 0){
+            if (mAppliedGenreId > 0) {
                 ArrayList<Integer> genreIds = video.getGenreIds();
-                if(genreIds == null || !genreIds.contains(mAppliedGenreId)){
+                if (genreIds == null || !genreIds.contains(mAppliedGenreId)) {
                     includeVideo = false;
                 }
             }
 
-            if(includeVideo && mAppliedFilters != null && !mAppliedFilters.isEmpty()){
-                for(Filter filter:mAppliedFilters){
-                    switch (filter){
+            if (includeVideo && mAppliedFilters != null && !mAppliedFilters.isEmpty()) {
+                for (Filter filter : mAppliedFilters) {
+                    switch (filter) {
                         case SHOW_WATCHED:
-                            if(video.isWatched()){
+                            if (video.isWatched()) {
                                 includeVideo = false;
                             }
                             break;
@@ -208,20 +193,17 @@ public class VideosFragment extends Fragment {
                 }
             }
 
-            if(includeVideo){
+            if (includeVideo) {
                 filtered.add(video);
             }
         }
 
-        Filter filterSort = null;
-        for(Filter filter : mAppliedFilters){
-            if(filter.getGroup() == Filter.Group.SORT){
-                filterSort = filter;
-                break;
-            }
-        }
+        Filter filterSort = mAppliedFilters.stream()
+                .filter(filter -> filter.getGroup() == Filter.Group.SORT)
+                .findFirst()
+                .orElse(null);
 
-        if(filterSort != null) {
+        if (filterSort != null) {
             VideoUtil.sort(filtered, filterSort);
         } else {
             VideoUtil.sort(filtered);
@@ -230,50 +212,45 @@ public class VideosFragment extends Fragment {
         return filtered;
     }
 
-    public void filterByGenre(Integer genreId){
-        if(mAppliedGenreId != genreId) {
+    public void filterByGenre(Integer genreId) {
+        if (mAppliedGenreId != genreId) {
             mAppliedGenreId = genreId;
             populate();
         }
     }
 
-    public ArrayList<Video> getVideos(){
-        if(mVideosAdapter != null){
+    public ArrayList<Video> getVideos() {
+        if (mVideosAdapter != null) {
             return mVideosAdapter.getItems();
         }
 
         return null;
     }
 
-    public float getHeight(){
+    public float getHeight() {
         return getView().getHeight();
     }
 
-    public float getWidth(){
+    public float getWidth() {
         return getView().getWidth();
     }
 
-    private class AdapterListener implements VideosAdapter.Listener<Video>{
-        private Listener mListener;
+    private class AdapterListener implements VideosAdapter.Listener<Video> {
+        private Optional<Listener> mListener;
 
         public AdapterListener(Listener listener) {
-            mListener = listener;
+            mListener = Optional.ofNullable(listener);
         }
 
         @Override
         public void onItemClicked(View view, Video item) {
-            if(mLayoutManager != null){
-                mListener.onItemClicked(view, item);
-            }
+            mListener.ifPresent(listener -> listener.onItemClicked(view, item));
         }
 
         @Override
         public void hasFocus(FragmentType type, Video item, View view, int position) {
-            mZoomGridVideo.show(view, item);
-
-            if(mListener != null){
-                mListener.hasFocus(type, item, view, position);
-            }
+            mView.zoomGridVideo.show(view, item);
+            mListener.ifPresent(listener -> listener.hasFocus(type, item, view, position));
         }
     }
 }

@@ -5,13 +5,11 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.object.FragmentType;
-import io.smileyjoe.putio.tv.ui.viewholder.BaseViewHolder;
 import io.smileyjoe.putio.tv.ui.viewholder.FolderListViewHolder;
 
-public class FolderListAdapter extends BaseListAdapter<Folder, BaseViewHolder<Folder>> {
+public class FolderListAdapter extends BaseListAdapter<Folder, FolderListViewHolder> {
 
     public FolderListAdapter(Context context) {
         super(context);
@@ -20,11 +18,11 @@ public class FolderListAdapter extends BaseListAdapter<Folder, BaseViewHolder<Fo
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.list_item_folder;
+        return FolderListViewHolder.VIEW;
     }
 
     @Override
-    protected BaseViewHolder<Folder> getViewHolder(View view, FragmentType fragmentType) {
+    protected FolderListViewHolder getViewHolder(View view, FragmentType fragmentType) {
         return new FolderListViewHolder(view, fragmentType);
     }
 }

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import androidx.annotation.StringRes;
 
 import java.util.List;
+import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -17,7 +18,6 @@ import io.smileyjoe.putio.tv.object.Video;
 public interface GroupAction extends Action {
 
     void updateActionGroup(long groupId, @StringRes int verb);
-
     void addActionGroup(Group group, String verb, String title);
 
     default void addGroupActions(Get.Listener listener) {
@@ -27,9 +27,7 @@ public interface GroupAction extends Action {
 
     @Override
     default void setupActions() {
-        addGroupActions((group, verb, title) -> {
-            addActionGroup(group, verb, title);
-        });
+        addGroupActions((group, verb, title) -> addActionGroup(group, verb, title));
     }
 
     @Override
@@ -57,12 +55,12 @@ public interface GroupAction extends Action {
 
         private Context mContext;
         private Video mVideo;
-        private Get.Listener mListener;
+        private Optional<Listener> mListener;
 
         public Get(Context context, Video video, Get.Listener listener) {
             mContext = context;
             mVideo = video;
-            mListener = listener;
+            mListener = Optional.ofNullable(listener);
         }
 
         @Override
@@ -75,7 +73,7 @@ public interface GroupAction extends Action {
             super.onPostExecute(groups);
 
             if (groups != null && !groups.isEmpty()) {
-                for (io.smileyjoe.putio.tv.object.Group group : groups) {
+                groups.forEach(group -> {
                     @StringRes int subTextResId;
 
                     if (group.getPutIds().contains(mVideo.getPutId())) {
@@ -84,10 +82,8 @@ public interface GroupAction extends Action {
                         subTextResId = R.string.text_add_to;
                     }
 
-                    if (mListener != null) {
-                        mListener.update(group, mContext.getString(subTextResId), group.getTitle());
-                    }
-                }
+                    mListener.ifPresent(listener -> listener.update(group, mContext.getString(subTextResId), group.getTitle()));
+                });
             }
         }
     }
@@ -96,13 +92,13 @@ public interface GroupAction extends Action {
         private long mGroupId;
         private Context mContext;
         private Video mVideo;
-        private GroupAction mListener;
+        private Optional<GroupAction> mListener;
 
         public OnClicked(long groupId, Context context, Video video, GroupAction listener) {
             mGroupId = groupId;
             mContext = context;
             mVideo = video;
-            mListener = listener;
+            mListener = Optional.ofNullable(listener);
         }
 
         @Override
@@ -134,8 +130,8 @@ public interface GroupAction extends Action {
         protected void onPostExecute(Integer verb) {
             super.onPostExecute(verb);
 
-            if (verb > 0 && mListener != null) {
-                mListener.updateActionGroup(mGroupId, verb);
+            if (verb > 0 && mListener.isPresent()) {
+                mListener.get().updateActionGroup(mGroupId, verb);
             }
         }
     }

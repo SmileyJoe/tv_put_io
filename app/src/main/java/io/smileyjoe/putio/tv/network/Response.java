@@ -1,14 +1,9 @@
 package io.smileyjoe.putio.tv.network;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
-
-import io.smileyjoe.putio.tv.Application;
-import io.smileyjoe.putio.tv.ui.activity.AuthActivity;
-import io.smileyjoe.putio.tv.util.SharedPrefs;
 
 public abstract class Response implements FutureCallback<com.koushikdutta.ion.Response<JsonObject>> {
 
@@ -21,7 +16,7 @@ public abstract class Response implements FutureCallback<com.koushikdutta.ion.Re
     public void onCompleted(Exception e, com.koushikdutta.ion.Response<JsonObject> result) {
         int responseCode = result.getHeaders().code();
 
-        if(responseCode == 401){
+        if (responseCode == 401) {
             Log.e("PutThings", result.getRequest().getPath());
 //            Context context = Application.getStaticContext();
 //

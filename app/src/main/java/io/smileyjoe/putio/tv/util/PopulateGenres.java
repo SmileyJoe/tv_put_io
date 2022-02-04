@@ -19,7 +19,7 @@ import io.smileyjoe.putio.tv.ui.view.PillView;
 
 public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
 
-    private enum Type{
+    private enum Type {
         CSV, PILL
     }
 
@@ -30,7 +30,7 @@ public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
     private Type mType;
     private Context mContext;
 
-    public PopulateGenres(LinearLayout layout, Video video){
+    public PopulateGenres(LinearLayout layout, Video video) {
         mLayout = layout;
         mVideo = video;
         mType = Type.PILL;
@@ -59,7 +59,7 @@ public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
         }
     }
 
-    private String format(List<Genre> genres){
+    private String format(List<Genre> genres) {
         if (genres != null && !genres.isEmpty()) {
             String genreText = "";
 
@@ -79,7 +79,7 @@ public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
 
     @Override
     protected void onPostExecute(List<Genre> genres) {
-        switch (mType){
+        switch (mType) {
             case CSV:
                 populateCsv(genres);
                 break;
@@ -89,40 +89,35 @@ public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
         }
     }
 
-    private void populateCsv(List<Genre> genres){
+    private void populateCsv(List<Genre> genres) {
         boolean isVisible = handleVisibility(genres, mTextView);
 
-        if(isVisible) {
+        if (isVisible) {
             mTextView.setText(format(genres));
         }
     }
 
-    private void populatePill(List<Genre> genres){
+    private void populatePill(List<Genre> genres) {
         boolean isVisible = handleVisibility(genres, mLayout);
 
-        if(isVisible) {
+        if (isVisible) {
             mLayout.removeAllViews();
-            int marginRight = mContext.getResources().getDimensionPixelOffset(R.dimen.padding_general);
 
-            for (Genre genre : genres) {
+            genres.forEach(genre -> {
                 PillView pill = (PillView) LayoutInflater.from(mContext).inflate(R.layout.item_video_details_genre, mLayout, false);
-//                PillView pill = (PillView) LayoutInflater.from(mContext).inflate(R.layout.item_video_details_genre, null);
                 pill.setText(genre.getTitle());
 
                 mLayout.addView(pill);
-
-//                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) pill.getLayoutParams();
-//                params.rightMargin = marginRight;
-            }
+            });
         }
     }
 
-    private boolean handleVisibility(List<Genre> genres, View view){
-        if(genres != null && !genres.isEmpty()){
+    private boolean handleVisibility(List<Genre> genres, View view) {
+        if (genres != null && !genres.isEmpty()) {
             view.setVisibility(View.VISIBLE);
             return true;
         } else {
-            if(mHideOnEmpty){
+            if (mHideOnEmpty) {
                 view.setVisibility(View.GONE);
             }
             return false;

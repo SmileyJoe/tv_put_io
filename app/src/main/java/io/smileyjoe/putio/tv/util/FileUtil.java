@@ -3,8 +3,6 @@ package io.smileyjoe.putio.tv.util;
 import android.content.Context;
 import android.net.Uri;
 
-import androidx.core.content.ContextCompat;
-
 import java.io.File;
 import java.io.FileWriter;
 
@@ -12,17 +10,17 @@ public class FileUtil {
 
     private static final String DIRECTORY_SUBTITLES = "subtitles";
 
-    private FileUtil(){
+    private FileUtil() {
 
     }
 
-    public static Uri saveSubtitle(Context context, long putId, String subtitles){
+    public static Uri saveSubtitle(Context context, long putId, String subtitles) {
         return save(context, DIRECTORY_SUBTITLES, Long.toString(putId) + ".srt", subtitles);
     }
 
-    private static Uri save(Context context, String directory, String fileName, String content){
+    private static Uri save(Context context, String directory, String fileName, String content) {
         File dir = new File(context.getFilesDir(), directory);
-        if(!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdir();
         }
 
@@ -33,7 +31,7 @@ public class FileUtil {
             writer.flush();
             writer.close();
             return Uri.fromFile(file);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

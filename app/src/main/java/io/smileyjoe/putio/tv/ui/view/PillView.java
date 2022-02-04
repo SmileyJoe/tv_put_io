@@ -3,9 +3,6 @@ package io.smileyjoe.putio.tv.ui.view;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.ViewTreeObserver;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -29,7 +26,7 @@ public class PillView extends AppCompatTextView {
         init(attrs);
     }
 
-    private void init(AttributeSet attributeSet){
+    private void init(AttributeSet attributeSet) {
         int paddingHorizontal = getResources().getDimensionPixelOffset(R.dimen.padding_pill_horizontal);
         int paddingVertical = getResources().getDimensionPixelOffset(R.dimen.padding_pill_vertical);
 

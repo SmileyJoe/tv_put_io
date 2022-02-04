@@ -31,6 +31,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
@@ -41,8 +43,8 @@ import io.smileyjoe.putio.tv.action.video.ResumeAction;
 import io.smileyjoe.putio.tv.interfaces.VideoDetails;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
+import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.util.VideoUtil;
@@ -68,7 +70,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     private DetailsFragmentBackgroundController mDetailsBackground;
 
-    private Listener mListener;
+    private Optional<Listener> mListener = Optional.empty();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,7 +99,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void handleClick(ActionOption option) {
-        switch (option){
+        switch (option) {
             case RESUME:
                 ResumeAction.super.handleClick(option);
                 break;
@@ -113,7 +115,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     @Override
     public void handleClick(Action action) {
         ActionOption option = ActionOption.fromId(action.getId());
-        if(option == ActionOption.UNKNOWN){
+        if (option == ActionOption.UNKNOWN) {
             onGroupActionClicked(getGroupId(action.getId()));
         } else {
             handleClick(ActionOption.fromId(action.getId()));
@@ -132,7 +134,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void addAction(ActionOption option, String title, String subtitle, boolean shouldShow) {
-        if(shouldShow) {
+        if (shouldShow) {
             mActionAdapter.add(new Action(option.getId(), title, subtitle));
         }
     }
@@ -164,7 +166,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
         super.onViewCreated(view, savedInstanceState);
 
         if (getActivity() instanceof Listener) {
-            mListener = (Listener) getActivity();
+            mListener = Optional.ofNullable((Listener) getActivity());
         }
     }
 
@@ -196,13 +198,13 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void update(Video video) {
-        if(mRow.getItem() == null) {
+        if (mRow.getItem() == null) {
             mRow.setItem(video);
         } else {
             mRow.setItem(new Video(video));
         }
 
-        if(!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())){
+        if (!TextUtils.isEmpty(mVideo.getYoutubeTrailerUrl())) {
             Action action = new Action(ActionOption.TRAILER.getId(), getResources().getString(ActionOption.TRAILER.getTitleResId()));
             mActionAdapter.add(action);
         }
@@ -231,14 +233,11 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     }
 
     private void setupRelatedVideoListRow() {
-        ArrayList<Video> relatedVideos = VideoUtil.getRelated(mVideo,mRelatedVideos);
+        ArrayList<Video> relatedVideos = VideoUtil.getRelated(mVideo, mRelatedVideos);
 
         if (relatedVideos != null && !relatedVideos.isEmpty()) {
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new RelatedVideoCardPresenter());
-
-            for (Video video : relatedVideos) {
-                listRowAdapter.add(video);
-            }
+            relatedVideos.forEach(listRowAdapter::add);
 
             HeaderItem header = new HeaderItem(0, getString(R.string.related_videos));
             mAdapter.add(new ListRow(header, listRowAdapter));
@@ -247,15 +246,11 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     }
 
     private Action getAction(long id) {
-        for (int i = 0; i < mActionAdapter.size(); i++) {
-            Action action = (Action) mActionAdapter.get(i);
-
-            if (action.getId() == id) {
-                return action;
-            }
-        }
-
-        return null;
+        return IntStream.range(0, mActionAdapter.size())
+                .filter(i -> ((Action) mActionAdapter.get(i)).getId() == id)
+                .mapToObj(i -> ((Action) mActionAdapter.get(i)))
+                .findFirst()
+                .orElse(null);
     }
 
     private void updateActions(Action action) {
@@ -300,8 +295,8 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
                 RowPresenter.ViewHolder rowViewHolder,
                 Row row) {
 
-            if (mListener != null && item instanceof Video) {
-                mListener.onRelatedClicked((Video) item, mRelatedVideos);
+            if (mListener.isPresent() && item instanceof Video) {
+                mListener.get().onRelatedClicked((Video) item, mRelatedVideos);
             }
         }
     }

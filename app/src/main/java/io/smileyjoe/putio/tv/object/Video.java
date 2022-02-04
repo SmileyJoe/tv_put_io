@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.text.format.Formatter;
 
 import androidx.room.ColumnInfo;
@@ -19,18 +18,14 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.converter.VideoTypeConverter;
-import io.smileyjoe.putio.tv.interfaces.Folder;
-import io.smileyjoe.putio.tv.util.Format;
 import io.smileyjoe.putio.tv.util.TimeUtil;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 @Entity(tableName = "video")
-public class Video implements Parcelable{
+public class Video implements Parcelable {
 
     // ids
     @PrimaryKey
@@ -150,7 +145,7 @@ public class Video implements Parcelable{
         mFileType = fileType;
     }
 
-    public void setFileType(String putType){
+    public void setFileType(String putType) {
         setFileType(FileType.fromPut(putType));
     }
 
@@ -234,7 +229,7 @@ public class Video implements Parcelable{
     public void setGenreIdsJson(String genreIdsJson) {
         mGenreIdsJson = genreIdsJson;
 
-        if(mGenreIds == null || mGenreIds.isEmpty()) {
+        if (mGenreIds == null || mGenreIds.isEmpty()) {
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<Integer>>() {
             }.getType();
@@ -245,7 +240,7 @@ public class Video implements Parcelable{
     public void setGenreIds(ArrayList<Integer> genreIds) {
         mGenreIds = genreIds;
 
-        if(TextUtils.isEmpty(mGenreIdsJson)){
+        if (TextUtils.isEmpty(mGenreIdsJson)) {
             Gson gson = new Gson();
             Type type = new TypeToken<ArrayList<Integer>>() {
             }.getType();
@@ -293,7 +288,7 @@ public class Video implements Parcelable{
         mCharacters = characters;
     }
 
-    public void setYoutubeTrailerKey(String key){
+    public void setYoutubeTrailerKey(String key) {
         mYoutubeTrailerKey = key;
     }
 
@@ -306,7 +301,7 @@ public class Video implements Parcelable{
     }
 
     public String getYoutubeTrailerUrl() {
-        if(!TextUtils.isEmpty(mYoutubeTrailerKey)) {
+        if (!TextUtils.isEmpty(mYoutubeTrailerKey)) {
             return "https://www.youtube.com/watch?v=" + mYoutubeTrailerKey;
         } else {
             return null;
@@ -330,7 +325,7 @@ public class Video implements Parcelable{
     }
 
     public String getTitleFormatted() {
-        if(mVideoType == VideoType.EPISODE){
+        if (mVideoType == VideoType.EPISODE) {
             return String.format("%02d", getEpisode()) + ". " + mTitle + " S" + String.format("%02d", getSeason());
         } else {
             return mTitle;
@@ -374,7 +369,7 @@ public class Video implements Parcelable{
     }
 
     public Uri getPosterAsUri() {
-        if(!TextUtils.isEmpty(mPoster)) {
+        if (!TextUtils.isEmpty(mPoster)) {
             return Uri.parse(mPoster);
         } else {
             return null;
@@ -382,7 +377,7 @@ public class Video implements Parcelable{
     }
 
     public Uri getBackdropAsUri() {
-        if(!TextUtils.isEmpty(mBackdrop)) {
+        if (!TextUtils.isEmpty(mBackdrop)) {
             return Uri.parse(mBackdrop);
         } else {
             return null;
@@ -425,8 +420,8 @@ public class Video implements Parcelable{
         return mSize;
     }
 
-    public String getSizeFormatted(Context context){
-        if(mSize > 0){
+    public String getSizeFormatted(Context context) {
+        if (mSize > 0) {
             return Formatter.formatShortFileSize(context, mSize);
         } else {
             return null;
@@ -441,7 +436,7 @@ public class Video implements Parcelable{
         return mCreatedAt;
     }
 
-    public String getCreatedAtFormatted(){
+    public String getCreatedAtFormatted() {
         return VideoUtil.getFormatted(mCreatedAt);
     }
 
@@ -449,12 +444,12 @@ public class Video implements Parcelable{
         return mUpdatedAt;
     }
 
-    public String getUpdatedAtFormatted(){
+    public String getUpdatedAtFormatted() {
         return VideoUtil.getFormatted(mUpdatedAt);
     }
 
-    public String getUpdatedAgo(Context context){
-        if(mUpdatedAt > 0){
+    public String getUpdatedAgo(Context context) {
+        if (mUpdatedAt > 0) {
             return TimeUtil.toRelative(context, mUpdatedAt);
         } else {
             return null;
@@ -465,7 +460,7 @@ public class Video implements Parcelable{
         return mReleaseDate;
     }
 
-    public String getReleaseDateFormatted(){
+    public String getReleaseDateFormatted() {
         return VideoUtil.getFormatted(mReleaseDate);
     }
 

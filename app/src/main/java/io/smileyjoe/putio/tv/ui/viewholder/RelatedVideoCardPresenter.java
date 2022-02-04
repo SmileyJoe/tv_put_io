@@ -1,8 +1,6 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -11,6 +9,8 @@ import androidx.leanback.widget.ImageCardView;
 import androidx.leanback.widget.Presenter;
 
 import com.bumptech.glide.Glide;
+
+import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
@@ -41,13 +41,10 @@ public class RelatedVideoCardPresenter extends Presenter {
         int color = selected ? sSelectedTextColor : sDefaultTextColor;
         ViewGroup viewInfo = imageCardView.findViewById(R.id.info_field);
 
-        for (int i = 0; i < viewInfo.getChildCount(); i++) {
-            View view = viewInfo.getChildAt(i);
-
-            if (view instanceof TextView) {
-                ((TextView) view).setTextColor(color);
-            }
-        }
+        IntStream.range(0, viewInfo.getChildCount())
+                .mapToObj(viewInfo::getChildAt)
+                .filter(view -> view instanceof TextView)
+                .forEach(view -> ((TextView) view).setTextColor(color));
     }
 
     @Override
@@ -90,7 +87,7 @@ public class RelatedVideoCardPresenter extends Presenter {
                     .error(mDefaultCardImage)
                     .into(cardView.getMainImageView());
         } else {
-            cardView.getMainImageView().setPadding(sPosterPadding,sPosterPadding,sPosterPadding,sPosterPadding);
+            cardView.getMainImageView().setPadding(sPosterPadding, sPosterPadding, sPosterPadding, sPosterPadding);
             cardView.getMainImageView().setImageResource(R.drawable.ic_movie_24);
         }
 

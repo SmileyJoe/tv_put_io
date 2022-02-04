@@ -7,13 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -28,22 +25,22 @@ import io.smileyjoe.putio.tv.action.video.PlayAction;
 import io.smileyjoe.putio.tv.action.video.RefreshAction;
 import io.smileyjoe.putio.tv.action.video.ResumeAction;
 import io.smileyjoe.putio.tv.action.video.TrailerAction;
+import io.smileyjoe.putio.tv.databinding.ActivityDetailsBackdropBinding;
 import io.smileyjoe.putio.tv.interfaces.VideoDetails;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsViewHolder;
 
-public class VideoDetailsBackdropActivity extends FragmentActivity implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction, TrailerAction {
+public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBackdropBinding> implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction, TrailerAction {
 
     private static final String EXTRA_VIDEO = "video";
 
     private Video mVideo;
     private VideoDetailsViewHolder mVideoDetailsViewHolder;
-    private LinearLayoutCompat mLayoutButtons;
     private int mButtonMargin;
     private HashMap<Long, Group> mHashGroups;
 
-    public static Intent getIntent(Context context, Video video){
+    public static Intent getIntent(Context context, Video video) {
         Intent intent = new Intent(context, VideoDetailsBackdropActivity.class);
 
         intent.putExtra(EXTRA_VIDEO, video);
@@ -55,10 +52,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_details_backdrop);
-
         mHashGroups = new HashMap<>();
-        mLayoutButtons = findViewById(R.id.layout_buttons);
         mButtonMargin = getResources().getDimensionPixelOffset(R.dimen.padding_general);
 
         handleExtras();
@@ -67,8 +61,13 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     }
 
     @Override
+    protected ActivityDetailsBackdropBinding inflate() {
+        return ActivityDetailsBackdropBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void setupActions() {
-        mLayoutButtons.removeAllViews();
+        mView.layoutButtons.removeAllViews();
         PlayAction.super.setupActions();
         ResumeAction.super.setupActions();
         GroupAction.super.setupActions();
@@ -89,7 +88,7 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
 
     @Override
     public void handleClick(ActionOption option) {
-        switch (option){
+        switch (option) {
             case RESUME:
                 ResumeAction.super.handleClick(option);
                 break;
@@ -105,16 +104,14 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
         }
     }
 
-    private void populate(){
-        setImage(findViewById(R.id.image_poster), mVideo.getPosterAsUri());
-        setImage(findViewById(R.id.image_backdrop), mVideo.getBackdropAsUri());
+    private void populate() {
+        setImage(mView.imagePoster, mVideo.getPosterAsUri());
+        setImage(mView.imageBackdrop, mVideo.getBackdropAsUri());
         setupActions();
 
-        if(mVideoDetailsViewHolder == null) {
-            FrameLayout frameDetails = findViewById(R.id.frame_details);
-            frameDetails.removeAllViews();
-            ViewGroup viewDetails = (ViewGroup) LayoutInflater.from(getBaseContext()).inflate(R.layout.item_video_details, frameDetails, true);
-            mVideoDetailsViewHolder = new VideoDetailsViewHolder(viewDetails);
+        if (mVideoDetailsViewHolder == null) {
+            mView.frameDetails.removeAllViews();
+            mVideoDetailsViewHolder = VideoDetailsViewHolder.getInstance(getBaseContext(), mView.frameDetails, true);
             mVideoDetailsViewHolder.addTextShadow();
         }
 
@@ -133,24 +130,22 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     @Override
     public void addActionGroup(Group group, String verb, String title) {
         MaterialButton button = addActionButton(verb + " " + title, getGroupActionId(group.getId()));
-        button.setOnClickListener(view -> {
-            onGroupActionClicked(group.getId());
-        });
+        button.setOnClickListener(view -> onGroupActionClicked(group.getId()));
         mHashGroups.put(group.getIdAsLong(), group);
     }
 
-    private MaterialButton addActionButton(String title, long tag){
+    private MaterialButton addActionButton(String title, long tag) {
         MaterialButton button = (MaterialButton) LayoutInflater.from(getBaseContext()).inflate(R.layout.include_button_backdrop, null);
         button.setText(title);
         button.setTag(tag);
-        mLayoutButtons.addView(button);
+        mView.layoutButtons.addView(button);
         LinearLayoutCompat.LayoutParams params = (LinearLayoutCompat.LayoutParams) button.getLayoutParams();
         params.leftMargin = mButtonMargin;
         params.rightMargin = mButtonMargin;
         return button;
     }
 
-    private void setImage(ImageView image, Uri uri){
+    private void setImage(ImageView image, Uri uri) {
         Glide.with(getBaseContext())
                 .load(uri)
                 .dontAnimate()
@@ -161,8 +156,8 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     private void handleExtras() {
         Bundle extras = getIntent().getExtras();
 
-        if(extras != null){
-            if(extras.containsKey(EXTRA_VIDEO)){
+        if (extras != null) {
+            if (extras.containsKey(EXTRA_VIDEO)) {
                 mVideo = extras.getParcelable(EXTRA_VIDEO);
             }
         }
@@ -181,16 +176,16 @@ public class VideoDetailsBackdropActivity extends FragmentActivity implements Vi
     @Override
     public void updateActionGroup(long groupId, int verb) {
         Group group = mHashGroups.get(groupId);
-        ((MaterialButton) mLayoutButtons.findViewWithTag(getGroupActionId(groupId))).setText(getString(verb) + " " + group.getTitle());
+        ((MaterialButton) mView.layoutButtons.findViewWithTag(getGroupActionId(groupId))).setText(getString(verb) + " " + group.getTitle());
     }
 
     @Override
     public void updateActionResume() {
         ActionOption option = ActionOption.RESUME;
-        MaterialButton button = mLayoutButtons.findViewWithTag(option.getId());
+        MaterialButton button = mView.layoutButtons.findViewWithTag(option.getId());
         String title = getString(option.getTitleResId()) + " : " + mVideo.getResumeTimeFormatted();
 
-        if(button.getVisibility() != View.VISIBLE) {
+        if (button.getVisibility() != View.VISIBLE) {
             button.setVisibility(View.VISIBLE);
         }
 

@@ -2,8 +2,6 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 
-import androidx.annotation.PluralsRes;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -35,15 +33,15 @@ public class TimeUtil {
     public static String toRelative(Context context, long duration, int maxLevel) {
         StringBuilder res = new StringBuilder();
         int level = 0;
-        for (Map.Entry<Integer, Long> time : sTimes.entrySet()){
+        for (Map.Entry<Integer, Long> time : sTimes.entrySet()) {
             int timeDelta = (int) (duration / time.getValue());
-            if (timeDelta > 0){
+            if (timeDelta > 0) {
                 res.append(context.getResources().getQuantityString(time.getKey(), timeDelta, timeDelta))
                         .append(", ");
                 duration -= time.getValue() * timeDelta;
                 level++;
             }
-            if (level == maxLevel){
+            if (level == maxLevel) {
                 break;
             }
         }

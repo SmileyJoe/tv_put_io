@@ -2,18 +2,20 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 import io.smileyjoe.putio.tv.comparator.VideoComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -29,11 +31,11 @@ public class VideoUtil {
 
     }
 
-    public static Video getFromDbByPutId(Context context, long putId){
+    public static Video getFromDbByPutId(Context context, long putId) {
         AppDatabase db = AppDatabase.getInstance(context);
         Video currentDbVideo = db.videoDao().getByPutId(putId);
 
-        if(currentDbVideo != null && currentDbVideo.getTmdbId() > 0){
+        if (currentDbVideo != null && currentDbVideo.getTmdbId() > 0) {
             currentDbVideo.setCharacters(new ArrayList<>(db.characterDao().getByTmdbId(currentDbVideo.getTmdbId())));
         }
 
@@ -41,15 +43,9 @@ public class VideoUtil {
     }
 
     public static ArrayList<Video> filter(ArrayList<Video> videos) {
-        ArrayList<Video> videosFiltered = new ArrayList<>();
-
-        for (Video video : videos) {
-            if (video.getFileType() != FileType.UNKNOWN && video.getSize() > 0) {
-                videosFiltered.add(video);
-            }
-        }
-
-        return videosFiltered;
+        return videos.stream()
+                .filter(video -> video.getFileType() != FileType.UNKNOWN && video.getSize() > 0)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static void sort(ArrayList<Video> videos) {
@@ -71,13 +67,13 @@ public class VideoUtil {
 
         Video video = VideoUtil.getFromDbByPutId(context, putId);
 
-        if(video != null){
+        if (video != null) {
             hasTmdbData = video.isTmdbFound();
         } else {
             video = new Video();
         }
 
-        if(!hasTmdbData){
+        if (!hasTmdbData) {
             video.setTitle(json.getString("name"));
             video.setPutId(json.getLong("id"));
             video.setBackdrop(json.getString("screenshot"));
@@ -101,32 +97,28 @@ public class VideoUtil {
         return video;
     }
 
-    public static long getMillies(String putDate){
+    public static long getMillies(String putDate) {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             Date date = formatter.parse(putDate);
             return date.getTime();
-        } catch (ParseException | NullPointerException e){
+        } catch (ParseException | NullPointerException e) {
             return -1;
         }
     }
 
-    public static String getFormatted(long millies){
+    public static String getFormatted(long millies) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
         return formatter.format(new Date(millies));
     }
 
     public static ArrayList<Video> parseFromPut(Context context, JsonArray jsonArray) {
-        ArrayList<Video> videos = new ArrayList<>();
-
-        for (JsonElement jsonElement : jsonArray) {
-            videos.add(parseFromPut(context, jsonElement.getAsJsonObject()));
-        }
-
-        return videos;
+        return StreamSupport.stream(jsonArray.spliterator(), false)
+                .map(jsonElement -> parseFromPut(context, jsonElement.getAsJsonObject()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public static Video updateFromDb(Video putVideo, Video dbVideo){
+    public static Video updateFromDb(Video putVideo, Video dbVideo) {
         putVideo.setTmdbId(dbVideo.getTmdbId());
         putVideo.setBackdrop(dbVideo.getBackdrop());
         putVideo.setOverView(dbVideo.getOverView());
@@ -140,8 +132,8 @@ public class VideoUtil {
         return putVideo;
     }
 
-    public static ArrayList<Video> getRelated(Video videoPrimary, ArrayList<Video> videoList){
-        switch (videoPrimary.getVideoType()){
+    public static ArrayList<Video> getRelated(Video videoPrimary, ArrayList<Video> videoList) {
+        switch (videoPrimary.getVideoType()) {
             case EPISODE:
                 return getRelatedSeries(videoPrimary, videoList);
             case MOVIE:
@@ -152,34 +144,25 @@ public class VideoUtil {
         }
     }
 
-    private static ArrayList<Video> getRelatedSeries(Video videoPrimary, ArrayList<Video> videoList){
-        ArrayList<Video> relatedVideos = new ArrayList<>();
-
-        for(Video video:videoList) {
-            if (video.getPutId() != videoPrimary.getPutId()
-                    && video.getVideoType() == VideoType.EPISODE
-                    && video.getTitle().equalsIgnoreCase(videoPrimary.getTitle())) {
-                relatedVideos.add(video);
-            }
-        }
-
-        return relatedVideos;
+    private static ArrayList<Video> getRelatedSeries(Video videoPrimary, ArrayList<Video> videoList) {
+        return videoList.stream()
+                .filter(video -> video.getPutId() != videoPrimary.getPutId()
+                        && video.getVideoType() == VideoType.EPISODE
+                        && video.getTitle().equalsIgnoreCase(videoPrimary.getTitle()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private static ArrayList<Video> getRelatedMovie(Video videoPrimary, ArrayList<Video> videoList){
+    private static ArrayList<Video> getRelatedMovie(Video videoPrimary, ArrayList<Video> videoList) {
         ArrayList<Video> relatedVideos = new ArrayList<>();
 
-        if(videoList != null && !videoList.isEmpty()) {
+        if (videoList != null && !videoList.isEmpty()) {
             HashMap<Integer, ArrayList<Video>> relatedVideosMap = new HashMap<>();
 
             for (Video video : videoList) {
                 if (video.getPutId() != videoPrimary.getPutId() && video.getVideoType() == VideoType.MOVIE) {
-                    int count = 0;
-                    for (int genreId : video.getGenreIds()) {
-                        if (videoPrimary.getGenreIds().contains(genreId)) {
-                            count++;
-                        }
-                    }
+                    int count = Math.toIntExact(video.getGenreIds().stream()
+                            .filter(id -> videoPrimary.getGenreIds().contains(id))
+                            .count());
 
                     if (count > 0) {
                         ArrayList<Video> videosFromMap;
@@ -197,11 +180,11 @@ public class VideoUtil {
                 }
             }
 
-            for (int i = videoPrimary.getGenreIds().size(); i >= 1; i--) {
-                if (relatedVideosMap.containsKey(i)) {
-                    relatedVideos.addAll(relatedVideosMap.get(i));
-                }
-            }
+            relatedVideos = IntStream.range(0, videoPrimary.getGenreIds().size())
+                    .filter(relatedVideosMap::containsKey)
+                    .mapToObj(relatedVideosMap::get)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toCollection(ArrayList::new));
         }
 
         return relatedVideos;

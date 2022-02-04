@@ -1,11 +1,12 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.stream.Stream;
 
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -16,9 +17,8 @@ public class FilterFragment extends ToggleFragment<Filter> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        for(Filter filter:Filter.values()){
-            addOption(filter);
-        }
+        Stream.of(Filter.values())
+                .forEach(filter -> addOption(filter));
     }
 
     @Override
@@ -28,18 +28,12 @@ public class FilterFragment extends ToggleFragment<Filter> {
 
     @Override
     protected void onItemClick(View view, Filter item) {
-        if(item.getGroup().isUnique()) {
-            for (View optionView : getOptionViews()) {
-                int tag = (Integer) optionView.getTag();
-
-                if (tag != item.getId()) {
-                    Filter filter = Filter.getById(tag);
-
-                    if (filter != null && filter.getGroup() == item.getGroup()) {
-                        optionView.setSelected(false);
-                    }
-                }
-            }
+        if (item.getGroup().isUnique()) {
+            getOptionViews()
+                    .stream()
+                    .filter(v -> ((Integer) v.getTag()) != item.getId())
+                    .filter(v -> Filter.getById((Integer) v.getTag()).getGroup() == item.getGroup())
+                    .forEach(optionView -> optionView.setSelected(false));
         }
 
         super.onItemClick(view, item);

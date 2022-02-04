@@ -20,8 +20,11 @@ import io.smileyjoe.putio.tv.object.Video;
 @Database(entities = {Video.class, Genre.class, Group.class, Character.class}, version = 8)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract VideoDao videoDao();
+
     public abstract GenreDao genreDao();
+
     public abstract GroupDao groupDao();
+
     public abstract CharacterDao characterDao();
 
     private static volatile AppDatabase INSTANCE;
@@ -94,7 +97,7 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
-    private static void resetVideo(SupportSQLiteDatabase database){
+    private static void resetVideo(SupportSQLiteDatabase database) {
         database.execSQL("DELETE FROM video");
         database.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='video'");
     }
@@ -129,7 +132,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    private static class RoomCallback extends RoomDatabase.Callback{
+    private static class RoomCallback extends RoomDatabase.Callback {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase database) {
             super.onCreate(database);

@@ -1,20 +1,16 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.leanback.widget.Presenter;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 
 public class VideoDetailsDescriptionPresenter extends Presenter {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
-        ViewGroup view = (ViewGroup) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_details, parent, false);
-        return new VideoDetailsViewHolder(view);
+        return VideoDetailsViewHolder.getInstance(parent.getContext(), parent, false);
     }
 
     @Override

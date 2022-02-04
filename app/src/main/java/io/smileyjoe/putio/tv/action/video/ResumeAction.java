@@ -2,6 +2,8 @@ package io.smileyjoe.putio.tv.action.video;
 
 import com.google.gson.JsonObject;
 
+import java.util.Optional;
+
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Video;
@@ -19,12 +21,10 @@ public interface ResumeAction extends Action {
         ActionOption option = ActionOption.RESUME;
         Video video = getVideo();
 
-        boolean shouldShow = true;
-        if (video.getResumeTime() <= 0) {
-            shouldShow = false;
-        }
-
-        addAction(ActionOption.RESUME, getBaseContext().getString(option.getTitleResId()), video.getResumeTimeFormatted(), shouldShow);
+        addAction(ActionOption.RESUME,
+                getBaseContext().getString(option.getTitleResId()),
+                video.getResumeTimeFormatted(),
+                video.getResumeTime() > 0);
     }
 
     @Override
@@ -38,11 +38,11 @@ public interface ResumeAction extends Action {
 
     class OnResumeResponse extends Response {
         private Video mVideo;
-        private ResumeAction mListener;
+        private Optional<ResumeAction> mListener;
 
         public OnResumeResponse(Video video, ResumeAction listener) {
             mVideo = video;
-            mListener = listener;
+            mListener = Optional.ofNullable(listener);
         }
 
         @Override
@@ -55,9 +55,7 @@ public interface ResumeAction extends Action {
             }
 
             if (mVideo.getResumeTime() > 0) {
-                if (mListener != null) {
-                    mListener.updateActionResume();
-                }
+                mListener.ifPresent(listener -> listener.updateActionResume());
             }
         }
     }

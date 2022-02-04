@@ -1,13 +1,8 @@
 package io.smileyjoe.putio.tv.ui.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.ui.viewholder.GenreListViewHolder;
@@ -22,7 +17,7 @@ public class GenreListAdapter extends BaseListAdapter<Genre, GenreListViewHolder
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.list_item_genre;
+        return GenreListViewHolder.VIEW;
     }
 
     @Override

@@ -1,10 +1,11 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
+
+import java.util.Optional;
 
 import at.huber.youtubeExtractor.VideoMeta;
 import at.huber.youtubeExtractor.YouTubeExtractor;
@@ -12,27 +13,27 @@ import at.huber.youtubeExtractor.YtFile;
 
 public class YoutubeUtil {
 
-    public interface Listener{
+    public interface Listener {
         void onYoutubeExtracted(String title, String videoUrl);
         void onYoutubeFailed();
     }
 
     private Extractor mExtractor;
-    private Listener mListener;
+    private Optional<Listener> mListener = Optional.empty();
 
     public YoutubeUtil(Context context) {
         mExtractor = new Extractor(context);
     }
 
     public void setListener(Listener listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
-    public void extract(String url){
+    public void extract(String url) {
         mExtractor.extract(url, false, true);
     }
 
-    private class Extractor extends YouTubeExtractor{
+    private class Extractor extends YouTubeExtractor {
 
         public Extractor(@NonNull Context context) {
             super(context);
@@ -40,11 +41,11 @@ public class YoutubeUtil {
 
         @Override
         protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
-            if(ytFiles != null && videoMeta != null) {
+            if (ytFiles != null && videoMeta != null) {
                 YtFile ytFile = ytFiles.get(22);
                 String videoUrl = null;
 
-                if(ytFile != null){
+                if (ytFile != null) {
                     videoUrl = ytFile.getUrl();
                 } else {
                     int maxHeight = -1;
@@ -60,13 +61,11 @@ public class YoutubeUtil {
                     }
                 }
 
-                if(mListener != null){
-                    mListener.onYoutubeExtracted(videoMeta.getTitle(), videoUrl);
+                if (mListener.isPresent()) {
+                    mListener.get().onYoutubeExtracted(videoMeta.getTitle(), videoUrl);
                 }
             } else {
-                if(mListener != null){
-                    mListener.onYoutubeFailed();
-                }
+                mListener.ifPresent(listener -> listener.onYoutubeFailed());
             }
         }
     }

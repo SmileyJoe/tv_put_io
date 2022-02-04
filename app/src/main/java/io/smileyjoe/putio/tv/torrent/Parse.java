@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.torrent;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class Parse {
     public static Video update(Video video) {
         HashMap<String, String> details = Parse.parse(video.getPutTitle());
 
-        if(!video.isTmdbFound()) {
+        if (!video.isTmdbFound()) {
             video.setTitle(details.get("title"));
 
             if (details.containsKey("is_movie")) {
@@ -58,8 +57,8 @@ public class Parse {
                 }
             }
 
-            if(details.containsKey("is_season")){
-                if(Boolean.parseBoolean(details.get("is_season"))){
+            if (details.containsKey("is_season")) {
+                if (Boolean.parseBoolean(details.get("is_season"))) {
                     video.setVideoType(VideoType.SEASON);
                 }
             }
@@ -81,7 +80,7 @@ public class Parse {
     }
 
     public static HashMap<String, String> parse(String rawTitle) {
-        if(TextUtils.isEmpty(rawTitle)){
+        if (TextUtils.isEmpty(rawTitle)) {
             return new HashMap<>();
         }
 
@@ -135,17 +134,17 @@ public class Parse {
         }
 
         boolean isMovie = false;
-        if(matchesClean.containsKey("year")){
+        if (matchesClean.containsKey("year")) {
             isMovie = true;
         }
 
         boolean isEpisode = false;
-        if(matchesClean.containsKey("episode")){
+        if (matchesClean.containsKey("episode")) {
             isEpisode = true;
         }
 
         boolean isSeason = false;
-        if(!isEpisode && matchesClean.containsKey("season")){
+        if (!isEpisode && matchesClean.containsKey("season")) {
             isSeason = true;
         }
 
@@ -167,7 +166,7 @@ public class Parse {
         return matchesClean;
     }
 
-    private static String replaceIfAll(String title, String character){
+    private static String replaceIfAll(String title, String character) {
         if (!title.contains(" ") && title.contains(character)) {
             title = title.replace(character, " ");
         }

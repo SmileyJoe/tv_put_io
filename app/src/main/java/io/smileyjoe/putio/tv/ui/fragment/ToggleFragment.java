@@ -4,39 +4,35 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
-import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.interfaces.ToggleItem;
+import io.smileyjoe.putio.tv.databinding.FragmentFilterBinding;
+import io.smileyjoe.putio.tv.databinding.ItemFilterBinding;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
+import io.smileyjoe.putio.tv.interfaces.ToggleItem;
 import io.smileyjoe.putio.tv.object.FragmentType;
 
-public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
+public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<FragmentFilterBinding> {
 
-    public interface Listener<T> extends HomeFragmentListener<T>{
+    public interface Listener<T> extends HomeFragmentListener<T> {
         void onItemClicked(View view, T filter, boolean isSelected);
     }
 
-    private LinearLayout mLayoutRoot;
-    private Listener<T> mListener;
+    private Optional<Listener<T>> mListener = Optional.empty();
     private ArrayList<View> mOptionViews = new ArrayList<>();
     private ArrayList<T> mOptions = new ArrayList<>();
 
     protected abstract FragmentType getFragmentType();
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mLayoutRoot = (LinearLayout) inflater.inflate(R.layout.fragment_filter, null);
-
-        return mLayoutRoot;
+    protected FragmentFilterBinding inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState) {
+        return FragmentFilterBinding.inflate(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -45,45 +41,42 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
     }
 
     public void setListener(Listener listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
-    protected View addOption(T filter){
+    protected View addOption(T filter) {
         mOptions.add(filter);
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.item_filter, null);
+        ItemFilterBinding binding = ItemFilterBinding.inflate(LayoutInflater.from(getContext()));
+        ViewGroup root = binding.getRoot();
+
         OnFilterListener listener = new OnFilterListener(filter);
 
-        ImageView imageIcon = view.findViewById(R.id.image_icon);
+        binding.imageIcon.setImageResource(filter.getIconResId());
 
-        imageIcon.setImageResource(filter.getIconResId());
-
-        view.setSelected(filter.isSelected());
-        view.setOnClickListener(listener);
-        view.setOnFocusChangeListener(listener);
-        view.setTag(filter.getId());
-        mOptionViews.add(view);
-        mLayoutRoot.addView(view);
-        return view;
+        root.setSelected(filter.isSelected());
+        root.setOnClickListener(listener);
+        root.setOnFocusChangeListener(listener);
+        root.setTag(filter.getId());
+        mOptionViews.add(root);
+        mView.getRoot().addView(root);
+        return root;
     }
 
     public ArrayList<T> getOptions() {
         return mOptions;
     }
 
-    public void reset(){
-        for(int i = 0; i < mLayoutRoot.getChildCount(); i++){
-            mLayoutRoot.getChildAt(i).setSelected(false);
-        }
+    public void reset() {
+        IntStream.range(0, mView.getRoot().getChildCount())
+                .forEach(i -> mView.getRoot().getChildAt(i).setSelected(false));
     }
 
-    protected void onItemClick(View view, T item){
+    protected void onItemClick(View view, T item) {
         boolean newState = !view.isSelected();
 
         view.setSelected(newState);
 
-        if(mListener != null){
-            mListener.onItemClicked(view, item, newState);
-        }
+        mListener.ifPresent(listener -> listener.onItemClicked(view, item, newState));
     }
 
     protected ArrayList<View> getOptionViews() {
@@ -99,9 +92,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends Fragment {
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if(mListener != null){
-                mListener.hasFocus(getFragmentType(), mFilter, v, 0);
-            }
+            mListener.ifPresent(listener -> listener.hasFocus(getFragmentType(), mFilter, v, 0));
         }
 
         @Override

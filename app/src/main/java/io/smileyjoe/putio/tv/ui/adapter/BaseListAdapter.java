@@ -8,21 +8,23 @@ import android.view.ViewGroup;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewbinding.ViewBinding;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.ui.viewholder.BaseViewHolder;
 
-public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends RecyclerView.Adapter<U> implements BaseViewHolder.Listener<T> {
+public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends ViewBinding>> extends RecyclerView.Adapter<U> implements BaseViewHolder.Listener<T> {
 
     public interface Listener<T> extends HomeFragmentListener<T> {
         void onItemClicked(View view, T item);
     }
 
     private Context mContext;
-    private Listener<T> mListener;
+    private Optional<Listener<T>> mListener;
     private ArrayList<T> mItems = new ArrayList<>();
     private FragmentType mFragmentType;
     private View mViewSelected;
@@ -30,7 +32,9 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
     private boolean mMarkSelected = false;
     private boolean mAllowDeselect = false;
 
-    protected abstract @LayoutRes int getLayoutResId();
+    @LayoutRes
+    protected abstract int getLayoutResId();
+
     protected abstract U getViewHolder(View view, FragmentType fragmentType);
 
     public BaseListAdapter(Context context) {
@@ -42,7 +46,7 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
     }
 
     public void setListener(Listener<T> listener) {
-        mListener = listener;
+        mListener = Optional.ofNullable(listener);
     }
 
     public void setItems(ArrayList<T> items) {
@@ -61,7 +65,7 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
         return mItems;
     }
 
-    public Listener<T> getListener() {
+    public Optional<Listener<T>> getListener() {
         return mListener;
     }
 
@@ -79,11 +83,11 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
         notifyItemChanged(selectedPosition);
     }
 
-    protected void shouldMarkSelected(boolean shouldMarkSelected){
+    protected void shouldMarkSelected(boolean shouldMarkSelected) {
         mMarkSelected = shouldMarkSelected;
     }
 
-    protected void shouldAllowDeselect(boolean allowDeselect){
+    protected void shouldAllowDeselect(boolean allowDeselect) {
         mAllowDeselect = allowDeselect;
     }
 
@@ -102,7 +106,7 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
         holder.bindView(getItem(position), position);
 
-        if(mMarkSelected) {
+        if (mMarkSelected) {
             if (position == mSelectedPosition) {
                 highlightItem(holder.getView(), position);
             } else {
@@ -111,8 +115,8 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
         }
     }
 
-    private void highlightItem(View view, int position){
-        if(mMarkSelected) {
+    private void highlightItem(View view, int position) {
+        if (mMarkSelected) {
             if (mViewSelected != null) {
                 mViewSelected.setSelected(false);
             }
@@ -123,8 +127,8 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
         }
     }
 
-    private void unhighlightItem(View view){
-        if(mMarkSelected) {
+    private void unhighlightItem(View view) {
+        if (mMarkSelected) {
             mViewSelected = null;
             view.setSelected(false);
             mSelectedPosition = -1;
@@ -134,8 +138,8 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
     @Override
     public void onItemClicked(View view, T item, int position) {
         boolean callListener = false;
-        if(view.isSelected()){
-            if(mAllowDeselect){
+        if (view.isSelected()) {
+            if (mAllowDeselect) {
                 unhighlightItem(view);
                 callListener = true;
             }
@@ -144,14 +148,14 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
             callListener = true;
         }
 
-        if(callListener && mListener != null){
-            mListener.onItemClicked(view, item);
+        if (callListener && mListener.isPresent()) {
+            mListener.get().onItemClicked(view, item);
         }
     }
 
-    public void clearSelected(){
+    public void clearSelected() {
         mSelectedPosition = -1;
-        if(mViewSelected != null) {
+        if (mViewSelected != null) {
             mViewSelected.setSelected(false);
             mViewSelected = null;
         }
@@ -159,8 +163,6 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T>> extends Re
 
     @Override
     public void hasFocus(FragmentType type, T item, View view, int position) {
-        if(mListener != null){
-            mListener.hasFocus(type, item, view, position);
-        }
+        mListener.ifPresent(listener -> listener.hasFocus(type, item, view, position));
     }
 }

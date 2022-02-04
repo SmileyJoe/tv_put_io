@@ -2,6 +2,8 @@ package io.smileyjoe.putio.tv.action.video;
 
 import androidx.annotation.StringRes;
 
+import java.util.stream.Stream;
+
 import io.smileyjoe.putio.tv.R;
 
 public enum ActionOption {
@@ -13,10 +15,10 @@ public enum ActionOption {
     REFRESH_DATA(5, R.string.action_refresh);
 
     private long mId;
-    private @StringRes
-    int mTitleResId;
+    @StringRes
+    private int mTitleResId;
 
-    ActionOption(long id, int titleResId) {
+    ActionOption(long id, @StringRes int titleResId) {
         mId = id;
         mTitleResId = titleResId;
     }
@@ -30,12 +32,9 @@ public enum ActionOption {
     }
 
     public static ActionOption fromId(long id) {
-        for (ActionOption option : ActionOption.values()) {
-            if (option.getId() == id) {
-                return option;
-            }
-        }
-
-        return UNKNOWN;
+        return Stream.of(values())
+                .filter(option -> option.getId() == id)
+                .findFirst()
+                .orElse(UNKNOWN);
     }
 }

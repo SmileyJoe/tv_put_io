@@ -2,13 +2,13 @@ package io.smileyjoe.putio.tv.object;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import io.smileyjoe.putio.tv.util.JsonUtil;
 
@@ -60,7 +60,7 @@ public class Subtitle implements Parcelable {
         return mSource;
     }
 
-    public static Subtitle fromApi(JsonObject jsonObject, long putId){
+    public static Subtitle fromApi(JsonObject jsonObject, long putId) {
         Subtitle subtitle = new Subtitle();
         JsonUtil json = new JsonUtil(jsonObject);
 
@@ -73,14 +73,10 @@ public class Subtitle implements Parcelable {
         return subtitle;
     }
 
-    public static ArrayList<Subtitle> fromApi(JsonArray jsonArray, long putId){
-        ArrayList<Subtitle> subtitles = new ArrayList<>();
-
-        for (JsonElement jsonElement : jsonArray) {
-            subtitles.add(fromApi(jsonElement.getAsJsonObject(), putId));
-        }
-
-        return subtitles;
+    public static ArrayList<Subtitle> fromApi(JsonArray jsonArray, long putId) {
+        return StreamSupport.stream(jsonArray.spliterator(), false)
+                .map(jsonElement -> fromApi(jsonElement.getAsJsonObject(), putId))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

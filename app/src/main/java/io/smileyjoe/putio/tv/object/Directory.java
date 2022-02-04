@@ -19,7 +19,7 @@ public class Directory implements Folder, Parcelable {
     public Directory() {
     }
 
-    public Directory(Video video){
+    public Directory(Video video) {
         setPutId(video.getPutId());
         setSize(video.getSize());
         setTitle(video.getTitle());
