@@ -39,7 +39,8 @@
         <activity android:name=".ui.activity.VideoDetailsActivity" />
         <activity android:name=".ui.activity.PlaybackActivity"
             android:theme="@style/AppTheme.Video"/>
-        <activity android:name=".ui.activity.SeriesActivity" />
+        <activity android:name=".ui.activity.SeriesActivity"
+            android:theme="@style/AppTheme.Series"/>
         <activity
             android:name=".ui.activity.VideoDetailsBackdropActivity"
             android:theme="@style/AppTheme.Backdrop"/>

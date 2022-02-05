@@ -22,9 +22,13 @@
     <dimen name="text_list_details">10sp</dimen>
     <dimen name="text_time_video_playback">40sp</dimen>
     <dimen name="text_auth_code">80sp</dimen>
+    <dimen name="text_default">14sp</dimen>
+    <dimen name="text_list_image_focused">18sp</dimen>
     <dimen name="logo_full_width">200dp</dimen>
     <dimen name="logo_full_height">@dimen/logo_full_width</dimen>
     <dimen name="subtitle_fragment_playback_width">@dimen/home_fragment_width_expanded</dimen>
     <dimen name="audio_selection_fragment_playback_width">@dimen/home_fragment_width_expanded</dimen>
     <dimen name="list_poster_width">150dp</dimen>
+    <dimen name="radius_corner_list_image">15dp</dimen>
+    <dimen name="padding_list_item_video_focus">20dp</dimen>
 </resources>

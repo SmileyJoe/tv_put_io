@@ -8,6 +8,10 @@
 
     </style>
 
+    <style name="AppTheme.Series" parent="Theme.MaterialComponents">
+
+    </style>
+
     <style name="AppTheme.Video">
         <item name="android:windowBackground">@color/color_black</item>
     </style>
@@ -17,6 +21,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:duplicateParentState">true</item>
+        <item name="android:textSize">@dimen/text_default</item>
     </style>
 
     <style name="Text.ResumeTime">
@@ -151,21 +156,32 @@
 
     <style name="ListItem.Video">
         <item name="android:padding">@dimen/padding_general</item>
-        <item name="android:backgroundTint">@color/selector_bg_row_poster</item>
+        <item name="android:backgroundTint">@color/color_transparent</item>
     </style>
 
     <style name="Button" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="shapeAppearanceOverlay">@style/AppearanceButtonRounded</item>
+        <item name="shapeAppearanceOverlay">@style/Shape.Rounded.Button</item>
         <item name="android:layout_margin">@dimen/padding_general</item>
         <item name="android:backgroundTint">@color/selector_button_backdrop</item>
         <item name="android:textColor">@color/selector_text_button_backdrop</item>
     </style>
 
-    <style name="AppearanceButtonRounded">
+    <style name="Shape">
+    </style>
+
+    <style name="Shape.Rounded">
         <item name="cornerFamily">rounded</item>
+    </style>
+
+    <style name="Shape.Rounded.Button">
         <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="Shape.Rounded.Image">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/radius_corner_list_image</item>
     </style>
 
 </resources>
