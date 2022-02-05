@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.util.DisplayMetrics;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
@@ -39,6 +40,11 @@ public class SnappingLinearLayoutManager extends LinearLayoutManager {
         @Override
         protected int getVerticalSnapPreference() {
             return SNAP_TO_START;
+        }
+
+        @Override
+        protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+            return 75f / displayMetrics.densityDpi;
         }
     }
 }
