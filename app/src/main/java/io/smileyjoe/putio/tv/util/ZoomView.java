@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.util;
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,7 +13,7 @@ public class ZoomView {
 
     private boolean mIncludeHeight;
 
-    public ZoomView(){
+    public ZoomView() {
         mOriginalSizes = new HashMap<>();
         mIncludeHeight = true;
     }
@@ -36,49 +35,49 @@ public class ZoomView {
         return position;
     }
 
-    public void reposition(View originalView, View zoomView){
+    public void reposition(View originalView, View zoomView) {
         ViewGroup parent = (ViewGroup) zoomView.getParent();
         ViewGroup grandParent = (ViewGroup) parent.getParent();
         parent.setX(getPosition(originalView.getX(), originalView.getWidth(), parent.getWidth(), grandParent.getWidth()));
         parent.setY(getPosition(originalView.getY(), originalView.getHeight(), parent.getHeight(), grandParent.getHeight()));
     }
 
-    public void zoom(View view, float multiplier){
+    public void zoom(View view, float multiplier) {
         zoom(view, view, multiplier);
     }
 
-    public void zoom(View originalView, View zoomView, float multiplier){
+    public void zoom(View originalView, View zoomView, float multiplier) {
         saveOriginalSize(zoomView);
         ViewGroup.LayoutParams params = zoomView.getLayoutParams();
         params.width = (int) (originalView.getMeasuredWidth() * multiplier);
-        if(mIncludeHeight) {
+        if (mIncludeHeight) {
             params.height = (int) (originalView.getMeasuredHeight() * multiplier);
         }
         zoomView.setLayoutParams(params);
     }
 
-    public void reset(View view){
+    public void reset(View view) {
         int[] originalSizes = getOriginalSizes(view);
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.width = originalSizes[mPositionWidth];
 
-        if(mIncludeHeight) {
+        if (mIncludeHeight) {
             params.height = originalSizes[mPositionHeight];
         }
         view.setLayoutParams(params);
     }
 
-    private int saveOriginalSize(View view){
+    private int saveOriginalSize(View view) {
         int id = view.getId();
 
-        if(!mOriginalSizes.containsKey(id)){
+        if (!mOriginalSizes.containsKey(id)) {
             mOriginalSizes.put(id, new int[]{view.getMeasuredWidth(), view.getMeasuredHeight()});
         }
 
         return id;
     }
 
-    private int[] getOriginalSizes(View view){
+    private int[] getOriginalSizes(View view) {
         int id = saveOriginalSize(view);
         return mOriginalSizes.get(id);
     }

@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -251,11 +250,11 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
 
         @Override
         public void hasFocus(FragmentType type, Video item, View view, int position) {
-            if(mStyle == VideosAdapter.Style.GRID) {
+            if (mStyle == VideosAdapter.Style.GRID) {
                 mView.zoomGridVideo.show(view, item);
             } else {
                 int newPosition = position - 1;
-                if(newPosition < 0){
+                if (newPosition < 0) {
                     newPosition = 0;
                 }
                 mView.recycler.smoothScrollToPosition(newPosition);
