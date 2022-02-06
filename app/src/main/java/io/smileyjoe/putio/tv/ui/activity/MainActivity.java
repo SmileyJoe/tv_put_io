@@ -225,6 +225,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private void showFolders() {
         mView.layoutFolders.setVisibility(View.VISIBLE);
         mFragmentVideoList.hideDetails();
+        mFragmentFolderList.requestFocus();
     }
 
     private void hideFolders() {
