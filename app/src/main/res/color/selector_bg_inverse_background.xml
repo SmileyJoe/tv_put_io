@@ -10,5 +10,5 @@
         android:color="@color/bg_selected_inverse"
         android:state_selected="true"/>
     <item
-        android:color="@color/bg_default"/>
+        android:color="@color/color_background"/>
 </selector>

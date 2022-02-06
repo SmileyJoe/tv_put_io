@@ -27,8 +27,8 @@
         android:id="@+id/zoom_grid_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:elevation="@dimen/elevation_zoom_video"
-        android:background="@color/bg_default"
+        android:elevation="@dimen/elevation_default"
+        android:background="@color/color_background"
         app:multiplier="1.25"
         android:visibility="invisible"/>
 

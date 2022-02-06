@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,6 +107,10 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
         }
     }
 
+    public boolean hasVideos(){
+        return mVideosAdapter.getItemCount() > 0;
+    }
+
 //    private int getSpanCount() {
 //        int spanCount;
 //
@@ -154,10 +159,10 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
         } else {
             mView.layoutEmpty.setVisibility(View.GONE);
             mView.recycler.setVisibility(View.VISIBLE);
-
-            mVideosAdapter.setItems(videos);
-            mVideosAdapter.notifyDataSetChanged();
         }
+
+        mVideosAdapter.setItems(videos);
+        mVideosAdapter.notifyDataSetChanged();
     }
 
     public void filter(Filter filter, boolean isSelected) {

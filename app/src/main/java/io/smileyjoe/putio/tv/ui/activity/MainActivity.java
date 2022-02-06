@@ -7,10 +7,13 @@ import static android.view.View.FOCUS_UP;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
 import androidx.fragment.app.Fragment;
@@ -93,7 +96,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
         mVideoLoader.loadDirectory();
 
-        mView.imageShowFolders.setOnClickListener(v -> toggleFolders());
+        mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
 
         FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
 
@@ -108,7 +111,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     @Override
     public void onBackPressed() {
-        if(mView.layoutFolders.getVisibility() == View.VISIBLE){
+        if(mView.layoutFolders.getVisibility() == View.VISIBLE && mFragmentVideoList.hasVideos()){
             hideFolders();
         } else {
             boolean hasHistory = mVideoLoader.back();
@@ -144,12 +147,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentVideoList.update(video);
     }
 
-    private void changeFragmentWidth(Fragment fragment, @DimenRes int widthResId) {
-        ViewGroup.LayoutParams params = fragment.getView().getLayoutParams();
-        params.width = getResources().getDimensionPixelOffset(widthResId);
-        fragment.getView().setLayoutParams(params);
-    }
-
     private void showDetails(Video video) {
         if (video.isTmdbFound()) {
             startActivity(VideoDetailsBackdropActivity.getIntent(getBaseContext(), video));
@@ -166,10 +163,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                 mVideoLoader.addToHistory(historyItem);
             }
             handleGenres(videos);
-            mView.textTitle.setText(historyItem.getTitle());
+
+            mView.textTitleFolders.setText(historyItem.getTitle());
 
             mFragmentFolderList.setFolders(folders);
-
+            mFragmentVideoList.hideDetails();
             mFragmentVideoList.setVideos(videos);
             mFragmentFilter.reset();
 
@@ -196,6 +194,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
         if(videos != null && !videos.isEmpty()) {
             hideFolders();
+        } else {
+            showFolders();
         }
         mView.frameLoading.setVisibility(View.GONE);
     }
@@ -229,13 +229,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     private void showFolders() {
         mView.layoutFolders.setVisibility(View.VISIBLE);
-        mView.layoutFolders.requestFocus();
+//        mView.layoutFolders.requestFocus();
         mFragmentVideoList.hideDetails();
     }
 
     private void hideFolders() {
         mView.layoutFolders.setVisibility(View.GONE);
-        mFragmentVideoList.requestFocus();
+//        mFragmentVideoList.requestFocus();
     }
 
     @Override

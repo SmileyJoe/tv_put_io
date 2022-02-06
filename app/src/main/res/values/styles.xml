@@ -4,11 +4,7 @@
         <item name="android:textViewStyle">@style/Text</item>
     </style>
 
-    <style name="AppTheme.Backdrop" parent="Theme.MaterialComponents">
-
-    </style>
-
-    <style name="AppTheme.Series" parent="Theme.MaterialComponents">
+    <style name="AppTheme.Material" parent="Theme.MaterialComponents">
 
     </style>
 
@@ -150,7 +146,7 @@
     <style name="ListItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/bg_default</item>
+        <item name="android:background">@color/color_background</item>
         <item name="android:backgroundTint">@color/selector_bg_inverse</item>
     </style>
 

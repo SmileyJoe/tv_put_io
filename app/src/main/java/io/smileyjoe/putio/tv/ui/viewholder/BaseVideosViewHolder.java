@@ -41,8 +41,6 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
             view.setPadding(0, 0, 0, 0);
             Glide.with(getContext())
                     .load(video.getPosterAsUri())
-                    .fallback(R.drawable.ic_movie_24)
-                    .placeholder(R.drawable.ic_movie_24)
                     .dontAnimate()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(view);

@@ -50,7 +50,7 @@ public class RelatedVideoCardPresenter extends Presenter {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         sPosterPadding = parent.getContext().getResources().getDimensionPixelOffset(R.dimen.file_grid_poster_padding);
-        sDefaultBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.bg_default);
+        sDefaultBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.color_background);
         sSelectedBackgroundColor = ContextCompat.getColor(parent.getContext(), R.color.bg_selected);
         sSelectedTextColor = ContextCompat.getColor(parent.getContext(), R.color.text_selected_inverse);
         sDefaultTextColor = ContextCompat.getColor(parent.getContext(), R.color.text);
