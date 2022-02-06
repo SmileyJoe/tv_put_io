@@ -177,6 +177,7 @@ public class TmdbUtil {
             video.setTagLine(json.getString("tagline"));
             video.setRuntime(json.getInt("runtime"));
             video.isTmdbFound(true);
+            video.isTmdbChecked(true);
 
             JsonArray genreJson = json.getJsonArray("genre_ids");
 
