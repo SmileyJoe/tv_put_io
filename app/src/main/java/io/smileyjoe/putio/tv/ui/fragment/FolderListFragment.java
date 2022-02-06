@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.leanback.widget.BrowseFrameLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
@@ -29,13 +30,19 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
         return FragmentFolderListBinding.inflate(inflater, container, savedInstanceState);
     }
 
+    @Override
     public void setType(FragmentType fragmentType) {
-
+        super.setType(fragmentType);
         if (mAdapter != null) {
             mAdapter.setFragmentType(fragmentType);
         }
 
         setLayoutManager(true);
+    }
+
+    @Override
+    public View getFocusableView() {
+        return mView.recycler;
     }
 
     @Override

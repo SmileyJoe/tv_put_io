@@ -42,6 +42,10 @@ public class GroupFragment extends ToggleFragment<Group> {
                 .forEach(i -> mViews.get(i).setSelected(mGroups.get(i).getPutIds().contains(currentPutId)));
     }
 
+    public View getFocusableView(){
+        return mView.getRoot();
+    }
+
     private class GetGroups extends AsyncTask<Void, Void, List<Group>> {
         @Override
         protected List<Group> doInBackground(Void... voids) {

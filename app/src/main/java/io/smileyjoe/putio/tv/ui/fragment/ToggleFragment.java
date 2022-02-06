@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,30 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
         mOptionViews.add(root);
         mView.getRoot().addView(root);
         return root;
+    }
+
+    public boolean canFocus(View view, int direction){
+        int nextPosition = mView.getRoot().indexOfChild(view) + 1;
+        int numberChildren = mView.getRoot().getChildCount() - 1;
+        switch (direction){
+            case View.FOCUS_UP:
+            case View.FOCUS_DOWN:
+                return true;
+            case View.FOCUS_LEFT:
+                if(nextPosition < 0){
+                    return false;
+                } else {
+                    return true;
+                }
+            case View.FOCUS_RIGHT:
+                if(nextPosition > numberChildren){
+                    return false;
+                } else {
+                    return true;
+                }
+            default:
+                return false;
+        }
     }
 
     public ArrayList<T> getOptions() {

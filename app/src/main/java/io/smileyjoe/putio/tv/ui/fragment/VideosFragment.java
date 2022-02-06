@@ -29,7 +29,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     }
 
     private VideosAdapter mVideosAdapter;
-    private boolean mIsFullScreen = false;
+//    private boolean mIsFullScreen = false;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Video> mVideosAll;
     private ArrayList<Filter> mAppliedFilters = new ArrayList<>();
@@ -51,7 +51,9 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
         setLayoutManager(true);
     }
 
+    @Override
     public void setType(FragmentType fragmentType) {
+        super.setType(fragmentType);
 
         if (mVideosAdapter != null) {
             mVideosAdapter.setFragmentType(fragmentType);
@@ -60,17 +62,22 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
         setLayoutManager(true);
     }
 
-    public void setFullScreen(boolean fullScreen) {
-        if (mIsFullScreen != fullScreen) {
-            mIsFullScreen = fullScreen;
-            mView.zoomGridVideo.reset();
-            boolean created = setLayoutManager(false);
-
-            if (!created && mLayoutManager instanceof GridLayoutManager) {
-                ((GridLayoutManager) mLayoutManager).setSpanCount(getSpanCount());
-            }
-        }
+    @Override
+    public View getFocusableView() {
+        return mView.recycler;
     }
+
+    //    public void setFullScreen(boolean fullScreen) {
+//        if (mIsFullScreen != fullScreen) {
+//            mIsFullScreen = fullScreen;
+//            mView.zoomGridVideo.reset();
+//            boolean created = setLayoutManager(false);
+//
+//            if (!created && mLayoutManager instanceof GridLayoutManager) {
+//                ((GridLayoutManager) mLayoutManager).setSpanCount(getSpanCount());
+//            }
+//        }
+//    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -99,17 +106,17 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
         }
     }
 
-    private int getSpanCount() {
-        int spanCount;
-
-        if (mIsFullScreen) {
-            spanCount = 7;
-        } else {
-            spanCount = 4;
-        }
-
-        return spanCount;
-    }
+//    private int getSpanCount() {
+//        int spanCount;
+//
+//        if (mIsFullScreen) {
+//            spanCount = 7;
+//        } else {
+//            spanCount = 4;
+//        }
+//
+//        return spanCount;
+//    }
 
     private boolean setLayoutManager(boolean force) {
         boolean created = false;
@@ -117,7 +124,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
             if (mLayoutManager == null || force) {
                 switch (mStyle) {
                     case GRID:
-                        mLayoutManager = new GridLayoutManager(getContext(), getSpanCount());
+                        mLayoutManager = new GridLayoutManager(getContext(), 7);
                         break;
                     case LIST:
                         mLayoutManager = new SnappingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);

@@ -1,5 +1,10 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
+import static android.view.View.FOCUS_DOWN;
+import static android.view.View.FOCUS_LEFT;
+import static android.view.View.FOCUS_RIGHT;
+import static android.view.View.FOCUS_UP;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -29,6 +34,7 @@ import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
+import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
@@ -41,7 +47,7 @@ import io.smileyjoe.putio.tv.util.VideoLoader;
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends BaseActivity<ActivityMainBinding> implements VideoLoader.Listener {
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements VideoLoader.Listener, BaseFragment.OnFocusSearchListener {
 
     private FolderListFragment mFragmentFolderList;
     private VideosFragment mFragmentVideoList;
@@ -66,17 +72,28 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentVideoList.setType(FragmentType.VIDEO);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
+        mFragmentGenreList.setType(FragmentType.GENRE);
         mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
+        mFragmentFilter.setType(FragmentType.FILTER);
         mFragmentFilter.setListener(new FilterListener());
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
+        mFragmentGroup.setType(FragmentType.GROUP);
         mFragmentGroup.setListener(new GroupListener());
 
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
         mFragmentGenreList.setListener(new GenreListListener());
 
+        mFragmentFolderList.setFocusSearchListener(this);
+        mFragmentVideoList.setFocusSearchListener(this);
+        mFragmentGenreList.setFocusSearchListener(this);
+        mFragmentFilter.setFocusSearchListener(this);
+        mFragmentGroup.setFocusSearchListener(this);
+
         mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
         mVideoLoader.loadDirectory();
+
+        mView.imageShowFolders.setOnClickListener(v -> toggleFolders());
 
         FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
 
@@ -91,11 +108,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     @Override
     public void onBackPressed() {
-        boolean hasHistory = mVideoLoader.back();
-        mFragmentVideoList.hideDetails();
+        if(mView.layoutFolders.getVisibility() == View.VISIBLE){
+            hideFolders();
+        } else {
+            boolean hasHistory = mVideoLoader.back();
+            mFragmentVideoList.hideDetails();
 
-        if (!hasHistory) {
-            super.onBackPressed();
+            if (!hasHistory) {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -149,7 +170,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
             mFragmentFolderList.setFolders(folders);
 
-            mFragmentVideoList.setFullScreen(false);
             mFragmentVideoList.setVideos(videos);
             mFragmentFilter.reset();
 
@@ -174,6 +194,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             }
         }
 
+        if(videos != null && !videos.isEmpty()) {
+            hideFolders();
+        }
         mView.frameLoading.setVisibility(View.GONE);
     }
 
@@ -196,22 +219,51 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         }
     }
 
-    private void showFolders() {
-        mView.textTitle.setVisibility(View.VISIBLE);
-        changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_expanded);
-        mFragmentVideoList.setFullScreen(false);
-        mFragmentVideoList.hideDetails();
-
-        if (mFragmentGroup.isVisible()) {
-            changeFragmentWidth(mFragmentGroup, R.dimen.home_fragment_width_expanded);
+    private void toggleFolders(){
+        if(mView.layoutFolders.getVisibility() == View.GONE){
+            showFolders();
+        } else {
+            hideFolders();
         }
     }
 
+    private void showFolders() {
+        mView.layoutFolders.setVisibility(View.VISIBLE);
+        mView.layoutFolders.requestFocus();
+        mFragmentVideoList.hideDetails();
+    }
+
     private void hideFolders() {
-        mView.textTitle.setVisibility(View.GONE);
-        changeFragmentWidth(mFragmentFolderList, R.dimen.home_fragment_width_contracted);
-        mFragmentVideoList.setFullScreen(true);
-        changeFragmentWidth(mFragmentGroup, R.dimen.home_fragment_width_contracted);
+        mView.layoutFolders.setVisibility(View.GONE);
+        mFragmentVideoList.requestFocus();
+    }
+
+    @Override
+    public View onFocusSearch(View focused, int direction, FragmentType type) {
+        switch (type){
+            case GROUP:
+                switch (direction){
+                    case FOCUS_UP:
+                        return focused;
+                    case FOCUS_DOWN:
+                        return mFragmentFolderList.getFocusableView();
+                    case FOCUS_RIGHT:
+                    case FOCUS_LEFT:
+                        if(mFragmentGroup.canFocus(focused, direction)){
+                            return null;
+                        } else {
+                            return focused;
+                        }
+                }
+            case FOLDER:
+                if(direction == FOCUS_UP){
+                    return mFragmentGroup.getFocusableView();
+                } else {
+                    return focused;
+                }
+            default:
+                return null;
+        }
     }
 
     private class GroupListener extends HomeListener<Group> implements ToggleFragment.Listener<Group> {
@@ -308,17 +360,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
                 switch (type) {
                     case FOLDER:
-                        showFolders();
+//                        showFolders();
                         break;
                     case VIDEO:
-                        hideFolders();
-                        break;
-                    case GROUP:
-                        showFolders();
+//                        hideFolders();
                         break;
                     default:
                         mFragmentVideoList.hideDetails();
-                        hideFolders();
+//                        hideFolders();
                         break;
                 }
             }

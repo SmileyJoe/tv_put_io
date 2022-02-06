@@ -6,11 +6,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.leanback.widget.BrowseFrameLayout;
 import androidx.viewbinding.ViewBinding;
 
-public abstract class BaseFragment<T extends ViewBinding> extends Fragment {
+import java.util.Optional;
+
+import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.object.FragmentType;
+
+public abstract class BaseFragment<T extends ViewBinding> extends Fragment implements BrowseFrameLayout.OnFocusSearchListener {
+
+    public interface OnFocusSearchListener{
+        View onFocusSearch(View focused, int direction, FragmentType type);
+    }
 
     protected T mView;
+    private Optional<OnFocusSearchListener> mFocusSearchListener = Optional.empty();
+    private FragmentType mType;
+    private BrowseFrameLayout mBrowseFrameLayout;
 
     protected abstract T inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState);
 
@@ -18,13 +31,52 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflate(inflater, container, false);
-        return mView.getRoot();
+
+        mBrowseFrameLayout = (BrowseFrameLayout) inflater.inflate(R.layout.fragment_base, container);
+        mView = inflate(inflater, mBrowseFrameLayout, false);
+        mBrowseFrameLayout.addView(mView.getRoot());
+        return mBrowseFrameLayout;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mView = null;
+    }
+
+    public void setType(FragmentType fragmentType) {
+        mType = fragmentType;
+    }
+
+    public FragmentType getType() {
+        return mType;
+    }
+
+    public void requestFocus(){
+        getFocusableView().requestFocus();
+    }
+
+    public View getFocusableView(){
+        return mView.getRoot();
+    }
+
+    protected BrowseFrameLayout getBrowserFrameLayout(){
+        return mBrowseFrameLayout;
+    }
+
+    public void setFocusSearchListener(OnFocusSearchListener focusSearchListener) {
+        if(getBrowserFrameLayout() != null){
+            mFocusSearchListener = Optional.ofNullable(focusSearchListener);
+            getBrowserFrameLayout().setOnFocusSearchListener(this);
+        }
+    }
+
+    @Override
+    public View onFocusSearch(View focused, int direction) {
+        if(mFocusSearchListener.isPresent()){
+            return mFocusSearchListener.get().onFocusSearch(focused, direction, getType());
+        } else {
+            return null;
+        }
     }
 }

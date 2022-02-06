@@ -183,4 +183,19 @@
         <item name="cornerSize">@dimen/radius_corner_image</item>
     </style>
 
+    <style name="Divider">
+        <item name="android:background">@color/ic_tint</item>
+    </style>
+
+    <style name="Divider.Horizontal">
+        <item name="android:layout_width">2dp</item>
+    </style>
+
+    <style name="Divider.Horizontal.Fragments">
+        <item name="android:layout_height">@dimen/ic_height</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">@dimen/padding_general</item>
+        <item name="android:layout_marginRight">@dimen/padding_general</item>
+    </style>
+
 </resources>
