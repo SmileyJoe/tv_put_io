@@ -229,13 +229,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     private void showFolders() {
         mView.layoutFolders.setVisibility(View.VISIBLE);
-//        mView.layoutFolders.requestFocus();
         mFragmentVideoList.hideDetails();
     }
 
     private void hideFolders() {
         mView.layoutFolders.setVisibility(View.GONE);
-//        mFragmentVideoList.requestFocus();
     }
 
     @Override
@@ -358,17 +356,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             if (mVideoTypeFocus != type) {
                 mVideoTypeFocus = type;
 
-                switch (type) {
-                    case FOLDER:
-//                        showFolders();
-                        break;
-                    case VIDEO:
-//                        hideFolders();
-                        break;
-                    default:
-                        mFragmentVideoList.hideDetails();
-//                        hideFolders();
-                        break;
+                if(type != FragmentType.VIDEO){
+                    mFragmentVideoList.hideDetails();
                 }
             }
         }

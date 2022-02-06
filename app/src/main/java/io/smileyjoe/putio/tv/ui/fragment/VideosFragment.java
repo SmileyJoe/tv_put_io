@@ -30,7 +30,6 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     }
 
     private VideosAdapter mVideosAdapter;
-//    private boolean mIsFullScreen = false;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Video> mVideosAll;
     private ArrayList<Filter> mAppliedFilters = new ArrayList<>();
@@ -68,18 +67,6 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
         return mView.recycler;
     }
 
-    //    public void setFullScreen(boolean fullScreen) {
-//        if (mIsFullScreen != fullScreen) {
-//            mIsFullScreen = fullScreen;
-//            mView.zoomGridVideo.reset();
-//            boolean created = setLayoutManager(false);
-//
-//            if (!created && mLayoutManager instanceof GridLayoutManager) {
-//                ((GridLayoutManager) mLayoutManager).setSpanCount(getSpanCount());
-//            }
-//        }
-//    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -110,18 +97,6 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     public boolean hasVideos(){
         return mVideosAdapter.getItemCount() > 0;
     }
-
-//    private int getSpanCount() {
-//        int spanCount;
-//
-//        if (mIsFullScreen) {
-//            spanCount = 7;
-//        } else {
-//            spanCount = 4;
-//        }
-//
-//        return spanCount;
-//    }
 
     private boolean setLayoutManager(boolean force) {
         boolean created = false;
