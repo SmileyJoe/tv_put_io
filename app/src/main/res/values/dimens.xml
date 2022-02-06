@@ -29,6 +29,8 @@
     <dimen name="subtitle_fragment_playback_width">@dimen/home_fragment_width_expanded</dimen>
     <dimen name="audio_selection_fragment_playback_width">@dimen/home_fragment_width_expanded</dimen>
     <dimen name="list_poster_width">150dp</dimen>
-    <dimen name="radius_corner_list_image">15dp</dimen>
-    <dimen name="padding_list_item_video_focus">20dp</dimen>
+    <dimen name="radius_corner_image">15dp</dimen>
+    <dimen name="padding_list_focus">20dp</dimen>
+    <dimen name="fg_list_image_border_width">3dp</dimen>
+    <dimen name="content_padding_fg_list_image_border">1dp</dimen>
 </resources>

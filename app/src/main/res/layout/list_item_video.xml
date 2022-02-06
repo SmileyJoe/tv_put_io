@@ -22,6 +22,8 @@
         android:layout_toRightOf="@id/image_watched"
         android:layout_centerVertical="true"
         android:duplicateParentState="true"
+        android:foreground="@drawable/fg_list_image_border"
+        app:contentPadding="@dimen/content_padding_fg_list_image_border"
         app:shapeAppearanceOverlay="@style/Shape.Rounded.Image" />
 
     <LinearLayout
@@ -30,36 +32,35 @@
         android:layout_width="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/padding_general"
-        android:duplicateParentState="true"
+        android:duplicateParentState="false"
         android:layout_toRightOf="@id/image_poster">
 
         <TextView
             android:id="@+id/text_title"
             style="@style/Text.Title.Video"
-            android:textColor="@color/text"
-            android:lines="1"/>
+            android:textColor="@color/text"/>
 
         <TextView
             android:id="@+id/text_resume_time"
-            android:duplicateParentState="false"
-            style="@style/Text.ResumeTime"/>
+            style="@style/Text.ResumeTime"
+            android:textColor="@color/text"/>
 
         <TextView
             android:id="@+id/text_release_date"
-            android:duplicateParentState="false"
             style="@style/Text.Date"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:textColor="@color/text"/>
 
         <TextView
             android:id="@+id/text_genres"
             style="@style/Text.Genre.Video"
-            android:duplicateParentState="false"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:textColor="@color/text"/>
 
         <TextView
             android:id="@+id/text_summary"
-            android:duplicateParentState="false"
-            style="@style/Text" />
+            style="@style/Text"
+            android:textColor="@color/text"/>
     </LinearLayout>
 
 </RelativeLayout>

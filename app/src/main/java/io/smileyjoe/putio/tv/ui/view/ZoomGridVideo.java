@@ -71,14 +71,6 @@ public class ZoomGridVideo extends RelativeLayout {
     }
 
     public void show(View view, Video video) {
-//        if (!mSizeSet) {
-//            ViewGroup.LayoutParams params = mView.getRoot().getLayoutParams();
-//            params.width = (int) (view.getWidth() * mMultiplier);
-//            params.height = (int) (view.getHeight() * mMultiplier);
-//            mView.getRoot().setLayoutParams(params);
-//            mSizeSet = true;
-//        }
-
         if (!mSizeSet) {
             mZoomView.zoom(view, mView.getRoot(), mMultiplier);
             mSizeSet = true;
@@ -129,10 +121,6 @@ public class ZoomGridVideo extends RelativeLayout {
         genresTask.execute();
 
         mZoomView.reposition(view, mView.getRoot());
-//        ViewGroup parent = (ViewGroup) mView.getRoot().getParent();
-//        ViewGroup grandParent = (ViewGroup) parent.getParent();
-//        parent.setX(getPosition(view.getX(), view.getWidth(), parent.getWidth(), grandParent.getWidth()));
-//        parent.setY(getPosition(view.getY(), view.getHeight(), parent.getHeight(), grandParent.getHeight()));
 
         setVisibility(View.VISIBLE);
     }

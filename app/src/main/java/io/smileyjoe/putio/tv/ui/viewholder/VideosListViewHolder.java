@@ -14,8 +14,11 @@ import io.smileyjoe.putio.tv.util.ViewUtil;
 
 public class VideosListViewHolder extends BaseVideosViewHolder<ListItemVideoBinding> {
 
-    private float mTextSize;
-    private float mTextSizeFocused;
+    private final float mMultiplierFocused = 1.50f;
+    private final float mTextSize;
+    private final float mTextSizeFocused;
+    private final int mPadding;
+    private final int mPaddingFocused;
     private ZoomView mZoomView;
 
     public VideosListViewHolder(@NonNull View itemView, FragmentType fragmentType) {
@@ -23,6 +26,8 @@ public class VideosListViewHolder extends BaseVideosViewHolder<ListItemVideoBind
 
         mTextSize = getContext().getResources().getDimension(R.dimen.text_default);
         mTextSizeFocused = getContext().getResources().getDimension(R.dimen.text_list_image_focused);
+        mPaddingFocused = (int) getContext().getResources().getDimension(R.dimen.padding_list_focus);
+        mPadding = (int) getContext().getResources().getDimension(R.dimen.padding_general);
 
         mZoomView = new ZoomView();
         mZoomView.setIncludeHeight(false);
@@ -55,11 +60,11 @@ public class VideosListViewHolder extends BaseVideosViewHolder<ListItemVideoBind
         float textSize;
 
         if(hasFocus){
-            padding = (int) getContext().getResources().getDimension(R.dimen.padding_list_item_video_focus);
+            padding = mPaddingFocused;
             textSize = mTextSizeFocused;
-            mZoomView.zoom(mView.imagePoster, 1.50f);
+            mZoomView.zoom(mView.imagePoster, mMultiplierFocused);
         } else {
-            padding = (int) getContext().getResources().getDimension(R.dimen.padding_general);
+            padding = mPadding;
             textSize = mTextSize;
             mZoomView.reset(mView.imagePoster);
         }

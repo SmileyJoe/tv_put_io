@@ -180,8 +180,7 @@
     </style>
 
     <style name="Shape.Rounded.Image">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/radius_corner_list_image</item>
+        <item name="cornerSize">@dimen/radius_corner_image</item>
     </style>
 
 </resources>

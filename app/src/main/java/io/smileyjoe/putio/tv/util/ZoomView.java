@@ -9,8 +9,8 @@ import java.util.HashMap;
 public class ZoomView {
 
     private HashMap<Integer, int[]> mOriginalSizes;
-    private static final int sPositionWidth = 0;
-    private static final int sPositionHeight = 1;
+    private final int mPositionWidth = 0;
+    private final int mPositionHeight = 1;
 
     private boolean mIncludeHeight;
 
@@ -48,7 +48,7 @@ public class ZoomView {
     }
 
     public void zoom(View originalView, View zoomView, float multiplier){
-        getOriginalSizes(zoomView);
+        saveOriginalSize(zoomView);
         ViewGroup.LayoutParams params = zoomView.getLayoutParams();
         params.width = (int) (originalView.getMeasuredWidth() * multiplier);
         if(mIncludeHeight) {
@@ -60,21 +60,26 @@ public class ZoomView {
     public void reset(View view){
         int[] originalSizes = getOriginalSizes(view);
         ViewGroup.LayoutParams params = view.getLayoutParams();
-        params.width = originalSizes[sPositionWidth];
+        params.width = originalSizes[mPositionWidth];
 
         if(mIncludeHeight) {
-            params.height = originalSizes[sPositionHeight];
+            params.height = originalSizes[mPositionHeight];
         }
         view.setLayoutParams(params);
     }
 
-    private int[] getOriginalSizes(View view){
+    private int saveOriginalSize(View view){
         int id = view.getId();
 
         if(!mOriginalSizes.containsKey(id)){
             mOriginalSizes.put(id, new int[]{view.getMeasuredWidth(), view.getMeasuredHeight()});
         }
 
+        return id;
+    }
+
+    private int[] getOriginalSizes(View view){
+        int id = saveOriginalSize(view);
         return mOriginalSizes.get(id);
     }
 
