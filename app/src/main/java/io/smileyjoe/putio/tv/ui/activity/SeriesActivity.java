@@ -98,7 +98,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
         mFragmentVideoList.setVideos(videos);
     }
 
-    private class VideoListListener implements VideosAdapter.Listener<Video> {
+    private class VideoListListener implements VideosFragment.Listener {
         @Override
         public void onItemClicked(View view, Video item) {
             startActivity(PlaybackActivity.getIntent(getBaseContext(), mFragmentVideoList.getVideos(), item, true));

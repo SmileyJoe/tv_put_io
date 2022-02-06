@@ -20,6 +20,7 @@ import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
+import io.smileyjoe.putio.tv.util.SnappingLinearLayoutManager;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
 public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
@@ -119,7 +120,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
                         mLayoutManager = new GridLayoutManager(getContext(), getSpanCount());
                         break;
                     case LIST:
-                        mLayoutManager = new LinearLayoutManager(getContext());
+                        mLayoutManager = new SnappingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                         break;
                 }
 
@@ -249,7 +250,15 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
 
         @Override
         public void hasFocus(FragmentType type, Video item, View view, int position) {
-            mView.zoomGridVideo.show(view, item);
+            if (mStyle == VideosAdapter.Style.GRID) {
+                mView.zoomGridVideo.show(view, item);
+            } else {
+                int newPosition = position - 1;
+                if (newPosition < 0) {
+                    newPosition = 0;
+                }
+                mView.recycler.smoothScrollToPosition(newPosition);
+            }
             mListener.ifPresent(listener -> listener.hasFocus(type, item, view, position));
         }
     }

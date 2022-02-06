@@ -13,15 +13,18 @@
         android:src="@drawable/ic_watched_24"
         android:layout_marginRight="@dimen/padding_general"/>
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image_poster"
         android:layout_width="@dimen/list_poster_width"
         android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
+        android:scaleType="fitXY"
         android:adjustViewBounds="true"
         android:layout_toRightOf="@id/image_watched"
         android:layout_centerVertical="true"
-        app:srcCompat="@drawable/ic_movie_24" />
+        android:duplicateParentState="true"
+        android:foreground="@drawable/fg_list_image_border"
+        app:contentPadding="@dimen/content_padding_fg_list_image_border"
+        app:shapeAppearanceOverlay="@style/Shape.Rounded.Image" />
 
     <LinearLayout
         android:id="@+id/layout_details"
@@ -35,25 +38,29 @@
         <TextView
             android:id="@+id/text_title"
             style="@style/Text.Title.Video"
-            android:lines="1"/>
+            android:textColor="@color/text"/>
 
         <TextView
             android:id="@+id/text_resume_time"
-            style="@style/Text.ResumeTime"/>
+            style="@style/Text.ResumeTime"
+            android:textColor="@color/text"/>
 
         <TextView
             android:id="@+id/text_release_date"
             style="@style/Text.Date"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:textColor="@color/text"/>
 
         <TextView
             android:id="@+id/text_genres"
             style="@style/Text.Genre.Video"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:textColor="@color/text"/>
 
         <TextView
             android:id="@+id/text_summary"
-            style="@style/Text" />
+            style="@style/Text"
+            android:textColor="@color/text"/>
     </LinearLayout>
 
 </RelativeLayout>

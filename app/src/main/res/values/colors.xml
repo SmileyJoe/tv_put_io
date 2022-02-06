@@ -32,4 +32,7 @@
     <!-- buttons -->
     <color name="button_backdrop">#4D000000</color>
     <color name="button_backdrop_selected">#90FFFFFF</color>
+
+    <!-- foreground -->
+    <color name="fg_list_image_border">#FFFFFF</color>
 </resources>

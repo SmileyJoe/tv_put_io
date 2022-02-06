@@ -21,12 +21,14 @@ import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.util.PopulateGenres;
 import io.smileyjoe.putio.tv.util.ViewUtil;
+import io.smileyjoe.putio.tv.util.ZoomView;
 
 public class ZoomGridVideo extends RelativeLayout {
 
     private float mMultiplier;
     private boolean mSizeSet = false;
     private GridItemVideoBinding mView;
+    private ZoomView mZoomView;
 
     public ZoomGridVideo(Context context) {
         super(context);
@@ -47,6 +49,7 @@ public class ZoomGridVideo extends RelativeLayout {
         handleAttributes(attrs);
         mView = GridItemVideoBinding.inflate(LayoutInflater.from(getContext()));
         mView.getRoot().setSelected(true);
+        mZoomView = new ZoomView();
         addView(mView.getRoot());
 
         mView.textTitle.setMaxLines(2);
@@ -67,25 +70,9 @@ public class ZoomGridVideo extends RelativeLayout {
         setVisibility(INVISIBLE);
     }
 
-    private float getPosition(float viewPosition, float viewSize, float size, float parentSize) {
-        float center = viewPosition + viewSize / 2;
-        float position = center - (size / 2);
-
-        if (position < 0) {
-            position = 0;
-        } else if ((position + size) > parentSize) {
-            position = parentSize - size;
-        }
-
-        return position;
-    }
-
     public void show(View view, Video video) {
         if (!mSizeSet) {
-            ViewGroup.LayoutParams params = mView.getRoot().getLayoutParams();
-            params.width = (int) (view.getWidth() * mMultiplier);
-            params.height = (int) (view.getHeight() * mMultiplier);
-            mView.getRoot().setLayoutParams(params);
+            mZoomView.zoom(view, mView.getRoot(), mMultiplier);
             mSizeSet = true;
         }
 
@@ -133,9 +120,8 @@ public class ZoomGridVideo extends RelativeLayout {
         genresTask.setHideOnEmpty(true);
         genresTask.execute();
 
-        ViewGroup parent = (ViewGroup) getParent();
-        setX(getPosition(view.getX(), view.getWidth(), getWidth(), parent.getWidth()));
-        setY(getPosition(view.getY(), view.getHeight(), getHeight(), parent.getHeight()));
+        mZoomView.reposition(view, mView.getRoot());
+
         setVisibility(View.VISIBLE);
     }
 
