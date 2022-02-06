@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
     private Optional<OnFocusSearchListener> mFocusSearchListener = Optional.empty();
     private FragmentType mType;
     private BrowseFrameLayout mBrowseFrameLayout;
+    private boolean mForceFocus = false;
 
     protected abstract T inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState);
 
@@ -36,6 +38,18 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
         mView = inflate(inflater, mBrowseFrameLayout, false);
         mBrowseFrameLayout.addView(mView.getRoot());
         return mBrowseFrameLayout;
+    }
+
+    public void setForceFocus(boolean forceFocus) {
+        mForceFocus = forceFocus;
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden && mForceFocus) {
+            requestFocus();
+        }
     }
 
     @Override

@@ -84,6 +84,11 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
     }
 
     @Override
+    public View getFocusableView() {
+        return mView.recycler;
+    }
+
+    @Override
     public void onItemClicked(View view, TracksInfo.TrackGroupInfo item) {
         mListener.ifPresent(listener -> listener.onTrackSelected(mTrackType, item.getTrackGroup()));
     }

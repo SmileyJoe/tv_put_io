@@ -73,7 +73,7 @@
             android:layout_alignParentLeft="true"
             android:orientation="vertical"
             android:elevation="@dimen/elevation_default"
-            android:background="@color/color_background">
+            android:background="@color/bg_elevated">
             <TextView
                 android:id="@+id/text_title_folders"
                 style="@style/Text.Title.Page"/>

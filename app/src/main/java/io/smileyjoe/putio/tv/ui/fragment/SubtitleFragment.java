@@ -82,6 +82,11 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
         // do nothing //
     }
 
+    @Override
+    public View getFocusableView() {
+        return mView.recyclerSubtitle;
+    }
+
     private class OnSubtitlesGetResponse extends ResponseString {
         @Override
         public void onSuccess(String result) {

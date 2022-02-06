@@ -1,5 +1,8 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
+import static android.view.View.FOCUS_LEFT;
+import static android.view.View.FOCUS_RIGHT;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,14 +26,16 @@ import java.util.Date;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.ActivityPlaybackBinding;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment;
 
-public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener {
+public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener, BaseFragment.OnFocusSearchListener {
 
     private enum PlayAction {
         NEXT, PREVIOUS
@@ -89,6 +94,8 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         mView.textTime.setText(mFormatWatchTime.format(new Date()));
 
         mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
+        mSubtitleFragment.setFocusSearchListener(this);
+        mSubtitleFragment.setForceFocus(true);
         setFragmentVisibility(mSubtitleFragment, false);
         if (mMediaType == MediaType.VIDEO) {
             mSubtitleFragment.setPutId(mVideo.getPutId());
@@ -97,6 +104,8 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
         mTrackGroupSelectionFragment = (TrackGroupSelectionFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_track_group_selection);
         mTrackGroupSelectionFragment.setListener(this);
+        mTrackGroupSelectionFragment.setFocusSearchListener(this);
+        mTrackGroupSelectionFragment.setForceFocus(true);
         setFragmentVisibility(mTrackGroupSelectionFragment, false);
 
         mPlaybackVideoFragment = (PlaybackVideoFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_playback);
@@ -144,6 +153,10 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     public void onSubtitlesClicked() {
         setFragmentVisibility(mSubtitleFragment, !mSubtitleFragment.isVisible());
         setFragmentVisibility(mTrackGroupSelectionFragment, false);
+
+        if(mSubtitleFragment.isVisible()){
+            mSubtitleFragment.requestFocus();
+        }
     }
 
     @Override
@@ -151,6 +164,10 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         mTrackGroupSelectionFragment.setTracksInfo(C.TRACK_TYPE_AUDIO, tracksInfo);
         setFragmentVisibility(mTrackGroupSelectionFragment, !mTrackGroupSelectionFragment.isVisible());
         setFragmentVisibility(mSubtitleFragment, false);
+
+        if(mTrackGroupSelectionFragment.isVisible()){
+            mTrackGroupSelectionFragment.requestFocus();
+        }
     }
 
     @Override
@@ -303,6 +320,11 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         if (!playingNext) {
             finish();
         }
+    }
+
+    @Override
+    public View onFocusSearch(View focused, int direction, FragmentType type) {
+        return focused;
     }
 
     private class BroadcastTick extends BroadcastReceiver {

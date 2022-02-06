@@ -21,6 +21,8 @@
     <color name="bg_selected">@color/color_selected</color>
     <color name="bg_selected_inverse">@color/color_primary</color>
     <color name="bg_selected_row_poster">#CC000000</color>
+    <color name="bg_elevated">#222222</color>
+    <color name="bg_elevated_selected">#3d3d3d</color>
 
     <!-- icons -->
     <color name="ic_tint">#FFFFFF</color>
