@@ -70,6 +70,8 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setType(FragmentType.VIDEO);
+
         mVideosAdapter = new VideosAdapter(getContext(), mStyle);
 
         mView.recycler.setAdapter(mVideosAdapter);

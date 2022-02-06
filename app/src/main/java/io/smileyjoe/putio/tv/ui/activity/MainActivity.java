@@ -71,21 +71,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         super.onCreate(savedInstanceState);
 
         mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
-        mFragmentFolderList.setType(FragmentType.FOLDER);
         mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
-        mFragmentVideoList.setType(FragmentType.VIDEO);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
-        mFragmentGenreList.setType(FragmentType.GENRE);
         mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
-        mFragmentFilter.setType(FragmentType.FILTER);
-        mFragmentFilter.setListener(new FilterListener());
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
-        mFragmentGroup.setType(FragmentType.GROUP);
-        mFragmentGroup.setListener(new GroupListener());
 
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
         mFragmentGenreList.setListener(new GenreListListener());
+        mFragmentFilter.setListener(new FilterListener());
+        mFragmentGroup.setListener(new GroupListener());
 
         mFragmentFolderList.setFocusSearchListener(this);
         mFragmentVideoList.setFocusSearchListener(this);
@@ -256,6 +251,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             case FOLDER:
                 if(direction == FOCUS_UP){
                     return mFragmentGroup.getFocusableView();
+                } else {
+                    return focused;
+                }
+            case VIDEO:
+                if(direction == FOCUS_UP){
+                    return null;
                 } else {
                     return focused;
                 }

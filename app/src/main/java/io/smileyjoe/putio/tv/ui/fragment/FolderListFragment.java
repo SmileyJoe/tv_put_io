@@ -48,6 +48,8 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setType(FragmentType.FOLDER);
+
         mAdapter = new FolderListAdapter(getContext());
 
         mView.recycler.setAdapter(mAdapter);

@@ -37,6 +37,7 @@ public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setType(FragmentType.GENRE);
 
         Listener listener = null;
 
