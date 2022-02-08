@@ -88,6 +88,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentFilter.setFocusSearchListener(this);
         mFragmentGroup.setFocusSearchListener(this);
 
+        mFragmentFolderList.setForceFocus(true);
+
         mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
         mVideoLoader.loadDirectory();
 
@@ -206,11 +208,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
 
+        mFragmentGenreList.setGenreIds(genresAvailable);
+
         if (genresAvailable == null || genresAvailable.isEmpty()) {
             FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
         } else {
             FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGenreList);
-            mFragmentGenreList.setGenreIds(genresAvailable);
         }
     }
 
@@ -225,11 +228,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private void showFolders() {
         mView.layoutFolders.setVisibility(View.VISIBLE);
         mFragmentVideoList.hideDetails();
-        mFragmentFolderList.requestFocus();
+        if(mFragmentGroup.isVisible()) {
+            mFragmentGroup.requestFocus();
+        } else {
+            mFragmentFolderList.requestFocus();
+        }
+//        FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentFolderList);
     }
 
     private void hideFolders() {
         mView.layoutFolders.setVisibility(View.GONE);
+//        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentFolderList);
     }
 
     @Override
@@ -260,6 +269,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                     return null;
                 } else {
                     return focused;
+                }
+            case FILTER:
+                switch (direction){
+                    case FOCUS_LEFT:
+                        if(mFragmentFilter.canFocus(focused, direction)){
+                            return null;
+                        } else {
+                            return mView.layoutShowFolders;
+                        }
+                    case FOCUS_RIGHT:
+                        Log.d("ViewThings", "Genre: " + mFragmentGenreList.hasItems());
+                        if(mFragmentFilter.canFocus(focused, direction)){
+                            return null;
+                        } else if(mFragmentGenreList.hasItems()){
+                            return mFragmentGenreList.getFocusableView();
+                        } else {
+                            return focused;
+                        }
                 }
             default:
                 return null;

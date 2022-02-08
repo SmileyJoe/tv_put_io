@@ -53,6 +53,14 @@ public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
         mView.recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
     }
 
+    public boolean hasItems(){
+        if(mAdapter != null){
+            return mAdapter.getItemCount() > 0;
+        } else {
+            return false;
+        }
+    }
+
     public void clearSelected() {
         mAdapter.clearSelected();
     }
@@ -67,8 +75,12 @@ public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
     }
 
     public void setGenreIds(ArrayList<Integer> genreIds) {
-        GetGenresTask task = new GetGenresTask(genreIds);
-        task.execute();
+        if(genreIds != null && !genreIds.isEmpty()) {
+            GetGenresTask task = new GetGenresTask(genreIds);
+            task.execute();
+        } else {
+            setGenres(new ArrayList<>());
+        }
     }
 
     private class GetGenresTask extends AsyncTask<Void, Void, List<Genre>> {

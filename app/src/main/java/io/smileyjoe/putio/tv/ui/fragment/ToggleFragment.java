@@ -41,6 +41,11 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @Override
+    public View getFocusableView() {
+        return mView.getRoot().getChildAt(0);
+    }
+
     public void setListener(Listener listener) {
         mListener = Optional.ofNullable(listener);
     }
@@ -64,20 +69,20 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
     }
 
     public boolean canFocus(View view, int direction){
-        int nextPosition = mView.getRoot().indexOfChild(view) + 1;
+        int currentPosition = mView.getRoot().indexOfChild(view);
         int numberChildren = mView.getRoot().getChildCount() - 1;
         switch (direction){
             case View.FOCUS_UP:
             case View.FOCUS_DOWN:
                 return true;
             case View.FOCUS_LEFT:
-                if(nextPosition < 0){
+                if(currentPosition - 1 < 0){
                     return false;
                 } else {
                     return true;
                 }
             case View.FOCUS_RIGHT:
-                if(nextPosition > numberChildren){
+                if(currentPosition + 1 > numberChildren){
                     return false;
                 } else {
                     return true;
