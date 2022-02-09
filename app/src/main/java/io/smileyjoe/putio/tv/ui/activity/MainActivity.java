@@ -237,6 +237,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     private void hideFolders() {
         mView.animLayoutFolders.exit();
+        mView.layoutShowFolders.requestFocus();
     }
 
     @Override

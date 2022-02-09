@@ -97,7 +97,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     }
 
     public boolean hasVideos(){
-        return mVideosAdapter.getItemCount() > 0;
+        return mVideosAll.size() > 0;
     }
 
     private boolean setLayoutManager(boolean force) {
