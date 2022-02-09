@@ -29,8 +29,9 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
         return FragmentFolderListBinding.inflate(inflater, container, savedInstanceState);
     }
 
+    @Override
     public void setType(FragmentType fragmentType) {
-
+        super.setType(fragmentType);
         if (mAdapter != null) {
             mAdapter.setFragmentType(fragmentType);
         }
@@ -39,8 +40,15 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
     }
 
     @Override
+    public View getFocusableView() {
+        return mView.recycler;
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setType(FragmentType.FOLDER);
+
         mAdapter = new FolderListAdapter(getContext());
 
         mView.recycler.setAdapter(mAdapter);

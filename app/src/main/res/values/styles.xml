@@ -4,11 +4,7 @@
         <item name="android:textViewStyle">@style/Text</item>
     </style>
 
-    <style name="AppTheme.Backdrop" parent="Theme.MaterialComponents">
-
-    </style>
-
-    <style name="AppTheme.Series" parent="Theme.MaterialComponents">
+    <style name="AppTheme.Material" parent="Theme.MaterialComponents">
 
     </style>
 
@@ -150,13 +146,17 @@
     <style name="ListItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/bg_default</item>
+        <item name="android:background">@color/color_background</item>
         <item name="android:backgroundTint">@color/selector_bg_inverse</item>
     </style>
 
     <style name="ListItem.Video">
         <item name="android:padding">@dimen/padding_general</item>
         <item name="android:backgroundTint">@color/color_transparent</item>
+    </style>
+
+    <style name="ListItem.Elevated">
+        <item name="android:backgroundTint">@color/selector_bg_inverse_elevated</item>
     </style>
 
     <style name="Button" parent="Widget.MaterialComponents.Button">
@@ -181,6 +181,21 @@
 
     <style name="Shape.Rounded.Image">
         <item name="cornerSize">@dimen/radius_corner_image</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:background">@color/ic_tint</item>
+    </style>
+
+    <style name="Divider.Horizontal">
+        <item name="android:layout_width">2dp</item>
+    </style>
+
+    <style name="Divider.Horizontal.Fragments">
+        <item name="android:layout_height">@dimen/ic_height</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">@dimen/padding_general</item>
+        <item name="android:layout_marginRight">@dimen/padding_general</item>
     </style>
 
 </resources>

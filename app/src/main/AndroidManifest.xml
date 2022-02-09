@@ -35,15 +35,16 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.MainActivity" />
+        <activity android:name=".ui.activity.MainActivity"
+            android:theme="@style/AppTheme.Material"/>
         <activity android:name=".ui.activity.VideoDetailsActivity" />
         <activity android:name=".ui.activity.PlaybackActivity"
             android:theme="@style/AppTheme.Video"/>
         <activity android:name=".ui.activity.SeriesActivity"
-            android:theme="@style/AppTheme.Series"/>
+            android:theme="@style/AppTheme.Material"/>
         <activity
             android:name=".ui.activity.VideoDetailsBackdropActivity"
-            android:theme="@style/AppTheme.Backdrop"/>
+            android:theme="@style/AppTheme.Material"/>
     </application>
 
 </manifest>

@@ -1,51 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
+    android:layout_height="match_parent"
+    android:background="@color/color_background">
+    <RelativeLayout
         android:id="@+id/layout_lists"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/text_title"
-                style="@style/Text.Title.Page"
-                android:layout_alignParentTop="true"/>
-
-            <fragment
-                android:id="@+id/fragment_groups"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.GroupFragment"/>
-
-            <fragment
-                android:id="@+id/fragment_folder_list"
-                android:layout_width="@dimen/home_fragment_width_expanded"
-                android:layout_height="match_parent"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
-        </LinearLayout>
-
-        <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true">
 
             <LinearLayout
                 android:id="@+id/layout_filters"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/layout_show_folders"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_general"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:background="@color/color_background"
+                    android:backgroundTint="@color/selector_bg_inverse"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:src="@drawable/ic_folder_24"
+                        app:tint="@color/selector_icon_inverse"
+                        android:tint="@color/selector_icon_inverse"
+                        style="@style/Icon"/>
+
+                </LinearLayout>
+
+<!--                <View style="@style/Divider.Horizontal.Fragments"/>-->
+
                 <fragment
                     android:id="@+id/fragment_filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:name="io.smileyjoe.putio.tv.ui.fragment.FilterFragment"/>
+
+<!--                <View style="@style/Divider.Horizontal.Fragments"/>-->
+
                 <fragment
                     android:id="@+id/fragment_genre_list"
                     android:layout_width="match_parent"
@@ -59,13 +65,45 @@
                 android:layout_height="match_parent"
                 android:name="io.smileyjoe.putio.tv.ui.fragment.VideosFragment"/>
         </LinearLayout>
-    </LinearLayout>
+
+        <io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout
+            android:id="@+id/anim_layout_folders"
+            android:layout_width="@dimen/side_panel_width"
+            android:layout_height="match_parent"
+            app:enter_direction="left"
+            app:start_position="exit">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:orientation="vertical"
+                android:elevation="@dimen/elevation_default"
+                android:background="@color/bg_elevated">
+                <TextView
+                    android:id="@+id/text_title_folders"
+                    style="@style/Text.Title.Page"/>
+
+                <fragment
+                    android:id="@+id/fragment_groups"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:name="io.smileyjoe.putio.tv.ui.fragment.GroupFragment"/>
+
+                <fragment
+                    android:id="@+id/fragment_folder_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
+            </LinearLayout>
+        </io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout>
+
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/frame_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:colorBackground">
+        android:background="@color/color_background">
         <ProgressBar
             android:id="@+id/progress_loading"
             android:layout_gravity="center"

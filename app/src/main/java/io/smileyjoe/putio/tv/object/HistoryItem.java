@@ -49,14 +49,6 @@ public class HistoryItem implements Parcelable {
         mFolderType = folderType;
     }
 
-    @Override
-    public String toString() {
-        return "HistoryItem{" +
-                "mId=" + mId +
-                ", mFolderType=" + mFolderType +
-                '}';
-    }
-
 
     @Override
     public int describeContents() {
@@ -67,6 +59,7 @@ public class HistoryItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.mId);
         dest.writeInt(this.mFolderType == null ? -1 : this.mFolderType.ordinal());
+        dest.writeString(this.mTitle);
     }
 
     public HistoryItem() {
@@ -76,6 +69,7 @@ public class HistoryItem implements Parcelable {
         this.mId = in.readLong();
         int tmpMFolderType = in.readInt();
         this.mFolderType = tmpMFolderType == -1 ? null : FolderType.values()[tmpMFolderType];
+        this.mTitle = in.readString();
     }
 
     public static final Creator<HistoryItem> CREATOR = new Creator<HistoryItem>() {
@@ -89,4 +83,13 @@ public class HistoryItem implements Parcelable {
             return new HistoryItem[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "HistoryItem{" +
+                "mId=" + mId +
+                ", mTitle='" + mTitle + '\'' +
+                ", mFolderType=" + mFolderType +
+                '}';
+    }
 }

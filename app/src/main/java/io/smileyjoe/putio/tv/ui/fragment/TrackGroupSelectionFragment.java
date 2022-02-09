@@ -42,6 +42,8 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setType(FragmentType.TRACK_SELECTION);
+
         mAdapter = new TrackGroupListAdapter(getContext());
         mAdapter.setListener(this);
 
@@ -81,6 +83,11 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
             mView.recycler.setVisibility(View.GONE);
             mView.textEmpty.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public View getFocusableView() {
+        return mView.recycler;
     }
 
     @Override

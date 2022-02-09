@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -28,18 +29,25 @@
         android:visibility="gone"
         android:layout_marginBottom="@dimen/padding_general"/>
 
-    <fragment
-        android:id="@+id/fragment_subtitle"
-        android:layout_width="@dimen/subtitle_fragment_playback_width"
+    <io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout
+        android:id="@+id/anim_layout_right_panel"
+        android:layout_width="@dimen/side_panel_width"
         android:layout_height="match_parent"
-        android:name="io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment"
-        android:layout_alignParentRight="true" />
+        app:enter_direction="right"
+        app:start_position="exit">
+        <fragment
+            android:id="@+id/fragment_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment"
+            android:layout_alignParentRight="true" />
 
-    <fragment
-        android:id="@+id/fragment_track_group_selection"
-        android:layout_width="@dimen/audio_selection_fragment_playback_width"
-        android:layout_height="match_parent"
-        android:name="io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment"
-        android:layout_alignParentRight="true" />
+        <fragment
+            android:id="@+id/fragment_track_group_selection"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment"
+            android:layout_alignParentRight="true" />
+    </io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout>
 
 </RelativeLayout>

@@ -5,7 +5,7 @@
     android:padding="@dimen/padding_general"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@color/bg_default"
+    android:background="@color/color_background"
     android:backgroundTint="@color/selector_bg_inverse"
     android:clickable="true">
 

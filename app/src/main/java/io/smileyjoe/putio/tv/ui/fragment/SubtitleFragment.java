@@ -61,6 +61,8 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setType(FragmentType.SUBTITLE);
+
         mAdapter = new SubtitleListAdapter(getContext());
         mAdapter.setListener(this);
 
@@ -80,6 +82,11 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
     @Override
     public void hasFocus(FragmentType type, Subtitle item, View view, int position) {
         // do nothing //
+    }
+
+    @Override
+    public View getFocusableView() {
+        return mView.recyclerSubtitle;
     }
 
     private class OnSubtitlesGetResponse extends ResponseString {

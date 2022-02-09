@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -19,18 +20,22 @@ import com.google.android.exoplayer2.ui.SubtitleView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.ActivityPlaybackBinding;
+import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment;
 
-public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener {
+public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener, BaseFragment.OnFocusSearchListener {
 
     private enum PlayAction {
         NEXT, PREVIOUS
@@ -51,6 +56,8 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     private Video mVideo;
     private String mYoutubeUrl;
     private MediaType mMediaType;
+    @IdRes
+    private final int[] mRightPanelIds = new int[]{R.id.fragment_subtitle, R.id.fragment_track_group_selection};
 
     public static Intent getIntent(Context context, Video video) {
         return getIntent(context, video, false);
@@ -89,16 +96,20 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         mView.textTime.setText(mFormatWatchTime.format(new Date()));
 
         mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
-        setFragmentVisibility(mSubtitleFragment, false);
+        mTrackGroupSelectionFragment = (TrackGroupSelectionFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_track_group_selection);
+
         if (mMediaType == MediaType.VIDEO) {
             mSubtitleFragment.setPutId(mVideo.getPutId());
             mSubtitleFragment.setListener(this);
+            mSubtitleFragment.setFocusSearchListener(this);
+            mSubtitleFragment.setForceFocus(true);
+
+            mTrackGroupSelectionFragment.setListener(this);
+            mTrackGroupSelectionFragment.setFocusSearchListener(this);
+            mTrackGroupSelectionFragment.setForceFocus(true);
         }
 
-        mTrackGroupSelectionFragment = (TrackGroupSelectionFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_track_group_selection);
-        mTrackGroupSelectionFragment.setListener(this);
-        setFragmentVisibility(mTrackGroupSelectionFragment, false);
-
+        hideRightPanel();
         mPlaybackVideoFragment = (PlaybackVideoFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_playback);
 
         if (mVideos != null && mVideos.size() > 1) {
@@ -136,28 +147,34 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
             mView.textTime.setVisibility(View.VISIBLE);
         } else {
             mView.textTime.setVisibility(View.GONE);
-            setFragmentVisibility(mSubtitleFragment, false);
+            hideRightPanel();
         }
     }
 
     @Override
     public void onSubtitlesClicked() {
-        setFragmentVisibility(mSubtitleFragment, !mSubtitleFragment.isVisible());
-        setFragmentVisibility(mTrackGroupSelectionFragment, false);
+        toggleRightPanel(R.id.fragment_subtitle);
+
+        if (mSubtitleFragment.isVisible()) {
+            mSubtitleFragment.requestFocus();
+        }
     }
 
     @Override
     public void onAudioTracksClicked(TracksInfo tracksInfo) {
         mTrackGroupSelectionFragment.setTracksInfo(C.TRACK_TYPE_AUDIO, tracksInfo);
-        setFragmentVisibility(mTrackGroupSelectionFragment, !mTrackGroupSelectionFragment.isVisible());
-        setFragmentVisibility(mSubtitleFragment, false);
+        toggleRightPanel(R.id.fragment_track_group_selection);
+
+        if (mTrackGroupSelectionFragment.isVisible()) {
+            mTrackGroupSelectionFragment.requestFocus();
+        }
     }
 
     @Override
     public void showSubtitles(Uri uri) {
         if (uri != null) {
             mView.exoSubtitle.setVisibility(View.VISIBLE);
-            setFragmentVisibility(mSubtitleFragment, false);
+            hideRightPanel();
             mPlaybackVideoFragment.showSubtitles(uri);
         } else {
             mView.exoSubtitle.setVisibility(View.GONE);
@@ -166,7 +183,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void onTrackSelected(@C.TrackType int trackType, TrackGroup item) {
-        setFragmentVisibility(mTrackGroupSelectionFragment, false);
+        hideRightPanel();
         mPlaybackVideoFragment.loadTrack(item);
     }
 
@@ -187,24 +204,42 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void onBackPressed() {
-        if (mSubtitleFragment.isVisible()) {
-            setFragmentVisibility(mSubtitleFragment, false);
-        } else if (mTrackGroupSelectionFragment.isVisible()) {
-            setFragmentVisibility(mTrackGroupSelectionFragment, false);
+        if (mSubtitleFragment.isVisible() || mTrackGroupSelectionFragment.isVisible()) {
+            hideRightPanel();
         } else {
             super.onBackPressed();
         }
     }
 
-    private void setFragmentVisibility(Fragment fragment, boolean visible) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    private void toggleRightPanel(@IdRes int idToToggle) {
+        AtomicBoolean isShowing = new AtomicBoolean(false);
+        Arrays.stream(mRightPanelIds)
+                .forEach(id -> {
+                    Fragment fragment = getSupportFragmentManager().findFragmentById(id);
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if (!visible) {
-            transaction.hide(fragment);
+                    if (id == idToToggle && !fragment.isVisible()) {
+                        transaction.show(fragment);
+                        isShowing.set(true);
+                    } else {
+                        transaction.hide(fragment);
+                    }
+
+                    transaction.commit();
+                });
+        if (isShowing.get()) {
+            mView.animLayoutRightPanel.enter();
         } else {
-            transaction.show(fragment);
+            mView.animLayoutRightPanel.exit();
         }
+    }
 
+    private void hideRightPanel() {
+        mView.animLayoutRightPanel.exit();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.hide(mSubtitleFragment);
+        transaction.hide(mTrackGroupSelectionFragment);
         transaction.commit();
     }
 
@@ -303,6 +338,11 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         if (!playingNext) {
             finish();
         }
+    }
+
+    @Override
+    public View onFocusSearch(View focused, int direction, FragmentType type) {
+        return focused;
     }
 
     private class BroadcastTick extends BroadcastReceiver {

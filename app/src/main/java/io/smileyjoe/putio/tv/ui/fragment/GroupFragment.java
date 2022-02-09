@@ -24,6 +24,7 @@ public class GroupFragment extends ToggleFragment<Group> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setType(FragmentType.GROUP);
 
         mGroups = new ArrayList<>();
         mViews = new ArrayList<>();

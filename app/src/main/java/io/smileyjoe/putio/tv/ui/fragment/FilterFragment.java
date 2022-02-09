@@ -16,6 +16,7 @@ public class FilterFragment extends ToggleFragment<Filter> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setType(FragmentType.FILTER);
 
         Stream.of(Filter.values())
                 .forEach(filter -> addOption(filter));
