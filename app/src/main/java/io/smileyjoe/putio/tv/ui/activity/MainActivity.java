@@ -7,16 +7,9 @@ import static android.view.View.FOCUS_UP;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.DimenRes;
-import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,7 +101,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     @Override
     public void onBackPressed() {
-        if(mView.animLayoutFolders.isShowing() && mFragmentVideoList.hasVideos()){
+        if (mView.animLayoutFolders.isShowing() && mFragmentVideoList.hasVideos()) {
             hideFolders();
         } else {
             boolean hasHistory = mVideoLoader.back();
@@ -189,7 +182,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             }
         }
 
-        if(videos != null && !videos.isEmpty()) {
+        if (videos != null && !videos.isEmpty()) {
             hideFolders();
         } else {
             showFolders();
@@ -217,8 +210,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         }
     }
 
-    private void toggleFolders(){
-        if(!mView.animLayoutFolders.isShowing()){
+    private void toggleFolders() {
+        if (!mView.animLayoutFolders.isShowing()) {
             showFolders();
         } else {
             hideFolders();
@@ -228,7 +221,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private void showFolders() {
         mView.animLayoutFolders.enter();
         mFragmentVideoList.hideDetails();
-        if(mFragmentGroup.isVisible()) {
+        if (mFragmentGroup.isVisible()) {
             mFragmentGroup.requestFocus();
         } else {
             mFragmentFolderList.requestFocus();
@@ -242,45 +235,45 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     @Override
     public View onFocusSearch(View focused, int direction, FragmentType type) {
-        switch (type){
+        switch (type) {
             case GROUP:
-                switch (direction){
+                switch (direction) {
                     case FOCUS_UP:
                         return focused;
                     case FOCUS_DOWN:
                         return mFragmentFolderList.getFocusableView();
                     case FOCUS_RIGHT:
                     case FOCUS_LEFT:
-                        if(mFragmentGroup.canFocus(focused, direction)){
+                        if (mFragmentGroup.canFocus(focused, direction)) {
                             return null;
                         } else {
                             return focused;
                         }
                 }
             case FOLDER:
-                if(direction == FOCUS_UP){
+                if (direction == FOCUS_UP) {
                     return mFragmentGroup.getFocusableView();
                 } else {
                     return focused;
                 }
             case VIDEO:
-                if(direction == FOCUS_UP){
+                if (direction == FOCUS_UP) {
                     return null;
                 } else {
                     return focused;
                 }
             case FILTER:
-                switch (direction){
+                switch (direction) {
                     case FOCUS_LEFT:
-                        if(mFragmentFilter.canFocus(focused, direction)){
+                        if (mFragmentFilter.canFocus(focused, direction)) {
                             return null;
                         } else {
                             return mView.layoutShowFolders;
                         }
                     case FOCUS_RIGHT:
-                        if(mFragmentFilter.canFocus(focused, direction)){
+                        if (mFragmentFilter.canFocus(focused, direction)) {
                             return null;
-                        } else if(mFragmentGenreList.hasItems()){
+                        } else if (mFragmentGenreList.hasItems()) {
                             return mFragmentGenreList.getFocusableView();
                         } else {
                             return focused;
@@ -384,7 +377,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             if (mVideoTypeFocus != type) {
                 mVideoTypeFocus = type;
 
-                if(type != FragmentType.VIDEO){
+                if (type != FragmentType.VIDEO) {
                     mFragmentVideoList.hideDetails();
                 }
             }

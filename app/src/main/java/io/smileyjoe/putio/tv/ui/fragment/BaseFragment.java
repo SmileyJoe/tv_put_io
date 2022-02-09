@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 
 public abstract class BaseFragment<T extends ViewBinding> extends Fragment implements BrowseFrameLayout.OnFocusSearchListener {
 
-    public interface OnFocusSearchListener{
+    public interface OnFocusSearchListener {
         View onFocusSearch(View focused, int direction, FragmentType type);
     }
 
@@ -47,7 +46,7 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden && mForceFocus) {
+        if (!hidden && mForceFocus) {
             requestFocus();
         }
     }
@@ -66,20 +65,20 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
         return mType;
     }
 
-    public void requestFocus(){
+    public void requestFocus() {
         getFocusableView().requestFocus();
     }
 
-    public View getFocusableView(){
+    public View getFocusableView() {
         return mView.getRoot();
     }
 
-    protected BrowseFrameLayout getBrowserFrameLayout(){
+    protected BrowseFrameLayout getBrowserFrameLayout() {
         return mBrowseFrameLayout;
     }
 
     public void setFocusSearchListener(OnFocusSearchListener focusSearchListener) {
-        if(getBrowserFrameLayout() != null){
+        if (getBrowserFrameLayout() != null) {
             mFocusSearchListener = Optional.ofNullable(focusSearchListener);
             getBrowserFrameLayout().setOnFocusSearchListener(this);
         }
@@ -87,7 +86,7 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
 
     @Override
     public View onFocusSearch(View focused, int direction) {
-        if(mFocusSearchListener.isPresent()){
+        if (mFocusSearchListener.isPresent()) {
             return mFocusSearchListener.get().onFocusSearch(focused, direction, getType());
         } else {
             return null;

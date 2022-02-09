@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -33,7 +31,7 @@ public class AnimationFrameLayout extends FrameLayout {
             return mAttrId;
         }
 
-        public static Optional<Type> fromAttr(int attrId){
+        public static Optional<Type> fromAttr(int attrId) {
             return Optional.ofNullable(Stream.of(values())
                     .filter(type -> type.getAttrId() == attrId)
                     .findFirst()
@@ -41,7 +39,7 @@ public class AnimationFrameLayout extends FrameLayout {
         }
     }
 
-    public enum StartPosition{
+    public enum StartPosition {
         ENTER(0), EXIT(1);
 
         private int mAttrId;
@@ -54,7 +52,7 @@ public class AnimationFrameLayout extends FrameLayout {
             return mAttrId;
         }
 
-        public static Optional<StartPosition> fromAttr(int attrId){
+        public static Optional<StartPosition> fromAttr(int attrId) {
             return Optional.ofNullable(Stream.of(values())
                     .filter(start -> start.getAttrId() == attrId)
                     .findFirst()
@@ -81,7 +79,7 @@ public class AnimationFrameLayout extends FrameLayout {
         init(attrs);
     }
 
-    private void init(@Nullable AttributeSet attrs){
+    private void init(@Nullable AttributeSet attrs) {
         mScreenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
         TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.AnimationFrameLayout, 0, 0);
         try {
@@ -95,8 +93,8 @@ public class AnimationFrameLayout extends FrameLayout {
         }
     }
 
-    private void setStartPosition(StartPosition position){
-        switch (position){
+    private void setStartPosition(StartPosition position) {
+        switch (position) {
             case ENTER:
                 enter();
                 break;
@@ -110,15 +108,15 @@ public class AnimationFrameLayout extends FrameLayout {
         return getVisibility() == VISIBLE;
     }
 
-    public void setAnimation(Type type){
+    public void setAnimation(Type type) {
         mType = type;
     }
 
-    public void enter(){
+    public void enter() {
         int start;
         int end;
 
-        switch (mType){
+        switch (mType) {
             case RIGHT:
                 start = mScreenWidth;
                 end = mScreenWidth - getMeasuredWidth();
@@ -138,10 +136,10 @@ public class AnimationFrameLayout extends FrameLayout {
 
     }
 
-    public void exit(){
+    public void exit() {
         int end;
 
-        switch (mType){
+        switch (mType) {
             case RIGHT:
                 end = mScreenWidth;
                 break;

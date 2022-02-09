@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +95,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
         }
     }
 
-    public boolean hasVideos(){
+    public boolean hasVideos() {
         return mVideosAll.size() > 0;
     }
 

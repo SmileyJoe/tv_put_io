@@ -1,8 +1,5 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
-import static android.view.View.FOCUS_LEFT;
-import static android.view.View.FOCUS_RIGHT;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.StreamSupport;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.ActivityPlaybackBinding;
@@ -159,7 +155,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     public void onSubtitlesClicked() {
         toggleRightPanel(R.id.fragment_subtitle);
 
-        if(mSubtitleFragment.isVisible()){
+        if (mSubtitleFragment.isVisible()) {
             mSubtitleFragment.requestFocus();
         }
     }
@@ -169,7 +165,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         mTrackGroupSelectionFragment.setTracksInfo(C.TRACK_TYPE_AUDIO, tracksInfo);
         toggleRightPanel(R.id.fragment_track_group_selection);
 
-        if(mTrackGroupSelectionFragment.isVisible()){
+        if (mTrackGroupSelectionFragment.isVisible()) {
             mTrackGroupSelectionFragment.requestFocus();
         }
     }
@@ -215,14 +211,14 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         }
     }
 
-    private void toggleRightPanel(@IdRes int idToToggle){
+    private void toggleRightPanel(@IdRes int idToToggle) {
         AtomicBoolean isShowing = new AtomicBoolean(false);
         Arrays.stream(mRightPanelIds)
                 .forEach(id -> {
                     Fragment fragment = getSupportFragmentManager().findFragmentById(id);
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-                    if(id == idToToggle && !fragment.isVisible()){
+                    if (id == idToToggle && !fragment.isVisible()) {
                         transaction.show(fragment);
                         isShowing.set(true);
                     } else {
@@ -231,14 +227,14 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
                     transaction.commit();
                 });
-        if(isShowing.get()){
+        if (isShowing.get()) {
             mView.animLayoutRightPanel.enter();
         } else {
             mView.animLayoutRightPanel.exit();
         }
     }
 
-    private void hideRightPanel(){
+    private void hideRightPanel() {
         mView.animLayoutRightPanel.exit();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
