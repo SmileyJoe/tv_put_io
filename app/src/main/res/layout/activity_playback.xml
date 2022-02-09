@@ -31,7 +31,7 @@
 
     <io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout
         android:id="@+id/anim_layout_right_panel"
-        android:layout_width="@dimen/subtitle_fragment_playback_width"
+        android:layout_width="@dimen/side_panel_width"
         android:layout_height="match_parent"
         app:enter_direction="right"
         app:start_position="exit">

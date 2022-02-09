@@ -68,12 +68,12 @@
 
         <io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout
             android:id="@+id/anim_layout_folders"
-            android:layout_width="@dimen/home_fragment_width_expanded"
+            android:layout_width="@dimen/side_panel_width"
             android:layout_height="match_parent"
             app:enter_direction="left"
             app:start_position="exit">
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
                 android:orientation="vertical"
@@ -91,7 +91,7 @@
 
                 <fragment
                     android:id="@+id/fragment_folder_list"
-                    android:layout_width="@dimen/home_fragment_width_expanded"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
             </LinearLayout>
@@ -103,7 +103,7 @@
         android:id="@+id/frame_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:colorBackground">
+        android:background="@color/color_background">
         <ProgressBar
             android:id="@+id/progress_loading"
             android:layout_gravity="center"

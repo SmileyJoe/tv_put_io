@@ -7,8 +7,7 @@
     <dimen name="file_grid_col_width">200dp</dimen>
     <dimen name="file_grid_col_height">200dp</dimen>
     <dimen name="file_grid_poster_padding">50dp</dimen>
-    <dimen name="home_fragment_width_expanded">300dp</dimen>
-    <dimen name="home_fragment_width_contracted">1dp</dimen>
+    <dimen name="side_panel_width">300dp</dimen>
     <dimen name="elevation_home_fragment_floating">3dp</dimen>
     <dimen name="watched_width">75dp</dimen>
     <dimen name="watched_height">@dimen/watched_width</dimen>
@@ -26,8 +25,6 @@
     <dimen name="text_list_image_focused">18sp</dimen>
     <dimen name="logo_full_width">200dp</dimen>
     <dimen name="logo_full_height">@dimen/logo_full_width</dimen>
-    <dimen name="subtitle_fragment_playback_width">@dimen/home_fragment_width_expanded</dimen>
-    <dimen name="audio_selection_fragment_playback_width">@dimen/home_fragment_width_expanded</dimen>
     <dimen name="list_poster_width">150dp</dimen>
     <dimen name="radius_corner_image">15dp</dimen>
     <dimen name="padding_list_focus">20dp</dimen>

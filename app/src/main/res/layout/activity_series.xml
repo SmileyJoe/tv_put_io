@@ -17,7 +17,7 @@
 
         <fragment
             android:id="@+id/fragment_season_details"
-            android:layout_width="@dimen/home_fragment_width_expanded"
+            android:layout_width="@dimen/side_panel_width"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
