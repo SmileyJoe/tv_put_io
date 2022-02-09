@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     @Override
     public void onBackPressed() {
-        if(mView.layoutFolders.getVisibility() == View.VISIBLE && mFragmentVideoList.hasVideos()){
+        if(mView.animLayoutFolders.isShowing() && mFragmentVideoList.hasVideos()){
             hideFolders();
         } else {
             boolean hasHistory = mVideoLoader.back();
@@ -218,7 +218,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     }
 
     private void toggleFolders(){
-        if(mView.layoutFolders.getVisibility() == View.GONE){
+        if(!mView.animLayoutFolders.isShowing()){
             showFolders();
         } else {
             hideFolders();
@@ -226,19 +226,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     }
 
     private void showFolders() {
-        mView.layoutFolders.setVisibility(View.VISIBLE);
+        mView.animLayoutFolders.enter();
         mFragmentVideoList.hideDetails();
         if(mFragmentGroup.isVisible()) {
             mFragmentGroup.requestFocus();
         } else {
             mFragmentFolderList.requestFocus();
         }
-//        FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentFolderList);
     }
 
     private void hideFolders() {
-        mView.layoutFolders.setVisibility(View.GONE);
-//        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentFolderList);
+        mView.animLayoutFolders.exit();
     }
 
     @Override
@@ -279,7 +277,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                             return mView.layoutShowFolders;
                         }
                     case FOCUS_RIGHT:
-                        Log.d("ViewThings", "Genre: " + mFragmentGenreList.hasItems());
                         if(mFragmentFilter.canFocus(focused, direction)){
                             return null;
                         } else if(mFragmentGenreList.hasItems()){
@@ -347,6 +344,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private class FolderListListener extends HomeListener<Folder> implements FolderListFragment.Listener {
         @Override
         public void onItemClicked(View view, Folder folder) {
+            hideFolders();
             switch (folder.getFolderType()) {
                 case DIRECTORY:
                     Directory directory = (Directory) folder;

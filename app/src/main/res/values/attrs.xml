@@ -3,4 +3,15 @@
     <declare-styleable name="ZoomGridVideo">
         <attr name="multiplier" format="float"/>
     </declare-styleable>
+
+    <declare-styleable name="AnimationFrameLayout">
+        <attr name="enter_direction" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="right" value="1"/>
+        </attr>
+        <attr name="start_position" format="enum">
+            <enum name="enter" value="0"/>
+            <enum name="exit" value="1"/>
+        </attr>
+    </declare-styleable>
 </resources>

@@ -66,30 +66,36 @@
                 android:name="io.smileyjoe.putio.tv.ui.fragment.VideosFragment"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_folders"
-            android:layout_width="wrap_content"
+        <io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout
+            android:id="@+id/anim_layout_folders"
+            android:layout_width="@dimen/home_fragment_width_expanded"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:orientation="vertical"
-            android:elevation="@dimen/elevation_default"
-            android:background="@color/bg_elevated">
-            <TextView
-                android:id="@+id/text_title_folders"
-                style="@style/Text.Title.Page"/>
-
-            <fragment
-                android:id="@+id/fragment_groups"
-                android:layout_width="@dimen/home_fragment_width_expanded"
-                android:layout_height="wrap_content"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.GroupFragment"/>
-
-            <fragment
-                android:id="@+id/fragment_folder_list"
-                android:layout_width="@dimen/home_fragment_width_expanded"
+            app:enter_direction="left"
+            app:start_position="exit">
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
-        </LinearLayout>
+                android:layout_alignParentLeft="true"
+                android:orientation="vertical"
+                android:elevation="@dimen/elevation_default"
+                android:background="@color/bg_elevated">
+                <TextView
+                    android:id="@+id/text_title_folders"
+                    style="@style/Text.Title.Page"/>
+
+                <fragment
+                    android:id="@+id/fragment_groups"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:name="io.smileyjoe.putio.tv.ui.fragment.GroupFragment"/>
+
+                <fragment
+                    android:id="@+id/fragment_folder_list"
+                    android:layout_width="@dimen/home_fragment_width_expanded"
+                    android:layout_height="match_parent"
+                    android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
+            </LinearLayout>
+        </io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout>
 
     </RelativeLayout>
 
