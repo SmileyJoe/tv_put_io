@@ -2,6 +2,7 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 
@@ -74,6 +75,7 @@ public class VideoLoader {
     }
 
     public void loadDirectory() {
+        mHistory = new ArrayList<>();
         getFromPut(Putio.NO_PARENT);
     }
 

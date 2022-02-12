@@ -61,7 +61,7 @@ public class Putio {
     }
 
     public static void getFiles(Context context, long parentId, Response response) {
-        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true";
+        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true&stream_url_parent=true&mp4_stream_url_parent=true&mp4_status_parent=true";
 
         if (parentId != NO_PARENT) {
             url += "&parent_id=" + parentId;

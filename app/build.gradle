@@ -14,6 +14,9 @@ android {
         buildConfigField "String", "PUTIO_CLIENT_ID", putio_client_id
         buildConfigField "String", "PUTIO_CLIENT_SECRET", putio_client_secret
         buildConfigField "String", "TMDB_AUTH_TOKEN", tmdb_auth_token
+
+        def host = 'tv.putio.smileyjoe.io'
+        resValue 'string', 'host_name', host
     }
 
     compileOptions {

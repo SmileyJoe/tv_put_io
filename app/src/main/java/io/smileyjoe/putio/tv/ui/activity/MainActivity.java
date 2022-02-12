@@ -9,17 +9,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.channel.UriHandler;
 import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
+import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
@@ -38,12 +44,16 @@ import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
+import io.smileyjoe.putio.tv.util.PutioHelper;
 import io.smileyjoe.putio.tv.util.VideoLoader;
+import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements VideoLoader.Listener, BaseFragment.OnFocusSearchListener {
+
+    private static final String EXTRA_URI_HANDLER = "uri_handler";
 
     private FolderListFragment mFragmentFolderList;
     private VideosFragment mFragmentVideoList;
@@ -53,15 +63,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
+    private UriHandler mUriHandler;
 
     public static Intent getIntent(Context context) {
+        return getIntent(context, null);
+    }
+
+    public static Intent getIntent(Context context, UriHandler uriHandler) {
         Intent intent = new Intent(context, MainActivity.class);
+
+        intent.putExtra(EXTRA_URI_HANDLER, uriHandler);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         return intent;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        handleExtras();
 
         mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
@@ -92,6 +113,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
         // todo: this needs to be called when an id is not found in the db //
         Tmdb.Genre.update(getBaseContext());
+    }
+
+    private void handleExtras(){
+        Bundle extras = getIntent().getExtras();
+
+        if(extras != null && extras.containsKey(EXTRA_URI_HANDLER)){
+            mUriHandler = extras.getParcelable(EXTRA_URI_HANDLER);
+        } else {
+            mUriHandler = null;
+        }
     }
 
     @Override
@@ -130,6 +161,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     @Override
     public void onVideosLoadFinished(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
         populate(historyItem, videos, folders, shouldAddToHistory);
+
+        if(mUriHandler != null){
+            mUriHandler.execute(getBaseContext(), this::showDetails);
+        }
     }
 
     @Override

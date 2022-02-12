@@ -3,6 +3,7 @@ package io.smileyjoe.putio.tv.channel;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.tvprovider.media.tv.PreviewChannel;
@@ -14,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 
 public class Programmes {
 
@@ -42,20 +45,22 @@ public class Programmes {
                 builder = new PreviewProgram.Builder();
             }
 
+            UriHandler handler = new UriHandler();
+            handler.setPutId(video.getPutId());
+
             builder.setChannelId(channelId)
                     .setContentId(Long.toString(video.getPutId()))
                     .setPosterArtUri(video.getPosterAsUri())
                     .setThumbnailUri(video.getPosterAsUri())
                     .setTitle(video.getTitleFormatted())
+                    .setIntentUri(UriHandler.buildVideo(context, video))
                     .setType(TvContractCompat.PreviewProgramColumns.TYPE_MOVIE);
 
             try {
                 if (program == null) {
                     (new PreviewChannelHelper(context)).publishPreviewProgram(builder.build());
-                    Log.d("Channel", "Inserted program into channel");
                 } else {
                     (new PreviewChannelHelper(context)).updatePreviewProgram(program.getId(), builder.build());
-                    Log.d("Channel", "Updated program in channel");
                 }
             } catch (IllegalArgumentException e) {
                 Log.d("Channel", "Unable to add program: $updatedProgram", e);

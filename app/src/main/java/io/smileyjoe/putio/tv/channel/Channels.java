@@ -98,7 +98,7 @@ public class Channels {
         return builder
                 .setInternalProviderId(type.getInternalId())
                 .setLogo(logo)
-                .setAppLinkIntentUri(type.getIntentUri(context))
+                .setAppLinkIntentUri(UriHandler.buildChannel(context, type))
                 .setDisplayName(type.getTitle(context))
                 .setDescription(type.getDescription(context))
                 .build();

@@ -3,8 +3,11 @@ package io.smileyjoe.putio.tv.channel;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import androidx.annotation.StringRes;
+
+import java.util.Arrays;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
@@ -37,12 +40,10 @@ public enum ChannelType {
         return context.getString(mTitle);
     }
 
-    public Uri getIntentUri(Context context){
-        switch (this){
-            case DEFAULT:
-                return Uri.parse(MainActivity.getIntent(context).toUri(Intent.URI_INTENT_SCHEME));
-            default:
-                return null;
-        }
+    public static ChannelType fromInternalId(String id){
+        return Arrays.stream(values())
+                .filter(type -> type.getInternalId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 }
