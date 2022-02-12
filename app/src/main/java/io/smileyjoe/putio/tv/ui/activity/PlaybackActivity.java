@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.channel.ChannelType;
+import io.smileyjoe.putio.tv.channel.Channels;
 import io.smileyjoe.putio.tv.databinding.ActivityPlaybackBinding;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.MediaType;
@@ -282,6 +284,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     private void play(Video video) {
         mPlaybackVideoFragment.play(video);
+        Channels.addProgramme(getBaseContext(), ChannelType.DEFAULT, mVideo);
     }
 
     private boolean play(Video current, PlayAction action) {
