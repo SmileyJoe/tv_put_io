@@ -31,6 +31,7 @@ import io.smileyjoe.putio.tv.databinding.ActivityPlaybackBinding;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
@@ -284,7 +285,6 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     private void play(Video video) {
         mPlaybackVideoFragment.play(video);
-        Channels.addProgramme(getBaseContext(), ChannelType.DEFAULT, mVideo);
     }
 
     private boolean play(Video current, PlayAction action) {

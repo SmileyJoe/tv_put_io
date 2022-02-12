@@ -163,7 +163,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         populate(historyItem, videos, folders, shouldAddToHistory);
 
         if(mUriHandler != null){
-            mUriHandler.execute(getBaseContext(), this::showDetails);
+            mUriHandler.execute(getBaseContext(), (type, video) -> {
+                switch (type){
+                    case VIDEO:
+                        showDetails(video);
+                        break;
+                    case SERIES:
+                        startActivity(SeriesActivity.getIntent(getBaseContext(), video));
+                        break;
+                }
+            });
         }
     }
 

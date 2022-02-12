@@ -21,7 +21,8 @@ public class UriHandler implements Parcelable {
 
     public enum Type{
         CHANNEL("channel", "https://%1$s/%2$s/%3$s"),
-        VIDEO("video", "https://%1$s/%2$s/%3$d");
+        VIDEO("video", "https://%1$s/%2$s/%3$d"),
+        SERIES("series", "https://%1$s/%2$s/%3$d");
 
         private String mSegment;
         private String mUriBase;
@@ -48,7 +49,7 @@ public class UriHandler implements Parcelable {
     }
 
     public interface LoadedListener{
-        void onLoaded(Video video);
+        void onLoaded(Type type, Video video);
     }
 
     private long mPutId = -1;
@@ -61,6 +62,10 @@ public class UriHandler implements Parcelable {
 
     public static Uri buildVideo(Context context, Video video){
         return Uri.parse(String.format(Type.VIDEO.getUriBase(), context.getString(R.string.host_name), Type.VIDEO.getSegment(), video.getPutId()));
+    }
+
+    public static Uri buildSeries(Context context, Video video){
+        return Uri.parse(String.format(Type.SERIES.getUriBase(), context.getString(R.string.host_name), Type.SERIES.getSegment(), video.getPutId()));
     }
 
     public UriHandler() {
@@ -90,9 +95,20 @@ public class UriHandler implements Parcelable {
                         case VIDEO:
                             handleVideo(uri);
                             break;
+                        case SERIES:
+                            handleSeries(uri);
+                            break;
                     }
                 });
             }
+        }
+    }
+
+    private void handleSeries(Uri uri){
+        try {
+            mPutId = Long.parseLong(uri.getLastPathSegment());
+        } catch (NumberFormatException e){
+            mPutId = -1;
         }
     }
 
@@ -111,6 +127,7 @@ public class UriHandler implements Parcelable {
     public void execute(Context context, LoadedListener listener){
         if(mType != null) {
             switch (mType) {
+                case SERIES:
                 case VIDEO:
                     if (mPutId > 0) {
                         LoadVideo task = new LoadVideo(context, listener);
@@ -124,7 +141,7 @@ public class UriHandler implements Parcelable {
         }
     }
 
-    private class LoadVideo extends AsyncTask<Void, Void, ArrayList<Video>> {
+    private class LoadVideo extends AsyncTask<Void, Void, Video> {
 
         private Context mContext;
         private Optional<LoadedListener> mListener;
@@ -135,15 +152,15 @@ public class UriHandler implements Parcelable {
         }
 
         @Override
-        protected ArrayList<Video> doInBackground(Void... voids) {
+        protected Video doInBackground(Void... voids) {
             PutioHelper helper = new PutioHelper(mContext);
             helper.parse(mPutId, Putio.getFiles(mContext, mPutId));
-            return helper.getVideos();
+            return helper.getCurrent();
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Video> videos) {
-            mListener.ifPresent(listener -> listener.onLoaded(videos.stream().findFirst().get()));
+        protected void onPostExecute(Video video) {
+            mListener.ifPresent(listener -> listener.onLoaded(mType, video));
             mPutId = -1;
         }
     }

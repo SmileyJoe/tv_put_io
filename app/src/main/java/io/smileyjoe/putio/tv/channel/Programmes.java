@@ -1,9 +1,11 @@
 package io.smileyjoe.putio.tv.channel;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import androidx.tvprovider.media.tv.PreviewChannel;
@@ -12,14 +14,18 @@ import androidx.tvprovider.media.tv.PreviewProgram;
 import androidx.tvprovider.media.tv.TvContractCompat;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 
 public class Programmes {
+
+    private static final int MAX = 10;
 
     private Programmes(){}
 
@@ -30,9 +36,25 @@ public class Programmes {
     @SuppressLint("RestrictedApi")
     private static void add(Context context, Optional<PreviewChannel> channel, Video video){
         if(channel.isPresent()) {
+            PreviewChannelHelper helper = new PreviewChannelHelper(context);
             long channelId = channel.get().getId();
             List<PreviewProgram> programs = get(context, channelId);
 
+            // Remove older items //
+            if(programs.size() > MAX){
+                IntStream.range(0, programs.size() - MAX)
+                        .forEach(i -> helper.deletePreviewProgram(programs.get(i).getId()));
+            }
+
+            // reduce the weight of everything in the channel by one //
+            programs.stream()
+                    .forEach(program -> {
+                        PreviewProgram.Builder builder = new PreviewProgram.Builder(program);
+                        builder.setWeight(program.getWeight() - 1);
+                        helper.updatePreviewProgram(program.getId(), builder.build());
+                    });
+
+            // get the current item or null //
             PreviewProgram program = programs.stream()
                     .filter(previewProgram -> previewProgram.getContentId().equals(Long.toString(video.getPutId())))
                     .findFirst()
@@ -53,14 +75,28 @@ public class Programmes {
                     .setPosterArtUri(video.getPosterAsUri())
                     .setThumbnailUri(video.getPosterAsUri())
                     .setTitle(video.getTitleFormatted())
-                    .setIntentUri(UriHandler.buildVideo(context, video))
-                    .setType(TvContractCompat.PreviewProgramColumns.TYPE_MOVIE);
+                    .setReleaseDate(Calendar.getInstance().getTime())
+                    .setWeight(programs.size())
+                    .setDescription(video.getOverView());
+
+            switch (video.getVideoType()){
+                case MOVIE:
+                    builder.setIntentUri(UriHandler.buildVideo(context, video))
+                            .setType(TvContractCompat.PreviewProgramColumns.TYPE_MOVIE)
+                            .setDurationMillis((video.getRuntime() * 60000) - (Math.toIntExact(video.getResumeTime()) * 1000));
+                    break;
+                case SEASON:
+                    builder.setIntentUri(UriHandler.buildSeries(context, video))
+                            .setSeasonNumber(video.getSeason())
+                            .setType(TvContractCompat.PreviewProgramColumns.TYPE_TV_SEASON);
+                    break;
+            }
 
             try {
                 if (program == null) {
-                    (new PreviewChannelHelper(context)).publishPreviewProgram(builder.build());
+                    helper.publishPreviewProgram(builder.build());
                 } else {
-                    (new PreviewChannelHelper(context)).updatePreviewProgram(program.getId(), builder.build());
+                    helper.updatePreviewProgram(program.getId(), builder.build());
                 }
             } catch (IllegalArgumentException e) {
                 Log.d("Channel", "Unable to add program: $updatedProgram", e);
