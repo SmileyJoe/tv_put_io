@@ -3,7 +3,6 @@ package io.smileyjoe.putio.tv.channel;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import androidx.tvprovider.media.tv.PreviewChannel;
 import androidx.tvprovider.media.tv.PreviewChannelHelper;
@@ -103,7 +102,7 @@ public class Programmes {
                         helper.updatePreviewProgram(program.getId(), builder.build());
                     }
                 } catch (IllegalArgumentException e) {
-                    Log.d("Channel", "Unable to add program", e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -133,7 +132,7 @@ public class Programmes {
             }
 
         } catch (IllegalArgumentException e) {
-            Log.e("Channel", "Error retrieving preview programs", e);
+            e.printStackTrace();
         }
 
         return programs;

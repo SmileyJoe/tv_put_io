@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.tvprovider.media.tv.PreviewChannel;
@@ -50,7 +49,7 @@ public class Channels {
                     TvContractCompat.requestChannelBrowsable(context, channelId);
                 }
             } catch (IOException e) {
-                Log.e("Channel", e.getMessage(), e);
+                e.printStackTrace();
             }
         }
 
@@ -66,7 +65,7 @@ public class Channels {
             try {
                 (new PreviewChannelHelper(context)).updatePreviewChannel(channel.get().getId(), updateChannel);
             } catch (IOException e) {
-                Log.e("Channel", e.getMessage(), e);
+                e.printStackTrace();
             }
         });
     }
