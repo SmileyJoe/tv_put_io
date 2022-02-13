@@ -274,8 +274,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
-    private void addToDefaultChannel(){
-        if(mVideo.getVideoType() == VideoType.MOVIE) {
+    private void addToDefaultChannel() {
+        if (mVideo.getVideoType() == VideoType.MOVIE) {
             Channels.addProgramme(getContext(), ChannelType.DEFAULT, mVideo);
         }
     }
@@ -382,10 +382,10 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayerGlue.setSubtitle(getString(R.string.text_ends_at, dateFormat.format(now)));
     }
 
-    private void updateResume(){
+    private void updateResume() {
         if (mVideo != null) {
             int resumeTime = Math.toIntExact(mPlayerGlue.getCurrentPosition() / 1000);
-            Putio.setResumeTime(getContext(), mVideo.getPutId(), resumeTime , null);
+            Putio.setResumeTime(getContext(), mVideo.getPutId(), resumeTime, null);
             mShouldResume = true;
             mVideo.setResumeTime(resumeTime);
             addToDefaultChannel();

@@ -1,11 +1,8 @@
 package io.smileyjoe.putio.tv.channel;
 
 import android.annotation.SuppressLint;
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import androidx.tvprovider.media.tv.PreviewChannel;
@@ -19,24 +16,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
-import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 
 public class Programmes {
 
     private static final int MAX = 10;
 
-    private Programmes(){}
+    private Programmes() {
+    }
 
-    public static void add(Context context, ChannelType type, Video video){
-        add(context, Channels.get(context, type) , video);
+    public static void add(Context context, ChannelType type, Video video) {
+        add(context, Channels.get(context, type), video);
     }
 
     @SuppressLint("RestrictedApi")
-    private static void add(Context context, Optional<PreviewChannel> channel, Video video){
-        if(channel.isPresent()) {
+    private static void add(Context context, Optional<PreviewChannel> channel, Video video) {
+        if (channel.isPresent()) {
             PreviewChannelHelper helper = new PreviewChannelHelper(context);
             long channelId = channel.get().getId();
             int timeLeft = (video.getRuntime() * 60000) - (Math.toIntExact(video.getResumeTime()) * 1000);
@@ -48,7 +44,7 @@ public class Programmes {
                     .findFirst()
                     .orElse(null);
 
-            if(video.getVideoType() == VideoType.MOVIE && timeLeft <= 600000){
+            if (video.getVideoType() == VideoType.MOVIE && timeLeft <= 600000) {
                 helper.deletePreviewProgram(program.getId());
                 return;
             } else {
@@ -114,7 +110,7 @@ public class Programmes {
     }
 
     @SuppressLint("RestrictedApi")
-    private static List<PreviewProgram> get(Context context, long channelId){
+    private static List<PreviewProgram> get(Context context, long channelId) {
         List<PreviewProgram> programs = new ArrayList<>();
 
         try {
@@ -132,7 +128,7 @@ public class Programmes {
                     }
                 } while (cursor.moveToNext());
             }
-            if(cursor != null){
+            if (cursor != null) {
                 cursor.close();
             }
 

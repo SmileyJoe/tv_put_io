@@ -25,13 +25,10 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.channel.ChannelType;
-import io.smileyjoe.putio.tv.channel.Channels;
 import io.smileyjoe.putio.tv.databinding.ActivityPlaybackBinding;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;

@@ -1,16 +1,12 @@
 package io.smileyjoe.putio.tv.channel;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.text.TextUtils;
 
 import androidx.annotation.StringRes;
 
 import java.util.Arrays;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 
 public enum ChannelType {
 
@@ -22,7 +18,7 @@ public enum ChannelType {
     @StringRes
     private int mDescription;
 
-    ChannelType(String internalId,@StringRes int title,@StringRes int description) {
+    ChannelType(String internalId, @StringRes int title, @StringRes int description) {
         mInternalId = internalId;
         mTitle = title;
         mDescription = description;
@@ -40,7 +36,7 @@ public enum ChannelType {
         return context.getString(mTitle);
     }
 
-    public static ChannelType fromInternalId(String id){
+    public static ChannelType fromInternalId(String id) {
         return Arrays.stream(values())
                 .filter(type -> type.getInternalId().equals(id))
                 .findFirst()

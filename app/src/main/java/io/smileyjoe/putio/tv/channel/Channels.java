@@ -1,46 +1,33 @@
 package io.smileyjoe.putio.tv.channel;
 
-import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.DrawableRes;
-import androidx.tvprovider.media.tv.BasePreviewProgram;
-import androidx.tvprovider.media.tv.Channel;
-import androidx.tvprovider.media.tv.ChannelLogoUtils;
-import androidx.tvprovider.media.tv.CollectionUtils;
 import androidx.tvprovider.media.tv.PreviewChannel;
 import androidx.tvprovider.media.tv.PreviewChannelHelper;
-import androidx.tvprovider.media.tv.PreviewProgram;
 import androidx.tvprovider.media.tv.TvContractCompat;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 
 public class Channels {
 
-    private Channels(){}
+    private Channels() {
+    }
 
-    public static void addProgramme(Context context, ChannelType type, Video video){
+    public static void addProgramme(Context context, ChannelType type, Video video) {
         Programmes.add(context, type, video);
     }
 
-    public static Optional<PreviewChannel> get(Context context, ChannelType type){
+    public static Optional<PreviewChannel> get(Context context, ChannelType type) {
         PreviewChannelHelper helper = new PreviewChannelHelper(context);
         List<PreviewChannel> channels = helper.getAllChannels();
 
@@ -49,10 +36,10 @@ public class Channels {
                 .findFirst();
     }
 
-    public static Optional<PreviewChannel> create(Context context, ChannelType type){
+    public static Optional<PreviewChannel> create(Context context, ChannelType type) {
         Optional<PreviewChannel> channel = get(context, type);
 
-        if(!channel.isPresent()){
+        if (!channel.isPresent()) {
             PreviewChannel newChannel = build(context, null, type);
 
             try {
@@ -62,7 +49,7 @@ public class Channels {
                 if (channelId >= 0 && type == ChannelType.DEFAULT) {
                     TvContractCompat.requestChannelBrowsable(context, channelId);
                 }
-            } catch (IOException e){
+            } catch (IOException e) {
                 Log.e("Channel", e.getMessage(), e);
             }
         }
@@ -70,7 +57,7 @@ public class Channels {
         return channel;
     }
 
-    public static void update(Context context, ChannelType type){
+    public static void update(Context context, ChannelType type) {
         Optional<PreviewChannel> channel = get(context, type);
 
         channel.ifPresent(current -> {
@@ -78,18 +65,18 @@ public class Channels {
 
             try {
                 (new PreviewChannelHelper(context)).updatePreviewChannel(channel.get().getId(), updateChannel);
-            } catch (IOException e){
+            } catch (IOException e) {
                 Log.e("Channel", e.getMessage(), e);
             }
         });
     }
 
-    private static PreviewChannel build(Context context, PreviewChannel current, ChannelType type){
+    private static PreviewChannel build(Context context, PreviewChannel current, ChannelType type) {
         Uri logo = getIcon(context.getResources(), R.mipmap.ic_channel_default);
 
         PreviewChannel.Builder builder;
 
-        if(current != null){
+        if (current != null) {
             builder = new PreviewChannel.Builder(current);
         } else {
             builder = new PreviewChannel.Builder();
@@ -104,7 +91,7 @@ public class Channels {
                 .build();
     }
 
-    private static Uri getIcon(Resources resources, @DrawableRes int icon){
+    private static Uri getIcon(Resources resources, @DrawableRes int icon) {
         return new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
                 .authority(resources.getResourcePackageName(icon))

@@ -9,10 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +21,6 @@ import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
@@ -44,9 +39,7 @@ import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
-import io.smileyjoe.putio.tv.util.PutioHelper;
 import io.smileyjoe.putio.tv.util.VideoLoader;
-import io.smileyjoe.putio.tv.util.VideoUtil;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
@@ -72,7 +65,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     public static Intent getIntent(Context context, UriHandler uriHandler) {
         Intent intent = new Intent(context, MainActivity.class);
 
-        if(uriHandler != null) {
+        if (uriHandler != null) {
             intent.putExtra(EXTRA_URI_HANDLER, uriHandler);
         }
 
@@ -118,10 +111,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         Tmdb.Genre.update(getBaseContext());
     }
 
-    private void handleExtras(){
+    private void handleExtras() {
         Bundle extras = getIntent().getExtras();
 
-        if(extras != null && extras.containsKey(EXTRA_URI_HANDLER)){
+        if (extras != null && extras.containsKey(EXTRA_URI_HANDLER)) {
             mUriHandler = extras.getParcelable(EXTRA_URI_HANDLER);
         } else {
             mUriHandler = null;
@@ -163,9 +156,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     @Override
     public void onVideosLoadFinished(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
-        if(mUriHandler != null && mUriHandler.isValid()){
+        if (mUriHandler != null && mUriHandler.isValid()) {
             mUriHandler.execute(getBaseContext(), (type, video) -> {
-                switch (type){
+                switch (type) {
                     case VIDEO:
                         showDetails(video);
                         break;

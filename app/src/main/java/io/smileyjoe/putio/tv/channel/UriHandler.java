@@ -6,9 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -19,7 +17,7 @@ import io.smileyjoe.putio.tv.util.PutioHelper;
 
 public class UriHandler implements Parcelable {
 
-    public enum Type{
+    public enum Type {
         CHANNEL("channel", "https://%1$s/%2$s/%3$s"),
         VIDEO("video", "https://%1$s/%2$s/%3$d"),
         SERIES("series", "https://%1$s/%2$s/%3$d");
@@ -40,7 +38,7 @@ public class UriHandler implements Parcelable {
             return mUriBase;
         }
 
-        public static Type fromSegment(String segment){
+        public static Type fromSegment(String segment) {
             return Arrays.stream(values())
                     .filter(type -> type.getSegment().equals(segment))
                     .findFirst()
@@ -48,7 +46,7 @@ public class UriHandler implements Parcelable {
         }
     }
 
-    public interface LoadedListener{
+    public interface LoadedListener {
         void onLoaded(Type type, Video video);
     }
 
@@ -56,26 +54,26 @@ public class UriHandler implements Parcelable {
     private Type mType;
     private ChannelType mChannelType;
 
-    public static Uri buildChannel(Context context, ChannelType type){
+    public static Uri buildChannel(Context context, ChannelType type) {
         return Uri.parse(String.format(Type.CHANNEL.getUriBase(), context.getString(R.string.host_name), Type.CHANNEL.getSegment(), type.getInternalId()));
     }
 
-    public static Uri buildVideo(Context context, Video video){
+    public static Uri buildVideo(Context context, Video video) {
         return Uri.parse(String.format(Type.VIDEO.getUriBase(), context.getString(R.string.host_name), Type.VIDEO.getSegment(), video.getPutId()));
     }
 
-    public static Uri buildSeries(Context context, Video video){
+    public static Uri buildSeries(Context context, Video video) {
         return Uri.parse(String.format(Type.SERIES.getUriBase(), context.getString(R.string.host_name), Type.SERIES.getSegment(), video.getPutId()));
     }
 
     public UriHandler() {
     }
 
-    public boolean isValid(){
+    public boolean isValid() {
         return mType != null;
     }
 
-    private void clear(){
+    private void clear() {
         mPutId = -1;
         mType = null;
         mChannelType = null;
@@ -89,13 +87,13 @@ public class UriHandler implements Parcelable {
         mPutId = putId;
     }
 
-    public void process(Intent intent){
+    public void process(Intent intent) {
         // Navigates to other fragments based on Intent's action
         // [MainActivity] is the main entry point for all intent filters
         if (intent.getAction() == Intent.ACTION_VIEW) {
             Uri uri = intent.getData();
 
-            if(uri != null) {
+            if (uri != null) {
                 uri.getPathSegments().stream().findFirst().ifPresent(segment -> {
                     mType = Type.fromSegment(segment);
                     switch (mType) {
@@ -114,33 +112,33 @@ public class UriHandler implements Parcelable {
         }
     }
 
-    private void handleSeries(Uri uri){
+    private void handleSeries(Uri uri) {
         try {
             mPutId = Long.parseLong(uri.getLastPathSegment());
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             clear();
         }
     }
 
-    private void handleChannel(Uri uri){
+    private void handleChannel(Uri uri) {
         mChannelType = ChannelType.fromInternalId(uri.getLastPathSegment());
     }
 
-    private void handleVideo(Uri uri){
+    private void handleVideo(Uri uri) {
         try {
             mPutId = Long.parseLong(uri.getLastPathSegment());
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             clear();
         }
     }
 
-    public void execute(Context context, LoadedListener listener){
+    public void execute(Context context, LoadedListener listener) {
         execute(context, Optional.ofNullable(listener));
     }
 
-    public void execute(Context context, Optional<LoadedListener> listener){
+    public void execute(Context context, Optional<LoadedListener> listener) {
         boolean loading = false;
-        if(mType != null) {
+        if (mType != null) {
             switch (mType) {
                 case SERIES:
                 case VIDEO:
@@ -157,7 +155,7 @@ public class UriHandler implements Parcelable {
             }
         }
 
-        if(!loading && listener.isPresent()){
+        if (!loading && listener.isPresent()) {
             listener.get().onLoaded(mType, null);
             clear();
         }
