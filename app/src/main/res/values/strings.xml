@@ -37,7 +37,7 @@
     <string name="title_error">Something went wrong</string>
     <string name="error_trailer">The trailer could not be played</string>
     <string name="error_generic">An unknown error occured.</string>
-    <string name="error_video">TESTING. The video could not be played</string>
+    <string name="error_video">The video could not be played</string>
     <string name="text_season">Season</string>
     <string name="text_hide">Hide</string>
     <string name="text_show">Show</string>
