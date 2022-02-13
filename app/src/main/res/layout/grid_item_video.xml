@@ -8,7 +8,6 @@
         android:id="@+id/image_poster"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/Icon"
         app:srcCompat="@drawable/ic_movie_24"
         android:scaleType="centerCrop"/>
 

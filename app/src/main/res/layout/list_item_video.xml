@@ -23,7 +23,6 @@
         android:layout_centerVertical="true"
         android:duplicateParentState="true"
         android:foreground="@drawable/fg_list_image_border"
-        app:contentPadding="@dimen/content_padding_fg_list_image_border"
         app:shapeAppearanceOverlay="@style/Shape.Rounded.Image" />
 
     <LinearLayout

@@ -52,9 +52,12 @@ import java.util.Date;
 import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.channel.ChannelType;
+import io.smileyjoe.putio.tv.channel.Channels;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 import io.smileyjoe.putio.tv.util.VideoPlayerGlue;
 import io.smileyjoe.putio.tv.util.YoutubeUtil;
@@ -163,8 +166,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         if (Util.SDK_INT <= 23) {
             releasePlayer();
         }
-
-        mShouldResume = true;
+        updateResume();
     }
 
     @Override
@@ -268,6 +270,13 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
             }
 
             mPlayerGlue.play();
+            addToDefaultChannel();
+        }
+    }
+
+    private void addToDefaultChannel() {
+        if (mVideo.getVideoType() == VideoType.MOVIE) {
+            Channels.addProgramme(getContext(), ChannelType.DEFAULT, mVideo);
         }
     }
 
@@ -315,8 +324,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     }
 
     public void showSubtitles(Uri uri) {
-        mShouldResume = true;
-        mVideo.setResumeTime(mPlayer.getCurrentPosition() / 1000);
+        updateResume();
         play(mVideo, uri);
     }
 
@@ -374,6 +382,16 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mPlayerGlue.setSubtitle(getString(R.string.text_ends_at, dateFormat.format(now)));
     }
 
+    private void updateResume() {
+        if (mVideo != null) {
+            int resumeTime = Math.toIntExact(mPlayerGlue.getCurrentPosition() / 1000);
+            Putio.setResumeTime(getContext(), mVideo.getPutId(), resumeTime, null);
+            mShouldResume = true;
+            mVideo.setResumeTime(resumeTime);
+            addToDefaultChannel();
+        }
+    }
+
     private class BroadcastTick extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -407,9 +425,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 } else {
                     getSurfaceView().setKeepScreenOn(false);
 
-                    if (mVideo != null) {
-                        Putio.setResumeTime(getContext(), mVideo.getPutId(), mPlayerGlue.getCurrentPosition() / 1000, null);
-                    }
+                    updateResume();
                 }
             }
         }

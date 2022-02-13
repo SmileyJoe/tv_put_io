@@ -74,6 +74,7 @@ public class VideoLoader {
     }
 
     public void loadDirectory() {
+        mHistory = new ArrayList<>();
         getFromPut(Putio.NO_PARENT);
     }
 

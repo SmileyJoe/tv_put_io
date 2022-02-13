@@ -13,6 +13,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.channel.ChannelType;
+import io.smileyjoe.putio.tv.channel.Channels;
 import io.smileyjoe.putio.tv.databinding.ActivitySeriesBinding;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -70,12 +72,14 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
                 mFragmentSeasonDetails.update(series);
 
                 Glide.with(getBaseContext())
-                        .load(series.getPosterAsUri())
+                        .load(series.getBackdropAsUri())
                         .dontAnimate()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mView.imagePoster);
 
                 mVideoLoader.loadDirectory(series.getPutId(), series.getTitle());
+
+                Channels.addProgramme(getBaseContext(), ChannelType.DEFAULT, series);
             }
         }
     }

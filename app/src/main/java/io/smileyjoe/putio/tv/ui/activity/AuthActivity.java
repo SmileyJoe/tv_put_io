@@ -17,6 +17,7 @@ import com.google.gson.JsonObject;
 
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.channel.UriHandler;
 import io.smileyjoe.putio.tv.databinding.ActivityAuthBinding;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
@@ -28,6 +29,7 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
     private SharedPrefs mPrefs;
     private String mCode;
     private boolean mIsPaused = false;
+    private UriHandler mUriHandler;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, AuthActivity.class);
@@ -40,6 +42,8 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
         super.onCreate(savedInstanceState);
 
         mPrefs = SharedPrefs.getInstance(getBaseContext());
+        mUriHandler = new UriHandler();
+        mUriHandler.process(getIntent());
 
         if (!TextUtils.isEmpty(Application.getPutToken())) {
             authComplete();
@@ -60,7 +64,7 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
     }
 
     public void startNext() {
-        startActivity(MainActivity.getIntent(getBaseContext()));
+        startActivity(MainActivity.getIntent(getBaseContext(), mUriHandler));
         finish();
     }
 
