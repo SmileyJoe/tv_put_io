@@ -63,6 +63,8 @@ public class Video implements Parcelable {
     // video links
     @Ignore
     private Uri mStreamUri;
+    @Ignore
+    private Uri mStreamMp4Uri;
     @ColumnInfo(name = "is_tmdb_checked")
     private boolean mIsTmdbChecked = false;
     @ColumnInfo(name = "is_tmdb_found")
@@ -193,16 +195,19 @@ public class Video implements Parcelable {
         mStreamUri = streamUri;
     }
 
-    public void setStreamUri(String streamUri, String streamMp4Uri) {
-        String uri;
-        if (!TextUtils.isEmpty(streamUri)) {
-            uri = streamUri;
-        } else {
-            uri = streamMp4Uri;
+    public void setStreamUri(String streamUri) {
+        if(!TextUtils.isEmpty(streamUri)) {
+            setStreamUri(Uri.parse(streamUri));
         }
+    }
 
-        if (!TextUtils.isEmpty(uri)) {
-            setStreamUri(Uri.parse(uri));
+    public void setStreamMp4Uri(Uri streamMp4Uri) {
+        mStreamMp4Uri = streamMp4Uri;
+    }
+
+    public void setStreamMp4Uri(String streamMp4Uri) {
+        if(!TextUtils.isEmpty(streamMp4Uri)) {
+            setStreamMp4Uri(Uri.parse(streamMp4Uri));
         }
     }
 
@@ -384,8 +389,20 @@ public class Video implements Parcelable {
         }
     }
 
+    public Uri getStreamUri(boolean playMp4) {
+        if(playMp4){
+            return getStreamMp4Uri();
+        } else {
+            return getStreamUri();
+        }
+    }
+
     public Uri getStreamUri() {
         return mStreamUri;
+    }
+
+    public Uri getStreamMp4Uri() {
+        return mStreamMp4Uri;
     }
 
     public int getYear() {
@@ -515,6 +532,7 @@ public class Video implements Parcelable {
         dest.writeString(this.mPoster);
         dest.writeString(this.mBackdrop);
         dest.writeParcelable(this.mStreamUri, flags);
+        dest.writeParcelable(this.mStreamMp4Uri, flags);
         dest.writeByte(this.mIsTmdbChecked ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mIsTmdbFound ? (byte) 1 : (byte) 0);
         dest.writeString(this.mGenreIdsJson);
@@ -549,6 +567,7 @@ public class Video implements Parcelable {
         this.mPoster = in.readString();
         this.mBackdrop = in.readString();
         this.mStreamUri = in.readParcelable(Uri.class.getClassLoader());
+        this.mStreamMp4Uri = in.readParcelable(Uri.class.getClassLoader());
         this.mIsTmdbChecked = in.readByte() != 0;
         this.mIsTmdbFound = in.readByte() != 0;
         this.mGenreIdsJson = in.readString();
@@ -596,6 +615,7 @@ public class Video implements Parcelable {
                 ", mPoster='" + mPoster + '\'' +
                 ", mBackdrop='" + mBackdrop + '\'' +
                 ", mStreamUri=" + mStreamUri +
+                ", mStreamMp4Uri=" + mStreamMp4Uri +
                 ", mIsTmdbChecked=" + mIsTmdbChecked +
                 ", mIsTmdbFound=" + mIsTmdbFound +
                 ", mGenreIdsJson='" + mGenreIdsJson + '\'' +
