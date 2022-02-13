@@ -21,6 +21,7 @@ import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 
 public class Programmes {
@@ -38,21 +39,8 @@ public class Programmes {
         if(channel.isPresent()) {
             PreviewChannelHelper helper = new PreviewChannelHelper(context);
             long channelId = channel.get().getId();
+            int timeLeft = (video.getRuntime() * 60000) - (Math.toIntExact(video.getResumeTime()) * 1000);
             List<PreviewProgram> programs = get(context, channelId);
-
-            // Remove older items //
-            if(programs.size() > MAX){
-                IntStream.range(0, programs.size() - MAX)
-                        .forEach(i -> helper.deletePreviewProgram(programs.get(i).getId()));
-            }
-
-            // reduce the weight of everything in the channel by one //
-            programs.stream()
-                    .forEach(program -> {
-                        PreviewProgram.Builder builder = new PreviewProgram.Builder(program);
-                        builder.setWeight(program.getWeight() - 1);
-                        helper.updatePreviewProgram(program.getId(), builder.build());
-                    });
 
             // get the current item or null //
             PreviewProgram program = programs.stream()
@@ -60,48 +48,67 @@ public class Programmes {
                     .findFirst()
                     .orElse(null);
 
-            PreviewProgram.Builder builder;
-            if (program != null) {
-                builder = new PreviewProgram.Builder(program);
+            if(video.getVideoType() == VideoType.MOVIE && timeLeft <= 600000){
+                helper.deletePreviewProgram(program.getId());
+                return;
             } else {
-                builder = new PreviewProgram.Builder();
-            }
-
-            UriHandler handler = new UriHandler();
-            handler.setPutId(video.getPutId());
-
-            builder.setChannelId(channelId)
-                    .setContentId(Long.toString(video.getPutId()))
-                    .setPosterArtUri(video.getBackdropAsUri())
-                    .setThumbnailUri(video.getBackdropAsUri())
-                    .setTitle(video.getTitleFormatted())
-                    .setReleaseDate(Calendar.getInstance().getTime())
-                    .setWeight(programs.size())
-                    .setDescription(video.getOverView())
-                    .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_16_9)
-                    .setThumbnailAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_16_9);
-
-            switch (video.getVideoType()){
-                case MOVIE:
-                    builder.setIntentUri(UriHandler.buildVideo(context, video))
-                            .setType(TvContractCompat.PreviewProgramColumns.TYPE_MOVIE)
-                            .setDurationMillis((video.getRuntime() * 60000) - (Math.toIntExact(video.getResumeTime()) * 1000));
-                    break;
-                case SEASON:
-                    builder.setIntentUri(UriHandler.buildSeries(context, video))
-                            .setSeasonNumber(video.getSeason())
-                            .setType(TvContractCompat.PreviewProgramColumns.TYPE_TV_SEASON);
-                    break;
-            }
-
-            try {
-                if (program == null) {
-                    helper.publishPreviewProgram(builder.build());
-                } else {
-                    helper.updatePreviewProgram(program.getId(), builder.build());
+                // Remove older items //
+                if (programs.size() > MAX) {
+                    IntStream.range(0, programs.size() - MAX)
+                            .forEach(i -> helper.deletePreviewProgram(programs.get(i).getId()));
                 }
-            } catch (IllegalArgumentException e) {
-                Log.d("Channel", "Unable to add program", e);
+
+                // reduce the weight of everything in the channel by one //
+                programs.stream()
+                        .forEach(programLooped -> {
+                            PreviewProgram.Builder builder = new PreviewProgram.Builder(programLooped);
+                            builder.setWeight(programLooped.getWeight() - 1);
+                            helper.updatePreviewProgram(programLooped.getId(), builder.build());
+                        });
+
+                PreviewProgram.Builder builder;
+                if (program != null) {
+                    builder = new PreviewProgram.Builder(program);
+                } else {
+                    builder = new PreviewProgram.Builder();
+                }
+
+                UriHandler handler = new UriHandler();
+                handler.setPutId(video.getPutId());
+
+                builder.setChannelId(channelId)
+                        .setContentId(Long.toString(video.getPutId()))
+                        .setPosterArtUri(video.getBackdropAsUri())
+                        .setThumbnailUri(video.getBackdropAsUri())
+                        .setTitle(video.getTitleFormatted())
+                        .setReleaseDate(Calendar.getInstance().getTime())
+                        .setWeight(programs.size())
+                        .setDescription(video.getOverView())
+                        .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_16_9)
+                        .setThumbnailAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_16_9);
+
+                switch (video.getVideoType()) {
+                    case MOVIE:
+                        builder.setIntentUri(UriHandler.buildVideo(context, video))
+                                .setType(TvContractCompat.PreviewProgramColumns.TYPE_MOVIE)
+                                .setDurationMillis(timeLeft);
+                        break;
+                    case SEASON:
+                        builder.setIntentUri(UriHandler.buildSeries(context, video))
+                                .setSeasonNumber(video.getSeason())
+                                .setType(TvContractCompat.PreviewProgramColumns.TYPE_TV_SEASON);
+                        break;
+                }
+
+                try {
+                    if (program == null) {
+                        helper.publishPreviewProgram(builder.build());
+                    } else {
+                        helper.updatePreviewProgram(program.getId(), builder.build());
+                    }
+                } catch (IllegalArgumentException e) {
+                    Log.d("Channel", "Unable to add program", e);
+                }
             }
         }
     }

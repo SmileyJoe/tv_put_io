@@ -159,6 +159,7 @@ public class UriHandler implements Parcelable {
 
         if(!loading && listener.isPresent()){
             listener.get().onLoaded(mType, null);
+            clear();
         }
     }
 
