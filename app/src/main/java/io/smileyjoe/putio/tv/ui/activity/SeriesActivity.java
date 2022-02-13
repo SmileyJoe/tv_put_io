@@ -72,7 +72,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
                 mFragmentSeasonDetails.update(series);
 
                 Glide.with(getBaseContext())
-                        .load(series.getPosterAsUri())
+                        .load(series.getBackdropAsUri())
                         .dontAnimate()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mView.imagePoster);

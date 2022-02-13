@@ -72,12 +72,14 @@ public class Programmes {
 
             builder.setChannelId(channelId)
                     .setContentId(Long.toString(video.getPutId()))
-                    .setPosterArtUri(video.getPosterAsUri())
-                    .setThumbnailUri(video.getPosterAsUri())
+                    .setPosterArtUri(video.getBackdropAsUri())
+                    .setThumbnailUri(video.getBackdropAsUri())
                     .setTitle(video.getTitleFormatted())
                     .setReleaseDate(Calendar.getInstance().getTime())
                     .setWeight(programs.size())
-                    .setDescription(video.getOverView());
+                    .setDescription(video.getOverView())
+                    .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_16_9)
+                    .setThumbnailAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_16_9);
 
             switch (video.getVideoType()){
                 case MOVIE:
