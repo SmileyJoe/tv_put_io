@@ -71,6 +71,16 @@ public class UriHandler implements Parcelable {
     public UriHandler() {
     }
 
+    public boolean isValid(){
+        return mType != null;
+    }
+
+    private void clear(){
+        mPutId = -1;
+        mType = null;
+        mChannelType = null;
+    }
+
     public long getPutId() {
         return mPutId;
     }
@@ -108,7 +118,7 @@ public class UriHandler implements Parcelable {
         try {
             mPutId = Long.parseLong(uri.getLastPathSegment());
         } catch (NumberFormatException e){
-            mPutId = -1;
+            clear();
         }
     }
 
@@ -120,11 +130,16 @@ public class UriHandler implements Parcelable {
         try {
             mPutId = Long.parseLong(uri.getLastPathSegment());
         } catch (NumberFormatException e){
-            mPutId = -1;
+            clear();
         }
     }
 
     public void execute(Context context, LoadedListener listener){
+        execute(context, Optional.ofNullable(listener));
+    }
+
+    public void execute(Context context, Optional<LoadedListener> listener){
+        boolean loading = false;
         if(mType != null) {
             switch (mType) {
                 case SERIES:
@@ -132,12 +147,18 @@ public class UriHandler implements Parcelable {
                     if (mPutId > 0) {
                         LoadVideo task = new LoadVideo(context, listener);
                         task.execute();
+                        loading = true;
                     }
                     break;
                 case CHANNEL:
-                    // do nothing for now //
+                default:
+                    loading = false;
                     break;
             }
+        }
+
+        if(!loading && listener.isPresent()){
+            listener.get().onLoaded(mType, null);
         }
     }
 
@@ -146,9 +167,9 @@ public class UriHandler implements Parcelable {
         private Context mContext;
         private Optional<LoadedListener> mListener;
 
-        public LoadVideo(Context context, LoadedListener listener) {
+        public LoadVideo(Context context, Optional<LoadedListener> listener) {
             mContext = context;
-            mListener = Optional.ofNullable(listener);
+            mListener = listener;
         }
 
         @Override
@@ -161,7 +182,7 @@ public class UriHandler implements Parcelable {
         @Override
         protected void onPostExecute(Video video) {
             mListener.ifPresent(listener -> listener.onLoaded(mType, video));
-            mPutId = -1;
+            clear();
         }
     }
 

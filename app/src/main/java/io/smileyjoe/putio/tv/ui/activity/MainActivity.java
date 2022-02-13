@@ -72,7 +72,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     public static Intent getIntent(Context context, UriHandler uriHandler) {
         Intent intent = new Intent(context, MainActivity.class);
 
-        intent.putExtra(EXTRA_URI_HANDLER, uriHandler);
+        if(uriHandler != null) {
+            intent.putExtra(EXTRA_URI_HANDLER, uriHandler);
+        }
+
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         return intent;
@@ -160,9 +163,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
     @Override
     public void onVideosLoadFinished(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
-        populate(historyItem, videos, folders, shouldAddToHistory);
-
-        if(mUriHandler != null){
+        if(mUriHandler != null && mUriHandler.isValid()){
             mUriHandler.execute(getBaseContext(), (type, video) -> {
                 switch (type){
                     case VIDEO:
@@ -172,7 +173,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                         startActivity(SeriesActivity.getIntent(getBaseContext(), video));
                         break;
                 }
+                populate(historyItem, videos, folders, shouldAddToHistory);
             });
+        } else {
+            populate(historyItem, videos, folders, shouldAddToHistory);
         }
     }
 

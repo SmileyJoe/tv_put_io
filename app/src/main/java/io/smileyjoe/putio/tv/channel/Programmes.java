@@ -101,7 +101,7 @@ public class Programmes {
                     helper.updatePreviewProgram(program.getId(), builder.build());
                 }
             } catch (IllegalArgumentException e) {
-                Log.d("Channel", "Unable to add program: $updatedProgram", e);
+                Log.d("Channel", "Unable to add program", e);
             }
         }
     }
