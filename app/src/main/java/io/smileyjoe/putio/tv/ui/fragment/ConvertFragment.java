@@ -67,7 +67,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
         }
     }
 
-    private void getConversionStatus() {
+    public void getConversionStatus() {
         if (!mVideo.isConverted() && getContext() != null) {
             Putio.getConversionStatus(getContext(), mVideo.getPutId(), new OnConvertResponse());
         }
@@ -103,6 +103,8 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
                         Putio.convertFile(getContext(), mVideo.getPutId(), new Response() {
                             @Override
                             public void onSuccess(JsonObject result) {
+                                mVideo.setConverting(true);
+                                VideoLoader.getInstance(getContext(), null).update(mVideo);
                                 getConversionStatus();
                             }
                         });

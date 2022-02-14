@@ -93,6 +93,8 @@ public class Video implements Parcelable {
     private ArrayList<Character> mCharacters;
     @Ignore
     private String mPutTitle;
+    @Ignore
+    private boolean mIsConverting;
 
     public Video() {
         mVideoType = VideoType.UNKNOWN;
@@ -129,6 +131,7 @@ public class Video implements Parcelable {
         this.mRuntime = video.getRuntime();
         this.mCharacters = video.getCharacters();
         this.mPutTitle = video.getPutTitle();
+        this.mIsConverting = video.isConverting();
     }
 
     public void setPutId(long putId) {
@@ -299,6 +302,10 @@ public class Video implements Parcelable {
 
     public void setPutTitle(String putTitle) {
         mPutTitle = putTitle;
+    }
+
+    public void setConverting(boolean converting) {
+        mIsConverting = converting;
     }
 
     public String getYoutubeTrailerKey() {
@@ -497,6 +504,10 @@ public class Video implements Parcelable {
         return mPutTitle;
     }
 
+    public boolean isConverting() {
+        return mIsConverting;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -547,6 +558,7 @@ public class Video implements Parcelable {
         dest.writeInt(this.mRuntime);
         dest.writeTypedList(this.mCharacters);
         dest.writeString(this.mPutTitle);
+        dest.writeByte(this.mIsConverting ? (byte) 1 : (byte) 0);
     }
 
     protected Video(Parcel in) {
@@ -583,6 +595,7 @@ public class Video implements Parcelable {
         this.mRuntime = in.readInt();
         this.mCharacters = in.createTypedArrayList(Character.CREATOR);
         this.mPutTitle = in.readString();
+        this.mIsConverting = in.readByte() != 0;
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {
@@ -630,6 +643,7 @@ public class Video implements Parcelable {
                 ", mRuntime=" + mRuntime +
                 ", mCharacters=" + mCharacters +
                 ", mPutTitle='" + mPutTitle + '\'' +
+                ", mIsConverting=" + mIsConverting +
                 '}';
     }
 }

@@ -120,13 +120,18 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         }
 
         hideRightPanel();
-        hideConversion(true);
 
         if (mVideos != null && mVideos.size() > 1) {
             mPlaybackVideoFragment.showNextPrevious();
         }
 
-        play();
+        if(mVideo.isConverting()){
+            showConversion();
+            mConvertFragment.getConversionStatus();
+        } else {
+            hideConversion(true);
+            play();
+        }
     }
 
     @Override
