@@ -50,7 +50,7 @@
     <string name="text_sort_released_descending">Newest release first</string>
     <string name="channel_default_title">Recent</string>
     <string name="channel_default_description">Pick up where you left off</string>
-    <string name="text_converting_instructions">Your file is being converted</string>
+    <string name="text_converting_instructions">The file format couldn\'t be played. \n Converting to mp4</string>
     <string name="convert_status_in_queue">In Queue</string>
     <string name="convert_status_extracted">Done</string>
     <plurals name="plural_second">
