@@ -25,6 +25,7 @@ import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Conversion;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.util.PutioHelper;
+import io.smileyjoe.putio.tv.util.VideoLoader;
 
 public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
 
@@ -34,18 +35,10 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
 
     private Video mVideo;
     private Optional<Listener> mListener = Optional.empty();
-    private Handler mStatusHandler;
 
     @Override
     protected FragmentConvertBinding inflate(LayoutInflater inflater, ViewGroup container, boolean savedInstanceState) {
         return FragmentConvertBinding.inflate(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mStatusHandler = new Handler();
     }
 
     public void setListener(Listener listener) {
@@ -130,6 +123,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
 
         @Override
         protected void onPostExecute(Video video) {
+            VideoLoader.getInstance(getContext(), null).update(video);
             mListener.ifPresent(listener -> listener.conversionFinished(video));
         }
     }

@@ -268,8 +268,6 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
             if (mShouldResume) {
                 mPlayerGlue.seekTo(mVideo.getResumeTime() * 1000);
-                // we only want to do this after the first load //
-                mShouldResume = false;
             }
 
             mPlayerGlue.play();
@@ -411,6 +409,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         public void onRenderedFirstFrame() {
             mPlayerGlue.showAudioTrackSelection();
             populateEndTime();
+            // we only want to do this after the first load //
+            mShouldResume = false;
         }
 
         @Override

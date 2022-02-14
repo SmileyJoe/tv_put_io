@@ -37,6 +37,7 @@ import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
+import io.smileyjoe.putio.tv.util.VideoLoader;
 
 public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener, BaseFragment.OnFocusSearchListener, ConvertFragment.Listener {
 
@@ -290,6 +291,8 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     private void play(Video video) {
         mPlaybackVideoFragment.play(video);
+        video.setWatched(true);
+        VideoLoader.getInstance(getBaseContext(), null).update(video);
     }
 
     private boolean play(Video current, PlayAction action) {
@@ -364,6 +367,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     @Override
     public void onPlayComplete(Video videoCompleted) {
         boolean playingNext = play(videoCompleted, PlayAction.NEXT);
+        videoCompleted.setWatched(true);
 
         if (!playingNext) {
             finish();
