@@ -7,12 +7,12 @@
         android:id="@+id/image_poster"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foreground="@color/bg_overlay_poster"
         android:scaleType="centerCrop"/>
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_overlay_poster"
         android:padding="@dimen/padding_general">
 
         <fragment

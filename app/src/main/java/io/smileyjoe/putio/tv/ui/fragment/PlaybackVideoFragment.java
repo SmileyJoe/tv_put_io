@@ -25,7 +25,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -80,6 +79,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         void onNextClicked(Video current);
         void onPreviousClicked(Video current);
         void onAudioTracksClicked(TracksInfo tracksInfo);
+        void showConversion();
         SubtitleView getSubtitleView();
     }
 
@@ -415,11 +415,13 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
         @Override
         public void onPlayerError(PlaybackException error) {
-            if(!mPlayMp4 && mVideo != null && mVideo.getStreamMp4Uri() != null){
+            if(mPlayMp4){
+                mListener.ifPresent(listener -> listener.showError());
+            } else if(mVideo.getStreamMp4Uri() == null){
+                mListener.ifPresent(listener -> listener.showConversion());
+            } else {
                 mPlayMp4 = true;
                 play(mVideo);
-            } else {
-                mListener.ifPresent(listener -> listener.showError());
             }
         }
     }
