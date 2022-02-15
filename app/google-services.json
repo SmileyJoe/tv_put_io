@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996521692858:android:0bced7ed8b97374284fc83",
+        "android_client_info": {
+          "package_name": "io.smileyjoe.putio.tv.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996521692858-upl9jvncvaaonivh57jjbcb5r7crreui.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIDnk819as-kLwdNqsbBgBVaZLNLV8BmM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996521692858-upl9jvncvaaonivh57jjbcb5r7crreui.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

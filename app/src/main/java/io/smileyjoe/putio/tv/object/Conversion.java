@@ -22,7 +22,8 @@ public class Conversion {
         ERROR("ERROR"),
         NOT_AVAILABLE("NOT_AVAILABLE"),
         CONVERTING("CONVERTING"),
-        COMPLETED("COMPLETED");
+        COMPLETED("COMPLETED"),
+        UNKNOWN("");
 
         private String mPutKey;
 
@@ -34,7 +35,7 @@ public class Conversion {
             return Arrays.stream(values())
                     .filter(type -> type.mPutKey.equals(key))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(UNKNOWN);
         }
     }
 

@@ -29,6 +29,9 @@ import io.smileyjoe.putio.tv.util.VideoLoader;
 
 public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
 
+    private static final int WAIT_SHORT = 1000;
+    private static final int WAIT_LONG = 5000;
+
     public interface Listener{
         void conversionFinished(Video video);
     }
@@ -83,14 +86,14 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
                     case IN_QUEUE:
                         mView.textStatus.setText(R.string.convert_status_in_queue);
                         if(isVisible()) {
-                            new Handler().postDelayed(() -> getConversionStatus(), 5000);
+                            new Handler().postDelayed(ConvertFragment.this::getConversionStatus, WAIT_LONG);
                         }
                         break;
                     case EXTRACTING:
                     case CONVERTING:
                         mView.textStatus.setText(conversion.getPercentFormatted());
                         if(isVisible()) {
-                            new Handler().postDelayed(() -> getConversionStatus(), 1000);
+                            new Handler().postDelayed(ConvertFragment.this::getConversionStatus, WAIT_SHORT);
                         }
                         break;
                     case EXTRACTED:
@@ -108,6 +111,16 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
                                 getConversionStatus();
                             }
                         });
+                        break;
+                    case ERROR:
+                        mView.textStatus.setText(R.string.convert_status_error);
+                        mView.textInstructions.setText(R.string.error_generic);
+                        break;
+                    default:
+                        mView.textStatus.setText(R.string.convert_status_unknown);
+                        if(isVisible()) {
+                            new Handler().postDelayed(ConvertFragment.this::getConversionStatus, WAIT_LONG);
+                        }
                         break;
                 }
             }
