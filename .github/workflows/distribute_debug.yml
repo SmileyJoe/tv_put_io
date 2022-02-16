@@ -40,4 +40,4 @@ jobs:
           -Pputio_client_secret=${{ secrets.PUTIO_CLIENT_SECRET }}
           -Ptmdb_auth_token=${{ secrets.TMDB_AUTH_TOKEN }}
           -Pbuild_number=${{ github.run_number }}
-          -Prelease_notes=${{ steps.build_changelog.outputs.changelog }}
+          -Prelease_notes="${{ steps.build_changelog.outputs.changelog }}"
