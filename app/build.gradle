@@ -1,6 +1,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.firebase.appdistribution'
+
+def getFirebaseDistributionKeyPath = { ->
+    project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
+}
+
+def getReleaseNotes = { ->
+    project.hasProperty('release_notes') ? release_notes : ""
+}
+
+def getBuildNumber = { ->
+    project.hasProperty('build_number') ? build_number : 0
+}
 
 android {
     compileSdkVersion 31
@@ -11,7 +24,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 31
         versionCode 24
-        versionName "3.1.0"
+        versionName "3.1.0." + getBuildNumber()
         buildConfigField "String", "PUTIO_CLIENT_ID", putio_client_id
         buildConfigField "String", "PUTIO_CLIENT_SECRET", putio_client_secret
         buildConfigField "String", "TMDB_AUTH_TOKEN", tmdb_auth_token
@@ -28,10 +41,24 @@ android {
     buildTypes {
         debug{
             applicationIdSuffix ".debug"
+
+            firebaseAppDistribution {
+                artifactType="APK"
+                releaseNotes = getReleaseNotes()
+                groups="qa"
+                serviceCredentialsFile = getFirebaseDistributionKeyPath()
+            }
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            firebaseAppDistribution {
+                artifactType="AAB"
+                releaseNotes = getReleaseNotes()
+                groups="testers"
+                serviceCredentialsFile = getFirebaseDistributionKeyPath()
+            }
         }
     }
 
