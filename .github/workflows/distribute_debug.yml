@@ -34,7 +34,7 @@ jobs:
       - name: Distribute to firebase
         id: distribure_firebase
         run: >-
-          bash ./gradlew :app:assembleDebug :app:appDistributionUploadDebug
+          bash ./gradlew :app:assembleDebug :app:appDistributionUploadDebug --warning-mode all
           -Pfirebase_distribution=${{ steps.fetch_credential_file.outputs.filePath }}
           -Pputio_client_id=${{ secrets.PUTIO_CLIENT_ID }}
           -Pputio_client_secret=${{ secrets.PUTIO_CLIENT_SECRET }}
