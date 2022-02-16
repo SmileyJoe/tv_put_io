@@ -1,8 +1,6 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,7 +140,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
 
         mVideosAdapter.setItems(videos);
 
-        if(oldSize == 0){
+        if (oldSize == 0) {
             mVideosAdapter.notifyDataSetChanged();
         } else {
             mVideosAdapter.notifyItemRangeChanged(0, oldSize);

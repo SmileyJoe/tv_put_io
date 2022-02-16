@@ -29,15 +29,15 @@ public abstract class BaseActivity<T extends ViewBinding> extends FragmentActivi
         mView = null;
     }
 
-    protected void show(Fragment... fragments){
+    protected void show(Fragment... fragments) {
         FragmentUtil.showFragment(getSupportFragmentManager(), fragments);
     }
 
-    protected void hide(Fragment... fragments){
+    protected void hide(Fragment... fragments) {
         FragmentUtil.hideFragment(getSupportFragmentManager(), fragments);
     }
 
-    protected Fragment getFragment(@IdRes int fragmentId){
+    protected Fragment getFragment(@IdRes int fragmentId) {
         return getSupportFragmentManager().findFragmentById(fragmentId);
     }
 }

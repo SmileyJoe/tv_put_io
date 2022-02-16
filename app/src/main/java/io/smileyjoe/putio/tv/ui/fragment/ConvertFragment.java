@@ -1,16 +1,9 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
@@ -18,7 +11,6 @@ import com.google.gson.JsonObject;
 import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.channel.UriHandler;
 import io.smileyjoe.putio.tv.databinding.FragmentConvertBinding;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
@@ -32,7 +24,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
     private static final int WAIT_SHORT = 1000;
     private static final int WAIT_LONG = 5000;
 
-    public interface Listener{
+    public interface Listener {
         void conversionFinished(Video video);
     }
 
@@ -48,7 +40,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
         mListener = Optional.ofNullable(listener);
     }
 
-    public void setVideo(Video video){
+    public void setVideo(Video video) {
         mVideo = video;
         Glide.with(getContext())
                 .load(video.getBackdropAsUri())
@@ -57,7 +49,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
         mView.textTitle.setText(video.getTitle());
     }
 
-    public void convert(){
+    public void convert() {
         getConversionStatus();
     }
 
@@ -65,7 +57,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 
-        if(!hidden){
+        if (!hidden) {
             getConversionStatus();
         }
     }
@@ -79,20 +71,20 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
     private class OnConvertResponse extends Response {
         @Override
         public void onSuccess(JsonObject result) {
-            if(isVisible()) {
+            if (isVisible()) {
                 Conversion conversion = Conversion.fromApi(result.getAsJsonObject("mp4"));
 
-                switch (conversion.getStatus()){
+                switch (conversion.getStatus()) {
                     case IN_QUEUE:
                         mView.textStatus.setText(R.string.convert_status_in_queue);
-                        if(isVisible()) {
+                        if (isVisible()) {
                             new Handler().postDelayed(ConvertFragment.this::getConversionStatus, WAIT_LONG);
                         }
                         break;
                     case EXTRACTING:
                     case CONVERTING:
                         mView.textStatus.setText(conversion.getPercentFormatted());
-                        if(isVisible()) {
+                        if (isVisible()) {
                             new Handler().postDelayed(ConvertFragment.this::getConversionStatus, WAIT_SHORT);
                         }
                         break;
@@ -118,7 +110,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
                         break;
                     default:
                         mView.textStatus.setText(R.string.convert_status_unknown);
-                        if(isVisible()) {
+                        if (isVisible()) {
                             new Handler().postDelayed(ConvertFragment.this::getConversionStatus, WAIT_LONG);
                         }
                         break;

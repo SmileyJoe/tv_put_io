@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.IdRes;
@@ -36,7 +35,6 @@ import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment;
-import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
 public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener, BaseFragment.OnFocusSearchListener, ConvertFragment.Listener {
@@ -125,7 +123,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
             mPlaybackVideoFragment.showNextPrevious();
         }
 
-        if(mVideo.isConverting()){
+        if (mVideo.isConverting()) {
             showConversion();
             mConvertFragment.getConversionStatus();
         } else {
@@ -219,7 +217,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void onBackPressed() {
-        if(mConvertFragment.isVisible()) {
+        if (mConvertFragment.isVisible()) {
             super.onBackPressed();
         } else if (mSubtitleFragment.isVisible() || mTrackGroupSelectionFragment.isVisible()) {
             hideRightPanel();
@@ -349,8 +347,8 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         show(mConvertFragment);
     }
 
-    private void hideConversion(boolean onLoad){
-        if(!onLoad) {
+    private void hideConversion(boolean onLoad) {
+        if (!onLoad) {
             show(mPlaybackVideoFragment);
             mPlaybackVideoFragment.hideControlsOverlay(true);
         }

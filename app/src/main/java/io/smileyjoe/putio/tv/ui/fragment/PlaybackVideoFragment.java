@@ -415,9 +415,9 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
         @Override
         public void onPlayerError(PlaybackException error) {
-            if(mPlayMp4){
+            if (mPlayMp4) {
                 mListener.ifPresent(listener -> listener.showError());
-            } else if(mVideo.getStreamMp4Uri() == null){
+            } else if (mVideo.getStreamMp4Uri() == null) {
                 mListener.ifPresent(listener -> listener.showConversion());
             } else {
                 mPlayMp4 = true;

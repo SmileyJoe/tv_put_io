@@ -1,7 +1,5 @@
 package io.smileyjoe.putio.tv.object;
 
-import android.text.TextUtils;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -14,7 +12,7 @@ import io.smileyjoe.putio.tv.util.JsonUtil;
 
 public class Conversion {
 
-    public enum Status{
+    public enum Status {
         IN_QUEUE("IN_QUEUE"),
         EXTRACTING("EXTRACTING"),
         EXTRACTED("EXTRACTED"),
@@ -31,7 +29,7 @@ public class Conversion {
             mPutKey = putKey;
         }
 
-        public static Status fromPut(String key){
+        public static Status fromPut(String key) {
             return Arrays.stream(values())
                     .filter(type -> type.mPutKey.equals(key))
                     .findFirst()
@@ -63,7 +61,7 @@ public class Conversion {
         return mPercent;
     }
 
-    public String getPercentFormatted(){
+    public String getPercentFormatted() {
         return mPercent + "%";
     }
 

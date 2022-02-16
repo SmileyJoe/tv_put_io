@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.channel.ChannelType;
@@ -63,7 +62,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     @Override
     protected void onResume() {
         super.onResume();
-        if(mVideoLoader != null){
+        if (mVideoLoader != null) {
             mVideoLoader.setListener(this);
         } else {
             mVideoLoader = VideoLoader.getInstance(getBaseContext(), this);

@@ -73,7 +73,7 @@ public class VideoLoader {
         return null;
     }
 
-    public void update(Video updateVideo){
+    public void update(Video updateVideo) {
         mVideos.entrySet().stream()
                 .forEach(entry -> {
                     mVideos.put(entry.getKey(), entry.getValue().stream()
@@ -86,7 +86,7 @@ public class VideoLoader {
                 .forEach(entry -> mParents.put(entry.getKey(), updateVideo));
     }
 
-    public void reload(){
+    public void reload() {
         if (mHistory != null && !mHistory.isEmpty()) {
             HistoryItem current = getCurrentHistory();
 

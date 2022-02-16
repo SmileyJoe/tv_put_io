@@ -199,7 +199,7 @@ public class Video implements Parcelable {
     }
 
     public void setStreamUri(String streamUri) {
-        if(!TextUtils.isEmpty(streamUri)) {
+        if (!TextUtils.isEmpty(streamUri)) {
             setStreamUri(Uri.parse(streamUri));
         }
     }
@@ -209,7 +209,7 @@ public class Video implements Parcelable {
     }
 
     public void setStreamMp4Uri(String streamMp4Uri) {
-        if(!TextUtils.isEmpty(streamMp4Uri)) {
+        if (!TextUtils.isEmpty(streamMp4Uri)) {
             setStreamMp4Uri(Uri.parse(streamMp4Uri));
         }
     }
@@ -397,7 +397,7 @@ public class Video implements Parcelable {
     }
 
     public Uri getStreamUri(boolean playMp4) {
-        if(playMp4){
+        if (playMp4) {
             return getStreamMp4Uri();
         } else {
             return getStreamUri();

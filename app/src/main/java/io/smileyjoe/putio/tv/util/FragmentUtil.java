@@ -11,7 +11,7 @@ public class FragmentUtil {
     public static void hideFragment(FragmentManager manager, Fragment... fragments) {
         FragmentTransaction transaction = manager.beginTransaction();
         Arrays.stream(fragments).forEach(fragment -> {
-            if(fragment != null) {
+            if (fragment != null) {
                 transaction.hide(fragment);
             }
         });
@@ -21,7 +21,7 @@ public class FragmentUtil {
     public static void showFragment(FragmentManager manager, Fragment... fragments) {
         FragmentTransaction transaction = manager.beginTransaction();
         Arrays.stream(fragments).forEach(fragment -> {
-            if(fragment != null) {
+            if (fragment != null) {
                 transaction.show(fragment);
             }
         });
