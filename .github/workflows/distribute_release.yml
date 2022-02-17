@@ -49,6 +49,6 @@ jobs:
           -Pbuild_number=${{ github.run_number }}
           -Prelease_notes="${{ steps.build_changelog.outputs.changelog }}"
           -Pkeystore_password=${{ secrets.KEYSTORE_PASSWORD }}
-          -Pkeystore_key_alias="${{ secrets.KEYSTORE_KEY_ALIAS }}"
+          -Pkeystore_key_alias=${{ secrets.KEYSTORE_KEY_ALIAS }}
           -Pkeystore_key_password=${{ secrets.KEYSTORE_KEY_PASSWORD }}
           -Pkeystore=${{ steps.fetch_keystore.outputs.filePath }}
