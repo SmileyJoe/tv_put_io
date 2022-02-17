@@ -123,7 +123,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
             mPlaybackVideoFragment.showNextPrevious();
         }
 
-        if (mVideo.isConverting()) {
+        if (mVideo != null && mVideo.isConverting()) {
             showConversion();
             mConvertFragment.getConversionStatus();
         } else {
