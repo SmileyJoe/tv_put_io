@@ -8,15 +8,15 @@ def getFirebaseDistributionKeyPath = { ->
 }
 
 def getKeystorePassword = { ->
-    project.hasProperty('keystore_password') ? keystore_password : ""
+    project.hasProperty('keystore_password') ? "\"${keystore_password}\"" : ""
 }
 
 def getKeystoreKeyPassword = { ->
-    project.hasProperty('keystore_key_password') ? keystore_key_password : ""
+    project.hasProperty('keystore_key_password') ? "\"${keystore_key_password}\"" : ""
 }
 
 def getKeystoreKeyAlias = { ->
-    project.hasProperty('keystore_key_alias') ? keystore_key_alias : ""
+    project.hasProperty('keystore_key_alias') ? "\"${keystore_key_alias}\"" : ""
 }
 
 def getReleaseNotes = { ->
