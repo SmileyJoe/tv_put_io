@@ -7,6 +7,10 @@ def getFirebaseDistributionKeyPath = { ->
     project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
 }
 
+def getKeystorePath = { ->
+    project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
+}
+
 def getReleaseNotes = { ->
     project.hasProperty('release_notes') ? release_notes : ""
 }
@@ -52,11 +56,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            storeFile = file("keystore/putio_tv_keystore.jks")
-            storePassword keystore_password
-            keyAlias keystore_key_alias
-            keyPassword keystore_key_password
+            signingConfig signingConfigs.release
 
             firebaseAppDistribution {
                 artifactType="AAB"
@@ -69,6 +69,15 @@ android {
 
     buildFeatures {
         viewBinding true
+    }
+
+    signingConfigs {
+        release {
+            storeFile = file("keystore/putio_tv_keystore.jks")
+            storePassword keystore_password
+            keyAlias keystore_key_alias
+            keyPassword keystore_key_password
+        }
     }
 }
 
