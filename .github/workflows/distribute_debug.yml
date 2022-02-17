@@ -1,0 +1,43 @@
+name: Distribute debug
+
+on:
+  pull_request:
+    branches: 
+      - master
+
+jobs:
+  distribute:
+    name: Distribute to firebase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build Changelog
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v2.9.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch distribution file from secrets
+        id: fetch_credential_file
+        uses: timheuer/base64-to-file@v1
+        with:
+            encodedString: ${{ secrets.FIREBASE_DISTRIBUTION }}
+            fileName: 'firebase_distribution.json'
+
+      - name: Distribute to firebase
+        id: distribure_firebase
+        run: >-
+          bash ./gradlew :app:assembleDebug :app:appDistributionUploadDebug --warning-mode all
+          -Pfirebase_distribution=${{ steps.fetch_credential_file.outputs.filePath }}
+          -Pputio_client_id=${{ secrets.PUTIO_CLIENT_ID }}
+          -Pputio_client_secret=${{ secrets.PUTIO_CLIENT_SECRET }}
+          -Ptmdb_auth_token=${{ secrets.TMDB_AUTH_TOKEN }}
+          -Pbuild_number=${{ github.run_number }}
+          -Prelease_notes="${{ steps.build_changelog.outputs.changelog }}"

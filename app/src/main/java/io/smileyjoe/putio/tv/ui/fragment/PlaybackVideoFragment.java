@@ -36,6 +36,7 @@ import androidx.leanback.media.PlaybackGlue;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
@@ -78,6 +79,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         void onNextClicked(Video current);
         void onPreviousClicked(Video current);
         void onAudioTracksClicked(TracksInfo tracksInfo);
+        void showConversion();
         SubtitleView getSubtitleView();
     }
 
@@ -94,6 +96,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private YoutubeUtil mYoutube;
     private String mYoutubeUrl;
     private boolean mShowNextPrevious;
+    private boolean mPlayMp4 = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -259,14 +262,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
             mPlayerGlue.setTitle(video.getTitleFormatted());
             mPlayerGlue.setMediaType(MediaType.VIDEO);
 
-            prepareMediaForPlaying(video.getStreamUri(), subtitleUri);
+            prepareMediaForPlaying(video.getStreamUri(mPlayMp4), subtitleUri);
 
             mPlayerGlue.addPlayerCallback(new PlayerCallback());
 
             if (mShouldResume) {
                 mPlayerGlue.seekTo(mVideo.getResumeTime() * 1000);
-                // we only want to do this after the first load //
-                mShouldResume = false;
             }
 
             mPlayerGlue.play();
@@ -408,6 +409,20 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         public void onRenderedFirstFrame() {
             mPlayerGlue.showAudioTrackSelection();
             populateEndTime();
+            // we only want to do this after the first load //
+            mShouldResume = false;
+        }
+
+        @Override
+        public void onPlayerError(PlaybackException error) {
+            if (mPlayMp4) {
+                mListener.ifPresent(listener -> listener.showError());
+            } else if (mVideo.getStreamMp4Uri() == null) {
+                mListener.ifPresent(listener -> listener.showConversion());
+            } else {
+                mPlayMp4 = true;
+                play(mVideo);
+            }
         }
     }
 

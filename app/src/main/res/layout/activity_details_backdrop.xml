@@ -7,12 +7,12 @@
         android:id="@+id/image_backdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foreground="@drawable/bg_backdrop_overlay"
         android:scaleType="centerCrop"/>
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_backdrop_overlay"
         android:padding="@dimen/padding_general">
 
         <ImageView

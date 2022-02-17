@@ -73,6 +73,34 @@ public class VideoLoader {
         return null;
     }
 
+    public void update(Video updateVideo) {
+        mVideos.entrySet().stream()
+                .forEach(entry -> {
+                    mVideos.put(entry.getKey(), entry.getValue().stream()
+                            .map(video -> video.getPutId() == updateVideo.getPutId() ? updateVideo : video)
+                            .collect(Collectors.toCollection(ArrayList::new)));
+                });
+
+        mParents.entrySet().stream()
+                .filter(entry -> entry.getValue().getPutId() == updateVideo.getPutId())
+                .forEach(entry -> mParents.put(entry.getKey(), updateVideo));
+    }
+
+    public void reload() {
+        if (mHistory != null && !mHistory.isEmpty()) {
+            HistoryItem current = getCurrentHistory();
+
+            switch (current.getFolderType()) {
+                case DIRECTORY:
+                    loadDirectory(current.getId(), current.getTitle(), false);
+                    break;
+                case GROUP:
+                    loadGroup(current.getId(), false);
+                    break;
+            }
+        }
+    }
+
     public void loadDirectory() {
         mHistory = new ArrayList<>();
         getFromPut(Putio.NO_PARENT);

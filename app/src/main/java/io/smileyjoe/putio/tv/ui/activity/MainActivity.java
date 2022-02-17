@@ -146,6 +146,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
         if (mVideoLoader != null) {
             mVideoLoader.setListener(this);
+            mVideoLoader.reload();
         }
     }
 

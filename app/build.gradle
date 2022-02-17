@@ -1,5 +1,31 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.firebase.appdistribution'
+
+def getFirebaseDistributionKeyPath = { ->
+    project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
+}
+
+def getKeystorePassword = { ->
+    project.hasProperty('keystore_password') ? keystore_password : ""
+}
+
+def getKeystoreKeyPassword = { ->
+    project.hasProperty('keystore_key_password') ? keystore_key_password : ""
+}
+
+def getKeystoreKeyAlias = { ->
+    project.hasProperty('keystore_key_alias') ? keystore_key_alias : ""
+}
+
+def getReleaseNotes = { ->
+    project.hasProperty('release_notes') ? release_notes : ""
+}
+
+def getBuildNumber = { ->
+    project.hasProperty('build_number') ? build_number : 0
+}
 
 android {
     compileSdkVersion 31
@@ -9,11 +35,11 @@ android {
         applicationId "io.smileyjoe.putio.tv"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 24
-        versionName "3.1.0"
-        buildConfigField "String", "PUTIO_CLIENT_ID", putio_client_id
-        buildConfigField "String", "PUTIO_CLIENT_SECRET", putio_client_secret
-        buildConfigField "String", "TMDB_AUTH_TOKEN", tmdb_auth_token
+        versionCode 25
+        versionName "3.2.0." + getBuildNumber()
+        buildConfigField "String", "PUTIO_CLIENT_ID", "\"${putio_client_id}\""
+        buildConfigField "String", "PUTIO_CLIENT_SECRET", "\"${putio_client_secret}\""
+        buildConfigField "String", "TMDB_AUTH_TOKEN", "\"${tmdb_auth_token}\""
 
         def host = 'tv.putio.smileyjoe.io'
         resValue 'string', 'host_name', host
@@ -24,10 +50,37 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        release {
+            storeFile = file("keystore/putio_tv_keystore.jks")
+            storePassword getKeystorePassword()
+            keyAlias getKeystoreKeyAlias()
+            keyPassword getKeystoreKeyPassword()
+        }
+    }
+
     buildTypes {
+        debug{
+            applicationIdSuffix ".debug"
+
+            firebaseAppDistribution {
+                artifactType="APK"
+                releaseNotes = getReleaseNotes()
+                groups="qa"
+                serviceCredentialsFile = getFirebaseDistributionKeyPath()
+            }
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+            firebaseAppDistribution {
+                artifactType="AAB"
+                releaseNotes = getReleaseNotes()
+                groups="testers"
+                serviceCredentialsFile = getFirebaseDistributionKeyPath()
+            }
         }
     }
 
@@ -54,6 +107,7 @@ dependencies {
     implementation 'androidx.tvprovider:tvprovider:1.0.0'
     annotationProcessor "androidx.room:room-compiler:2.4.1"
 
-    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+    implementation platform('com.google.firebase:firebase-bom:29.1.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
 }

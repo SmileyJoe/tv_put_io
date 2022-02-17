@@ -30,12 +30,14 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.MediaType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
+import io.smileyjoe.putio.tv.ui.fragment.ConvertFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ErrorFragment;
 import io.smileyjoe.putio.tv.ui.fragment.PlaybackVideoFragment;
 import io.smileyjoe.putio.tv.ui.fragment.SubtitleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.TrackGroupSelectionFragment;
+import io.smileyjoe.putio.tv.util.VideoLoader;
 
-public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener, BaseFragment.OnFocusSearchListener {
+public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> implements PlaybackVideoFragment.Listener, SubtitleFragment.Listener, ErrorFragment.Listener, TrackGroupSelectionFragment.Listener, BaseFragment.OnFocusSearchListener, ConvertFragment.Listener {
 
     private enum PlayAction {
         NEXT, PREVIOUS
@@ -48,6 +50,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     public static final String EXTRA_MEDIA_TYPE = "media_type";
 
     private PlaybackVideoFragment mPlaybackVideoFragment;
+    private ConvertFragment mConvertFragment;
     private ArrayList<Video> mVideos;
     private BroadcastTick mBroadcastTick;
     private final SimpleDateFormat mFormatWatchTime = new SimpleDateFormat("HH:mm");
@@ -95,8 +98,10 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
         mView.textTime.setText(mFormatWatchTime.format(new Date()));
 
-        mSubtitleFragment = (SubtitleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_subtitle);
-        mTrackGroupSelectionFragment = (TrackGroupSelectionFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_track_group_selection);
+        mPlaybackVideoFragment = (PlaybackVideoFragment) getFragment(R.id.fragment_video_playback);
+        mConvertFragment = (ConvertFragment) getFragment(R.id.fragment_convert);
+        mSubtitleFragment = (SubtitleFragment) getFragment(R.id.fragment_subtitle);
+        mTrackGroupSelectionFragment = (TrackGroupSelectionFragment) getFragment(R.id.fragment_track_group_selection);
 
         if (mMediaType == MediaType.VIDEO) {
             mSubtitleFragment.setPutId(mVideo.getPutId());
@@ -107,16 +112,24 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
             mTrackGroupSelectionFragment.setListener(this);
             mTrackGroupSelectionFragment.setFocusSearchListener(this);
             mTrackGroupSelectionFragment.setForceFocus(true);
+
+            mConvertFragment.setListener(this);
+            mConvertFragment.setVideo(mVideo);
         }
 
         hideRightPanel();
-        mPlaybackVideoFragment = (PlaybackVideoFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_playback);
 
         if (mVideos != null && mVideos.size() > 1) {
             mPlaybackVideoFragment.showNextPrevious();
         }
 
-        play();
+        if (mVideo.isConverting()) {
+            showConversion();
+            mConvertFragment.getConversionStatus();
+        } else {
+            hideConversion(true);
+            play();
+        }
     }
 
     @Override
@@ -204,7 +217,9 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void onBackPressed() {
-        if (mSubtitleFragment.isVisible() || mTrackGroupSelectionFragment.isVisible()) {
+        if (mConvertFragment.isVisible()) {
+            super.onBackPressed();
+        } else if (mSubtitleFragment.isVisible() || mTrackGroupSelectionFragment.isVisible()) {
             hideRightPanel();
         } else {
             super.onBackPressed();
@@ -215,7 +230,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
         AtomicBoolean isShowing = new AtomicBoolean(false);
         Arrays.stream(mRightPanelIds)
                 .forEach(id -> {
-                    Fragment fragment = getSupportFragmentManager().findFragmentById(id);
+                    Fragment fragment = getFragment(id);
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                     if (id == idToToggle && !fragment.isVisible()) {
@@ -237,10 +252,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     private void hideRightPanel() {
         mView.animLayoutRightPanel.exit();
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.hide(mSubtitleFragment);
-        transaction.hide(mTrackGroupSelectionFragment);
-        transaction.commit();
+        hide(mSubtitleFragment, mTrackGroupSelectionFragment);
     }
 
     private void handleExtras() {
@@ -282,6 +294,8 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     private void play(Video video) {
         mPlaybackVideoFragment.play(video);
+        video.setWatched(true);
+        VideoLoader.getInstance(getBaseContext(), null).update(video);
     }
 
     private boolean play(Video current, PlayAction action) {
@@ -327,6 +341,28 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     }
 
     @Override
+    public void showConversion() {
+        mPlaybackVideoFragment.onPause();
+        hide(mPlaybackVideoFragment);
+        show(mConvertFragment);
+    }
+
+    private void hideConversion(boolean onLoad) {
+        if (!onLoad) {
+            show(mPlaybackVideoFragment);
+            mPlaybackVideoFragment.hideControlsOverlay(true);
+        }
+
+        hide(mConvertFragment);
+    }
+
+    @Override
+    public void conversionFinished(Video video) {
+        hideConversion(false);
+        play(video);
+    }
+
+    @Override
     public void onErrorDismissed() {
         finish();
     }
@@ -334,6 +370,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     @Override
     public void onPlayComplete(Video videoCompleted) {
         boolean playingNext = play(videoCompleted, PlayAction.NEXT);
+        videoCompleted.setWatched(true);
 
         if (!playingNext) {
             finish();

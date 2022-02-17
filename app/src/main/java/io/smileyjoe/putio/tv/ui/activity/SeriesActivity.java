@@ -33,6 +33,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     private SeasonDetailsFragment mFragmentSeasonDetails;
     private VideosFragment mFragmentVideoList;
     private VideoLoader mVideoLoader;
+    private Video mSeries;
 
     public static Intent getIntent(Context context, Video series) {
         Intent intent = new Intent(context, SeriesActivity.class);
@@ -59,6 +60,18 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mVideoLoader != null) {
+            mVideoLoader.setListener(this);
+        } else {
+            mVideoLoader = VideoLoader.getInstance(getBaseContext(), this);
+        }
+
+        mVideoLoader.loadDirectory(mSeries.getPutId(), mSeries.getTitle());
+    }
+
+    @Override
     protected ActivitySeriesBinding inflate() {
         return ActivitySeriesBinding.inflate(getLayoutInflater());
     }
@@ -68,18 +81,18 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
 
         if (extras != null) {
             if (extras.containsKey(EXTRA_SERIES)) {
-                Video series = extras.getParcelable(EXTRA_SERIES);
-                mFragmentSeasonDetails.update(series);
+                mSeries = extras.getParcelable(EXTRA_SERIES);
+                mFragmentSeasonDetails.update(mSeries);
 
                 Glide.with(getBaseContext())
-                        .load(series.getBackdropAsUri())
+                        .load(mSeries.getBackdropAsUri())
                         .dontAnimate()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mView.imagePoster);
 
-                mVideoLoader.loadDirectory(series.getPutId(), series.getTitle());
+                mVideoLoader.loadDirectory(mSeries.getPutId(), mSeries.getTitle());
 
-                Channels.addProgramme(getBaseContext(), ChannelType.DEFAULT, series);
+                Channels.addProgramme(getBaseContext(), ChannelType.DEFAULT, mSeries);
             }
         }
     }

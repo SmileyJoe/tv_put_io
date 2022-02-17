@@ -11,6 +11,7 @@
         android:layout_centerVertical="true"
         android:padding="@dimen/watched_ic_padding"
         android:src="@drawable/ic_watched_24"
+        android:tint="@color/ic_tint"
         android:layout_marginRight="@dimen/padding_general"/>
 
     <com.google.android.material.imageview.ShapeableImageView

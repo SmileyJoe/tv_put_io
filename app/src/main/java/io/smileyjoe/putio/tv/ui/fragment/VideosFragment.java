@@ -127,6 +127,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     }
 
     private void populate() {
+        int oldSize = mVideosAdapter.getItemCount();
         ArrayList<Video> videos = applyFilters();
 
         if (videos == null || videos.isEmpty()) {
@@ -138,7 +139,12 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
         }
 
         mVideosAdapter.setItems(videos);
-        mVideosAdapter.notifyDataSetChanged();
+
+        if (oldSize == 0) {
+            mVideosAdapter.notifyDataSetChanged();
+        } else {
+            mVideosAdapter.notifyItemRangeChanged(0, oldSize);
+        }
     }
 
     public void filter(Filter filter, boolean isSelected) {

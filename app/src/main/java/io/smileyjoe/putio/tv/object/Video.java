@@ -63,6 +63,8 @@ public class Video implements Parcelable {
     // video links
     @Ignore
     private Uri mStreamUri;
+    @Ignore
+    private Uri mStreamMp4Uri;
     @ColumnInfo(name = "is_tmdb_checked")
     private boolean mIsTmdbChecked = false;
     @ColumnInfo(name = "is_tmdb_found")
@@ -91,6 +93,8 @@ public class Video implements Parcelable {
     private ArrayList<Character> mCharacters;
     @Ignore
     private String mPutTitle;
+    @Ignore
+    private boolean mIsConverting;
 
     public Video() {
         mVideoType = VideoType.UNKNOWN;
@@ -127,6 +131,7 @@ public class Video implements Parcelable {
         this.mRuntime = video.getRuntime();
         this.mCharacters = video.getCharacters();
         this.mPutTitle = video.getPutTitle();
+        this.mIsConverting = video.isConverting();
     }
 
     public void setPutId(long putId) {
@@ -193,16 +198,19 @@ public class Video implements Parcelable {
         mStreamUri = streamUri;
     }
 
-    public void setStreamUri(String streamUri, String streamMp4Uri) {
-        String uri;
+    public void setStreamUri(String streamUri) {
         if (!TextUtils.isEmpty(streamUri)) {
-            uri = streamUri;
-        } else {
-            uri = streamMp4Uri;
+            setStreamUri(Uri.parse(streamUri));
         }
+    }
 
-        if (!TextUtils.isEmpty(uri)) {
-            setStreamUri(Uri.parse(uri));
+    public void setStreamMp4Uri(Uri streamMp4Uri) {
+        mStreamMp4Uri = streamMp4Uri;
+    }
+
+    public void setStreamMp4Uri(String streamMp4Uri) {
+        if (!TextUtils.isEmpty(streamMp4Uri)) {
+            setStreamMp4Uri(Uri.parse(streamMp4Uri));
         }
     }
 
@@ -296,6 +304,10 @@ public class Video implements Parcelable {
         mPutTitle = putTitle;
     }
 
+    public void setConverting(boolean converting) {
+        mIsConverting = converting;
+    }
+
     public String getYoutubeTrailerKey() {
         return mYoutubeTrailerKey;
     }
@@ -384,8 +396,20 @@ public class Video implements Parcelable {
         }
     }
 
+    public Uri getStreamUri(boolean playMp4) {
+        if (playMp4) {
+            return getStreamMp4Uri();
+        } else {
+            return getStreamUri();
+        }
+    }
+
     public Uri getStreamUri() {
         return mStreamUri;
+    }
+
+    public Uri getStreamMp4Uri() {
+        return mStreamMp4Uri;
     }
 
     public int getYear() {
@@ -480,6 +504,10 @@ public class Video implements Parcelable {
         return mPutTitle;
     }
 
+    public boolean isConverting() {
+        return mIsConverting;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -515,6 +543,7 @@ public class Video implements Parcelable {
         dest.writeString(this.mPoster);
         dest.writeString(this.mBackdrop);
         dest.writeParcelable(this.mStreamUri, flags);
+        dest.writeParcelable(this.mStreamMp4Uri, flags);
         dest.writeByte(this.mIsTmdbChecked ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mIsTmdbFound ? (byte) 1 : (byte) 0);
         dest.writeString(this.mGenreIdsJson);
@@ -529,6 +558,7 @@ public class Video implements Parcelable {
         dest.writeInt(this.mRuntime);
         dest.writeTypedList(this.mCharacters);
         dest.writeString(this.mPutTitle);
+        dest.writeByte(this.mIsConverting ? (byte) 1 : (byte) 0);
     }
 
     protected Video(Parcel in) {
@@ -549,6 +579,7 @@ public class Video implements Parcelable {
         this.mPoster = in.readString();
         this.mBackdrop = in.readString();
         this.mStreamUri = in.readParcelable(Uri.class.getClassLoader());
+        this.mStreamMp4Uri = in.readParcelable(Uri.class.getClassLoader());
         this.mIsTmdbChecked = in.readByte() != 0;
         this.mIsTmdbFound = in.readByte() != 0;
         this.mGenreIdsJson = in.readString();
@@ -564,6 +595,7 @@ public class Video implements Parcelable {
         this.mRuntime = in.readInt();
         this.mCharacters = in.createTypedArrayList(Character.CREATOR);
         this.mPutTitle = in.readString();
+        this.mIsConverting = in.readByte() != 0;
     }
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {
@@ -596,6 +628,7 @@ public class Video implements Parcelable {
                 ", mPoster='" + mPoster + '\'' +
                 ", mBackdrop='" + mBackdrop + '\'' +
                 ", mStreamUri=" + mStreamUri +
+                ", mStreamMp4Uri=" + mStreamMp4Uri +
                 ", mIsTmdbChecked=" + mIsTmdbChecked +
                 ", mIsTmdbFound=" + mIsTmdbFound +
                 ", mGenreIdsJson='" + mGenreIdsJson + '\'' +
@@ -610,6 +643,7 @@ public class Video implements Parcelable {
                 ", mRuntime=" + mRuntime +
                 ", mCharacters=" + mCharacters +
                 ", mPutTitle='" + mPutTitle + '\'' +
+                ", mIsConverting=" + mIsConverting +
                 '}';
     }
 }

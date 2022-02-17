@@ -173,7 +173,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     @Override
     public void onResume() {
         super.onResume();
-        getResumeTime();
+        updateActionResume();
     }
 
     private void initializeBackground(Video video) {

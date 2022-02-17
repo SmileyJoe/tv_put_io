@@ -50,4 +50,9 @@
             android:layout_alignParentRight="true" />
     </io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout>
 
+    <fragment
+        android:id="@+id/fragment_convert"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="io.smileyjoe.putio.tv.ui.fragment.ConvertFragment" />
 </RelativeLayout>
