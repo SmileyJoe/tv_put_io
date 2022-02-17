@@ -7,8 +7,16 @@ def getFirebaseDistributionKeyPath = { ->
     project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
 }
 
-def getKeystorePath = { ->
-    project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
+def getKeystorePassword = { ->
+    project.hasProperty('keystore_password') ? keystore_password : ""
+}
+
+def getKeystoreKeyPassword = { ->
+    project.hasProperty('keystore_key_password') ? keystore_key_password : ""
+}
+
+def getKeystoreKeyAlias = { ->
+    project.hasProperty('keystore_key_alias') ? keystore_key_alias : ""
 }
 
 def getReleaseNotes = { ->
@@ -42,6 +50,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        release {
+            storeFile = file("keystore/putio_tv_keystore.jks")
+            storePassword getKeystorePassword()
+            keyAlias getKeystoreKeyAlias()
+            keyPassword getKeystoreKeyPassword()
+        }
+    }
+
     buildTypes {
         debug{
             applicationIdSuffix ".debug"
@@ -69,15 +86,6 @@ android {
 
     buildFeatures {
         viewBinding true
-    }
-
-    signingConfigs {
-        release {
-            storeFile = file("keystore/putio_tv_keystore.jks")
-            storePassword keystore_password
-            keyAlias keystore_key_alias
-            keyPassword keystore_key_password
-        }
     }
 }
 
