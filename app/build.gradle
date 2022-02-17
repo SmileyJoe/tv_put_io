@@ -53,6 +53,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
+            storeFile = file("keystore/putio_tv_keystore.jks")
+            storePassword keystore_password
+            keyAlias keystore_key_alias
+            keyPassword keystore_key_password
+
             firebaseAppDistribution {
                 artifactType="AAB"
                 releaseNotes = getReleaseNotes()
