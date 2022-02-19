@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import io.smileyjoe.putio.tv.Application;
@@ -13,140 +15,142 @@ import io.smileyjoe.putio.tv.BuildConfig;
 
 public class Putio {
 
-    public static final long NO_PARENT = -100;
-    private static final String BASE = "https://api.put.io/v2";
-    private static final String FILES = "/files/list";
-    private static final String DOWNLOAD_URL = "/files/{id}/url";
-    private static final String RESUME_TIME = "/files/{id}/start-from";
-    private static final String CONVERT = "/files/{id}/mp4";
-    private static final String AUTH_GET_CODE = "/oauth2/oob/code";
-    private static final String AUTH_GET_TOKEN = "/oauth2/oob/code/{code}";
-    private static final String SUBTITLES_AVAILABLE = "/files/{id}/subtitles";
-    private static final String SUBTITLES = SUBTITLES_AVAILABLE + "/{key}";
+    public static class Auth extends Base{
+        private static final String URL_CODE = BASE + "/oauth2/oob/code";
+        private static final String URL_TOKEN = URL_CODE + "/{code}";
 
-    public static void getAuthCode(Context context, Response response) {
-        String url = BASE + AUTH_GET_CODE + "?app_id=" + BuildConfig.PUTIO_CLIENT_ID;
+        public static void getCode(Context context, Response response) {
+            String url = URL_CODE + "?app_id=" + BuildConfig.PUTIO_CLIENT_ID;
 
-        Ion.with(context)
-                .load(url)
-                .asJsonObject()
-                .withResponse()
-                .setCallback(response);
-    }
-
-    public static void getAuthToken(Context context, String code, Response response) {
-        String url = BASE + AUTH_GET_TOKEN;
-        url = url.replace("{code}", code);
-        execute(context, url, response);
-    }
-
-    public static void getAvailableSubtitles(Context context, long id, Response response) {
-        String url = BASE + SUBTITLES_AVAILABLE.replace("{id}", Long.toString(id));
-        execute(context, url, response);
-    }
-
-    public static void getSubtitles(Context context, long id, String key, ResponseString response) {
-        String url = BASE + SUBTITLES
-                .replace("{id}", Long.toString(id))
-                .replace("{key}", key);
-
-        getBaseCall(context, url)
-                .asString()
-                .withResponse()
-                .setCallback(response);
-    }
-
-    public static void getFiles(Context context, Response response) {
-        getFiles(context, NO_PARENT, response);
-    }
-
-    public static void getFiles(Context context, long parentId, Response response) {
-        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true&stream_url_parent=true&mp4_stream_url_parent=true&mp4_status_parent=true";
-
-        if (parentId != NO_PARENT) {
-            url += "&parent_id=" + parentId;
-        }
-
-        execute(context, url, response);
-    }
-
-    public static JsonObject getFiles(Context context, long parentId) {
-        String url = BASE + FILES + "?stream_url=true&mp4_stream_url=true&file_type=FOLDER,VIDEO&mp4_status=true&stream_url_parent=true&mp4_stream_url_parent=true&mp4_status_parent=true";
-
-        if (parentId != NO_PARENT) {
-            url += "&parent_id=" + parentId;
-        }
-
-        try {
-            return getBaseCall(context, url)
+            Ion.with(context)
+                    .load(url)
                     .asJsonObject()
-                    .get();
-        } catch (InterruptedException | ExecutionException e) {
-            return null;
+                    .withResponse()
+                    .setCallback(response);
+        }
+
+        public static void getToken(Context context, String code, Response response) {
+            String url = URL_TOKEN.replace("{code}", code);
+            execute(context, url, response);
         }
     }
 
-    public static void getResumeTime(Context context, long id, Response response) {
-        String url = BASE + RESUME_TIME;
+    public static class Subtitle extends Base{
+        private static final String URL_AVAILABLE = BASE + "/files/{id}/subtitles";
+        private static final String URL_SUBTITLES = URL_AVAILABLE + "/{key}";
 
-        url = url.replace("{id}", Long.toString(id));
+        public static void available(Context context, long id, Response response) {
+            String url = URL_AVAILABLE.replace("{id}", Long.toString(id));
+            execute(context, url, response);
+        }
 
-        execute(context, url, response);
+        public static void get(Context context, long id, String key, ResponseString response) {
+            String url = URL_SUBTITLES
+                    .replace("{id}", Long.toString(id))
+                    .replace("{key}", key);
+
+            getBaseCall(context, url)
+                    .asString()
+                    .withResponse()
+                    .setCallback(response);
+        }
     }
 
-    public static void setResumeTime(Context context, long id, long seconds, Response response) {
-        String url = BASE + RESUME_TIME;
-        url = url.replace("{id}", Long.toString(id));
 
-        JsonObject body = new JsonObject();
-        body.addProperty("time", seconds);
+    public static class Resume extends Base{
+        private static final String URL = BASE + "/files/{id}/start-from";
 
-        getBaseCall(context, url)
-                .setHeader("Authorization", "Bearer " + Application.getPutToken())
-                .setJsonObjectBody(body)
-                .asJsonObject()
-                .withResponse()
-                .setCallback(response);
+        private static String getUrl(long id){
+            return URL.replace("{id}", Long.toString(id));
+        }
+
+        public static void set(Context context, long id, long seconds, Response response) {
+            JsonObject body = new JsonObject();
+            body.addProperty("time", seconds);
+
+            execute(context, getUrl(id), body, response);
+        }
+
+        public static void get(Context context, long id, Response response) {
+            execute(context, getUrl(id), response);
+        }
     }
 
-    public static void getConversionStatus(Context context, long id, Response response) {
-        String url = BASE + CONVERT;
-        url = url.replace("{id}", Long.toString(id));
-        execute(context, url, response);
+    public static class Convert extends Base{
+        private static final String URL = BASE + "/files/{id}/mp4";
+
+        private static String getUrl(long id){
+            return URL.replace("{id}", Long.toString(id));
+        }
+        public static void start(Context context, long id, Response response) {
+            execute(context, getUrl(id), new JsonObject(), response);
+        }
+
+        public static void status(Context context, long id, Response response) {
+            execute(context, getUrl(id), response);
+        }
     }
 
-    public static void convertFile(Context context, long id, Response response) {
-        String url = BASE + CONVERT;
-        url = url.replace("{id}", Long.toString(id));
+    public static class Files extends Base{
+        public static final long NO_PARENT = -100;
+        private static final String URL = BASE + "/files/list" +
+                "?stream_url=true" +
+                "&mp4_stream_url=true" +
+                "&file_type=FOLDER,VIDEO" +
+                "&mp4_status=true" +
+                "&stream_url_parent=true" +
+                "&mp4_stream_url_parent=true" +
+                "&mp4_status_parent=true";
 
-        getBaseCall(context, url)
-                .setJsonObjectBody(new JsonObject())
-                .asJsonObject()
-                .withResponse()
-                .setCallback(response);
+        private static String getUrl(long parentId){
+            String url = URL;
+
+            if (parentId != NO_PARENT) {
+                url += "&parent_id=" + parentId;
+            }
+
+            return url;
+        }
+
+        public static void get(Context context, long parentId, Response response) {
+            execute(context, getUrl(parentId), response);
+        }
+
+        public static JsonObject get(Context context, long parentId) {
+            try {
+                return getBaseCall(context, getUrl(parentId))
+                        .asJsonObject()
+                        .get();
+            } catch (InterruptedException | ExecutionException e) {
+                return null;
+            }
+        }
     }
 
-    public static void getDownloadUrl(Context context, long id, Response response) {
-        String url = BASE + DOWNLOAD_URL;
+    private abstract static class Base{
+        protected static final String BASE = "https://api.put.io/v2";
+        protected static Builders.Any.B getBaseCall(Context context, String url) {
+            return Ion.with(context)
+                    .load(url)
+                    .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
+                    .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
+                    .setHeader("Authorization", "Bearer " + Application.getPutToken());
+        }
 
-        url = url.replace("{id}", Long.toString(id));
+        protected static void execute(Context context, String url, Response response) {
+            getBaseCall(context, url)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(response);
+        }
 
-        execute(context, url, response);
-    }
-
-    private static Builders.Any.B getBaseCall(Context context, String url) {
-        return Ion.with(context)
-                .load(url)
-                .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
-                .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
-                .setHeader("Authorization", "Bearer " + Application.getPutToken());
-    }
-
-    private static void execute(Context context, String url, Response response) {
-        getBaseCall(context, url)
-                .asJsonObject()
-                .withResponse()
-                .setCallback(response);
+        protected static void execute(Context context, String url, JsonObject jsonObject, Response response) {
+            getBaseCall(context, url)
+                    .setJsonObjectBody(jsonObject)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(response);
+        }
     }
 
 }

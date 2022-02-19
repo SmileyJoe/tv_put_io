@@ -103,7 +103,7 @@ public class VideoLoader {
 
     public void loadDirectory() {
         mHistory = new ArrayList<>();
-        getFromPut(Putio.NO_PARENT);
+        getFromPut(Putio.Files.NO_PARENT);
     }
 
     public void loadDirectory(Long putId, String title) {
@@ -180,7 +180,7 @@ public class VideoLoader {
 
     private void getFromPut(long putId) {
         mListener.ifPresent(listener -> listener.onVideosLoadStarted());
-        Putio.getFiles(mContext, putId, new OnPutResponse(putId));
+        Putio.Files.get(mContext, putId, new OnPutResponse(putId));
     }
 
     public void addToHistory(HistoryItem item) {
@@ -226,7 +226,7 @@ public class VideoLoader {
                     PutioHelper helper = new PutioHelper(mContext);
                     mListener.ifPresent(helper::setListener);
 
-                    JsonObject result = Putio.getFiles(mContext, id);
+                    JsonObject result = Putio.Files.get(mContext, id);
 
                     helper.parse(id, result);
 
@@ -253,7 +253,7 @@ public class VideoLoader {
                     PutioHelper helper = new PutioHelper(mContext);
                     mListener.ifPresent(helper::setListener);
 
-                    JsonObject result = Putio.getFiles(mContext, id);
+                    JsonObject result = Putio.Files.get(mContext, id);
 
                     helper.parse(id, result);
 

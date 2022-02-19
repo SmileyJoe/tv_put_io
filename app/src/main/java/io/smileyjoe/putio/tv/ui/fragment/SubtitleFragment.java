@@ -55,7 +55,7 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
         mView.recyclerSubtitle.setVisibility(View.GONE);
         mView.textEmpty.setVisibility(View.GONE);
 
-        Putio.getAvailableSubtitles(getContext(), mPutId, new OnAvailableSubtitlesGetResponse());
+        Putio.Subtitle.available(getContext(), mPutId, new OnAvailableSubtitlesGetResponse());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
     @Override
     public void onItemClicked(View view, Subtitle item) {
         if (item.getPutId() != 0) {
-            Putio.getSubtitles(getContext(), item.getPutId(), item.getKey(), new OnSubtitlesGetResponse());
+            Putio.Subtitle.get(getContext(), item.getPutId(), item.getKey(), new OnSubtitlesGetResponse());
         } else {
             mListener.ifPresent(listener -> listener.showSubtitles(null));
         }

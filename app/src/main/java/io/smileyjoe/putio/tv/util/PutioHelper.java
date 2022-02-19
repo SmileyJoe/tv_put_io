@@ -57,7 +57,7 @@ public class PutioHelper {
         JsonArray filesJson = jsonObject.getAsJsonArray("files");
         JsonObject parentObject = jsonObject.getAsJsonObject("parent");
 
-        if (putId == Putio.NO_PARENT) {
+        if (putId == Putio.Files.NO_PARENT) {
             List<Group> groups = AppDatabase.getInstance(mContext).groupDao().getAll();
 
             if (groups != null && !groups.isEmpty()) {

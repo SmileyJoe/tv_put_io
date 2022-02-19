@@ -43,7 +43,7 @@ public class VideoComparator implements Comparator<Video> {
     public int compare(Video videoOne, Video videoTwo) {
         int result;
 
-        if (videoOne.getVideoType() == VideoType.EPISODE) {
+        if (videoOne.getVideoType() == VideoType.EPISODE && videoTwo.getVideoType() == VideoType.EPISODE) {
             return Integer.compare(videoOne.getEpisode(), videoTwo.getEpisode());
         } else {
             switch (mOrder) {
