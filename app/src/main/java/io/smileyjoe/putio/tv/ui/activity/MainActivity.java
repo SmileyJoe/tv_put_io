@@ -213,6 +213,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
             switch (historyItem.getFolderType()) {
                 case VIRTUAL:
+                    mFragmentFilter.select(VirtualDirectory.getFromPutId(getBaseContext(), historyItem.getId()).getDefaultFilter());
                 case GROUP:
                     FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
                     break;

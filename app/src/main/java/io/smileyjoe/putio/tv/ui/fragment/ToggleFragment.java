@@ -16,6 +16,7 @@ import io.smileyjoe.putio.tv.databinding.FragmentFilterBinding;
 import io.smileyjoe.putio.tv.databinding.ItemFilterBinding;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.interfaces.ToggleItem;
+import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 
 public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<FragmentFilterBinding> {
@@ -98,6 +99,14 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
     public void reset() {
         IntStream.range(0, mView.getRoot().getChildCount())
                 .forEach(i -> mView.getRoot().getChildAt(i).setSelected(false));
+    }
+
+    public void select(T item){
+        getOptionViews()
+                .stream()
+                .filter(v -> ((Integer) v.getTag()) == item.getId())
+                .findFirst()
+                .ifPresent(v -> onItemClick(v, item));
     }
 
     protected void onItemClick(View view, T item) {

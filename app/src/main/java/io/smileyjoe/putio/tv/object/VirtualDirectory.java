@@ -20,6 +20,7 @@ public class VirtualDirectory implements Folder {
     private FileType mFileType;
     @DrawableRes
     private int mIconResId;
+    private Filter mDefaultFilter;
 
     public static VirtualDirectory getFromPutId(Context context, long putId){
         if (putId == Putio.Files.PARENT_ID_RECENT){
@@ -35,6 +36,7 @@ public class VirtualDirectory implements Folder {
         recent.setTitle(context.getString(R.string.text_recently_added));
         recent.setFileType(FileType.FOLDER);
         recent.setIconResId(R.drawable.ic_sort_by_created_24);
+        recent.setDefaultFilter(Filter.SORT_CREATED);
         return recent;
     }
 
@@ -109,5 +111,13 @@ public class VirtualDirectory implements Folder {
     @Override
     public FolderType getFolderType() {
         return FolderType.VIRTUAL;
+    }
+
+    public void setDefaultFilter(Filter defaultFilter) {
+        mDefaultFilter = defaultFilter;
+    }
+
+    public Filter getDefaultFilter() {
+        return mDefaultFilter;
     }
 }
