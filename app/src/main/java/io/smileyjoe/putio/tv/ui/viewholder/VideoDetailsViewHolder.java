@@ -53,7 +53,7 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
     }
 
     public void bind(Video video) {
-        setText(mView.textTitle, video.getTitleFormatted());
+        setText(mView.textTitle, video.getTitleFormatted(mContext, false));
         setText(mView.textOverview, video.getOverView());
         setText(mView.textTagline, video.getTagLine());
         setText(mView.textRuntime, Format.runtime(mContext, video.getRuntime()));

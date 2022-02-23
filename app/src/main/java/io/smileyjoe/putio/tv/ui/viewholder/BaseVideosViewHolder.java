@@ -24,14 +24,6 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
         mPosterPadding = itemView.getContext().getResources().getDimensionPixelOffset(R.dimen.file_grid_poster_padding);
     }
 
-    protected void populateTitle(Video video, TextView view) {
-        String title = video.getTitleFormatted();
-        if (video.getVideoType() == VideoType.SEASON) {
-            title = title + ": " + getContext().getString(R.string.text_season) + " " + video.getSeason();
-        }
-        view.setText(title);
-    }
-
     protected void populateSummary(Video video, TextView view) {
         view.setText(video.getOverView());
     }

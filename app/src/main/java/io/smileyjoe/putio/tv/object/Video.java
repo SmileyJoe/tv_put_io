@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.converter.VideoTypeConverter;
 import io.smileyjoe.putio.tv.util.TimeUtil;
 import io.smileyjoe.putio.tv.util.VideoUtil;
@@ -336,9 +337,17 @@ public class Video implements Parcelable {
         return mFileType;
     }
 
-    public String getTitleFormatted() {
+    public String getTitleFormatted(Context context, boolean includeSeason) {
         if (mVideoType == VideoType.EPISODE) {
-            return String.format("%02d", getEpisode()) + ". " + mTitle + " S" + String.format("%02d", getSeason());
+            String prefix = "";
+            if(includeSeason){
+                prefix = String.format("S%02dE", getSeason());
+            }
+
+            prefix += String.format("%02d. ", getEpisode());
+            return prefix + mTitle;
+        } else if(mVideoType == VideoType.SEASON && includeSeason){
+            return mTitle + ": " + context.getString(R.string.text_season) + " " + getSeason();
         } else {
             return mTitle;
         }

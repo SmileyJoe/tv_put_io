@@ -86,11 +86,7 @@ public class ZoomGridVideo extends RelativeLayout {
             mView.imagePoster.setImageDrawable(currentPoster);
         }
 
-        String title = video.getTitleFormatted();
-        if (video.getVideoType() == VideoType.SEASON) {
-            title = title + ": " + getContext().getString(R.string.text_season) + " " + video.getSeason();
-        }
-        mView.textTitle.setText(title);
+        mView.textTitle.setText(video.getTitleFormatted(getContext(), true));
         mView.textTitle.setTypeface(null, Typeface.BOLD);
 
         if (!TextUtils.isEmpty(video.getOverView())) {

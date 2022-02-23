@@ -18,6 +18,7 @@ import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VirtualDirectory;
 
 public class VideoLoader {
 
@@ -314,7 +315,7 @@ public class VideoLoader {
             helper.parse(mPutId, mResult);
 
             mCurrentPutId = helper.getCurrent().getPutId();
-            mCurrentTitle = helper.getCurrent().getTitleFormatted();
+            mCurrentTitle = helper.getCurrent().getTitleFormatted(mContext, true);
 
             mParents.put(mCurrentPutId, helper.getCurrent());
             mVideos.put(mCurrentPutId, helper.getVideos());
@@ -325,7 +326,16 @@ public class VideoLoader {
 
         @Override
         protected void onPostExecute(Void param) {
-            onVideosLoaded(HistoryItem.directory(mCurrentPutId, mCurrentTitle), mVideos.get(mCurrentPutId), mFolders.get(mCurrentPutId), true);
+            VirtualDirectory virtual = VirtualDirectory.getFromPutId(mContext, mCurrentPutId);
+            HistoryItem historyItem;
+
+            if(virtual == null){
+                historyItem = HistoryItem.directory(mCurrentPutId, mCurrentTitle);
+            } else {
+                historyItem = HistoryItem.virtualDirectory(mCurrentPutId, mCurrentTitle);
+            }
+
+            onVideosLoaded(historyItem, mVideos.get(mCurrentPutId), mFolders.get(mCurrentPutId), true);
         }
     }
 

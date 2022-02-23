@@ -23,7 +23,7 @@ public class VideosGridViewHolder extends BaseVideosViewHolder<GridItemVideoBind
     public void bindView(Video video, int position) {
         super.bindView(video, position);
 
-        populateTitle(video, mView.textTitle);
+        mView.textTitle.setText(video.getTitleFormatted(getContext(), true));
         populateSummary(video, mView.textSummary);
         populatePoster(video, mView.imagePoster);
 

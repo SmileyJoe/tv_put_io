@@ -259,7 +259,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mVideo = video;
 
         if (mInitialized) {
-            mPlayerGlue.setTitle(video.getTitleFormatted());
+            mPlayerGlue.setTitle(video.getTitleFormatted(getContext(), true));
             mPlayerGlue.setMediaType(MediaType.VIDEO);
 
             prepareMediaForPlaying(video.getStreamUri(mPlayMp4), subtitleUri);

@@ -77,7 +77,7 @@ public class RelatedVideoCardPresenter extends Presenter {
         Video video = (Video) item;
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
-        cardView.setTitleText(video.getTitleFormatted());
+        cardView.setTitleText(video.getTitleFormatted(cardView.getContext(), true));
         cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
 
         if (video.getPosterAsUri() != null) {

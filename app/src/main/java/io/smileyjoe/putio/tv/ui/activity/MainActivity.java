@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
+import io.smileyjoe.putio.tv.object.VirtualDirectory;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
@@ -210,6 +212,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             }
 
             switch (historyItem.getFolderType()) {
+                case VIRTUAL:
                 case GROUP:
                     FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
                     break;
@@ -382,6 +385,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         public void onItemClicked(View view, Folder folder) {
             hideFolders();
             switch (folder.getFolderType()) {
+                case VIRTUAL:
+                    VirtualDirectory virtualDirectory = (VirtualDirectory) folder;
+                    mVideoLoader.loadDirectory(virtualDirectory.getPutId(), virtualDirectory.getTitle());
+                    break;
                 case DIRECTORY:
                     Directory directory = (Directory) folder;
                     mVideoLoader.loadDirectory(directory.getPutId(), directory.getTitle());
