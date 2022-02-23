@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.GridItemVideoBinding;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.util.PopulateGenres;
 import io.smileyjoe.putio.tv.util.ViewUtil;
 import io.smileyjoe.putio.tv.util.ZoomView;

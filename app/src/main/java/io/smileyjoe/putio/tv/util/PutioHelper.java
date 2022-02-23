@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.comparator.FolderComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
@@ -61,7 +59,7 @@ public class PutioHelper {
         try {
             JsonObject parentObject = jsonObject.getAsJsonObject("parent");
             mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
-        } catch (ClassCastException e){
+        } catch (ClassCastException e) {
             mCurrent = VirtualDirectory.getFromPutId(mContext, putId).asVideo();
         }
 

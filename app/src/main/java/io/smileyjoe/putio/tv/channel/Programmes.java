@@ -75,7 +75,7 @@ public class Programmes {
                         .setContentId(Long.toString(video.getPutId()))
                         .setPosterArtUri(video.getBackdropAsUri())
                         .setThumbnailUri(video.getBackdropAsUri())
-                        .setTitle(video.getTitleFormatted(context,true))
+                        .setTitle(video.getTitleFormatted(context, true))
                         .setReleaseDate(Calendar.getInstance().getTime())
                         .setWeight(programs.size())
                         .setDescription(video.getOverView())

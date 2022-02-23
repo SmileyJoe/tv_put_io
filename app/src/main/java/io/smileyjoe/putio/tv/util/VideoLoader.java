@@ -329,7 +329,7 @@ public class VideoLoader {
             VirtualDirectory virtual = VirtualDirectory.getFromPutId(mContext, mCurrentPutId);
             HistoryItem historyItem;
 
-            if(virtual == null){
+            if (virtual == null) {
                 historyItem = HistoryItem.directory(mCurrentPutId, mCurrentTitle);
             } else {
                 historyItem = HistoryItem.virtualDirectory(mCurrentPutId, mCurrentTitle);

@@ -43,8 +43,8 @@ android {
         applicationId "io.smileyjoe.putio.tv"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 27
-        versionName "3.2.8." + getBuildNumber()
+        versionCode 28
+        versionName "3.3.0." + getBuildNumber()
         buildConfigField "String", "PUTIO_CLIENT_ID", "\"${putio_client_id}\""
         buildConfigField "String", "PUTIO_CLIENT_SECRET", "\"${putio_client_secret}\""
         buildConfigField "String", "TMDB_AUTH_TOKEN", "\"${tmdb_auth_token}\""

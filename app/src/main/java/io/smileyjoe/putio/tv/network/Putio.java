@@ -1,22 +1,20 @@
 package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.BuildConfig;
+import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 
 public class Putio {
 
-    public static class Auth extends Base{
+    public static class Auth extends Base {
         private static final String URL_CODE = BASE + "/oauth2/oob/code";
         private static final String URL_TOKEN = URL_CODE + "/{code}";
 
@@ -36,7 +34,7 @@ public class Putio {
         }
     }
 
-    public static class Subtitle extends Base{
+    public static class Subtitle extends Base {
         private static final String URL_AVAILABLE = BASE + "/files/{id}/subtitles";
         private static final String URL_SUBTITLES = URL_AVAILABLE + "/{key}";
 
@@ -58,10 +56,10 @@ public class Putio {
     }
 
 
-    public static class Resume extends Base{
+    public static class Resume extends Base {
         private static final String URL = BASE + "/files/{id}/start-from";
 
-        private static String getUrl(long id){
+        private static String getUrl(long id) {
             return URL.replace("{id}", Long.toString(id));
         }
 
@@ -77,12 +75,13 @@ public class Putio {
         }
     }
 
-    public static class Convert extends Base{
+    public static class Convert extends Base {
         private static final String URL = BASE + "/files/{id}/mp4";
 
-        private static String getUrl(long id){
+        private static String getUrl(long id) {
             return URL.replace("{id}", Long.toString(id));
         }
+
         public static void start(Context context, long id, Response response) {
             execute(context, getUrl(id), new JsonObject(), response);
         }
@@ -92,7 +91,7 @@ public class Putio {
         }
     }
 
-    public static class Files extends Base{
+    public static class Files extends Base {
         public static final long NO_PARENT = -100;
         public static final long PARENT_ID_RECENT = -1;
         private static final String URL = BASE + "/files/list" +
@@ -103,14 +102,14 @@ public class Putio {
                 "&mp4_stream_url_parent=true" +
                 "&mp4_status_parent=true";
 
-        private static String getUrl(long parentId){
+        private static String getUrl(long parentId) {
             String url = URL;
 
-            if(parentId == NO_PARENT){
+            if (parentId == NO_PARENT) {
                 url += "&file_type=FOLDER,VIDEO";
-            } else if(parentId == PARENT_ID_RECENT){
+            } else if (parentId == PARENT_ID_RECENT) {
                 url += "&file_type=VIDEO" +
-                        "&per_page=20" +
+                        "&per_page=" + (VideosFragment.GRID_COL_COUNT * 3) +
                         "&sort_by=DATE_DESC" +
                         "&parent_id=" + parentId;
             } else {
@@ -136,8 +135,9 @@ public class Putio {
         }
     }
 
-    private abstract static class Base{
+    private abstract static class Base {
         protected static final String BASE = "https://api.put.io/v2";
+
         protected static Builders.Any.B getBaseCall(Context context, String url) {
             return Ion.with(context)
                     .load(url)

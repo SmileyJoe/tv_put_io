@@ -22,15 +22,15 @@ public class VirtualDirectory implements Folder {
     private int mIconResId;
     private Filter mDefaultFilter;
 
-    public static VirtualDirectory getFromPutId(Context context, long putId){
-        if (putId == Putio.Files.PARENT_ID_RECENT){
+    public static VirtualDirectory getFromPutId(Context context, long putId) {
+        if (putId == Putio.Files.PARENT_ID_RECENT) {
             return getRecentAdded(context);
         } else {
             return null;
         }
     }
 
-    public static VirtualDirectory getRecentAdded(Context context){
+    public static VirtualDirectory getRecentAdded(Context context) {
         VirtualDirectory recent = new VirtualDirectory();
         recent.setPutId(Putio.Files.PARENT_ID_RECENT);
         recent.setTitle(context.getString(R.string.text_recently_added));
@@ -40,7 +40,7 @@ public class VirtualDirectory implements Folder {
         return recent;
     }
 
-    public Video asVideo(){
+    public Video asVideo() {
         Video video = new Video();
         video.setPutId(getPutId());
         video.setTitle(getTitle());
@@ -88,7 +88,7 @@ public class VirtualDirectory implements Folder {
 
     @Override
     public String getSubTextOne(Context context) {
-        if(mSubtextOne != 0) {
+        if (mSubtextOne != 0) {
             return context.getString(mSubtextOne);
         } else {
             return null;
@@ -101,7 +101,7 @@ public class VirtualDirectory implements Folder {
 
     @Override
     public String getSubTextTwo(Context context) {
-        if(mSubtextTwo != 0) {
+        if (mSubtextTwo != 0) {
             return context.getString(mSubtextTwo);
         } else {
             return null;

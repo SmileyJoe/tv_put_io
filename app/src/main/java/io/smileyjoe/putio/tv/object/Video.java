@@ -340,13 +340,13 @@ public class Video implements Parcelable {
     public String getTitleFormatted(Context context, boolean includeSeason) {
         if (mVideoType == VideoType.EPISODE) {
             String prefix = "";
-            if(includeSeason){
+            if (includeSeason) {
                 prefix = String.format("S%02dE", getSeason());
             }
 
             prefix += String.format("%02d. ", getEpisode());
             return prefix + mTitle;
-        } else if(mVideoType == VideoType.SEASON && includeSeason){
+        } else if (mVideoType == VideoType.SEASON && includeSeason) {
             return mTitle + ": " + context.getString(R.string.text_season) + " " + getSeason();
         } else {
             return mTitle;
