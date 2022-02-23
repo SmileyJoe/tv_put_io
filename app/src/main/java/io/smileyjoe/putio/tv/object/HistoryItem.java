@@ -25,6 +25,14 @@ public class HistoryItem implements Parcelable {
         return item;
     }
 
+    public static HistoryItem virtualDirectory(Long id, String title) {
+        HistoryItem item = new HistoryItem();
+        item.setId(id);
+        item.setTitle(title);
+        item.setFolderType(FolderType.VIRTUAL);
+        return item;
+    }
+
     public long getId() {
         return mId;
     }

@@ -33,7 +33,7 @@ public interface ResumeAction extends Action {
     }
 
     default void getResumeTime() {
-        Putio.getResumeTime(getBaseContext(), getVideo().getPutId(), new OnResumeResponse(getVideo(), this));
+        Putio.Resume.get(getBaseContext(), getVideo().getPutId(), new OnResumeResponse(getVideo(), this));
     }
 
     class OnResumeResponse extends Response {

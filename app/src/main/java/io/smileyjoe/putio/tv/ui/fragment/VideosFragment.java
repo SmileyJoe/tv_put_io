@@ -28,6 +28,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     public interface Listener extends VideosAdapter.Listener<Video> {
     }
 
+    public static final int GRID_COL_COUNT = 7;
     private VideosAdapter mVideosAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Video> mVideosAll;
@@ -105,7 +106,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
             if (mLayoutManager == null || force) {
                 switch (mStyle) {
                     case GRID:
-                        mLayoutManager = new GridLayoutManager(getContext(), 7);
+                        mLayoutManager = new GridLayoutManager(getContext(), GRID_COL_COUNT);
                         break;
                     case LIST:
                         mLayoutManager = new SnappingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);

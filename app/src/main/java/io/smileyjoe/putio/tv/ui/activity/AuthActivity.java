@@ -51,7 +51,7 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
         }
         populateInstructions();
 
-        Putio.getAuthCode(getBaseContext(), new OnCodeResponse());
+        Putio.Auth.getCode(getBaseContext(), new OnCodeResponse());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class AuthActivity extends BaseActivity<ActivityAuthBinding> {
     private void getToken() {
         if (!mIsPaused) {
             (new Handler()).postDelayed(() ->
-                            Putio.getAuthToken(getBaseContext(), mCode, new OnTokenResponse()),
+                            Putio.Auth.getToken(getBaseContext(), mCode, new OnTokenResponse()),
                     5000);
         }
     }

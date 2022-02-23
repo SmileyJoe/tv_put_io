@@ -43,26 +43,30 @@ public class VideoComparator implements Comparator<Video> {
     public int compare(Video videoOne, Video videoTwo) {
         int result;
 
-        if (videoOne.getVideoType() == VideoType.EPISODE) {
-            return Integer.compare(videoOne.getEpisode(), videoTwo.getEpisode());
-        } else {
-            switch (mOrder) {
-                case NEWEST_FIRST:
-                    result = Long.compare(videoTwo.getCreatedAt(), videoOne.getCreatedAt());
-                    break;
-                case RELEASE_ASCENDING:
-                    result = Long.compare(videoTwo.getReleaseDate(), videoOne.getReleaseDate());
-                    break;
-                case RELEASE_DESCENDING:
-                    result = Long.compare(videoOne.getReleaseDate(), videoTwo.getReleaseDate());
-                    break;
-                case ALPHABETICAL:
-                default:
-                    result = videoOne.getTitle().compareTo(videoTwo.getTitle());
-                    break;
-            }
+        switch (mOrder) {
+            case NEWEST_FIRST:
+                result = Long.compare(videoTwo.getCreatedAt(), videoOne.getCreatedAt());
+                break;
+            case RELEASE_ASCENDING:
+                result = Long.compare(videoTwo.getReleaseDate(), videoOne.getReleaseDate());
+                break;
+            case RELEASE_DESCENDING:
+                result = Long.compare(videoOne.getReleaseDate(), videoTwo.getReleaseDate());
+                break;
+            case ALPHABETICAL:
+            default:
+                if (videoOne.getVideoType() == VideoType.EPISODE && videoTwo.getVideoType() == VideoType.EPISODE) {
+                    result = Integer.compare(videoOne.getSeason(), videoTwo.getSeason());
 
-            return result;
+                    if (result == 0) {
+                        result = Integer.compare(videoOne.getEpisode(), videoTwo.getEpisode());
+                    }
+                } else {
+                    result = videoOne.getTitle().compareTo(videoTwo.getTitle());
+                }
+                break;
         }
+
+        return result;
     }
 }

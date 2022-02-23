@@ -18,6 +18,7 @@ import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VirtualDirectory;
 
 public class PutioHelper {
 
@@ -53,11 +54,17 @@ public class PutioHelper {
     }
 
     public void parse(long putId, JsonObject jsonObject) {
-
         JsonArray filesJson = jsonObject.getAsJsonArray("files");
-        JsonObject parentObject = jsonObject.getAsJsonObject("parent");
 
-        if (putId == Putio.NO_PARENT) {
+        try {
+            JsonObject parentObject = jsonObject.getAsJsonObject("parent");
+            mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
+        } catch (ClassCastException e) {
+            mCurrent = VirtualDirectory.getFromPutId(mContext, putId).asVideo();
+        }
+
+        if (putId == Putio.Files.NO_PARENT) {
+            mFolders.add(VirtualDirectory.getRecentAdded(mContext));
             List<Group> groups = AppDatabase.getInstance(mContext).groupDao().getAll();
 
             if (groups != null && !groups.isEmpty()) {
@@ -66,8 +73,6 @@ public class PutioHelper {
                 }
             }
         }
-
-        mCurrent = VideoUtil.parseFromPut(mContext, parentObject);
 
         if (mCurrent.getFileType() == FileType.FOLDER) {
 

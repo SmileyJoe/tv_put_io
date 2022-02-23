@@ -259,7 +259,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mVideo = video;
 
         if (mInitialized) {
-            mPlayerGlue.setTitle(video.getTitleFormatted());
+            mPlayerGlue.setTitle(video.getTitleFormatted(getContext(), true));
             mPlayerGlue.setMediaType(MediaType.VIDEO);
 
             prepareMediaForPlaying(video.getStreamUri(mPlayMp4), subtitleUri);
@@ -386,7 +386,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     private void updateResume() {
         if (mVideo != null) {
             int resumeTime = Math.toIntExact(mPlayerGlue.getCurrentPosition() / 1000);
-            Putio.setResumeTime(getContext(), mVideo.getPutId(), resumeTime, null);
+            Putio.Resume.set(getContext(), mVideo.getPutId(), resumeTime, null);
             mShouldResume = true;
             mVideo.setResumeTime(resumeTime);
             addToDefaultChannel();

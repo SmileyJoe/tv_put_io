@@ -100,6 +100,14 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
                 .forEach(i -> mView.getRoot().getChildAt(i).setSelected(false));
     }
 
+    public void select(T item) {
+        getOptionViews()
+                .stream()
+                .filter(v -> ((Integer) v.getTag()) == item.getId())
+                .findFirst()
+                .ifPresent(v -> onItemClick(v, item));
+    }
+
     protected void onItemClick(View view, T item) {
         boolean newState = !view.isSelected();
 

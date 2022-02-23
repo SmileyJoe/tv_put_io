@@ -55,6 +55,7 @@
     <string name="convert_status_extracted">Done</string>
     <string name="convert_status_unknown">Working</string>
     <string name="convert_status_error">Error</string>
+    <string name="text_recently_added">Recently Added</string>
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

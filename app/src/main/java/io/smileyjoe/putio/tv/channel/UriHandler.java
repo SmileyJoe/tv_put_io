@@ -174,7 +174,7 @@ public class UriHandler implements Parcelable {
         @Override
         protected Video doInBackground(Void... voids) {
             PutioHelper helper = new PutioHelper(mContext);
-            helper.parse(mPutId, Putio.getFiles(mContext, mPutId));
+            helper.parse(mPutId, Putio.Files.get(mContext, mPutId));
             return helper.getCurrent();
         }
 

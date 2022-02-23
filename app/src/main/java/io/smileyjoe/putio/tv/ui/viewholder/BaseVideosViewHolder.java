@@ -13,7 +13,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 
 public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseViewHolder<Video, V> {
 
@@ -22,14 +21,6 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
     public BaseVideosViewHolder(@NonNull View itemView, FragmentType fragmentType) {
         super(itemView, fragmentType);
         mPosterPadding = itemView.getContext().getResources().getDimensionPixelOffset(R.dimen.file_grid_poster_padding);
-    }
-
-    protected void populateTitle(Video video, TextView view) {
-        String title = video.getTitleFormatted();
-        if (video.getVideoType() == VideoType.SEASON) {
-            title = title + ": " + getContext().getString(R.string.text_season) + " " + video.getSeason();
-        }
-        view.setText(title);
     }
 
     protected void populateSummary(Video video, TextView view) {

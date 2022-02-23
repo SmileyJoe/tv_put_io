@@ -42,7 +42,7 @@ public class VideosListViewHolder extends BaseVideosViewHolder<ListItemVideoBind
     public void bindView(Video video, int position) {
         super.bindView(video, position);
 
-        populateTitle(video, mView.textTitle);
+        mView.textTitle.setText(video.getTitleFormatted(getContext(), false));
         populateSummary(video, mView.textSummary);
         populatePoster(video, mView.imagePoster);
         ViewUtil.populateResumeTime(mView.textResumeTime, video);
