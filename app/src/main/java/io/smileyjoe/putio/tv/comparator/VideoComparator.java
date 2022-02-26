@@ -55,15 +55,7 @@ public class VideoComparator implements Comparator<Video> {
                 break;
             case ALPHABETICAL:
             default:
-                if (videoOne.getVideoType() == VideoType.EPISODE && videoTwo.getVideoType() == VideoType.EPISODE) {
-                    result = Integer.compare(videoOne.getSeason(), videoTwo.getSeason());
-
-                    if (result == 0) {
-                        result = Integer.compare(videoOne.getEpisode(), videoTwo.getEpisode());
-                    }
-                } else {
-                    result = videoOne.getTitle().compareTo(videoTwo.getTitle());
-                }
+                result = videoOne.getPutTitle().compareTo(videoTwo.getPutTitle());
                 break;
         }
 
