@@ -44,7 +44,7 @@ public class Programmes {
                     .orElse(null);
 
             if (video.getVideoType() == VideoType.MOVIE && timeLeft <= 600000) {
-                if(program != null) {
+                if (program != null) {
                     helper.deletePreviewProgram(program.getId());
                 }
                 return;
