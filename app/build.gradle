@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.appdistribution'
+apply from: '../release_notes.groovy'
 
 def getFirebaseDistributionKeyPath = { ->
     project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
@@ -23,10 +24,6 @@ def getKeystoreKeyAlias = { ->
     project.hasProperty('keystore_key_alias') ? keystore_key_alias : ""
 }
 
-def getReleaseNotes = { ->
-    project.hasProperty('release_notes') ? release_notes : ""
-}
-
 def getBuildNumber = { ->
     project.hasProperty('build_number') ? build_number : 0
 }
@@ -43,8 +40,8 @@ android {
         applicationId "io.smileyjoe.putio.tv"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 30
-        versionName "3.3.2." + getBuildNumber()
+        versionCode 31
+        versionName "3.4.0." + getBuildNumber()
         buildConfigField "String", "PUTIO_CLIENT_ID", "\"${putio_client_id}\""
         buildConfigField "String", "PUTIO_CLIENT_SECRET", "\"${putio_client_secret}\""
         buildConfigField "String", "TMDB_AUTH_TOKEN", "\"${tmdb_auth_token}\""
@@ -74,7 +71,7 @@ android {
 
             firebaseAppDistribution {
                 artifactType="APK"
-                releaseNotes = getReleaseNotes()
+                releaseNotes = generateReleaseNotes("debug")
                 groups="qa"
                 serviceCredentialsFile = getFirebaseDistributionKeyPath()
             }
@@ -86,7 +83,7 @@ android {
 
             firebaseAppDistribution {
                 artifactType="AAB"
-                releaseNotes = getReleaseNotes()
+                releaseNotes = generateReleaseNotes("release")
                 groups="testers"
                 serviceCredentialsFile = getFirebaseDistributionKeyPath()
             }

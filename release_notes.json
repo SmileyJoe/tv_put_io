@@ -1,0 +1,22 @@
+{
+  "previous_release_release": "3.3.1",
+  "previous_release_debug": "3.3.2",
+  "notes": {
+    "3": {
+      "3": {
+        "1": [
+          "General bug fixes"
+        ],
+        "2": [
+          "`Fatal Exception: java.lang.IndexOutOfBoundsException` could happen when filtering the grid view",
+          "`Fatal Exception: java.lang.NullPointerException` was happening when a movie that was previosuly watched elsewhere was watched in the app"
+        ]
+      },
+      "4": {
+        "0": [
+          "Adding release notes to build process"
+        ]
+      }
+    }
+  }
+}
