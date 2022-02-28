@@ -5,7 +5,6 @@ import java.util.stream.Stream;
 
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 
 public class VideoComparator implements Comparator<Video> {
 

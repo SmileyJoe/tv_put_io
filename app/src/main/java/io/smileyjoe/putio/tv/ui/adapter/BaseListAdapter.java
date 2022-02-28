@@ -50,7 +50,29 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends V
     }
 
     public void setItems(ArrayList<T> items) {
-        mItems = items;
+        int oldSize = getItemCount();
+
+        if (items != null) {
+            mItems = items;
+        } else {
+            mItems = new ArrayList<>();
+        }
+
+        int newSize = getItemCount();
+
+        if (newSize == 0) {
+            notifyItemRangeRemoved(0, oldSize);
+        } else if (oldSize == 0) {
+            notifyItemRangeInserted(0, newSize);
+        } else if (oldSize == newSize) {
+            notifyItemRangeChanged(0, newSize);
+        } else if (newSize > oldSize) {
+            notifyItemRangeChanged(0, oldSize);
+            notifyItemRangeInserted(oldSize, newSize);
+        } else if (oldSize > newSize) {
+            notifyItemRangeChanged(0, newSize);
+            notifyItemRangeRemoved(newSize, oldSize);
+        }
     }
 
     public void setFragmentType(FragmentType fragmentType) {

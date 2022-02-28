@@ -44,7 +44,9 @@ public class Programmes {
                     .orElse(null);
 
             if (video.getVideoType() == VideoType.MOVIE && timeLeft <= 600000) {
-                helper.deletePreviewProgram(program.getId());
+                if (program != null) {
+                    helper.deletePreviewProgram(program.getId());
+                }
                 return;
             } else {
                 // Remove older items //

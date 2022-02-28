@@ -119,7 +119,6 @@ public class SubtitleFragment extends BaseFragment<FragmentSubtitleBinding> impl
                     subtitles.add(0, subtitleEmpty);
 
                     mAdapter.setItems(subtitles);
-                    mAdapter.notifyDataSetChanged();
 
                     mView.recyclerSubtitle.setVisibility(View.VISIBLE);
                     mView.textEmpty.setVisibility(View.GONE);

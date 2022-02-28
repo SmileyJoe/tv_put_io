@@ -71,7 +71,6 @@ public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
 
     public void setGenres(ArrayList<Genre> genres) {
         mAdapter.setItems(genres);
-        mAdapter.notifyDataSetChanged();
     }
 
     public void setGenreIds(ArrayList<Integer> genreIds) {

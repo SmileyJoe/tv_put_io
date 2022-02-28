@@ -80,7 +80,6 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
             mView.recycler.setVisibility(View.VISIBLE);
 
             mAdapter.setItems(folders);
-            mAdapter.notifyDataSetChanged();
         }
     }
 
