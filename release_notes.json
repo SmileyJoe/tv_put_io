@@ -1,6 +1,6 @@
 {
-  "previous_release_release": "3.3.1",
-  "previous_release_debug": "3.3.2",
+  "previous_release": "3.3.2",
+  "current_debug": "3.4.0",
   "notes": {
     "3": {
       "3": {

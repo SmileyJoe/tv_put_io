@@ -2,8 +2,15 @@ import groovy.json.JsonSlurper
 
 ext.generateReleaseNotes = {flavour ->
     def json = new JsonSlurper().parseText(new File('release_notes.json').text)
-    def (version, feature, bug) = json.get("previous_release_" + flavour).tokenize('.')
-    bug++
+    def version, feature, bug
+
+    if(flavour.equalsIgnoreCase("debug")){
+        (version, feature, bug) = json.get("current_debug").tokenize('.')
+    } else {
+        (version, feature, bug) = json.get("previous_release").tokenize('.')
+        bug++
+    }
+
     def notes = json.notes
     def release_notes = ""
 
