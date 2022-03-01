@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
 
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import io.smileyjoe.putio.tv.Application;
@@ -88,6 +89,14 @@ public class Putio {
 
         public static void status(Context context, long id, Response response) {
             execute(context, getUrl(id), response);
+        }
+    }
+
+    public static class Account extends Base{
+        private static final String URL_INFO = BASE + "/account/info";
+
+        public static void info(Context context, Response response){
+            execute(context, URL_INFO, response);
         }
     }
 

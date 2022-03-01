@@ -9,10 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
@@ -21,7 +25,10 @@ import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
+import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
+import io.smileyjoe.putio.tv.object.Account;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FolderType;
@@ -39,7 +46,9 @@ import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
+import io.smileyjoe.putio.tv.util.Format;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
+import io.smileyjoe.putio.tv.util.JsonUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
 /*
@@ -107,9 +116,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
 
         FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
-
+        populateAccount();
         // todo: this needs to be called when an id is not found in the db //
         Tmdb.Genre.update(getBaseContext());
+    }
+
+    private void populateAccount(){
+        Putio.Account.info(getBaseContext(), new Response() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Account account = Account.fromApi(result);
+                mView.textAccountUsername.setText(account.getUserName());
+                mView.textUsageAvailable.setText(getString(R.string.text_usage_available, Format.size(getBaseContext(), account.getDiskAvailable())).toUpperCase(Locale.ROOT));
+                mView.progressUsage.setMax(Math.toIntExact(account.getDiskSize()/1000000));
+                mView.progressUsage.setProgress(Math.toIntExact(account.getDiskUsed()/1000000));
+            }
+        });
     }
 
     private void handleExtras() {
