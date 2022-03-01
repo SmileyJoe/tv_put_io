@@ -15,7 +15,8 @@
       "4": {
         "0": [
           "Adding release notes to build process",
-          "Displaying account info"
+          "Displaying account info",
+          "Adding different host name for debug app"
         ]
       }
     }

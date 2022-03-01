@@ -45,9 +45,8 @@ android {
         buildConfigField "String", "PUTIO_CLIENT_ID", "\"${putio_client_id}\""
         buildConfigField "String", "PUTIO_CLIENT_SECRET", "\"${putio_client_secret}\""
         buildConfigField "String", "TMDB_AUTH_TOKEN", "\"${tmdb_auth_token}\""
+        project.ext.set('host', 'tv.putio.smileyjoe.io')
 
-        def host = 'tv.putio.smileyjoe.io'
-        resValue 'string', 'host_name', host
     }
 
     compileOptions {
@@ -68,6 +67,7 @@ android {
         debug{
             applicationIdSuffix ".debug"
             ext.enableCrashlytics = getEnableCrashlyticsDebug()
+            resValue 'string', 'host_name', 'debug.' + project.ext.get('host')
 
             firebaseAppDistribution {
                 artifactType="APK"
@@ -80,6 +80,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            resValue 'string', 'host_name', project.ext.get('host')
 
             firebaseAppDistribution {
                 artifactType="AAB"
