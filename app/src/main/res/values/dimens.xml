@@ -30,4 +30,5 @@
     <dimen name="padding_list_focus">20dp</dimen>
     <dimen name="fg_list_image_border_width">3dp</dimen>
     <dimen name="content_padding_fg_list_image_border">1dp</dimen>
+    <dimen name="height_linear_progress_with_text">24dp</dimen>
 </resources>
