@@ -18,6 +18,11 @@
           "Displaying account info",
           "Adding different host name for debug app"
         ]
+      },
+      "5": {
+        "0": [
+          "Adding settings page"
+        ]
       }
     }
   }

@@ -39,6 +39,7 @@ import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.object.VirtualDirectory;
+import io.smileyjoe.putio.tv.ui.fragment.AccountFragment;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
@@ -63,6 +64,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private GenreListFragment mFragmentGenreList;
     private FilterFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
+    private AccountFragment mFragmentAccount;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -95,6 +97,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
         mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
+        mFragmentAccount = (AccountFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_account);
 
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
@@ -107,6 +110,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentGenreList.setFocusSearchListener(this);
         mFragmentFilter.setFocusSearchListener(this);
         mFragmentGroup.setFocusSearchListener(this);
+        mFragmentAccount.setFocusSearchListener(this);
 
         mFragmentFolderList.setForceFocus(true);
 
@@ -114,24 +118,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mVideoLoader.loadDirectory();
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
+        mFragmentAccount.setOnClickListener(v -> startActivity(SettingsActivity.getIntent(getBaseContext())));
 
         FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
-        populateAccount();
+
         // todo: this needs to be called when an id is not found in the db //
         Tmdb.Genre.update(getBaseContext());
-    }
-
-    private void populateAccount(){
-        Putio.Account.info(getBaseContext(), new Response() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Account account = Account.fromApi(result);
-                mView.textAccountUsername.setText(account.getUserName());
-                mView.textUsageAvailable.setText(getString(R.string.text_usage_available, Format.size(getBaseContext(), account.getDiskAvailable())).toUpperCase(Locale.ROOT));
-                mView.progressUsage.setMax(Math.toIntExact(account.getDiskSize()/1000000));
-                mView.progressUsage.setProgress(Math.toIntExact(account.getDiskUsed()/1000000));
-            }
-        });
     }
 
     private void handleExtras() {
@@ -303,12 +295,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     @Override
     public View onFocusSearch(View focused, int direction, FragmentType type) {
         switch (type) {
+            case ACCOUNT:
+                if(direction == FOCUS_UP){
+                    if(mFragmentFolderList.hasItems()) {
+                        return mFragmentFolderList.getFocusableView();
+                    } else {
+                        return mFragmentGroup.getFocusableView();
+                    }
+                } else {
+                    return focused;
+                }
             case GROUP:
                 switch (direction) {
                     case FOCUS_UP:
                         return focused;
                     case FOCUS_DOWN:
-                        return mFragmentFolderList.getFocusableView();
+                        if(mFragmentFolderList.hasItems()) {
+                            return mFragmentFolderList.getFocusableView();
+                        } else {
+                            return mFragmentAccount.getFocusableView();
+                        }
                     case FOCUS_RIGHT:
                     case FOCUS_LEFT:
                         if (mFragmentGroup.canFocus(focused, direction)) {
@@ -318,10 +324,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                         }
                 }
             case FOLDER:
-                if (direction == FOCUS_UP) {
-                    return mFragmentGroup.getFocusableView();
-                } else {
-                    return focused;
+                switch (direction){
+                    case FOCUS_UP:
+                        return mFragmentGroup.getFocusableView();
+                    case FOCUS_DOWN:
+                        return mFragmentAccount.getFocusableView();
+                    default:
+                        return focused;
                 }
             case VIDEO:
                 if (direction == FOCUS_UP) {
