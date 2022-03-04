@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

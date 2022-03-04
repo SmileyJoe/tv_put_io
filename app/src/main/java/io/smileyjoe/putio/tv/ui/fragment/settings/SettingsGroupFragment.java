@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.ui.fragment.settings;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 

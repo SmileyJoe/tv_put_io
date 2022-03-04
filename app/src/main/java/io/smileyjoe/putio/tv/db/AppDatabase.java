@@ -145,10 +145,10 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase database) {
             super.onCreate(database);
 
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (1, 'Movies', '[]', 1, 0)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (2, 'Series', '[]', 1, 0)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (3, 'Watch Later', '[]', 3, 1)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (4, 'Favourites', '[]', 3, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent, enabled) VALUES (1, 'Movies', '[]', 1, 0, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent, enabled) VALUES (2, 'Series', '[]', 1, 0, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent, enabled) VALUES (3, 'Watch Later', '[]', 3, 1, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent, enabled) VALUES (4, 'Favourites', '[]', 3, 1, 1)");
         }
     }
 }

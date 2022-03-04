@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.google.gson.JsonObject;
@@ -15,6 +14,7 @@ import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.torrent.Parse;
+import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
 
 public class Tmdb {
@@ -105,27 +105,10 @@ public class Tmdb {
 
             @Override
             public void onSuccess(JsonObject result) {
-                ProcessResponse task = new ProcessResponse(mContext, result);
-                task.execute();
-            }
-        }
-
-        private static class ProcessResponse extends AsyncTask<Void, Void, Void> {
-            private JsonObject mResult;
-            private Context mContext;
-
-            public ProcessResponse(Context context, JsonObject result) {
-                mContext = context;
-                mResult = result;
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                ArrayList<io.smileyjoe.putio.tv.object.Genre> genres = io.smileyjoe.putio.tv.object.Genre.fromApi(mResult.get("genres").getAsJsonArray());
-
-                AppDatabase.getInstance(mContext).genreDao().insert(genres);
-
-                return null;
+                Async.run(() -> {
+                    ArrayList<io.smileyjoe.putio.tv.object.Genre> genres = io.smileyjoe.putio.tv.object.Genre.fromApi(result.get("genres").getAsJsonArray());
+                    AppDatabase.getInstance(mContext).genreDao().insert(genres);
+                });
             }
         }
     }

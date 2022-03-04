@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.action.video;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import androidx.annotation.StringRes;
 

@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
@@ -302,12 +301,11 @@ public class VideoLoader {
 
         @Override
         public void onSuccess(JsonObject result) {
-            ProcessPutResponse task = new ProcessPutResponse(mPutId, result);
-            task.execute();
+            new ProcessPutResponse(mPutId, result).run();
         }
     }
 
-    private class ProcessPutResponse extends AsyncTask<Void, Void, Void> {
+    private class ProcessPutResponse extends Async.Runner<Void> {
 
         private long mPutId;
         private JsonObject mResult;
@@ -320,7 +318,7 @@ public class VideoLoader {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void onBackground() {
             PutioHelper helper = new PutioHelper(mContext);
             mListener.ifPresent(helper::setListener);
             helper.parse(mPutId, mResult);
@@ -336,7 +334,7 @@ public class VideoLoader {
         }
 
         @Override
-        protected void onPostExecute(Void param) {
+        protected void onMain(Void param) {
             VirtualDirectory virtual = VirtualDirectory.getFromPutId(mContext, mCurrentPutId);
             HistoryItem historyItem;
 
