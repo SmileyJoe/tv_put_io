@@ -132,8 +132,7 @@ public class VideoLoader {
 
     public void loadGroup(Long id, boolean shouldAddToHistory) {
         mListener.ifPresent(listener -> listener.onVideosLoadStarted());
-        GetGroup task = new GetGroup(id, shouldAddToHistory);
-        task.execute();
+        new GetGroup(id, shouldAddToHistory).run();
     }
 
     public boolean back() {
@@ -200,7 +199,7 @@ public class VideoLoader {
         mHistory.add(item);
     }
 
-    private class GetGroup extends AsyncTask<Void, Void, Void> {
+    private class GetGroup extends Async.Runner<Void> {
         private Long mId;
         private Group mGroup;
         private ArrayList<Video> mGroupVideos;
@@ -215,7 +214,7 @@ public class VideoLoader {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void onBackground() {
             mGroup = AppDatabase.getInstance(mContext).groupDao().get(mId);
             ArrayList<Long> putIds = mGroup.getPutIds();
 
@@ -288,7 +287,7 @@ public class VideoLoader {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onMain(Void aVoid) {
             onVideosLoaded(HistoryItem.group(mId, mGroup.getTitle()), mGroupVideos, mGroupFolders, mShouldAddToHistory);
         }
     }

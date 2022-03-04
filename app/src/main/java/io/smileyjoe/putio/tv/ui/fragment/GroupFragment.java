@@ -16,6 +16,7 @@ import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
+import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
 
 public class GroupFragment extends ToggleFragment<Group> {
@@ -35,14 +36,31 @@ public class GroupFragment extends ToggleFragment<Group> {
         mGroups = new ArrayList<>();
         mViews = new ArrayList<>();
 
-        GetGroups task = new GetGroups();
-        task.execute();
+        getGroups(null);
     }
 
     public void reload(LoadedListener listener){
         clear();
-        GetGroups task = new GetGroups(listener);
-        task.execute();
+        getGroups(listener);
+    }
+
+    private void getGroups(LoadedListener listener){
+        Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId()), groups -> {
+            groups.stream()
+                    .filter(Group::isEnabled)
+                    .forEach(group -> {
+                        mGroups.add(group);
+                        mViews.add(addOption(group));
+                    });
+
+            if(!hasItems()){
+                hide();
+            }
+
+            if(listener != null){
+                listener.loaded();
+            }
+        });
     }
 
     @Override
@@ -63,42 +81,6 @@ public class GroupFragment extends ToggleFragment<Group> {
             return super.show();
         } else {
             return false;
-        }
-    }
-
-    private class GetGroups extends AsyncTask<Void, Void, List<Group>> {
-
-        private Optional<LoadedListener> mLoaded;
-
-        public GetGroups() {
-            this(null);
-        }
-
-        public GetGroups(LoadedListener loaded) {
-            mLoaded = Optional.ofNullable(loaded);
-        }
-
-        @Override
-        protected List<Group> doInBackground(Void... voids) {
-            return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId());
-        }
-
-        @Override
-        protected void onPostExecute(List<Group> groups) {
-            super.onPostExecute(groups);
-
-            groups.stream()
-                    .filter(Group::isEnabled)
-                    .forEach(group -> {
-                        mGroups.add(group);
-                        mViews.add(addOption(group));
-                    });
-
-            if(!hasItems()){
-                hide();
-            }
-
-            mLoaded.ifPresent(l -> l.loaded());
         }
     }
 }

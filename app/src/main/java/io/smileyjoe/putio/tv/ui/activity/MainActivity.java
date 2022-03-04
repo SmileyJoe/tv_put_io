@@ -51,6 +51,7 @@ import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
+import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.Format;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.JsonUtil;
@@ -390,30 +391,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private class GroupListener extends HomeListener<Group> implements ToggleFragment.Listener<Group> {
         @Override
         public void onItemClicked(View view, Group group, boolean isSelected) {
-            UpdateGroup task = new UpdateGroup(group, isSelected);
-            task.execute();
-        }
-
-        private class UpdateGroup extends AsyncTask<Void, Void, Void> {
-            private Group mGroup;
-            private boolean mIsSelected;
-
-            public UpdateGroup(Group group, boolean isSelected) {
-                mGroup = group;
-                mIsSelected = isSelected;
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                if (mIsSelected) {
-                    mGroup.addPutId(mVideoLoader.getCurrentHistory().getId());
+            Async.run(() -> {
+                if (isSelected) {
+                    group.addPutId(mVideoLoader.getCurrentHistory().getId());
                 } else {
-                    mGroup.removePutId(mVideoLoader.getCurrentHistory().getId());
+                    group.removePutId(mVideoLoader.getCurrentHistory().getId());
                 }
 
-                AppDatabase.getInstance(getBaseContext()).groupDao().insert(mGroup);
-                return null;
-            }
+                AppDatabase.getInstance(getBaseContext()).groupDao().insert(group);
+            });
         }
     }
 

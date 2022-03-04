@@ -19,6 +19,7 @@ import io.smileyjoe.putio.tv.db.GroupDao;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
+import io.smileyjoe.putio.tv.util.Async;
 
 public class SettingsGroupFragment extends SettingsBaseFragment{
 
@@ -40,7 +41,14 @@ public class SettingsGroupFragment extends SettingsBaseFragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        new GetGroups().execute();
+        Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId()), groups -> {
+            List<GuidedAction> actions = new ArrayList<>();
+
+            groups.forEach(group -> actions.add(getAction(group.getTitle(), null, group.getIconResId(), group.getId(), group.isEnabled())));
+
+            actions.add(getAction(getString(R.string.text_recently_added), null, R.drawable.ic_sort_by_created_24, Math.toIntExact(Putio.Files.PARENT_ID_RECENT), false));
+            setActions(actions);
+        });
     }
 
     @Override
@@ -49,44 +57,7 @@ public class SettingsGroupFragment extends SettingsBaseFragment{
         if(action.getId() == Putio.Files.PARENT_ID_RECENT){
 
         } else {
-            new UpdateGroupEnabled(action.getId(), action.isChecked()).execute();
+            Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().enabled(action.getId(), action.isChecked()));
         }
     }
-
-    private class UpdateGroupEnabled extends AsyncTask<Void, Void, Void> {
-
-        private long mGroupId;
-        private boolean mEnabled;
-
-        public UpdateGroupEnabled(long groupId, boolean enabled) {
-            mGroupId = groupId;
-            mEnabled = enabled;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            AppDatabase.getInstance(getContext()).groupDao().enabled(mGroupId, mEnabled);
-            return null;
-        }
-    }
-
-    private class GetGroups extends AsyncTask<Void, Void, List<Group>> {
-        @Override
-        protected List<Group> doInBackground(Void... voids) {
-            return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId());
-        }
-
-        @Override
-        protected void onPostExecute(List<Group> groups) {
-            super.onPostExecute(groups);
-
-            List<GuidedAction> actions = new ArrayList<>();
-
-            groups.forEach(group -> actions.add(getAction(group.getTitle(), null, group.getIconResId(), group.getId(), group.isEnabled())));
-
-            actions.add(getAction(getString(R.string.text_recently_added), null, R.drawable.ic_sort_by_created_24, Math.toIntExact(Putio.Files.PARENT_ID_RECENT), false));
-            setActions(actions);
-        }
-    }
-
 }
