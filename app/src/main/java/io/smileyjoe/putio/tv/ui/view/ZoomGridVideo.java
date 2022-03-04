@@ -113,7 +113,7 @@ public class ZoomGridVideo extends RelativeLayout {
         mView.textGenres.setText(null);
         PopulateGenres genresTask = new PopulateGenres(mView.textGenres, video);
         genresTask.setHideOnEmpty(true);
-        genresTask.execute();
+        genresTask.run();
 
         mZoomView.reposition(view, mView.getRoot());
 

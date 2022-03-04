@@ -17,7 +17,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.view.PillView;
 
-public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
+public class PopulateGenres extends Async.Runner<List<Genre>> {
 
     private enum Type {
         CSV, PILL
@@ -49,7 +49,7 @@ public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
     }
 
     @Override
-    protected List<Genre> doInBackground(Void... voids) {
+    protected List<Genre> onBackground() {
         ArrayList<Integer> genreIds = mVideo.getGenreIds();
 
         if (genreIds != null && !genreIds.isEmpty()) {
@@ -78,7 +78,7 @@ public class PopulateGenres extends AsyncTask<Void, Void, List<Genre>> {
     }
 
     @Override
-    protected void onPostExecute(List<Genre> genres) {
+    protected void onMain(List<Genre> genres) {
         switch (mType) {
             case CSV:
                 populateCsv(genres);
