@@ -77,6 +77,8 @@
     <string name="settings_title_bandwidth">Monthly bandwidth</string>
     <string name="settings_title_expiration">Expiration</string>
     <string name="settings_title_disk_available">Available</string>
+    <string name="settings_title_group">Group</string>
+    <string name="settings_description_group">Enable or disable groups</string>
 
     <plurals name="plural_second">
         <item quantity="one">%d second</item>

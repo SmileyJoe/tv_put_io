@@ -5,12 +5,16 @@ import static android.view.View.FOCUS_LEFT;
 import static android.view.View.FOCUS_RIGHT;
 import static android.view.View.FOCUS_UP;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.google.gson.JsonObject;
 
@@ -70,6 +74,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private VideoLoader mVideoLoader;
     private UriHandler mUriHandler;
 
+    private ActivityResultLauncher<Intent> mSettingsLauncher;
+
     public static Intent getIntent(Context context) {
         return getIntent(context, null);
     }
@@ -91,6 +97,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         super.onCreate(savedInstanceState);
 
         handleExtras();
+        setupActivityResults();
 
         mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
@@ -118,12 +125,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mVideoLoader.loadDirectory();
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
-        mFragmentAccount.setOnClickListener(v -> startActivity(SettingsActivity.getIntent(getBaseContext())));
+        mFragmentAccount.setOnClickListener(v -> mSettingsLauncher.launch(SettingsActivity.getIntent(getBaseContext())));
 
-        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
+        mFragmentGenreList.hide();
 
         // todo: this needs to be called when an id is not found in the db //
         Tmdb.Genre.update(getBaseContext());
+    }
+
+    private void setupActivityResults(){
+        mSettingsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    mFragmentGroup.reload(() -> {
+                        if (mVideoLoader.hasHistory()) {
+                            mFragmentGroup.show();
+                        }
+                    });
+                });
     }
 
     private void handleExtras() {
@@ -219,23 +238,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             mFragmentFilter.reset();
 
             if (videos != null && !videos.isEmpty()) {
-                FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentFilter);
+                mFragmentFilter.show();
             } else {
-                FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentFilter);
+                mFragmentFilter.hide();
             }
 
             switch (historyItem.getFolderType()) {
                 case VIRTUAL:
                     mFragmentFilter.select(VirtualDirectory.getFromPutId(getBaseContext(), historyItem.getId()).getDefaultFilter());
                 case GROUP:
-                    FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
+                    mFragmentGroup.hide();
                     break;
                 case DIRECTORY:
                     if (mVideoLoader.hasHistory()) {
-                        FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGroup);
+                        mFragmentGroup.show();
                         mFragmentGroup.setCurrentPutId(historyItem.getId());
                     } else {
-                        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
+                        mFragmentGroup.hide();
                     }
                     break;
             }
@@ -263,9 +282,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentGenreList.setGenreIds(genresAvailable);
 
         if (genresAvailable == null || genresAvailable.isEmpty()) {
-            FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
+            mFragmentGenreList.hide();
         } else {
-            FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGenreList);
+            mFragmentGenreList.show();
         }
     }
 
@@ -280,10 +299,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private void showFolders() {
         mView.animLayoutFolders.enter();
         mFragmentVideoList.hideDetails();
-        if (mFragmentGroup.isVisible()) {
+        if(mFragmentFolderList.hasItems()) {
+            mFragmentFolderList.requestFocus();
+        } else if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()){
             mFragmentGroup.requestFocus();
         } else {
-            mFragmentFolderList.requestFocus();
+            mFragmentAccount.requestFocus();
         }
     }
 
@@ -299,8 +320,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                 if(direction == FOCUS_UP){
                     if(mFragmentFolderList.hasItems()) {
                         return mFragmentFolderList.getFocusableView();
-                    } else {
+                    } else if(mFragmentGroup.isVisible() && mFragmentGroup.hasItems()){
                         return mFragmentGroup.getFocusableView();
+                    } else {
+                        return focused;
                     }
                 } else {
                     return focused;
@@ -326,7 +349,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             case FOLDER:
                 switch (direction){
                     case FOCUS_UP:
-                        return mFragmentGroup.getFocusableView();
+                        if(mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
+                            return mFragmentGroup.getFocusableView();
+                        } else {
+                            return focused;
+                        }
                     case FOCUS_DOWN:
                         return mFragmentAccount.getFocusableView();
                     default:

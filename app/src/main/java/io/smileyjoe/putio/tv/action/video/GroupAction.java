@@ -73,7 +73,9 @@ public interface GroupAction extends Action {
             super.onPostExecute(groups);
 
             if (groups != null && !groups.isEmpty()) {
-                groups.forEach(group -> {
+                groups.stream()
+                        .filter(Group::isEnabled)
+                        .forEach(group -> {
                     @StringRes int subTextResId;
 
                     if (group.getPutIds().contains(mVideo.getPutId())) {

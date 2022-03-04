@@ -17,6 +17,8 @@ public class SettingsMainFragment extends SettingsBaseFragment {
 
     private static final int ID_ABOUT = 1;
     private static final int ID_ACCOUNT = 2;
+    private static final int ID_SETTINGS = 3;
+    private static final int ID_GROUPS = 4;
 
     @Override
     @NonNull
@@ -27,6 +29,7 @@ public class SettingsMainFragment extends SettingsBaseFragment {
     @Override
     public void onCreateActions(@NonNull List<GuidedAction> actions,
                                 Bundle savedInstanceState) {
+        actions.add(SettingsGroupFragment.getAction(getContext(), ID_GROUPS));
         actions.add(SettingsAccountFragment.getAction(getContext(), ID_ACCOUNT));
         actions.add(SettingsAboutFragment.getAction(getContext(), ID_ABOUT));
     }
@@ -37,6 +40,8 @@ public class SettingsMainFragment extends SettingsBaseFragment {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsAboutFragment());
         } else if(action.getId() == ID_ACCOUNT) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsAccountFragment());
+        } else if (action.getId() == ID_GROUPS) {
+            GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsGroupFragment());
         } else {
             getActivity().finishAfterTransition();
         }

@@ -2,11 +2,13 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -90,7 +92,6 @@ public class VideoLoader {
     public void reload() {
         if (mHistory != null && !mHistory.isEmpty()) {
             HistoryItem current = getCurrentHistory();
-
             switch (current.getFolderType()) {
                 case DIRECTORY:
                     loadDirectory(current.getId(), current.getTitle(), false);
@@ -176,7 +177,18 @@ public class VideoLoader {
     }
 
     private void onVideosLoaded(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
-        mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, folders, shouldAddToHistory));
+        ArrayList<Folder> tempFolders = new ArrayList<>(folders);
+        if (item.getId() == Putio.Files.NO_PARENT) {
+            tempFolders.add(0, VirtualDirectory.getRecentAdded(mContext));
+            Async.run(() -> AppDatabase.getInstance(mContext).groupDao().getEnabled(), groups -> {
+                if (groups != null && !groups.isEmpty()) {
+                    groups.forEach(group -> tempFolders.add(0, group));
+                }
+                mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, tempFolders, shouldAddToHistory));
+            });
+        } else {
+            mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, tempFolders, shouldAddToHistory));
+        }
     }
 
     private void getFromPut(long putId) {

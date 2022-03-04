@@ -101,7 +101,7 @@ public class Putio {
     }
 
     public static class Files extends Base {
-        public static final long NO_PARENT = -100;
+        public static final long NO_PARENT = 0;
         public static final long PARENT_ID_RECENT = -1;
         private static final String URL = BASE + "/files/list" +
                 "?stream_url=true" +

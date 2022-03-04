@@ -63,16 +63,7 @@ public class PutioHelper {
             mCurrent = VirtualDirectory.getFromPutId(mContext, putId).asVideo();
         }
 
-        if (putId == Putio.Files.NO_PARENT) {
-            mFolders.add(VirtualDirectory.getRecentAdded(mContext));
-            List<Group> groups = AppDatabase.getInstance(mContext).groupDao().getAll();
 
-            if (groups != null && !groups.isEmpty()) {
-                for (Group group : groups) {
-                    mFolders.add(group);
-                }
-            }
-        }
 
         if (mCurrent.getFileType() == FileType.FOLDER) {
 
