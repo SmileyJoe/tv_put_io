@@ -34,15 +34,11 @@ public class AccountFragment extends BaseFragment<FragmentAccountBinding> {
     }
 
     private void populateAccount(){
-        Putio.Account.info(getContext(), new Response() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Account account = Account.fromApi(result);
-                mView.textAccountUsername.setText(account.getUserName());
-                mView.textUsageAvailable.setText(getString(R.string.text_usage_available, Format.size(getContext(), account.getDiskAvailable())).toUpperCase(Locale.ROOT));
-                mView.progressUsage.setMax(Math.toIntExact(account.getDiskSize()/1000000));
-                mView.progressUsage.setProgress(Math.toIntExact(account.getDiskUsed()/1000000));
-            }
+        Account.get(getContext(), account -> {
+            mView.textAccountUsername.setText(account.getUserName());
+            mView.textUsageAvailable.setText(getString(R.string.text_usage_available, Format.size(getContext(), account.getDiskAvailable())).toUpperCase(Locale.ROOT));
+            mView.progressUsage.setMax(Math.toIntExact(account.getDiskSize()/1000000));
+            mView.progressUsage.setProgress(Math.toIntExact(account.getDiskUsed()/1000000));
         });
     }
 

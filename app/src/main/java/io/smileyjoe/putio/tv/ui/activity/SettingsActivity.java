@@ -2,17 +2,35 @@ package io.smileyjoe.putio.tv.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.leanback.app.GuidedStepSupportFragment;
+import androidx.leanback.widget.GuidanceStylist;
+import androidx.leanback.widget.GuidanceStylist.Guidance;
+import androidx.leanback.widget.GuidedAction;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
-import io.smileyjoe.putio.tv.databinding.ActivitySettingsBinding;
+import java.util.List;
 
-public class SettingsActivity extends BaseActivity<ActivitySettingsBinding> {
+import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.ui.fragment.settings.SettingsMainFragment;
+
+/**
+ * Activity that showcases different aspects of GuidedStepFragments.
+ */
+public class SettingsActivity extends FragmentActivity {
 
     public static Intent getIntent(Context context){
         return new Intent(context, SettingsActivity.class);
     }
 
     @Override
-    protected ActivitySettingsBinding inflate() {
-        return ActivitySettingsBinding.inflate(getLayoutInflater());
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (null == savedInstanceState) {
+            GuidedStepSupportFragment.addAsRoot(this, new SettingsMainFragment(), android.R.id.content);
+        }
     }
 }

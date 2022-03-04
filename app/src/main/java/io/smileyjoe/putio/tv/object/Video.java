@@ -453,14 +453,6 @@ public class Video implements Parcelable {
         return mSize;
     }
 
-    public String getSizeFormatted(Context context) {
-        if (mSize > 0) {
-            return Formatter.formatShortFileSize(context, mSize);
-        } else {
-            return null;
-        }
-    }
-
     public String getGenresFormatted() {
         return mGenresFormatted;
     }

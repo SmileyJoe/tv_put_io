@@ -6,6 +6,7 @@ import android.text.format.Formatter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import io.smileyjoe.putio.tv.R;
 
@@ -14,9 +15,67 @@ public class Format {
     private Format() {
     }
 
-    public static String size(Context context, long size) {
-        if (size > 0) {
-            return Formatter.formatShortFileSize(context, size);
+    /**
+     * Basically copied from {@link Formatter} because they won't let me use it,
+     * and what I can use is fixed to using 1000 instead of 1024, which doesn't
+     * work for this case.
+     *
+     * @param context context
+     * @param sizeBytes size
+     * @return formatted string
+     */
+    public static String size(Context context, long sizeBytes) {
+        if (sizeBytes > 0) {
+            final int unit = 1024;
+            final int unitMax = unit - 1;
+            final boolean isNegative = (sizeBytes < 0);
+            float result = isNegative ? -sizeBytes : sizeBytes;
+            int suffix = R.string.format_byte;
+            long mult = 1;
+            if (result > unitMax) {
+                suffix = R.string.format_kilobyte;
+                mult = unit;
+                result = result / unit;
+            }
+            if (result > unitMax) {
+                suffix = R.string.format_megabyte;
+                mult *= unit;
+                result = result / unit;
+            }
+            if (result > unitMax) {
+                suffix = R.string.format_gigabyte;
+                mult *= unit;
+                result = result / unit;
+            }
+            if (result > unitMax) {
+                suffix = R.string.format_terabyte;
+                mult *= unit;
+                result = result / unit;
+            }
+            if (result > unitMax) {
+                suffix = R.string.format_petabyte;
+                mult *= unit;
+                result = result / unit;
+            }
+
+            final String roundFormat;
+            if (mult == 1 || result >= 100) {
+                roundFormat = "%.0f";
+            } else if (result < 1) {
+                roundFormat = "%.2f";
+            } else if (result < 10) {
+                roundFormat = "%.2f";
+            } else {
+                roundFormat = "%.2f";
+            }
+
+            if (isNegative) {
+                result = -result;
+            }
+
+            final String roundedString = String.format(roundFormat, result);
+            final String units = context.getString(suffix);
+            return context.getString(R.string.format_disk_size, roundedString, units).toUpperCase(Locale.ROOT);
         } else {
             return null;
         }
