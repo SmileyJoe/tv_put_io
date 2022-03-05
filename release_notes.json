@@ -21,7 +21,13 @@
       },
       "5": {
         "0": [
-          "Adding settings page"
+          "Added settings page",
+          "Enable and disable groups",
+          "Enable and disable recently added menu item",
+          "Added account summary in side menu",
+          "Added account details to settings",
+          "Added about page to settings",
+          "Moved away from AsyncTask"
         ]
       }
     }
