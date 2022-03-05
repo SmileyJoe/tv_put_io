@@ -177,7 +177,9 @@ public class VideoLoader {
     private void onVideosLoaded(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
         ArrayList<Folder> tempFolders = new ArrayList<>(folders);
         if (item.getId() == Putio.Files.NO_PARENT) {
-            tempFolders.add(0, VirtualDirectory.getRecentAdded(mContext));
+            if(Settings.getInstance(mContext).shouldShowRecentlyAdded()) {
+                tempFolders.add(0, VirtualDirectory.getRecentAdded(mContext));
+            }
             Async.run(() -> AppDatabase.getInstance(mContext).groupDao().getEnabled(), groups -> {
                 if (groups != null && !groups.isEmpty()) {
                     groups.forEach(group -> tempFolders.add(0, group));

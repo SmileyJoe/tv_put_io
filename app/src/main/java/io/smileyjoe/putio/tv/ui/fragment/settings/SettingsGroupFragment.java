@@ -19,8 +19,13 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.util.Async;
+import io.smileyjoe.putio.tv.util.Settings;
 
 public class SettingsGroupFragment extends SettingsBaseFragment{
+
+    private static final int ID_RECENTLY_ADDED = -1;
+
+    private Settings mSettings;
 
     public static GuidedAction getAction(Context context, int id){
         return new GuidedAction.Builder(context)
@@ -40,21 +45,22 @@ public class SettingsGroupFragment extends SettingsBaseFragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mSettings = Settings.getInstance(getContext());
+
         Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId()), groups -> {
             List<GuidedAction> actions = new ArrayList<>();
 
             groups.forEach(group -> actions.add(getAction(group.getTitle(), null, group.getIconResId(), group.getId(), group.isEnabled())));
 
-            actions.add(getAction(getString(R.string.text_recently_added), null, R.drawable.ic_sort_by_created_24, Math.toIntExact(Putio.Files.PARENT_ID_RECENT), false));
+            actions.add(getAction(getString(R.string.text_recently_added), null, R.drawable.ic_sort_by_created_24, ID_RECENTLY_ADDED, mSettings.shouldShowRecentlyAdded()));
             setActions(actions);
         });
     }
 
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
-
-        if(action.getId() == Putio.Files.PARENT_ID_RECENT){
-
+        if(action.getId() == ID_RECENTLY_ADDED){
+            mSettings.shouldShowRecentlyAdded(action.isChecked());
         } else {
             Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().enabled(action.getId(), action.isChecked()));
         }
