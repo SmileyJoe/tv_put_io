@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.fragment.settings;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.leanback.app.GuidedStepSupportFragment;
@@ -15,6 +16,7 @@ public class SettingsMainFragment extends SettingsBaseFragment {
 
     private static final int ID_ABOUT = 1;
     private static final int ID_ACCOUNT = 2;
+    private static final int ID_VIDEO_LAYOUT = 3;
     private static final int ID_GROUPS = 4;
 
     @Override
@@ -27,8 +29,24 @@ public class SettingsMainFragment extends SettingsBaseFragment {
     public void onCreateActions(@NonNull List<GuidedAction> actions,
                                 Bundle savedInstanceState) {
         actions.add(SettingsGroupFragment.getAction(getContext(), ID_GROUPS));
+        actions.add(SettingsVideoLayoutFragment.getAction(getContext(), ID_VIDEO_LAYOUT));
         actions.add(SettingsAccountFragment.getAction(getContext(), ID_ACCOUNT));
         actions.add(SettingsAboutFragment.getAction(getContext(), ID_ABOUT));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(getSelectedActionPosition() >= 0) {
+            GuidedAction action = getActions().get(getSelectedActionPosition());
+            if (action != null) {
+                if (action.getId() == ID_VIDEO_LAYOUT) {
+                    action.setDescription(getString(getSettings().getVideoLayout().getTitle()));
+                    notifyActionChanged(getSelectedActionPosition());
+                }
+            }
+        }
     }
 
     @Override
@@ -39,6 +57,8 @@ public class SettingsMainFragment extends SettingsBaseFragment {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsAccountFragment());
         } else if (action.getId() == ID_GROUPS) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsGroupFragment());
+        } else if (action.getId() == ID_VIDEO_LAYOUT) {
+            GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsVideoLayoutFragment());
         } else {
             getActivity().finishAfterTransition();
         }

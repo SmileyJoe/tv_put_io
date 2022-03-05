@@ -34,6 +34,7 @@ import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.object.VirtualDirectory;
+import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.AccountFragment;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
@@ -43,6 +44,7 @@ import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.Async;
+import io.smileyjoe.putio.tv.util.Settings;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
 /*
@@ -62,6 +64,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
     private UriHandler mUriHandler;
+    private Settings mSettings;
 
     private ActivityResultLauncher<Intent> mSettingsLauncher;
 
@@ -85,6 +88,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mSettings = Settings.getInstance(getBaseContext());
+
         handleExtras();
         setupActivityResults();
 
@@ -95,6 +100,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
         mFragmentAccount = (AccountFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_account);
 
+        mFragmentVideoList.setStyle(mSettings.getVideoLayout());
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
         mFragmentGenreList.setListener(new GenreListListener());
@@ -126,6 +132,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mSettingsLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    mFragmentVideoList.setStyle(mSettings.getVideoLayout());
                     mFragmentGroup.reload(() -> {
                         if (mVideoLoader.hasHistory()) {
                             mFragmentGroup.show();

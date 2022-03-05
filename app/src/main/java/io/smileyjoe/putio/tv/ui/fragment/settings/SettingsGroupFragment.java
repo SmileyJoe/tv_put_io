@@ -20,8 +20,6 @@ public class SettingsGroupFragment extends SettingsBaseFragment {
 
     private static final int ID_RECENTLY_ADDED = -1;
 
-    private Settings mSettings;
-
     public static GuidedAction getAction(Context context, int id) {
         return new GuidedAction.Builder(context)
                 .id(id)
@@ -40,14 +38,12 @@ public class SettingsGroupFragment extends SettingsBaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mSettings = Settings.getInstance(getContext());
-
         Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId()), groups -> {
             List<GuidedAction> actions = new ArrayList<>();
 
             groups.forEach(group -> actions.add(getAction(group.getTitle(), null, group.getIconResId(), group.getId(), group.isEnabled())));
 
-            actions.add(getAction(getString(R.string.text_recently_added), null, R.drawable.ic_sort_by_created_24, ID_RECENTLY_ADDED, mSettings.shouldShowRecentlyAdded()));
+            actions.add(getAction(getString(R.string.text_recently_added), null, R.drawable.ic_sort_by_created_24, ID_RECENTLY_ADDED, getSettings().shouldShowRecentlyAdded()));
             setActions(actions);
         });
     }
@@ -55,7 +51,7 @@ public class SettingsGroupFragment extends SettingsBaseFragment {
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
         if (action.getId() == ID_RECENTLY_ADDED) {
-            mSettings.shouldShowRecentlyAdded(action.isChecked());
+            getSettings().shouldShowRecentlyAdded(action.isChecked());
         } else {
             Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().enabled(action.getId(), action.isChecked()));
         }

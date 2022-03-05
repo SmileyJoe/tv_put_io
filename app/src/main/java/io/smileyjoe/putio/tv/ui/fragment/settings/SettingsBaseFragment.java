@@ -1,12 +1,26 @@
 package io.smileyjoe.putio.tv.ui.fragment.settings;
 
+import android.os.Bundle;
+
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.leanback.app.GuidedStepSupportFragment;
 import androidx.leanback.widget.GuidanceStylist;
 import androidx.leanback.widget.GuidedAction;
 
+import io.smileyjoe.putio.tv.util.Settings;
+
 public class SettingsBaseFragment extends GuidedStepSupportFragment {
+
+    private Settings mSettings;
+
+    protected Settings getSettings(){
+        if(mSettings == null){
+            mSettings = Settings.getInstance(getContext());
+        }
+
+        return mSettings;
+    }
 
     protected GuidedAction getAction(@StringRes int title, String description, @DrawableRes int icon) {
         GuidedAction.Builder builder = new GuidedAction.Builder(getContext())
@@ -29,6 +43,20 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
 
     protected GuidedAction getAction(@StringRes int title, String description, int id, boolean checked) {
         return getAction(getString(title), description, 0, id, checked);
+    }
+
+    protected GuidedAction getActionGroup(String title, String description, @DrawableRes int icon, int groupId, int id, boolean checked) {
+        GuidedAction guidedAction = new GuidedAction.Builder(getContext())
+                .title(title)
+                .id(id)
+                .focusable(true)
+                .editable(false)
+                .description(description)
+                .checkSetId(groupId)
+                .icon(icon)
+                .build();
+        guidedAction.setChecked(checked);
+        return guidedAction;
     }
 
     protected GuidedAction getAction(String title, String description, @DrawableRes int icon, int id, boolean checked) {

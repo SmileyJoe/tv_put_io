@@ -46,6 +46,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
 
         if (mVideosAdapter != null) {
             mVideosAdapter.setStyle(style);
+            mView.recycler.setAdapter(mVideosAdapter);
         }
 
         setLayoutManager(true);

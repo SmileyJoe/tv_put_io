@@ -87,6 +87,10 @@
     <string name="settings_description_codebase" translatable="false">https://github.com/SmileyJoe/tv_put_io</string>
     <string name="settings_title_debug">Debug</string>
     <string name="settings_description_debug">Thanks for testing!</string>
+    <string name="settings_title_video_layout">Video Layout</string>
+    <string name="settings_description_video_layout">Style of the video layout</string>
+    <string name="text_grid">Grid</string>
+    <string name="text_list">List</string>
 
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
