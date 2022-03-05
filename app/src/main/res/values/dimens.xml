@@ -31,4 +31,6 @@
     <dimen name="fg_list_image_border_width">3dp</dimen>
     <dimen name="content_padding_fg_list_image_border">1dp</dimen>
     <dimen name="height_linear_progress_with_text">24dp</dimen>
+    <dimen name="width_checkbox_settings">30dp</dimen>
+    <dimen name="height_checkbox_settings">@dimen/width_checkbox_settings</dimen>
 </resources>

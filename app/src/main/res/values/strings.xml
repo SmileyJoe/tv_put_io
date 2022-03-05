@@ -79,6 +79,14 @@
     <string name="settings_title_disk_available">Available</string>
     <string name="settings_title_group">Group</string>
     <string name="settings_description_group">Enable or disable groups</string>
+    <string name="settings_title_contact">Contact</string>
+    <string name="settings_description_contact" translatable="false">hello@smileyjoe.io</string>
+    <string name="settings_title_developer">Developer</string>
+    <string name="settings_description_developer">SmileyJoe (No affiliation to Put.io)</string>
+    <string name="settings_title_codebase">"This app is open source "</string>
+    <string name="settings_description_codebase" translatable="false">https://github.com/SmileyJoe/tv_put_io</string>
+    <string name="settings_title_debug">Debug</string>
+    <string name="settings_description_debug">Thanks for testing!</string>
 
     <plurals name="plural_second">
         <item quantity="one">%d second</item>

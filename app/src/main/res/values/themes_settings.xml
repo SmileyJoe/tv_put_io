@@ -7,8 +7,8 @@
     </style>
 
     <style name="CheckmarkStyle" parent="@style/Widget.Leanback.GuidedActionItemCheckmarkStyle">
-        <item name="android:layout_width">30dp</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">@dimen/width_checkbox_settings</item>
+        <item name="android:layout_height">@dimen/height_checkbox_settings</item>
         <item name="tint">@color/selector_settings_checkmark</item>
         <item name="android:tint">@color/selector_settings_checkmark</item>
     </style>
