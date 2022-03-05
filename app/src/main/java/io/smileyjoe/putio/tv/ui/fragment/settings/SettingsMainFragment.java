@@ -1,10 +1,8 @@
 package io.smileyjoe.putio.tv.ui.fragment.settings;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 import androidx.leanback.app.GuidedStepSupportFragment;
 import androidx.leanback.widget.GuidanceStylist;
 import androidx.leanback.widget.GuidedAction;
@@ -38,7 +36,7 @@ public class SettingsMainFragment extends SettingsBaseFragment {
     public void onGuidedActionClicked(GuidedAction action) {
         if (action.getId() == ID_ABOUT) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsAboutFragment());
-        } else if(action.getId() == ID_ACCOUNT) {
+        } else if (action.getId() == ID_ACCOUNT) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsAccountFragment());
         } else if (action.getId() == ID_GROUPS) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsGroupFragment());

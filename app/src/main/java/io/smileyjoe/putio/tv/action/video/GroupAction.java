@@ -72,16 +72,16 @@ public interface GroupAction extends Action {
                 groups.stream()
                         .filter(Group::isEnabled)
                         .forEach(group -> {
-                    @StringRes int subTextResId;
+                            @StringRes int subTextResId;
 
-                    if (group.getPutIds().contains(mVideo.getPutId())) {
-                        subTextResId = R.string.text_remove_from;
-                    } else {
-                        subTextResId = R.string.text_add_to;
-                    }
+                            if (group.getPutIds().contains(mVideo.getPutId())) {
+                                subTextResId = R.string.text_remove_from;
+                            } else {
+                                subTextResId = R.string.text_add_to;
+                            }
 
-                    mListener.ifPresent(listener -> listener.update(group, mContext.getString(subTextResId), group.getTitle()));
-                });
+                            mListener.ifPresent(listener -> listener.update(group, mContext.getString(subTextResId), group.getTitle()));
+                        });
             }
         }
     }

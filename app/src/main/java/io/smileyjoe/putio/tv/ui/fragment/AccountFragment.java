@@ -8,14 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.gson.JsonObject;
-
 import java.util.Locale;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.FragmentAccountBinding;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Account;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.util.Format;
@@ -33,16 +29,16 @@ public class AccountFragment extends BaseFragment<FragmentAccountBinding> {
         populateAccount();
     }
 
-    private void populateAccount(){
+    private void populateAccount() {
         Account.get(getContext(), account -> {
             mView.textAccountUsername.setText(account.getUserName());
             mView.textUsageAvailable.setText(getString(R.string.text_usage_available, Format.size(getContext(), account.getDiskAvailable())).toUpperCase(Locale.ROOT));
-            mView.progressUsage.setMax(Math.toIntExact(account.getDiskSize()/1000000));
-            mView.progressUsage.setProgress(Math.toIntExact(account.getDiskUsed()/1000000));
+            mView.progressUsage.setMax(Math.toIntExact(account.getDiskSize() / 1000000));
+            mView.progressUsage.setProgress(Math.toIntExact(account.getDiskUsed() / 1000000));
         });
     }
 
-    public void setOnClickListener(View.OnClickListener listener){
+    public void setOnClickListener(View.OnClickListener listener) {
         mView.imageSettings.setOnClickListener(listener);
     }
 

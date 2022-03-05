@@ -1,13 +1,11 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -177,7 +175,7 @@ public class VideoLoader {
     private void onVideosLoaded(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
         ArrayList<Folder> tempFolders = new ArrayList<>(folders);
         if (item.getId() == Putio.Files.NO_PARENT) {
-            if(Settings.getInstance(mContext).shouldShowRecentlyAdded()) {
+            if (Settings.getInstance(mContext).shouldShowRecentlyAdded()) {
                 tempFolders.add(0, VirtualDirectory.getRecentAdded(mContext));
             }
             Async.run(() -> AppDatabase.getInstance(mContext).groupDao().getEnabled(), groups -> {

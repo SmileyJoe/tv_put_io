@@ -3,7 +3,6 @@ package io.smileyjoe.putio.tv.object;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 
@@ -14,7 +13,7 @@ import io.smileyjoe.putio.tv.util.VideoUtil;
 
 public class Account implements Parcelable {
 
-    public interface Listener{
+    public interface Listener {
         void retrieved(Account account);
     }
 
@@ -30,19 +29,19 @@ public class Account implements Parcelable {
     public Account() {
     }
 
-    public static void get(Context context, Listener listener){
-        if(sAccount == null){
+    public static void get(Context context, Listener listener) {
+        if (sAccount == null) {
             Putio.Account.info(context, new Response() {
                 @Override
                 public void onSuccess(JsonObject result) {
                     sAccount = fromApi(result);
-                    if(listener != null){
+                    if (listener != null) {
                         listener.retrieved(sAccount);
                     }
                 }
             });
         } else {
-            if(listener != null){
+            if (listener != null) {
                 listener.retrieved(sAccount);
             }
         }
@@ -96,11 +95,11 @@ public class Account implements Parcelable {
         mExpirationDate = expirationDate;
     }
 
-    public void setExpirationDate(String date){
+    public void setExpirationDate(String date) {
         setExpirationDate(VideoUtil.getMillies(date));
     }
 
-    public static Account fromApi(JsonObject jsonObject){
+    public static Account fromApi(JsonObject jsonObject) {
         JsonUtil json = new JsonUtil(jsonObject.get("info").getAsJsonObject());
         JsonUtil jsonDisk = new JsonUtil(json.getJsonObject("disk"));
 

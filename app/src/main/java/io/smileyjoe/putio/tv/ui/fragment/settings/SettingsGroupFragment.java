@@ -2,7 +2,6 @@ package io.smileyjoe.putio.tv.ui.fragment.settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.leanback.widget.GuidanceStylist;
@@ -11,23 +10,19 @@ import androidx.leanback.widget.GuidedAction;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.db.GroupDao;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.Settings;
 
-public class SettingsGroupFragment extends SettingsBaseFragment{
+public class SettingsGroupFragment extends SettingsBaseFragment {
 
     private static final int ID_RECENTLY_ADDED = -1;
 
     private Settings mSettings;
 
-    public static GuidedAction getAction(Context context, int id){
+    public static GuidedAction getAction(Context context, int id) {
         return new GuidedAction.Builder(context)
                 .id(id)
                 .title(R.string.settings_title_group)
@@ -59,7 +54,7 @@ public class SettingsGroupFragment extends SettingsBaseFragment{
 
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
-        if(action.getId() == ID_RECENTLY_ADDED){
+        if (action.getId() == ID_RECENTLY_ADDED) {
             mSettings.shouldShowRecentlyAdded(action.isChecked());
         } else {
             Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().enabled(action.getId(), action.isChecked()));

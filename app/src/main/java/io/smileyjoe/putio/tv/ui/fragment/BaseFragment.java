@@ -68,7 +68,7 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
 
     public void requestFocus() {
         View focusable = getFocusableView();
-        if(focusable != null) {
+        if (focusable != null) {
             focusable.requestFocus();
         }
     }
@@ -88,12 +88,12 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
         }
     }
 
-    public boolean show(){
+    public boolean show() {
         FragmentUtil.showFragment(getParentFragmentManager(), this);
         return true;
     }
 
-    public void hide(){
+    public void hide() {
         FragmentUtil.hideFragment(getParentFragmentManager(), this);
     }
 

@@ -42,7 +42,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
 
     @Override
     public View getFocusableView() {
-        if(isVisible() && hasItems()) {
+        if (isVisible() && hasItems()) {
             return mView.getRoot().getChildAt(0);
         } else {
             return null;
@@ -71,7 +71,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
         return root;
     }
 
-    protected void clear(){
+    protected void clear() {
         mOptions = new ArrayList<>();
         mOptionViews = new ArrayList<>();
         mView.getRoot().removeAllViews();
@@ -106,7 +106,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
     }
 
     public void reset() {
-        if(hasItems()) {
+        if (hasItems()) {
             IntStream.range(0, mView.getRoot().getChildCount())
                     .forEach(i -> mView.getRoot().getChildAt(i).setSelected(false));
         }
@@ -120,7 +120,7 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
                 .ifPresent(v -> onItemClick(v, item));
     }
 
-    public boolean hasItems(){
+    public boolean hasItems() {
         return mOptions != null && !mOptions.isEmpty();
     }
 

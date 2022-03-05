@@ -5,21 +5,16 @@ import static android.view.View.FOCUS_LEFT;
 import static android.view.View.FOCUS_RIGHT;
 import static android.view.View.FOCUS_UP;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
-import com.google.gson.JsonObject;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
@@ -28,10 +23,7 @@ import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
-import io.smileyjoe.putio.tv.object.Account;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FolderType;
@@ -51,9 +43,6 @@ import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.Async;
-import io.smileyjoe.putio.tv.util.Format;
-import io.smileyjoe.putio.tv.util.FragmentUtil;
-import io.smileyjoe.putio.tv.util.JsonUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
 /*
@@ -133,7 +122,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         Tmdb.Genre.update(getBaseContext());
     }
 
-    private void setupActivityResults(){
+    private void setupActivityResults() {
         mSettingsLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -299,9 +288,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private void showFolders() {
         mView.animLayoutFolders.enter();
         mFragmentVideoList.hideDetails();
-        if(mFragmentFolderList.hasItems()) {
+        if (mFragmentFolderList.hasItems()) {
             mFragmentFolderList.requestFocus();
-        } else if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()){
+        } else if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
             mFragmentGroup.requestFocus();
         } else {
             mFragmentAccount.requestFocus();
@@ -317,10 +306,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     public View onFocusSearch(View focused, int direction, FragmentType type) {
         switch (type) {
             case ACCOUNT:
-                if(direction == FOCUS_UP){
-                    if(mFragmentFolderList.hasItems()) {
+                if (direction == FOCUS_UP) {
+                    if (mFragmentFolderList.hasItems()) {
                         return mFragmentFolderList.getFocusableView();
-                    } else if(mFragmentGroup.isVisible() && mFragmentGroup.hasItems()){
+                    } else if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
                         return mFragmentGroup.getFocusableView();
                     } else {
                         return focused;
@@ -333,7 +322,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                     case FOCUS_UP:
                         return focused;
                     case FOCUS_DOWN:
-                        if(mFragmentFolderList.hasItems()) {
+                        if (mFragmentFolderList.hasItems()) {
                             return mFragmentFolderList.getFocusableView();
                         } else {
                             return mFragmentAccount.getFocusableView();
@@ -347,9 +336,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                         }
                 }
             case FOLDER:
-                switch (direction){
+                switch (direction) {
                     case FOCUS_UP:
-                        if(mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
+                        if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
                             return mFragmentGroup.getFocusableView();
                         } else {
                             return focused;

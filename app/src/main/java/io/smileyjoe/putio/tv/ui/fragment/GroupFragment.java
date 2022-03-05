@@ -7,8 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -16,11 +14,10 @@ import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.util.Async;
-import io.smileyjoe.putio.tv.util.FragmentUtil;
 
 public class GroupFragment extends ToggleFragment<Group> {
 
-    public interface LoadedListener{
+    public interface LoadedListener {
         void loaded();
     }
 
@@ -38,12 +35,12 @@ public class GroupFragment extends ToggleFragment<Group> {
         getGroups(null);
     }
 
-    public void reload(LoadedListener listener){
+    public void reload(LoadedListener listener) {
         clear();
         getGroups(listener);
     }
 
-    private void getGroups(LoadedListener listener){
+    private void getGroups(LoadedListener listener) {
         Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId()), groups -> {
             groups.stream()
                     .filter(Group::isEnabled)
@@ -52,11 +49,11 @@ public class GroupFragment extends ToggleFragment<Group> {
                         mViews.add(addOption(group));
                     });
 
-            if(!hasItems()){
+            if (!hasItems()) {
                 hide();
             }
 
-            if(listener != null){
+            if (listener != null) {
                 listener.loaded();
             }
         });
@@ -68,7 +65,7 @@ public class GroupFragment extends ToggleFragment<Group> {
     }
 
     public void setCurrentPutId(long currentPutId) {
-        if(hasItems()) {
+        if (hasItems()) {
             IntStream.range(0, mGroups.size())
                     .forEach(i -> mViews.get(i).setSelected(mGroups.get(i).getPutIds().contains(currentPutId)));
         }
@@ -76,7 +73,7 @@ public class GroupFragment extends ToggleFragment<Group> {
 
     @Override
     public boolean show() {
-        if(hasItems()){
+        if (hasItems()) {
             return super.show();
         } else {
             return false;

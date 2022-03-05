@@ -82,8 +82,8 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
         mAdapter.setItems(folders);
     }
 
-    public boolean hasItems(){
-        if(mAdapter == null){
+    public boolean hasItems() {
+        if (mAdapter == null) {
             return false;
         } else {
             return mAdapter.getItemCount() > 0;

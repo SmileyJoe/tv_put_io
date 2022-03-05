@@ -4,25 +4,19 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.leanback.app.GuidedStepSupportFragment;
 import androidx.leanback.widget.GuidanceStylist;
 import androidx.leanback.widget.GuidedAction;
-
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Account;
 import io.smileyjoe.putio.tv.util.Format;
 
 public class SettingsAccountFragment extends SettingsBaseFragment {
 
-    public static GuidedAction getAction(Context context, int id){
+    public static GuidedAction getAction(Context context, int id) {
         return new GuidedAction.Builder(context)
                 .id(id)
                 .title(R.string.settings_title_account)

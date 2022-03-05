@@ -20,7 +20,7 @@ public class Format {
      * and what I can use is fixed to using 1000 instead of 1024, which doesn't
      * work for this case.
      *
-     * @param context context
+     * @param context   context
      * @param sizeBytes size
      * @return formatted string
      */

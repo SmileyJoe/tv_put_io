@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.text.format.Formatter;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

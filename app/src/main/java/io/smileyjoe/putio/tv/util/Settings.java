@@ -13,7 +13,7 @@ public class Settings {
     private SharedPreferences mPrefs;
     private static Settings sInstance;
 
-    private Settings(Context context){
+    private Settings(Context context) {
         mPrefs = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
     }
 
@@ -25,11 +25,11 @@ public class Settings {
         return sInstance;
     }
 
-    public void shouldShowRecentlyAdded(boolean shouldShow){
+    public void shouldShowRecentlyAdded(boolean shouldShow) {
         mPrefs.edit().putBoolean(KEY_SHOW_RECENTLY_ADDED, shouldShow).apply();
     }
 
-    public boolean shouldShowRecentlyAdded(){
+    public boolean shouldShowRecentlyAdded() {
         return mPrefs.getBoolean(KEY_SHOW_RECENTLY_ADDED, true);
     }
 

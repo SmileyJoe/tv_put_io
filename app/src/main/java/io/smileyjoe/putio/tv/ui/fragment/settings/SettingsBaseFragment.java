@@ -6,11 +6,9 @@ import androidx.leanback.app.GuidedStepSupportFragment;
 import androidx.leanback.widget.GuidanceStylist;
 import androidx.leanback.widget.GuidedAction;
 
-import io.smileyjoe.putio.tv.R;
-
 public class SettingsBaseFragment extends GuidedStepSupportFragment {
 
-    protected GuidedAction getAction(@StringRes int title, String description, @DrawableRes int icon){
+    protected GuidedAction getAction(@StringRes int title, String description, @DrawableRes int icon) {
         return new GuidedAction.Builder(getContext())
                 .title(title)
                 .description(description)
@@ -19,7 +17,7 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
                 .build();
     }
 
-    protected GuidedAction getAction(@StringRes int title, String description){
+    protected GuidedAction getAction(@StringRes int title, String description) {
         return getAction(title, description, 0);
     }
 
@@ -39,7 +37,7 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
         return guidedAction;
     }
 
-    protected GuidanceStylist.Guidance getGuidance(@StringRes int title, @StringRes int description){
+    protected GuidanceStylist.Guidance getGuidance(@StringRes int title, @StringRes int description) {
         return new GuidanceStylist.Guidance(getString(title), getString(description), null, null);
     }
 

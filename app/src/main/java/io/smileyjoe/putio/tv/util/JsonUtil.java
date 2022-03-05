@@ -107,8 +107,8 @@ public class JsonUtil {
         return null;
     }
 
-    public JsonObject getJsonObject(String name){
-        if(isValid(name)){
+    public JsonObject getJsonObject(String name) {
+        if (isValid(name)) {
             return mJsonObject.get(name).getAsJsonObject();
         }
 

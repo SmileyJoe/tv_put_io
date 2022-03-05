@@ -11,10 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import io.smileyjoe.putio.tv.comparator.GenreComparator;
 import io.smileyjoe.putio.tv.databinding.FragmentGenreListBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.FragmentType;
@@ -76,7 +73,7 @@ public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
     public void setGenreIds(ArrayList<Integer> genreIds) {
         if (genreIds != null && !genreIds.isEmpty()) {
             Async.run(() ->
-                    AppDatabase.getInstance(getContext()).genreDao().getByIds(genreIds),
+                            AppDatabase.getInstance(getContext()).genreDao().getByIds(genreIds),
                     genres -> setGenres(new ArrayList(genres)));
         } else {
             setGenres(new ArrayList<>());

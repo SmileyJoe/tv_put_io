@@ -8,26 +8,26 @@ import java.util.concurrent.Executors;
 
 public class Async {
 
-    public interface BackgroundOnly{
+    public interface BackgroundOnly {
         void running();
     }
 
-    public interface Background<T>{
+    public interface Background<T> {
         T running();
     }
 
-    public interface Main<T>{
+    public interface Main<T> {
         void complete(T result);
     }
 
     private final Executor mBackgroundThread;
     private final Executor mMainThread;
 
-    public static <T> void run(BackgroundOnly background){
+    public static <T> void run(BackgroundOnly background) {
         new Async().onBackground().execute(background::running);
     }
 
-    public static <T> void run(Background<T> background, Main<T> main){
+    public static <T> void run(Background<T> background, Main<T> main) {
         Async async = new Async();
         async.onBackground().execute(() -> {
             T result = background.running();
@@ -35,11 +35,11 @@ public class Async {
         });
     }
 
-    public abstract static class Runner<T>{
+    public abstract static class Runner<T> {
         protected abstract T onBackground();
         protected abstract void onMain(T result);
 
-        public void run(){
+        public void run() {
             Async.run(this::onBackground, this::onMain);
         }
     }
