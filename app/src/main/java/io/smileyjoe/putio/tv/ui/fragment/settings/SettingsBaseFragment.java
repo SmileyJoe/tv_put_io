@@ -9,12 +9,16 @@ import androidx.leanback.widget.GuidedAction;
 public class SettingsBaseFragment extends GuidedStepSupportFragment {
 
     protected GuidedAction getAction(@StringRes int title, String description, @DrawableRes int icon) {
-        return new GuidedAction.Builder(getContext())
+        GuidedAction.Builder builder = new GuidedAction.Builder(getContext())
                 .title(title)
                 .description(description)
-                .icon(icon)
-                .infoOnly(true)
-                .build();
+                .infoOnly(true);
+
+        if(icon != 0){
+            builder.icon(icon);
+        }
+
+        return builder.build();
     }
 
     protected GuidedAction getAction(@StringRes int title, String description) {

@@ -2,6 +2,7 @@
 
     <style name="AppTheme" parent="@style/Theme.Leanback" >
         <item name="android:textViewStyle">@style/Text</item>
+        <item name="android:windowBackground">@color/color_background</item>
     </style>
 
     <style name="AppTheme.Material" parent="Theme.MaterialComponents">
