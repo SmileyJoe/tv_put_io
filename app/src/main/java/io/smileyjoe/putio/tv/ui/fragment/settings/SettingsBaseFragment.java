@@ -12,6 +12,8 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
         GuidedAction.Builder builder = new GuidedAction.Builder(getContext())
                 .title(title)
                 .description(description)
+                .focusable(true)
+                .editable(false)
                 .infoOnly(true);
 
         if(icon != 0){
@@ -33,6 +35,8 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
         GuidedAction guidedAction = new GuidedAction.Builder(getContext())
                 .title(title)
                 .id(id)
+                .focusable(true)
+                .editable(false)
                 .description(description)
                 .checkSetId(GuidedAction.CHECKBOX_CHECK_SET_ID)
                 .icon(icon)

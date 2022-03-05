@@ -15,7 +15,6 @@ public class SettingsMainFragment extends SettingsBaseFragment {
 
     private static final int ID_ABOUT = 1;
     private static final int ID_ACCOUNT = 2;
-    private static final int ID_SETTINGS = 3;
     private static final int ID_GROUPS = 4;
 
     @Override
