@@ -36,19 +36,19 @@ public class Settings {
         return mPrefs.getBoolean(KEY_SHOW_RECENTLY_ADDED, true);
     }
 
-    public void setVideoLayout(int styleId){
+    public void setVideoLayout(int styleId) {
         mPrefs.edit().putInt(KEY_VIDEO_LAYOUT, styleId).apply();
     }
 
-    public VideosAdapter.Style getVideoLayout(){
+    public VideosAdapter.Style getVideoLayout() {
         return VideosAdapter.Style.fromId(mPrefs.getInt(KEY_VIDEO_LAYOUT, VideosAdapter.Style.GRID.getId()));
     }
 
-    public void setVideoNumCols(int cols){
+    public void setVideoNumCols(int cols) {
         mPrefs.edit().putInt(KEY_VIDEO_NUM_COLS, cols).apply();
     }
 
-    public int getVideoNumCols(){
+    public int getVideoNumCols() {
         return mPrefs.getInt(KEY_VIDEO_NUM_COLS, 7);
     }
 

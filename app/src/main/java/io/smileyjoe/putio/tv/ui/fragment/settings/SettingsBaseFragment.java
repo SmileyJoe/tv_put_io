@@ -1,7 +1,5 @@
 package io.smileyjoe.putio.tv.ui.fragment.settings;
 
-import android.os.Bundle;
-
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.leanback.app.GuidedStepSupportFragment;
@@ -14,8 +12,8 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
 
     private Settings mSettings;
 
-    protected Settings getSettings(){
-        if(mSettings == null){
+    protected Settings getSettings() {
+        if (mSettings == null) {
             mSettings = Settings.getInstance(getContext());
         }
 
@@ -30,7 +28,7 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
                 .editable(false)
                 .infoOnly(true);
 
-        if(icon != 0){
+        if (icon != 0) {
             builder.icon(icon);
         }
 
@@ -54,7 +52,7 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
                 .description(description)
                 .checkSetId(groupId);
 
-        if(icon != 0){
+        if (icon != 0) {
             builder.icon(icon);
         }
         GuidedAction guidedAction = builder.build();

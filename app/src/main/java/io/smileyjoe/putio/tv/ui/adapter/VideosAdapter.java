@@ -45,7 +45,7 @@ public class VideosAdapter extends BaseListAdapter<Video, BaseVideosViewHolder<?
         }
 
         @StringRes
-        public int getTitle(){
+        public int getTitle() {
             return mTitle;
         }
 
@@ -69,7 +69,7 @@ public class VideosAdapter extends BaseListAdapter<Video, BaseVideosViewHolder<?
             }
         }
 
-        public static Style fromId(int id){
+        public static Style fromId(int id) {
             return Stream.of(values())
                     .filter(style -> style.getId() == id)
                     .findFirst()

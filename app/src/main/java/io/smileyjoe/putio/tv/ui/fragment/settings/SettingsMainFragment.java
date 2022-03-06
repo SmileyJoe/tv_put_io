@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.ui.fragment.settings;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.leanback.app.GuidedStepSupportFragment;
@@ -40,19 +39,19 @@ public class SettingsMainFragment extends SettingsBaseFragment {
     public void onResume() {
         super.onResume();
 
-        if(getSelectedActionPosition() >= 0) {
+        if (getSelectedActionPosition() >= 0) {
             GuidedAction action = getActions().get(getSelectedActionPosition());
             if (action != null) {
                 boolean update = false;
                 if (action.getId() == ID_VIDEO_LAYOUT) {
                     action.setDescription(getString(getSettings().getVideoLayout().getTitle()));
                     update = true;
-                } else if(action.getId() == ID_VIDEO_NUM_COLS){
+                } else if (action.getId() == ID_VIDEO_NUM_COLS) {
                     action.setDescription(Integer.toString(getSettings().getVideoNumCols()));
                     update = true;
                 }
 
-                if(update){
+                if (update) {
                     notifyActionChanged(getSelectedActionPosition());
                 }
             }

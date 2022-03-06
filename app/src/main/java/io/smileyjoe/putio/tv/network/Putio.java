@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutionException;
 
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.BuildConfig;
-import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.Settings;
 
 public class Putio {

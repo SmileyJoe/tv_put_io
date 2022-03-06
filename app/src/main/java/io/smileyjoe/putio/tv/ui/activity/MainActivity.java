@@ -34,7 +34,6 @@ import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.object.VirtualDirectory;
-import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.AccountFragment;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;

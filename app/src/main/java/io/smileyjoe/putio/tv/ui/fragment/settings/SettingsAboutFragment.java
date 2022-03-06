@@ -35,7 +35,7 @@ public class SettingsAboutFragment extends SettingsBaseFragment {
         actions.add(getAction(R.string.settings_title_developer, getString(R.string.settings_description_developer)));
         actions.add(getAction(R.string.settings_title_contact, getString(R.string.settings_description_contact)));
         actions.add(getAction(R.string.settings_title_codebase, getString(R.string.settings_description_codebase)));
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             actions.add(getAction(R.string.settings_title_debug, getString(R.string.settings_description_debug)));
         }
     }

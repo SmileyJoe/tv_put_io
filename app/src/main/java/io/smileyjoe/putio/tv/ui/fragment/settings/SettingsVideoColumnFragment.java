@@ -13,11 +13,11 @@ import java.util.List;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.util.Settings;
 
-public class SettingsVideoColumnFragment extends SettingsBaseFragment{
+public class SettingsVideoColumnFragment extends SettingsBaseFragment {
 
     private static final int GROUP_ID_COLS = 1;
 
-    private final Integer[] mOptions = new Integer[]{5,7,9};
+    private final Integer[] mOptions = new Integer[]{5, 7, 9};
 
     public static GuidedAction getAction(Context context, int id) {
         return new GuidedAction.Builder(context)

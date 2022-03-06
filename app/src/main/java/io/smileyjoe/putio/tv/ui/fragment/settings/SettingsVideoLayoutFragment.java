@@ -10,14 +10,11 @@ import androidx.leanback.widget.GuidedAction;
 import java.util.Arrays;
 import java.util.List;
 
-import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
-import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.Settings;
 
-public class SettingsVideoLayoutFragment extends SettingsBaseFragment{
+public class SettingsVideoLayoutFragment extends SettingsBaseFragment {
 
     private static final int GROUP_ID_STYLE = 1;
 
@@ -56,7 +53,7 @@ public class SettingsVideoLayoutFragment extends SettingsBaseFragment{
     public void onGuidedActionClicked(GuidedAction action) {
         VideosAdapter.Style style = VideosAdapter.Style.fromId(Math.toIntExact(action.getId()));
 
-        if(style != null){
+        if (style != null) {
             getSettings().setVideoLayout(style.getId());
         }
 
