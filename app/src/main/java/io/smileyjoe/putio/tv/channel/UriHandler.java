@@ -3,7 +3,6 @@ package io.smileyjoe.putio.tv.channel;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,6 +12,7 @@ import java.util.Optional;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.PutioHelper;
 
 public class UriHandler implements Parcelable {
@@ -143,8 +143,15 @@ public class UriHandler implements Parcelable {
                 case SERIES:
                 case VIDEO:
                     if (mPutId > 0) {
-                        LoadVideo task = new LoadVideo(context, listener);
-                        task.execute();
+                        Async.run(() -> {
+                            PutioHelper helper = new PutioHelper(context);
+                            helper.parse(mPutId, Putio.Files.get(context, mPutId));
+                            return helper.getCurrent();
+                        }, video -> {
+                            listener.ifPresent(l -> l.onLoaded(mType, video));
+                            clear();
+                        });
+
                         loading = true;
                     }
                     break;
@@ -157,30 +164,6 @@ public class UriHandler implements Parcelable {
 
         if (!loading && listener.isPresent()) {
             listener.get().onLoaded(mType, null);
-            clear();
-        }
-    }
-
-    private class LoadVideo extends AsyncTask<Void, Void, Video> {
-
-        private Context mContext;
-        private Optional<LoadedListener> mListener;
-
-        public LoadVideo(Context context, Optional<LoadedListener> listener) {
-            mContext = context;
-            mListener = listener;
-        }
-
-        @Override
-        protected Video doInBackground(Void... voids) {
-            PutioHelper helper = new PutioHelper(mContext);
-            helper.parse(mPutId, Putio.Files.get(mContext, mPutId));
-            return helper.getCurrent();
-        }
-
-        @Override
-        protected void onPostExecute(Video video) {
-            mListener.ifPresent(listener -> listener.onLoaded(mType, video));
             clear();
         }
     }

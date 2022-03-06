@@ -1,21 +1,50 @@
 package io.smileyjoe.putio.tv.object;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.JsonObject;
 
+import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.util.JsonUtil;
+import io.smileyjoe.putio.tv.util.VideoUtil;
 
 public class Account implements Parcelable {
+
+    public interface Listener {
+        void retrieved(Account account);
+    }
+
+    private static Account sAccount;
 
     private String mUserName;
     private long mDiskUsed;
     private long mDiskAvailable;
     private long mDiskSize;
     private long mBandwidthUsage;
+    private long mExpirationDate;
 
     public Account() {
+    }
+
+    public static void get(Context context, Listener listener) {
+        if (sAccount == null) {
+            Putio.Account.info(context, new Response() {
+                @Override
+                public void onSuccess(JsonObject result) {
+                    sAccount = fromApi(result);
+                    if (listener != null) {
+                        listener.retrieved(sAccount);
+                    }
+                }
+            });
+        } else {
+            if (listener != null) {
+                listener.retrieved(sAccount);
+            }
+        }
     }
 
     public String getUserName() {
@@ -58,7 +87,19 @@ public class Account implements Parcelable {
         mBandwidthUsage = bandwidthUsage;
     }
 
-    public static Account fromApi(JsonObject jsonObject){
+    public long getExpirationDate() {
+        return mExpirationDate;
+    }
+
+    public void setExpirationDate(long expirationDate) {
+        mExpirationDate = expirationDate;
+    }
+
+    public void setExpirationDate(String date) {
+        setExpirationDate(VideoUtil.getMillies(date));
+    }
+
+    public static Account fromApi(JsonObject jsonObject) {
         JsonUtil json = new JsonUtil(jsonObject.get("info").getAsJsonObject());
         JsonUtil jsonDisk = new JsonUtil(json.getJsonObject("disk"));
 
@@ -68,6 +109,7 @@ public class Account implements Parcelable {
         account.setDiskSize(jsonDisk.getLong("size"));
         account.setDiskUsed(jsonDisk.getLong("used"));
         account.setUserName(json.getString("username"));
+        account.setExpirationDate(json.getString("plan_expiration_date"));
 
         return account;
     }

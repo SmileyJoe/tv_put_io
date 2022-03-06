@@ -9,6 +9,7 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.databinding.ListItemVideoBinding;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.util.ViewUtil;
 import io.smileyjoe.putio.tv.util.ZoomView;
 
@@ -42,7 +43,7 @@ public class VideosListViewHolder extends BaseVideosViewHolder<ListItemVideoBind
     public void bindView(Video video, int position) {
         super.bindView(video, position);
 
-        mView.textTitle.setText(video.getTitleFormatted(getContext(), false));
+        mView.textTitle.setText(video.getTitleFormatted(getContext(), video.getVideoType() == VideoType.SEASON));
         populateSummary(video, mView.textSummary);
         populatePoster(video, mView.imagePoster);
         ViewUtil.populateResumeTime(mView.textResumeTime, video);

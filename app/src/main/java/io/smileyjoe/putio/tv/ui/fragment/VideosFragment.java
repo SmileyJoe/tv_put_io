@@ -20,6 +20,7 @@ import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
+import io.smileyjoe.putio.tv.util.Settings;
 import io.smileyjoe.putio.tv.util.SnappingLinearLayoutManager;
 import io.smileyjoe.putio.tv.util.VideoUtil;
 
@@ -28,7 +29,6 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     public interface Listener extends VideosAdapter.Listener<Video> {
     }
 
-    public static final int GRID_COL_COUNT = 7;
     private VideosAdapter mVideosAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Video> mVideosAll;
@@ -46,6 +46,8 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
 
         if (mVideosAdapter != null) {
             mVideosAdapter.setStyle(style);
+            mView.recycler.setAdapter(mVideosAdapter);
+            mView.zoomGridVideo.reset();
         }
 
         setLayoutManager(true);
@@ -106,7 +108,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
             if (mLayoutManager == null || force) {
                 switch (mStyle) {
                     case GRID:
-                        mLayoutManager = new GridLayoutManager(getContext(), GRID_COL_COUNT);
+                        mLayoutManager = new GridLayoutManager(getContext(), Settings.getInstance(getContext()).getVideoNumCols());
                         break;
                     case LIST:
                         mLayoutManager = new SnappingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);

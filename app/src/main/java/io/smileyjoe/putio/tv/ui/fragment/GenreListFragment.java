@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import io.smileyjoe.putio.tv.comparator.GenreComparator;
 import io.smileyjoe.putio.tv.databinding.FragmentGenreListBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.ui.adapter.GenreListAdapter;
+import io.smileyjoe.putio.tv.util.Async;
 
 public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
 
@@ -75,30 +72,11 @@ public class GenreListFragment extends BaseFragment<FragmentGenreListBinding> {
 
     public void setGenreIds(ArrayList<Integer> genreIds) {
         if (genreIds != null && !genreIds.isEmpty()) {
-            GetGenresTask task = new GetGenresTask(genreIds);
-            task.execute();
+            Async.run(() ->
+                            AppDatabase.getInstance(getContext()).genreDao().getByIds(genreIds),
+                    genres -> setGenres(new ArrayList(genres)));
         } else {
             setGenres(new ArrayList<>());
-        }
-    }
-
-    private class GetGenresTask extends AsyncTask<Void, Void, List<Genre>> {
-        private ArrayList<Integer> mGenreIds;
-
-        public GetGenresTask(ArrayList<Integer> genreIds) {
-            mGenreIds = genreIds;
-        }
-
-        @Override
-        protected List<Genre> doInBackground(Void... voids) {
-            List<Genre> genres = AppDatabase.getInstance(getContext()).genreDao().getByIds(mGenreIds);
-            Collections.sort(genres, new GenreComparator());
-            return genres;
-        }
-
-        @Override
-        protected void onPostExecute(List<Genre> genres) {
-            setGenres(new ArrayList<>(genres));
         }
     }
 }

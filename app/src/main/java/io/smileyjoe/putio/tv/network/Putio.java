@@ -6,12 +6,11 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
 
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.BuildConfig;
-import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
+import io.smileyjoe.putio.tv.util.Settings;
 
 public class Putio {
 
@@ -92,16 +91,16 @@ public class Putio {
         }
     }
 
-    public static class Account extends Base{
+    public static class Account extends Base {
         private static final String URL_INFO = BASE + "/account/info";
 
-        public static void info(Context context, Response response){
+        public static void info(Context context, Response response) {
             execute(context, URL_INFO, response);
         }
     }
 
     public static class Files extends Base {
-        public static final long NO_PARENT = -100;
+        public static final long NO_PARENT = 0;
         public static final long PARENT_ID_RECENT = -1;
         private static final String URL = BASE + "/files/list" +
                 "?stream_url=true" +
@@ -111,14 +110,14 @@ public class Putio {
                 "&mp4_stream_url_parent=true" +
                 "&mp4_status_parent=true";
 
-        private static String getUrl(long parentId) {
+        private static String getUrl(Context context, long parentId) {
             String url = URL;
 
             if (parentId == NO_PARENT) {
                 url += "&file_type=FOLDER,VIDEO";
             } else if (parentId == PARENT_ID_RECENT) {
                 url += "&file_type=VIDEO" +
-                        "&per_page=" + (VideosFragment.GRID_COL_COUNT * 3) +
+                        "&per_page=" + (Settings.getInstance(context).getVideoNumCols() * 3) +
                         "&sort_by=DATE_DESC" +
                         "&parent_id=" + parentId;
             } else {
@@ -130,12 +129,12 @@ public class Putio {
         }
 
         public static void get(Context context, long parentId, Response response) {
-            execute(context, getUrl(parentId), response);
+            execute(context, getUrl(context, parentId), response);
         }
 
         public static JsonObject get(Context context, long parentId) {
             try {
-                return getBaseCall(context, getUrl(parentId))
+                return getBaseCall(context, getUrl(context, parentId))
                         .asJsonObject()
                         .get();
             } catch (InterruptedException | ExecutionException e) {

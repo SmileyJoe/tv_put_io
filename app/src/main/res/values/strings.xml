@@ -57,6 +57,43 @@
     <string name="convert_status_error">Error</string>
     <string name="text_recently_added">Recently Added</string>
     <string name="text_usage_available">%1$s free</string>
+    <string name="settings_title_about">About</string>
+    <string name="settings_description_about">About the app</string>
+    <string name="settings_title_version">Version</string>
+    <string name="settings_title_account">Account</string>
+    <string name="settings_description_account">Put.io account details</string>
+    <string name="settings_title_username">Username</string>
+    <string name="settings_title_main">@string/app_name</string>
+    <string name="settings_description_main">Settings and info on the app</string>
+    <string name="settings_title_disk_used">Used</string>
+    <string name="settings_title_disk_size">Size</string>
+    <string name="format_disk_size">%1$s %2$s</string>
+    <string name="format_byte">b</string>
+    <string name="format_kilobyte">kb</string>
+    <string name="format_megabyte">mb</string>
+    <string name="format_gigabyte">gb</string>
+    <string name="format_terabyte">tb</string>
+    <string name="format_petabyte">pb</string>
+    <string name="settings_title_bandwidth">Monthly bandwidth</string>
+    <string name="settings_title_expiration">Expiration</string>
+    <string name="settings_title_disk_available">Available</string>
+    <string name="settings_title_group">Group</string>
+    <string name="settings_description_group">Enable or disable groups</string>
+    <string name="settings_title_contact">Contact</string>
+    <string name="settings_description_contact" translatable="false">hello@smileyjoe.io</string>
+    <string name="settings_title_developer">Developer</string>
+    <string name="settings_description_developer">SmileyJoe (No affiliation to Put.io)</string>
+    <string name="settings_title_codebase">"This app is open source "</string>
+    <string name="settings_description_codebase" translatable="false">https://github.com/SmileyJoe/tv_put_io</string>
+    <string name="settings_title_debug">Debug</string>
+    <string name="settings_description_debug">Thanks for testing!</string>
+    <string name="settings_title_video_layout">Video Layout</string>
+    <string name="settings_description_video_layout">Style of the video layout</string>
+    <string name="text_grid">Grid</string>
+    <string name="text_list">List</string>
+    <string name="settings_title_video_cols">Number of columns</string>
+    <string name="settings_description_video_cols">The number of columns to show when selecting grid view for the video layout</string>
+
     <plurals name="plural_second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

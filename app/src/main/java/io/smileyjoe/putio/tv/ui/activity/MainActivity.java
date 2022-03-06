@@ -7,16 +7,14 @@ import static android.view.View.FOCUS_UP;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
-import com.google.gson.JsonObject;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
@@ -25,10 +23,7 @@ import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
-import io.smileyjoe.putio.tv.network.Putio;
-import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
-import io.smileyjoe.putio.tv.object.Account;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
 import io.smileyjoe.putio.tv.object.FolderType;
@@ -39,6 +34,7 @@ import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.object.VirtualDirectory;
+import io.smileyjoe.putio.tv.ui.fragment.AccountFragment;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
@@ -46,9 +42,8 @@ import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
 import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
-import io.smileyjoe.putio.tv.util.Format;
-import io.smileyjoe.putio.tv.util.FragmentUtil;
-import io.smileyjoe.putio.tv.util.JsonUtil;
+import io.smileyjoe.putio.tv.util.Async;
+import io.smileyjoe.putio.tv.util.Settings;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
 /*
@@ -63,10 +58,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private GenreListFragment mFragmentGenreList;
     private FilterFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
+    private AccountFragment mFragmentAccount;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
     private UriHandler mUriHandler;
+    private Settings mSettings;
+
+    private ActivityResultLauncher<Intent> mSettingsLauncher;
 
     public static Intent getIntent(Context context) {
         return getIntent(context, null);
@@ -88,14 +87,19 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mSettings = Settings.getInstance(getBaseContext());
+
         handleExtras();
+        setupActivityResults();
 
         mFragmentFolderList = (FolderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_list);
         mFragmentVideoList = (VideosFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_video_list);
         mFragmentGenreList = (GenreListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_genre_list);
         mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
+        mFragmentAccount = (AccountFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_account);
 
+        mFragmentVideoList.setStyle(mSettings.getVideoLayout());
         mFragmentVideoList.setListener(new VideoListListener());
         mFragmentFolderList.setListener(new FolderListListener());
         mFragmentGenreList.setListener(new GenreListListener());
@@ -107,6 +111,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentGenreList.setFocusSearchListener(this);
         mFragmentFilter.setFocusSearchListener(this);
         mFragmentGroup.setFocusSearchListener(this);
+        mFragmentAccount.setFocusSearchListener(this);
 
         mFragmentFolderList.setForceFocus(true);
 
@@ -114,24 +119,25 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mVideoLoader.loadDirectory();
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
+        mFragmentAccount.setOnClickListener(v -> mSettingsLauncher.launch(SettingsActivity.getIntent(getBaseContext())));
 
-        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
-        populateAccount();
+        mFragmentGenreList.hide();
+
         // todo: this needs to be called when an id is not found in the db //
         Tmdb.Genre.update(getBaseContext());
     }
 
-    private void populateAccount(){
-        Putio.Account.info(getBaseContext(), new Response() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Account account = Account.fromApi(result);
-                mView.textAccountUsername.setText(account.getUserName());
-                mView.textUsageAvailable.setText(getString(R.string.text_usage_available, Format.size(getBaseContext(), account.getDiskAvailable())).toUpperCase(Locale.ROOT));
-                mView.progressUsage.setMax(Math.toIntExact(account.getDiskSize()/1000000));
-                mView.progressUsage.setProgress(Math.toIntExact(account.getDiskUsed()/1000000));
-            }
-        });
+    private void setupActivityResults() {
+        mSettingsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    mFragmentVideoList.setStyle(mSettings.getVideoLayout());
+                    mFragmentGroup.reload(() -> {
+                        if (mVideoLoader.hasHistory()) {
+                            mFragmentGroup.show();
+                        }
+                    });
+                });
     }
 
     private void handleExtras() {
@@ -227,23 +233,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
             mFragmentFilter.reset();
 
             if (videos != null && !videos.isEmpty()) {
-                FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentFilter);
+                mFragmentFilter.show();
             } else {
-                FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentFilter);
+                mFragmentFilter.hide();
             }
 
             switch (historyItem.getFolderType()) {
                 case VIRTUAL:
                     mFragmentFilter.select(VirtualDirectory.getFromPutId(getBaseContext(), historyItem.getId()).getDefaultFilter());
                 case GROUP:
-                    FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
+                    mFragmentGroup.hide();
                     break;
                 case DIRECTORY:
                     if (mVideoLoader.hasHistory()) {
-                        FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGroup);
+                        mFragmentGroup.show();
                         mFragmentGroup.setCurrentPutId(historyItem.getId());
                     } else {
-                        FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGroup);
+                        mFragmentGroup.hide();
                     }
                     break;
             }
@@ -271,9 +277,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
         mFragmentGenreList.setGenreIds(genresAvailable);
 
         if (genresAvailable == null || genresAvailable.isEmpty()) {
-            FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentGenreList);
+            mFragmentGenreList.hide();
         } else {
-            FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentGenreList);
+            mFragmentGenreList.show();
         }
     }
 
@@ -288,10 +294,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private void showFolders() {
         mView.animLayoutFolders.enter();
         mFragmentVideoList.hideDetails();
-        if (mFragmentGroup.isVisible()) {
+        if (mFragmentFolderList.hasItems()) {
+            mFragmentFolderList.requestFocus();
+        } else if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
             mFragmentGroup.requestFocus();
         } else {
-            mFragmentFolderList.requestFocus();
+            mFragmentAccount.requestFocus();
         }
     }
 
@@ -303,12 +311,28 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     @Override
     public View onFocusSearch(View focused, int direction, FragmentType type) {
         switch (type) {
+            case ACCOUNT:
+                if (direction == FOCUS_UP) {
+                    if (mFragmentFolderList.hasItems()) {
+                        return mFragmentFolderList.getFocusableView();
+                    } else if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
+                        return mFragmentGroup.getFocusableView();
+                    } else {
+                        return focused;
+                    }
+                } else {
+                    return focused;
+                }
             case GROUP:
                 switch (direction) {
                     case FOCUS_UP:
                         return focused;
                     case FOCUS_DOWN:
-                        return mFragmentFolderList.getFocusableView();
+                        if (mFragmentFolderList.hasItems()) {
+                            return mFragmentFolderList.getFocusableView();
+                        } else {
+                            return mFragmentAccount.getFocusableView();
+                        }
                     case FOCUS_RIGHT:
                     case FOCUS_LEFT:
                         if (mFragmentGroup.canFocus(focused, direction)) {
@@ -318,10 +342,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
                         }
                 }
             case FOLDER:
-                if (direction == FOCUS_UP) {
-                    return mFragmentGroup.getFocusableView();
-                } else {
-                    return focused;
+                switch (direction) {
+                    case FOCUS_UP:
+                        if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
+                            return mFragmentGroup.getFocusableView();
+                        } else {
+                            return focused;
+                        }
+                    case FOCUS_DOWN:
+                        return mFragmentAccount.getFocusableView();
+                    default:
+                        return focused;
                 }
             case VIDEO:
                 if (direction == FOCUS_UP) {
@@ -354,30 +385,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     private class GroupListener extends HomeListener<Group> implements ToggleFragment.Listener<Group> {
         @Override
         public void onItemClicked(View view, Group group, boolean isSelected) {
-            UpdateGroup task = new UpdateGroup(group, isSelected);
-            task.execute();
-        }
-
-        private class UpdateGroup extends AsyncTask<Void, Void, Void> {
-            private Group mGroup;
-            private boolean mIsSelected;
-
-            public UpdateGroup(Group group, boolean isSelected) {
-                mGroup = group;
-                mIsSelected = isSelected;
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                if (mIsSelected) {
-                    mGroup.addPutId(mVideoLoader.getCurrentHistory().getId());
+            Async.run(() -> {
+                if (isSelected) {
+                    group.addPutId(mVideoLoader.getCurrentHistory().getId());
                 } else {
-                    mGroup.removePutId(mVideoLoader.getCurrentHistory().getId());
+                    group.removePutId(mVideoLoader.getCurrentHistory().getId());
                 }
 
-                AppDatabase.getInstance(getBaseContext()).groupDao().insert(mGroup);
-                return null;
-            }
+                AppDatabase.getInstance(getBaseContext()).groupDao().insert(group);
+            });
         }
     }
 

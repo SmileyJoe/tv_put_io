@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.object.Conversion;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.PutioHelper;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
@@ -92,7 +92,14 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
                     case COMPLETED:
                         mView.textStatus.setText(R.string.convert_status_extracted);
                         mVideo.setConverted(true);
-                        new LoadVideo().execute();
+                        Async.run(() -> {
+                            PutioHelper helper = new PutioHelper(getContext());
+                            helper.parse(mVideo.getPutId(), Putio.Files.get(getContext(), mVideo.getPutId()));
+                            return helper.getCurrent();
+                        }, video -> {
+                            VideoLoader.getInstance(getContext(), null).update(video);
+                            mListener.ifPresent(listener -> listener.conversionFinished(video));
+                        });
                         break;
                     case NOT_AVAILABLE:
                         Putio.Convert.start(getContext(), mVideo.getPutId(), new Response() {
@@ -116,22 +123,6 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
                         break;
                 }
             }
-        }
-    }
-
-    private class LoadVideo extends AsyncTask<Void, Void, Video> {
-
-        @Override
-        protected Video doInBackground(Void... voids) {
-            PutioHelper helper = new PutioHelper(getContext());
-            helper.parse(mVideo.getPutId(), Putio.Files.get(getContext(), mVideo.getPutId()));
-            return helper.getCurrent();
-        }
-
-        @Override
-        protected void onPostExecute(Video video) {
-            VideoLoader.getInstance(getContext(), null).update(video);
-            mListener.ifPresent(listener -> listener.conversionFinished(video));
         }
     }
 }

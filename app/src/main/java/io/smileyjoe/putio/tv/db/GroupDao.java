@@ -18,9 +18,15 @@ public interface GroupDao {
     @Query("SELECT * FROM `group` WHERE id IS :id")
     Group get(Long id);
 
+    @Query("SELECT * FROM `group` WHERE enabled IS 1")
+    List<Group> getEnabled();
+
     @Query("SELECT * FROM `group` WHERE group_type_id IN (3, :typeId)")
     List<Group> getByType(int typeId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Group group);
+
+    @Query("UPDATE `group` SET `enabled` = :enabled WHERE id IS :id")
+    void enabled(Long id, boolean enabled);
 }

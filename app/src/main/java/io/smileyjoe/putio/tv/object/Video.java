@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.text.format.Formatter;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -451,14 +450,6 @@ public class Video implements Parcelable {
 
     public long getSize() {
         return mSize;
-    }
-
-    public String getSizeFormatted(Context context) {
-        if (mSize > 0) {
-            return Formatter.formatShortFileSize(context, mSize);
-        } else {
-            return null;
-        }
     }
 
     public String getGenresFormatted() {

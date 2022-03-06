@@ -76,13 +76,14 @@ public class TrackGroupSelectionFragment extends BaseFragment<FragmentTrackSelec
         mView.progressLoading.setVisibility(View.GONE);
 
         if (!validGroups.isEmpty()) {
-            mAdapter.setItems(validGroups);
             mView.recycler.setVisibility(View.VISIBLE);
             mView.textEmpty.setVisibility(View.GONE);
         } else {
             mView.recycler.setVisibility(View.GONE);
             mView.textEmpty.setVisibility(View.VISIBLE);
         }
+
+        mAdapter.setItems(validGroups);
     }
 
     @Override

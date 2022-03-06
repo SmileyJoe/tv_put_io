@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.object.FragmentType;
+import io.smileyjoe.putio.tv.util.FragmentUtil;
 
 public abstract class BaseFragment<T extends ViewBinding> extends Fragment implements BrowseFrameLayout.OnFocusSearchListener {
 
@@ -66,7 +67,10 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
     }
 
     public void requestFocus() {
-        getFocusableView().requestFocus();
+        View focusable = getFocusableView();
+        if (focusable != null) {
+            focusable.requestFocus();
+        }
     }
 
     public View getFocusableView() {
@@ -82,6 +86,15 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment imple
             mFocusSearchListener = Optional.ofNullable(focusSearchListener);
             getBrowserFrameLayout().setOnFocusSearchListener(this);
         }
+    }
+
+    public boolean show() {
+        FragmentUtil.showFragment(getParentFragmentManager(), this);
+        return true;
+    }
+
+    public void hide() {
+        FragmentUtil.hideFragment(getParentFragmentManager(), this);
     }
 
     @Override

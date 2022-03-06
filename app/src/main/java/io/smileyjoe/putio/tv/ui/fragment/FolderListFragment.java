@@ -78,8 +78,15 @@ public class FolderListFragment extends BaseFragment<FragmentFolderListBinding> 
         } else {
             mView.layoutEmpty.setVisibility(View.GONE);
             mView.recycler.setVisibility(View.VISIBLE);
+        }
+        mAdapter.setItems(folders);
+    }
 
-            mAdapter.setItems(folders);
+    public boolean hasItems() {
+        if (mAdapter == null) {
+            return false;
+        } else {
+            return mAdapter.getItemCount() > 0;
         }
     }
 

@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.google.gson.JsonObject;
 
@@ -90,7 +89,6 @@ public class VideoLoader {
     public void reload() {
         if (mHistory != null && !mHistory.isEmpty()) {
             HistoryItem current = getCurrentHistory();
-
             switch (current.getFolderType()) {
                 case DIRECTORY:
                     loadDirectory(current.getId(), current.getTitle(), false);
@@ -131,8 +129,7 @@ public class VideoLoader {
 
     public void loadGroup(Long id, boolean shouldAddToHistory) {
         mListener.ifPresent(listener -> listener.onVideosLoadStarted());
-        GetGroup task = new GetGroup(id, shouldAddToHistory);
-        task.execute();
+        new GetGroup(id, shouldAddToHistory).run();
     }
 
     public boolean back() {
@@ -176,7 +173,20 @@ public class VideoLoader {
     }
 
     private void onVideosLoaded(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
-        mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, folders, shouldAddToHistory));
+        ArrayList<Folder> tempFolders = new ArrayList<>(folders);
+        if (item.getId() == Putio.Files.NO_PARENT) {
+            if (Settings.getInstance(mContext).shouldShowRecentlyAdded()) {
+                tempFolders.add(0, VirtualDirectory.getRecentAdded(mContext));
+            }
+            Async.run(() -> AppDatabase.getInstance(mContext).groupDao().getEnabled(), groups -> {
+                if (groups != null && !groups.isEmpty()) {
+                    groups.forEach(group -> tempFolders.add(0, group));
+                }
+                mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, tempFolders, shouldAddToHistory));
+            });
+        } else {
+            mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, tempFolders, shouldAddToHistory));
+        }
     }
 
     private void getFromPut(long putId) {
@@ -188,7 +198,7 @@ public class VideoLoader {
         mHistory.add(item);
     }
 
-    private class GetGroup extends AsyncTask<Void, Void, Void> {
+    private class GetGroup extends Async.Runner<Void> {
         private Long mId;
         private Group mGroup;
         private ArrayList<Video> mGroupVideos;
@@ -203,7 +213,7 @@ public class VideoLoader {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void onBackground() {
             mGroup = AppDatabase.getInstance(mContext).groupDao().get(mId);
             ArrayList<Long> putIds = mGroup.getPutIds();
 
@@ -276,7 +286,7 @@ public class VideoLoader {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onMain(Void aVoid) {
             onVideosLoaded(HistoryItem.group(mId, mGroup.getTitle()), mGroupVideos, mGroupFolders, mShouldAddToHistory);
         }
     }
@@ -291,12 +301,11 @@ public class VideoLoader {
 
         @Override
         public void onSuccess(JsonObject result) {
-            ProcessPutResponse task = new ProcessPutResponse(mPutId, result);
-            task.execute();
+            new ProcessPutResponse(mPutId, result).run();
         }
     }
 
-    private class ProcessPutResponse extends AsyncTask<Void, Void, Void> {
+    private class ProcessPutResponse extends Async.Runner<Void> {
 
         private long mPutId;
         private JsonObject mResult;
@@ -309,7 +318,7 @@ public class VideoLoader {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void onBackground() {
             PutioHelper helper = new PutioHelper(mContext);
             mListener.ifPresent(helper::setListener);
             helper.parse(mPutId, mResult);
@@ -325,7 +334,7 @@ public class VideoLoader {
         }
 
         @Override
-        protected void onPostExecute(Void param) {
+        protected void onMain(Void param) {
             VirtualDirectory virtual = VirtualDirectory.getFromPutId(mContext, mCurrentPutId);
             HistoryItem historyItem;
 

@@ -17,7 +17,7 @@ import io.smileyjoe.putio.tv.object.Genre;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 
-@Database(entities = {Video.class, Genre.class, Group.class, Character.class}, version = 8)
+@Database(entities = {Video.class, Genre.class, Group.class, Character.class}, version = 9)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract VideoDao videoDao();
 
@@ -111,6 +111,13 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_8_9 = new Migration(8, 9) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE `group` ADD COLUMN enabled INTEGER NOT NULL DEFAULT 1");
+        }
+    };
+
     public static AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
@@ -124,6 +131,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             .addMigrations(MIGRATION_5_6)
                             .addMigrations(MIGRATION_6_7)
                             .addMigrations(MIGRATION_7_8)
+                            .addMigrations(MIGRATION_8_9)
                             .addCallback(new RoomCallback())
                             .build();
                 }
@@ -137,10 +145,10 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase database) {
             super.onCreate(database);
 
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (1, 'Movies', '[]', 1, 0)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (2, 'Series', '[]', 1, 0)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (3, 'Watch Later', '[]', 3, 1)");
-            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent) VALUES (4, 'Favourites', '[]', 3, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent, enabled) VALUES (1, 'Movies', '[]', 1, 0, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent, enabled) VALUES (2, 'Series', '[]', 1, 0, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent, enabled) VALUES (3, 'Watch Later', '[]', 3, 1, 1)");
+            database.execSQL("INSERT INTO `group` (id, title, put_ids_json, group_type_id, use_parent, enabled) VALUES (4, 'Favourites', '[]', 3, 1, 1)");
         }
     }
 }

@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.action.video;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import androidx.annotation.StringRes;
 
@@ -14,6 +13,7 @@ import io.smileyjoe.putio.tv.db.GroupDao;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.util.Async;
 
 public interface GroupAction extends Action {
 
@@ -21,8 +21,7 @@ public interface GroupAction extends Action {
     void addActionGroup(Group group, String verb, String title);
 
     default void addGroupActions(Get.Listener listener) {
-        Get groupsTask = new Get(getBaseContext(), getVideo(), listener);
-        groupsTask.execute();
+        new Get(getBaseContext(), getVideo(), listener).run();
     }
 
     @Override
@@ -36,8 +35,7 @@ public interface GroupAction extends Action {
     }
 
     default void onGroupActionClicked(long groupId) {
-        OnClicked task = new OnClicked(groupId, getBaseContext(), getVideo(), this);
-        task.execute();
+        new OnClicked(groupId, getBaseContext(), getVideo(), this).run();
     }
 
     default long getGroupActionId(long groupId) {
@@ -48,7 +46,7 @@ public interface GroupAction extends Action {
         return actionId - 100;
     }
 
-    class Get extends AsyncTask<Void, Void, List<io.smileyjoe.putio.tv.object.Group>> {
+    class Get extends Async.Runner<List<io.smileyjoe.putio.tv.object.Group>> {
         public interface Listener {
             void update(Group group, String verb, String title);
         }
@@ -64,31 +62,31 @@ public interface GroupAction extends Action {
         }
 
         @Override
-        protected List<io.smileyjoe.putio.tv.object.Group> doInBackground(Void... voids) {
+        protected List<io.smileyjoe.putio.tv.object.Group> onBackground() {
             return AppDatabase.getInstance(mContext).groupDao().getByType(GroupType.VIDEO.getId());
         }
 
         @Override
-        protected void onPostExecute(List<io.smileyjoe.putio.tv.object.Group> groups) {
-            super.onPostExecute(groups);
-
+        protected void onMain(List<io.smileyjoe.putio.tv.object.Group> groups) {
             if (groups != null && !groups.isEmpty()) {
-                groups.forEach(group -> {
-                    @StringRes int subTextResId;
+                groups.stream()
+                        .filter(Group::isEnabled)
+                        .forEach(group -> {
+                            @StringRes int subTextResId;
 
-                    if (group.getPutIds().contains(mVideo.getPutId())) {
-                        subTextResId = R.string.text_remove_from;
-                    } else {
-                        subTextResId = R.string.text_add_to;
-                    }
+                            if (group.getPutIds().contains(mVideo.getPutId())) {
+                                subTextResId = R.string.text_remove_from;
+                            } else {
+                                subTextResId = R.string.text_add_to;
+                            }
 
-                    mListener.ifPresent(listener -> listener.update(group, mContext.getString(subTextResId), group.getTitle()));
-                });
+                            mListener.ifPresent(listener -> listener.update(group, mContext.getString(subTextResId), group.getTitle()));
+                        });
             }
         }
     }
 
-    class OnClicked extends AsyncTask<Void, Void, Integer> {
+    class OnClicked extends Async.Runner<Integer> {
         private long mGroupId;
         private Context mContext;
         private Video mVideo;
@@ -102,7 +100,7 @@ public interface GroupAction extends Action {
         }
 
         @Override
-        protected Integer doInBackground(Void... voids) {
+        protected Integer onBackground() {
             @StringRes int verb = -1;
 
             if (mGroupId == io.smileyjoe.putio.tv.object.Group.DEFAULT_ID_WATCH_LATER
@@ -127,9 +125,7 @@ public interface GroupAction extends Action {
         }
 
         @Override
-        protected void onPostExecute(Integer verb) {
-            super.onPostExecute(verb);
-
+        protected void onMain(Integer verb) {
             if (verb > 0 && mListener.isPresent()) {
                 mListener.get().updateActionGroup(mGroupId, verb);
             }

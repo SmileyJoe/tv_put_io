@@ -18,6 +18,19 @@
           "Displaying account info",
           "Adding different host name for debug app"
         ]
+      },
+      "5": {
+        "0": [
+          "Added settings page",
+          "Enable and disable groups",
+          "Enable and disable recently added menu item",
+          "Added account summary in side menu",
+          "Added account details to settings",
+          "Added about page to settings",
+          "Moved away from AsyncTask",
+          "Added option to have grid or list view for videos",
+          "Added option to change number of columns in grid"
+        ]
       }
     }
   }

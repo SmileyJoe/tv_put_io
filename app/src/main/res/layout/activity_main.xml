@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/color_background">
+    android:layout_height="match_parent">
     <RelativeLayout
         android:id="@+id/layout_lists"
         android:layout_width="match_parent"
@@ -97,44 +96,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@id/fragment_groups"
-                    android:layout_above="@+id/layout_account"
+                    android:layout_above="@+id/fragment_account"
                     android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/layout_account"
+                <fragment
+                    android:id="@+id/fragment_account"
                     android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding_general">
-
-                    <TextView
-                        android:id="@+id/text_account_username"
-                        style="@style/Text.Title"
-                        android:paddingBottom="@dimen/padding_general"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/progress_usage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:trackThickness="@dimen/height_linear_progress_with_text"
-                        app:indicatorColor="@color/color_primary"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/text_account_username"/>
-                    <TextView
-                        android:id="@+id/text_usage_available"
-                        style="@style/Text"
-                        android:textColor="@color/bg_selected"
-                        android:gravity="center"
-                        app:layout_constraintBottom_toBottomOf="@+id/progress_usage"
-                        app:layout_constraintEnd_toEndOf="@+id/progress_usage"
-                        app:layout_constraintStart_toStartOf="@+id/progress_usage"
-                        app:layout_constraintTop_toTopOf="@+id/progress_usage" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:name="io.smileyjoe.putio.tv.ui.fragment.AccountFragment"/>
             </RelativeLayout>
         </io.smileyjoe.putio.tv.ui.view.AnimationFrameLayout>
 

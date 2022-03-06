@@ -2,10 +2,15 @@
 
     <style name="AppTheme" parent="@style/Theme.Leanback" >
         <item name="android:textViewStyle">@style/Text</item>
+        <item name="android:windowBackground">@color/color_background</item>
+        <item name="guidedStepTheme">@style/SettingsTheme</item>
+        <item name="colorAccent">@color/color_primary</item>
+        <item name="android:colorAccent">@color/color_primary</item>
     </style>
 
     <style name="AppTheme.Material" parent="Theme.MaterialComponents">
-
+        <item name="android:textViewStyle">@style/Text</item>
+        <item name="android:windowBackground">@color/color_background</item>
     </style>
 
     <style name="AppTheme.Video">

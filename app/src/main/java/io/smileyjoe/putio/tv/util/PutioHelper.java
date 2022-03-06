@@ -7,16 +7,13 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import io.smileyjoe.putio.tv.comparator.FolderComparator;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
-import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.FileType;
-import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.object.VirtualDirectory;
 
@@ -63,16 +60,6 @@ public class PutioHelper {
             mCurrent = VirtualDirectory.getFromPutId(mContext, putId).asVideo();
         }
 
-        if (putId == Putio.Files.NO_PARENT) {
-            mFolders.add(VirtualDirectory.getRecentAdded(mContext));
-            List<Group> groups = AppDatabase.getInstance(mContext).groupDao().getAll();
-
-            if (groups != null && !groups.isEmpty()) {
-                for (Group group : groups) {
-                    mFolders.add(group);
-                }
-            }
-        }
 
         if (mCurrent.getFileType() == FileType.FOLDER) {
 

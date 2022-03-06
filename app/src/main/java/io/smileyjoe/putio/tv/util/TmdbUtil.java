@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.google.gson.JsonArray;
@@ -86,11 +85,11 @@ public class TmdbUtil {
         public void onSuccess(JsonObject result) {
             ProcessTmdbResponse task = new ProcessTmdbResponse(mContext, mVideo, result);
             task.setListener(mListener);
-            task.execute();
+            task.run();
         }
     }
 
-    public static class ProcessTmdbResponse extends AsyncTask<Void, Void, Video> {
+    public static class ProcessTmdbResponse extends Async.Runner<Video> {
 
         private Context mContext;
         private JsonObject mResult;
@@ -108,7 +107,7 @@ public class TmdbUtil {
         }
 
         @Override
-        protected Video doInBackground(Void... voids) {
+        protected Video onBackground() {
             if (mResult.has("results")) {
                 update(mVideo, mResult.get("results").getAsJsonArray());
             } else {
@@ -120,7 +119,7 @@ public class TmdbUtil {
         }
 
         @Override
-        protected void onPostExecute(Video video) {
+        protected void onMain(Video video) {
             mListener.ifPresent(listener -> listener.update(video));
         }
 

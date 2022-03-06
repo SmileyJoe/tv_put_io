@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.ui.fragment;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 
@@ -8,15 +7,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
+import io.smileyjoe.putio.tv.util.Async;
 
 public class GroupFragment extends ToggleFragment<Group> {
+
+    public interface LoadedListener {
+        void loaded();
+    }
 
     private ArrayList<Group> mGroups;
     private ArrayList<View> mViews;
@@ -29,8 +32,31 @@ public class GroupFragment extends ToggleFragment<Group> {
         mGroups = new ArrayList<>();
         mViews = new ArrayList<>();
 
-        GetGroups task = new GetGroups();
-        task.execute();
+        getGroups(null);
+    }
+
+    public void reload(LoadedListener listener) {
+        clear();
+        getGroups(listener);
+    }
+
+    private void getGroups(LoadedListener listener) {
+        Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId()), groups -> {
+            groups.stream()
+                    .filter(Group::isEnabled)
+                    .forEach(group -> {
+                        mGroups.add(group);
+                        mViews.add(addOption(group));
+                    });
+
+            if (!hasItems()) {
+                hide();
+            }
+
+            if (listener != null) {
+                listener.loaded();
+            }
+        });
     }
 
     @Override
@@ -39,23 +65,18 @@ public class GroupFragment extends ToggleFragment<Group> {
     }
 
     public void setCurrentPutId(long currentPutId) {
-        IntStream.range(0, mGroups.size())
-                .forEach(i -> mViews.get(i).setSelected(mGroups.get(i).getPutIds().contains(currentPutId)));
+        if (hasItems()) {
+            IntStream.range(0, mGroups.size())
+                    .forEach(i -> mViews.get(i).setSelected(mGroups.get(i).getPutIds().contains(currentPutId)));
+        }
     }
 
-    private class GetGroups extends AsyncTask<Void, Void, List<Group>> {
-        @Override
-        protected List<Group> doInBackground(Void... voids) {
-            return AppDatabase.getInstance(getContext()).groupDao().getByType(GroupType.DIRECTORY.getId());
-        }
-
-        @Override
-        protected void onPostExecute(List<Group> groups) {
-            super.onPostExecute(groups);
-
-            mGroups.addAll(groups);
-
-            groups.forEach(group -> mViews.add(addOption(group)));
+    @Override
+    public boolean show() {
+        if (hasItems()) {
+            return super.show();
+        } else {
+            return false;
         }
     }
 }

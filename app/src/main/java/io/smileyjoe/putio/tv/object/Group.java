@@ -46,6 +46,8 @@ public class Group implements ToggleItem, Folder, Parcelable {
     private GroupType mType;
     @ColumnInfo(name = "group_type_id")
     private int mTypeId;
+    @ColumnInfo(name = "enabled")
+    private boolean mEnabled;
 
     public Group() {
         mIsSelected = false;
@@ -200,6 +202,14 @@ public class Group implements ToggleItem, Folder, Parcelable {
         return FolderType.GROUP;
     }
 
+    public void setEnabled(boolean enabled) {
+        mEnabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return mEnabled;
+    }
+
     @Override
     public String toString() {
         return "Group{" +
@@ -211,6 +221,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
                 ", mIsSelected=" + mIsSelected +
                 ", mType=" + mType +
                 ", mTypeId=" + mTypeId +
+                ", mEnabled=" + mEnabled +
                 '}';
     }
 
@@ -229,6 +240,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
         dest.writeByte(this.mIsSelected ? (byte) 1 : (byte) 0);
         dest.writeInt(this.mType == null ? -1 : this.mType.ordinal());
         dest.writeInt(this.mTypeId);
+        dest.writeByte(this.mEnabled ? (byte) 1 : (byte) 0);
     }
 
     protected Group(Parcel in) {
@@ -242,6 +254,7 @@ public class Group implements ToggleItem, Folder, Parcelable {
         int tmpMType = in.readInt();
         this.mType = tmpMType == -1 ? null : GroupType.values()[tmpMType];
         this.mTypeId = in.readInt();
+        this.mEnabled = in.readByte() != 0;
     }
 
     public static final Creator<Group> CREATOR = new Creator<Group>() {

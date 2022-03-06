@@ -95,7 +95,7 @@ public class VideoDetailsViewHolder extends Presenter.ViewHolder {
 
         PopulateGenres task = new PopulateGenres(mView.layoutGenres, video);
         task.setHideOnEmpty(true);
-        task.execute();
+        task.run();
     }
 
     private void setText(TextView view, String text) {

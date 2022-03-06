@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding_general">
+    <ImageView
+        android:id="@+id/image_settings"
+        style="@style/Icon"
+        app:tint="@color/selector_icon_inverse"
+        android:tint="@color/selector_icon_inverse"
+        android:src="@drawable/ic_settings_24"
+        android:layout_marginBottom="@dimen/padding_general"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:duplicateParentState="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/text_account_username"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/progress_usage"/>
+    <TextView
+        android:id="@+id/text_account_username"
+        style="@style/Text.Title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toStartOf="@+id/image_settings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/progress_usage"
+        app:layout_constraintTop_toTopOf="parent" />
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_usage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:trackThickness="@dimen/height_linear_progress_with_text"
+        app:indicatorColor="@color/color_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_account_username"/>
+    <TextView
+        android:id="@+id/text_usage_available"
+        style="@style/Text"
+        android:textColor="@color/bg_selected"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/progress_usage"
+        app:layout_constraintEnd_toEndOf="@+id/progress_usage"
+        app:layout_constraintStart_toStartOf="@+id/progress_usage"
+        app:layout_constraintTop_toTopOf="@+id/progress_usage" />
+</androidx.constraintlayout.widget.ConstraintLayout>

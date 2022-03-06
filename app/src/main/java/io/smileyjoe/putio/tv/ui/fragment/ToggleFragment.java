@@ -42,7 +42,11 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
 
     @Override
     public View getFocusableView() {
-        return mView.getRoot().getChildAt(0);
+        if (isVisible() && hasItems()) {
+            return mView.getRoot().getChildAt(0);
+        } else {
+            return null;
+        }
     }
 
     public void setListener(Listener listener) {
@@ -65,6 +69,12 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
         mOptionViews.add(root);
         mView.getRoot().addView(root);
         return root;
+    }
+
+    protected void clear() {
+        mOptions = new ArrayList<>();
+        mOptionViews = new ArrayList<>();
+        mView.getRoot().removeAllViews();
     }
 
     public boolean canFocus(View view, int direction) {
@@ -96,8 +106,10 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
     }
 
     public void reset() {
-        IntStream.range(0, mView.getRoot().getChildCount())
-                .forEach(i -> mView.getRoot().getChildAt(i).setSelected(false));
+        if (hasItems()) {
+            IntStream.range(0, mView.getRoot().getChildCount())
+                    .forEach(i -> mView.getRoot().getChildAt(i).setSelected(false));
+        }
     }
 
     public void select(T item) {
@@ -106,6 +118,10 @@ public abstract class ToggleFragment<T extends ToggleItem> extends BaseFragment<
                 .filter(v -> ((Integer) v.getTag()) == item.getId())
                 .findFirst()
                 .ifPresent(v -> onItemClick(v, item));
+    }
+
+    public boolean hasItems() {
+        return mOptions != null && !mOptions.isEmpty();
     }
 
     protected void onItemClick(View view, T item) {
