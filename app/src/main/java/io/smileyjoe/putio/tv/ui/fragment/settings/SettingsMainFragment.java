@@ -18,6 +18,7 @@ public class SettingsMainFragment extends SettingsBaseFragment {
     private static final int ID_ACCOUNT = 2;
     private static final int ID_VIDEO_LAYOUT = 3;
     private static final int ID_GROUPS = 4;
+    private static final int ID_VIDEO_NUM_COLS = 5;
 
     @Override
     @NonNull
@@ -30,6 +31,7 @@ public class SettingsMainFragment extends SettingsBaseFragment {
                                 Bundle savedInstanceState) {
         actions.add(SettingsGroupFragment.getAction(getContext(), ID_GROUPS));
         actions.add(SettingsVideoLayoutFragment.getAction(getContext(), ID_VIDEO_LAYOUT));
+        actions.add(SettingsVideoColumnFragment.getAction(getContext(), ID_VIDEO_NUM_COLS));
         actions.add(SettingsAccountFragment.getAction(getContext(), ID_ACCOUNT));
         actions.add(SettingsAboutFragment.getAction(getContext(), ID_ABOUT));
     }
@@ -41,8 +43,16 @@ public class SettingsMainFragment extends SettingsBaseFragment {
         if(getSelectedActionPosition() >= 0) {
             GuidedAction action = getActions().get(getSelectedActionPosition());
             if (action != null) {
+                boolean update = false;
                 if (action.getId() == ID_VIDEO_LAYOUT) {
                     action.setDescription(getString(getSettings().getVideoLayout().getTitle()));
+                    update = true;
+                } else if(action.getId() == ID_VIDEO_NUM_COLS){
+                    action.setDescription(Integer.toString(getSettings().getVideoNumCols()));
+                    update = true;
+                }
+
+                if(update){
                     notifyActionChanged(getSelectedActionPosition());
                 }
             }
@@ -59,6 +69,8 @@ public class SettingsMainFragment extends SettingsBaseFragment {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsGroupFragment());
         } else if (action.getId() == ID_VIDEO_LAYOUT) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsVideoLayoutFragment());
+        } else if (action.getId() == ID_VIDEO_NUM_COLS) {
+            GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsVideoColumnFragment());
         } else {
             getActivity().finishAfterTransition();
         }

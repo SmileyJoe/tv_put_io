@@ -91,6 +91,8 @@
     <string name="settings_description_video_layout">Style of the video layout</string>
     <string name="text_grid">Grid</string>
     <string name="text_list">List</string>
+    <string name="settings_title_video_cols">Number of columns</string>
+    <string name="settings_description_video_cols">The number of columns to show when selecting grid view for the video layout</string>
 
     <plurals name="plural_second">
         <item quantity="one">%d second</item>

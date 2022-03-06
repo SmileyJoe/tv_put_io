@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
+import io.smileyjoe.putio.tv.util.Settings;
 
 public class Putio {
 
@@ -110,14 +111,14 @@ public class Putio {
                 "&mp4_stream_url_parent=true" +
                 "&mp4_status_parent=true";
 
-        private static String getUrl(long parentId) {
+        private static String getUrl(Context context, long parentId) {
             String url = URL;
 
             if (parentId == NO_PARENT) {
                 url += "&file_type=FOLDER,VIDEO";
             } else if (parentId == PARENT_ID_RECENT) {
                 url += "&file_type=VIDEO" +
-                        "&per_page=" + (VideosFragment.GRID_COL_COUNT * 3) +
+                        "&per_page=" + (Settings.getInstance(context).getVideoNumCols() * 3) +
                         "&sort_by=DATE_DESC" +
                         "&parent_id=" + parentId;
             } else {
@@ -129,12 +130,12 @@ public class Putio {
         }
 
         public static void get(Context context, long parentId, Response response) {
-            execute(context, getUrl(parentId), response);
+            execute(context, getUrl(context, parentId), response);
         }
 
         public static JsonObject get(Context context, long parentId) {
             try {
-                return getBaseCall(context, getUrl(parentId))
+                return getBaseCall(context, getUrl(context, parentId))
                         .asJsonObject()
                         .get();
             } catch (InterruptedException | ExecutionException e) {

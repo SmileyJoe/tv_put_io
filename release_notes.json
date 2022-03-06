@@ -27,7 +27,8 @@
           "Added account summary in side menu",
           "Added account details to settings",
           "Added about page to settings",
-          "Moved away from AsyncTask"
+          "Moved away from AsyncTask",
+          "Added option to have grid or list view for videos"
         ]
       }
     }

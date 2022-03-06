@@ -11,6 +11,7 @@ public class Settings {
     private static final String NAME = BuildConfig.APPLICATION_ID + ".prefs_settings";
     private static final String KEY_SHOW_RECENTLY_ADDED = "show_recently_added";
     private static final String KEY_VIDEO_LAYOUT = "video_layout";
+    private static final String KEY_VIDEO_NUM_COLS = "video_num_cols";
 
     private SharedPreferences mPrefs;
     private static Settings sInstance;
@@ -41,6 +42,14 @@ public class Settings {
 
     public VideosAdapter.Style getVideoLayout(){
         return VideosAdapter.Style.fromId(mPrefs.getInt(KEY_VIDEO_LAYOUT, VideosAdapter.Style.GRID.getId()));
+    }
+
+    public void setVideoNumCols(int cols){
+        mPrefs.edit().putInt(KEY_VIDEO_NUM_COLS, cols).apply();
+    }
+
+    public int getVideoNumCols(){
+        return mPrefs.getInt(KEY_VIDEO_NUM_COLS, 7);
     }
 
 }

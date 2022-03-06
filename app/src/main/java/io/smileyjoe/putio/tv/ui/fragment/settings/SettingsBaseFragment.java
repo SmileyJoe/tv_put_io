@@ -46,15 +46,18 @@ public class SettingsBaseFragment extends GuidedStepSupportFragment {
     }
 
     protected GuidedAction getActionGroup(String title, String description, @DrawableRes int icon, int groupId, int id, boolean checked) {
-        GuidedAction guidedAction = new GuidedAction.Builder(getContext())
+        GuidedAction.Builder builder = new GuidedAction.Builder(getContext())
                 .title(title)
                 .id(id)
                 .focusable(true)
                 .editable(false)
                 .description(description)
-                .checkSetId(groupId)
-                .icon(icon)
-                .build();
+                .checkSetId(groupId);
+
+        if(icon != 0){
+            builder.icon(icon);
+        }
+        GuidedAction guidedAction = builder.build();
         guidedAction.setChecked(checked);
         return guidedAction;
     }
