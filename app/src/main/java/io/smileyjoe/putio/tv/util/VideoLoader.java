@@ -34,6 +34,14 @@ public class VideoLoader {
     private Optional<Listener> mListener = Optional.empty();
     private static VideoLoader sInstance;
 
+    private static VideoLoader getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new VideoLoader(context);
+        }
+
+        return sInstance;
+    }
+
     public static VideoLoader getInstance(Context context, Listener listener) {
         if (sInstance == null) {
             sInstance = new VideoLoader(context);
@@ -71,6 +79,11 @@ public class VideoLoader {
         }
 
         return null;
+    }
+
+    public static void update(Context context, Video updateVideo){
+        // this is so we don't have to expose the class without a listener attached //
+        getInstance(context).update(updateVideo);
     }
 
     public void update(Video updateVideo) {

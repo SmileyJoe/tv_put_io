@@ -31,6 +31,11 @@
           "Added option to have grid or list view for videos",
           "Added option to change number of columns in grid"
         ]
+      },
+      "6": {
+        "0": [
+          "Updating cache when refreshing data"
+        ]
       }
     }
   }
