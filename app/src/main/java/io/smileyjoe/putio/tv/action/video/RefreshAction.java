@@ -9,8 +9,8 @@ public interface RefreshAction extends Action {
     void update(Video video);
 
     default void refreshData() {
-        Tmdb.update(getBaseContext(), getVideo(), updatedVideo -> {
-            VideoLoader.update(getBaseContext(), updatedVideo);
+        Tmdb.update(getContext(), getVideo(), updatedVideo -> {
+            VideoLoader.update(getContext(), updatedVideo);
             update(updatedVideo);
         });
     }

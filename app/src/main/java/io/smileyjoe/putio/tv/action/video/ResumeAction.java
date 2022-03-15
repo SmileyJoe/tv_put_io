@@ -13,7 +13,7 @@ public interface ResumeAction extends Action {
     void updateActionResume();
 
     default void resumeVideo() {
-        play(getActivity(), getVideo(), true);
+        play(getVideo(), true);
     }
 
     @Override
@@ -22,7 +22,7 @@ public interface ResumeAction extends Action {
         Video video = getVideo();
 
         addAction(ActionOption.RESUME,
-                getBaseContext().getString(option.getTitleResId()),
+                getContext().getString(option.getTitleResId()),
                 video.getResumeTimeFormatted(),
                 video.getResumeTime() > 0);
     }
@@ -33,7 +33,7 @@ public interface ResumeAction extends Action {
     }
 
     default void getResumeTime() {
-        Putio.Resume.get(getBaseContext(), getVideo().getPutId(), new OnResumeResponse(getVideo(), this));
+        Putio.Resume.get(getContext(), getVideo().getPutId(), new OnResumeResponse(getVideo(), this));
     }
 
     class OnResumeResponse extends Response {

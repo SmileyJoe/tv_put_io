@@ -11,6 +11,12 @@
     <style name="AppTheme.Material" parent="Theme.MaterialComponents">
         <item name="android:textViewStyle">@style/Text</item>
         <item name="android:windowBackground">@color/color_background</item>
+        <item name="android:colorBackground">@color/color_background</item>
+        <item name="android:alertDialogTheme">@style/AlertDialog</item>
+    </style>
+
+    <style name="AlertDialog" parent="@style/ThemeOverlay.MaterialComponents.Dialog.Alert.Framework">
+        <item name="android:colorBackground">@color/bg_elevated</item>
     </style>
 
     <style name="AppTheme.Video">

@@ -14,7 +14,7 @@ import java.util.Optional;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.object.FragmentType;
 
-public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
+public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener, View.OnLongClickListener {
 
     public interface Listener<T> extends HomeFragmentListener<T> {
         void onItemClicked(View view, T item, int position);
@@ -35,6 +35,7 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
         mFragmentType = fragmentType;
         itemView.setOnClickListener(this);
         itemView.setOnFocusChangeListener(this);
+        itemView.setOnLongClickListener(this);
     }
 
     protected Context getContext() {
@@ -64,6 +65,11 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
     @Override
     public void onClick(View v) {
         mListener.ifPresent(listener -> listener.onItemClicked(v, mItem, mPosition));
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return false;
     }
 
     protected void setText(TextView textView, String text) {

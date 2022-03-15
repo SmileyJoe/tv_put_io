@@ -7,7 +7,7 @@ import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 public interface TrailerAction extends Action {
 
     default void playTrailer() {
-        getActivity().startActivity(PlaybackActivity.getIntent(getBaseContext(), getVideo().getYoutubeTrailerUrl()));
+        getContext().startActivity(PlaybackActivity.getIntent(getContext(), getVideo().getYoutubeTrailerUrl()));
     }
 
     @Override
