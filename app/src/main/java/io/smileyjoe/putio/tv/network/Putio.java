@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
@@ -133,6 +134,7 @@ public class Putio {
         }
 
         public static JsonObject get(Context context, long parentId) {
+
             try {
                 return getBaseCall(context, getUrl(context, parentId))
                         .asJsonObject()

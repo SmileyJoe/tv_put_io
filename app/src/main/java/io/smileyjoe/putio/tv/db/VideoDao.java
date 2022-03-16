@@ -14,4 +14,7 @@ public interface VideoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Video video);
+
+    @Query("DELETE FROM video WHERE id_put_io IS :id")
+    void delete(long id);
 }
