@@ -175,6 +175,12 @@ public abstract class BaseListAdapter<T, U extends BaseViewHolder<T, ? extends V
         }
     }
 
+    @Override
+    public void update(T item, int position) {
+        mItems.set(position, item);
+        notifyItemChanged(position);
+    }
+
     public void clearSelected() {
         mSelectedPosition = -1;
         if (mViewSelected != null) {

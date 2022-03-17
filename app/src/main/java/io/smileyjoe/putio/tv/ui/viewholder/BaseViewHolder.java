@@ -18,6 +18,7 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
 
     public interface Listener<T> extends HomeFragmentListener<T> {
         void onItemClicked(View view, T item, int position);
+        void update(T item, int position);
     }
 
     private T mItem;
@@ -46,9 +47,17 @@ public abstract class BaseViewHolder<T, V extends ViewBinding> extends RecyclerV
         mListener = Optional.ofNullable(listener);
     }
 
+    protected Optional<Listener<T>> getListener() {
+        return mListener;
+    }
+
     public void bindView(T item, int position) {
         mItem = item;
         mPosition = position;
+    }
+
+    protected int getInternalPosition() {
+        return mPosition;
     }
 
     public View getView() {

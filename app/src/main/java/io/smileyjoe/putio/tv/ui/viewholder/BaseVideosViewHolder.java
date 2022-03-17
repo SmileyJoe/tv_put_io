@@ -16,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
@@ -130,7 +131,7 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
 
         @Override
         public void update(Video video) {
-            // todo: something should happen here //
+            getListener().ifPresent(l -> l.update(video, getInternalPosition()));
         }
     }
 }

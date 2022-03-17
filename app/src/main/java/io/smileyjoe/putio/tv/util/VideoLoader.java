@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 

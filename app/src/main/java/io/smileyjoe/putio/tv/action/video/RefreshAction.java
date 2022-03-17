@@ -23,11 +23,11 @@ public interface RefreshAction extends Action {
         Async.run(() -> {
             AppDatabase.getInstance(getContext()).videoDao().delete(getVideo().getPutId());
             PutioHelper helper = new PutioHelper(getContext());
+            helper.setListener(video -> {
+                VideoLoader.update(getContext(), video);
+                update(video);
+            });
             helper.parse(getVideo().getPutId(), Putio.Files.get(getContext(), getVideo().getPutId()));
-            return helper.getCurrent();
-        }, video -> {
-            VideoLoader.update(getContext(), video);
-            update(video);
         });
     }
 
