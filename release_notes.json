@@ -1,6 +1,6 @@
 {
-  "previous_release": "3.3.2",
-  "current_debug": "3.4.0",
+  "previous_release": "3.5.0",
+  "current_debug": "3.6.0",
   "notes": {
     "3": {
       "3": {
@@ -35,7 +35,8 @@
       "6": {
         "0": [
           "Updating cache when refreshing data",
-          "Long press context menu"
+          "Long press context menu",
+          "Added a put.io service status feed"
         ]
       }
     }
