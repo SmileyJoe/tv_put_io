@@ -84,11 +84,14 @@ public class PutioHelper {
             if (currentDbVideo != null) {
                 if(currentDbVideo.isTmdbFound()){
                     Video updated = VideoUtil.updateFromDb(mCurrent, currentDbVideo);
+                    AppDatabase.getInstance(mContext).videoDao().insert(updated);
                     mVideos.add(updated);
                 } else {
+                    AppDatabase.getInstance(mContext).videoDao().insert(mCurrent);
                     updateTmdb(currentDbVideo);
                 }
             } else {
+                AppDatabase.getInstance(mContext).videoDao().insert(mCurrent);
                 updateTmdb(mCurrent);
             }
         }
@@ -98,7 +101,6 @@ public class PutioHelper {
     }
 
     private void updateTmdb(Video video){
-        // todo: this needs to happen for current //
         switch (video.getVideoType()) {
             case MOVIE:
                 if (!video.isTmdbChecked()) {
