@@ -112,7 +112,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     public void onVideosLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
         mView.frameLoading.setVisibility(View.GONE);
         FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentVideoList);
-        mFragmentVideoList.setVideos(videos);
+        mFragmentVideoList.setVideos(mSeries, videos);
     }
 
     private class VideoListListener implements VideosFragment.Listener {

@@ -53,6 +53,10 @@ public class PutioHelper {
     }
 
     public void parse(long putId, JsonObject jsonObject) {
+        parse(putId, 0, jsonObject);
+    }
+
+    public void parse(long putId, long parentTmdbId, JsonObject jsonObject) {
         JsonArray filesJson = jsonObject.getAsJsonArray("files");
 
         try {
@@ -76,7 +80,7 @@ public class PutioHelper {
             }
 
             for (Video video : videos) {
-                updateTmdb(video);
+                updateTmdb(mCurrent.getTmdbId(), video);
             }
         } else {
             Video currentDbVideo = VideoUtil.getFromDbByPutId(mContext, mCurrent.getPutId());
@@ -88,11 +92,11 @@ public class PutioHelper {
                     mVideos.add(updated);
                 } else {
                     AppDatabase.getInstance(mContext).videoDao().insert(mCurrent);
-                    updateTmdb(currentDbVideo);
+                    updateTmdb(parentTmdbId, currentDbVideo);
                 }
             } else {
                 AppDatabase.getInstance(mContext).videoDao().insert(mCurrent);
-                updateTmdb(mCurrent);
+                updateTmdb(parentTmdbId, mCurrent);
             }
         }
 
@@ -100,7 +104,7 @@ public class PutioHelper {
         Collections.sort(mFolders, new FolderComparator());
     }
 
-    private void updateTmdb(Video video){
+    private void updateTmdb(long parentTmdbId, Video video){
         switch (video.getVideoType()) {
             case MOVIE:
                 if (!video.isTmdbChecked()) {
@@ -109,10 +113,11 @@ public class PutioHelper {
                     Tmdb.Movie.search(mContext, video.getTitle(), video.getYear(), response);
                 }
             case EPISODE:
-                if (!video.isTmdbChecked() && mCurrent.getTmdbId() > 0) {
+                if (!video.isTmdbChecked() && parentTmdbId > 0) {
+                    video.setParentTmdbId(parentTmdbId);
                     TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
                     response.setListener(mListener);
-                    Tmdb.Series.getEpisode(mContext, mCurrent.getTmdbId(), video.getSeason(), video.getEpisode(), response);
+                    Tmdb.Series.getEpisode(mContext, parentTmdbId, video.getSeason(), video.getEpisode(), response);
                 }
                 mVideos.add(video);
                 break;

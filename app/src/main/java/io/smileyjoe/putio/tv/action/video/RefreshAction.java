@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.action.video;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 
@@ -27,7 +28,7 @@ public interface RefreshAction extends Action {
                 VideoLoader.update(getContext(), video);
                 update(video);
             });
-            helper.parse(getVideo().getPutId(), Putio.Files.get(getContext(), getVideo().getPutId()));
+            helper.parse(getVideo().getPutId(), getVideo().getParentTmdbId(), Putio.Files.get(getContext(), getVideo().getPutId()));
         });
     }
 
