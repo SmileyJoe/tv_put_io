@@ -3,7 +3,7 @@ package io.smileyjoe.putio.tv.action.video;
 public interface PlayAction extends Action {
 
     default void playVideo() {
-        play(getActivity(), getVideo(), false);
+        play(getVideo(), false);
     }
 
     @Override

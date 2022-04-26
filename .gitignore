@@ -10,3 +10,4 @@
 /app/*.jks
 /app/release
 /app/firebase-distribution.json
+notes.md

@@ -9,6 +9,7 @@ import androidx.leanback.widget.GuidedAction;
 
 import java.util.List;
 
+import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.R;
 
 public class SettingsMainFragment extends SettingsBaseFragment {
@@ -18,6 +19,7 @@ public class SettingsMainFragment extends SettingsBaseFragment {
     private static final int ID_VIDEO_LAYOUT = 3;
     private static final int ID_GROUPS = 4;
     private static final int ID_VIDEO_NUM_COLS = 5;
+    private static final int ID_STATUS = 6;
 
     @Override
     @NonNull
@@ -33,6 +35,7 @@ public class SettingsMainFragment extends SettingsBaseFragment {
         actions.add(SettingsVideoColumnFragment.getAction(getContext(), ID_VIDEO_NUM_COLS));
         actions.add(SettingsAccountFragment.getAction(getContext(), ID_ACCOUNT));
         actions.add(SettingsAboutFragment.getAction(getContext(), ID_ABOUT));
+        actions.add(SettingsStatusFragment.getAction(getContext(), ID_STATUS));
     }
 
     @Override
@@ -70,6 +73,8 @@ public class SettingsMainFragment extends SettingsBaseFragment {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsVideoLayoutFragment());
         } else if (action.getId() == ID_VIDEO_NUM_COLS) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsVideoColumnFragment());
+        } else if(action.getId() == ID_STATUS) {
+            GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsStatusFragment());
         } else {
             getActivity().finishAfterTransition();
         }

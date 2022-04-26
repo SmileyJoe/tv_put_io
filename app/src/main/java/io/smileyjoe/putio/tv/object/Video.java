@@ -33,6 +33,8 @@ public class Video implements Parcelable {
     private long mPutId;
     @ColumnInfo(name = "id_tmdb")
     private long mTmdbId;
+    @Ignore
+    private long mParentTmdbId;
     // general
     @ColumnInfo(name = "video_type")
     @TypeConverters(VideoTypeConverter.class)
@@ -104,6 +106,7 @@ public class Video implements Parcelable {
     public Video(Video video) {
         this.mPutId = video.getPutId();
         this.mTmdbId = video.getTmdbId();
+        this.mParentTmdbId = video.getParentTmdbId();
         this.mVideoType = video.getVideoType();
         this.mFileType = video.getFileType();
         this.mTitle = video.getTitle();
@@ -308,6 +311,10 @@ public class Video implements Parcelable {
         mIsConverting = converting;
     }
 
+    public void setParentTmdbId(long parentTmdbId) {
+        mParentTmdbId = parentTmdbId;
+    }
+
     public String getYoutubeTrailerKey() {
         return mYoutubeTrailerKey;
     }
@@ -508,6 +515,10 @@ public class Video implements Parcelable {
         return mIsConverting;
     }
 
+    public long getParentTmdbId() {
+        return mParentTmdbId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -530,6 +541,7 @@ public class Video implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.mPutId);
         dest.writeLong(this.mTmdbId);
+        dest.writeLong(this.mParentTmdbId);
         dest.writeInt(this.mVideoType == null ? -1 : this.mVideoType.ordinal());
         dest.writeInt(this.mFileType == null ? -1 : this.mFileType.ordinal());
         dest.writeString(this.mTitle);
@@ -564,6 +576,7 @@ public class Video implements Parcelable {
     protected Video(Parcel in) {
         this.mPutId = in.readLong();
         this.mTmdbId = in.readLong();
+        this.mParentTmdbId = in.readLong();
         int tmpMVideoType = in.readInt();
         this.mVideoType = tmpMVideoType == -1 ? null : VideoType.values()[tmpMVideoType];
         int tmpMFileType = in.readInt();
@@ -615,6 +628,7 @@ public class Video implements Parcelable {
         return "Video{" +
                 "mPutId=" + mPutId +
                 ", mTmdbId=" + mTmdbId +
+                ", mParentTmdbId=" + mParentTmdbId +
                 ", mVideoType=" + mVideoType +
                 ", mFileType=" + mFileType +
                 ", mTitle='" + mTitle + '\'' +

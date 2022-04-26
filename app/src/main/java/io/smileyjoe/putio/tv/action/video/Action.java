@@ -3,6 +3,7 @@ package io.smileyjoe.putio.tv.action.video;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.leanback.widget.OnActionClickedListener;
@@ -15,22 +16,21 @@ import io.smileyjoe.putio.tv.ui.activity.PlaybackActivity;
 
 public interface Action {
 
-    Activity getActivity();
+    Context getContext();
     Video getVideo();
     void handleClick(ActionOption option);
-    void addAction(ActionOption option, String title, String subtitle, boolean shouldShow);
     void setupActions();
 
     default void handleClick(androidx.leanback.widget.Action action) {
         // do nothing //
     }
 
-    default Context getBaseContext() {
-        return getActivity().getBaseContext();
+    default void addAction(ActionOption option, boolean shouldShow) {
+        addAction(option, getContext().getString(option.getTitleResId()), null, shouldShow);
     }
 
-    default void addAction(ActionOption option, boolean shouldShow) {
-        addAction(option, getBaseContext().getString(option.getTitleResId()), null, shouldShow);
+    default void addAction(ActionOption option, String title, String subtitle, boolean shouldShow){
+        // do nothing //
     }
 
     default String getTitleFormatted(String title, String subtitle) {
@@ -39,6 +39,21 @@ public interface Action {
         } else {
             return title;
         }
+    }
+
+    default void play(Video video, boolean shouldResume) {
+        play(video, null, shouldResume);
+    }
+
+    default void play(Video video, ArrayList<Video> videos, boolean shouldResume) {
+        if (video.getVideoType() == VideoType.EPISODE) {
+            if (videos != null && !videos.isEmpty()) {
+                getContext().startActivity(PlaybackActivity.getIntent(getContext(), videos, video, shouldResume));
+                return;
+            }
+        }
+
+        getContext().startActivity(PlaybackActivity.getIntent(getContext(), video, shouldResume));
     }
 
     class OnButtonClicked implements View.OnClickListener {
@@ -69,18 +84,19 @@ public interface Action {
         }
     }
 
-    default void play(Activity activity, Video video, boolean shouldResume) {
-        play(activity, video, null, shouldResume);
-    }
+    class OnContextItemClicked implements MenuItem.OnMenuItemClickListener{
+        private Action mListener;
+        private ActionOption mOption;
 
-    default void play(Activity activity, Video video, ArrayList<Video> videos, boolean shouldResume) {
-        if (video.getVideoType() == VideoType.EPISODE) {
-            if (videos != null && !videos.isEmpty()) {
-                activity.startActivity(PlaybackActivity.getIntent(activity.getBaseContext(), videos, video, shouldResume));
-                return;
-            }
+        public OnContextItemClicked(ActionOption option, Action listener) {
+            mListener = listener;
+            mOption = option;
         }
 
-        activity.startActivity(PlaybackActivity.getIntent(activity.getBaseContext(), video, shouldResume));
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            mListener.handleClick(mOption);
+            return true;
+        }
     }
 }

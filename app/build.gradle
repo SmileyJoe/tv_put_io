@@ -40,8 +40,8 @@ android {
         applicationId "io.smileyjoe.putio.tv"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 32
-        versionName "3.5.0." + getBuildNumber()
+        versionCode 33
+        versionName "3.6.0." + getBuildNumber()
         buildConfigField "String", "PUTIO_CLIENT_ID", "\"${putio_client_id}\""
         buildConfigField "String", "PUTIO_CLIENT_SECRET", "\"${putio_client_secret}\""
         buildConfigField "String", "TMDB_AUTH_TOKEN", "\"${tmdb_auth_token}\""
@@ -117,4 +117,6 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
+
+    implementation 'com.prof18.rssparser:rssparser:4.0.2'
 }

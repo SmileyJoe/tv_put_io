@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -15,6 +16,7 @@ import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.object.VirtualDirectory;
 
 public class PutioHelper {
@@ -51,6 +53,10 @@ public class PutioHelper {
     }
 
     public void parse(long putId, JsonObject jsonObject) {
+        parse(putId, 0, jsonObject);
+    }
+
+    public void parse(long putId, long parentTmdbId, JsonObject jsonObject) {
         JsonArray filesJson = jsonObject.getAsJsonArray("files");
 
         try {
@@ -59,7 +65,6 @@ public class PutioHelper {
         } catch (ClassCastException e) {
             mCurrent = VirtualDirectory.getFromPutId(mContext, putId).asVideo();
         }
-
 
         if (mCurrent.getFileType() == FileType.FOLDER) {
 
@@ -75,54 +80,68 @@ public class PutioHelper {
             }
 
             for (Video video : videos) {
-                switch (video.getVideoType()) {
-                    case MOVIE:
-                        if (!video.isTmdbChecked()) {
-                            TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
-                            response.setListener(mListener);
-                            Tmdb.Movie.search(mContext, video.getTitle(), video.getYear(), response);
-                        }
-                    case EPISODE:
-                        if (!video.isTmdbChecked() && mCurrent.getTmdbId() > 0) {
-                            TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
-                            response.setListener(mListener);
-                            Tmdb.Series.getEpisode(mContext, mCurrent.getTmdbId(), video.getSeason(), video.getEpisode(), response);
-                        }
-                        mVideos.add(video);
-                        break;
-                    case SEASON:
-                        if (!video.isTmdbChecked()) {
-                            TmdbUtil.OnTmdbSeriesSearchResponse response = new TmdbUtil.OnTmdbSeriesSearchResponse(mContext, video);
-                            response.setListener(mListener);
-                            Tmdb.Series.search(mContext, video.getTitle(), response);
-                        }
-                        mVideos.add(video);
-                        break;
-                    case UNKNOWN:
-                        switch (video.getFileType()) {
-                            case VIDEO:
-                                mVideos.add(video);
-                                break;
-                            case FOLDER:
-                            case UNKNOWN:
-                            default:
-                                mFolders.add(new Directory(video));
-                                break;
-                        }
-                        break;
-                }
+                updateTmdb(mCurrent.getTmdbId(), video);
             }
         } else {
             Video currentDbVideo = VideoUtil.getFromDbByPutId(mContext, mCurrent.getPutId());
 
-            if (currentDbVideo != null && currentDbVideo.isTmdbFound()) {
-                Video updated = VideoUtil.updateFromDb(mCurrent, currentDbVideo);
-                mVideos.add(updated);
+            if (currentDbVideo != null) {
+                if(currentDbVideo.isTmdbFound()){
+                    Video updated = VideoUtil.updateFromDb(mCurrent, currentDbVideo);
+                    AppDatabase.getInstance(mContext).videoDao().insert(updated);
+                    mVideos.add(updated);
+                } else {
+                    AppDatabase.getInstance(mContext).videoDao().insert(mCurrent);
+                    updateTmdb(parentTmdbId, currentDbVideo);
+                }
+            } else {
+                AppDatabase.getInstance(mContext).videoDao().insert(mCurrent);
+                updateTmdb(parentTmdbId, mCurrent);
             }
         }
 
         VideoUtil.sort(mVideos);
         Collections.sort(mFolders, new FolderComparator());
+    }
+
+    private void updateTmdb(long parentTmdbId, Video video){
+        switch (video.getVideoType()) {
+            case MOVIE:
+                if (!video.isTmdbChecked()) {
+                    TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
+                    response.setListener(mListener);
+                    Tmdb.Movie.search(mContext, video.getTitle(), video.getYear(), response);
+                }
+            case EPISODE:
+                if (!video.isTmdbChecked() && parentTmdbId > 0) {
+                    video.setParentTmdbId(parentTmdbId);
+                    TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
+                    response.setListener(mListener);
+                    Tmdb.Series.getEpisode(mContext, parentTmdbId, video.getSeason(), video.getEpisode(), response);
+                }
+                mVideos.add(video);
+                break;
+            case SEASON:
+                if (!video.isTmdbChecked()) {
+                    TmdbUtil.OnTmdbSeriesSearchResponse response = new TmdbUtil.OnTmdbSeriesSearchResponse(mContext, video);
+                    response.setListener(mListener);
+                    Tmdb.Series.search(mContext, video.getTitle(), response);
+                }
+                mVideos.add(video);
+                break;
+            case UNKNOWN:
+                switch (video.getFileType()) {
+                    case VIDEO:
+                        mVideos.add(video);
+                        break;
+                    case FOLDER:
+                    case UNKNOWN:
+                    default:
+                        mFolders.add(new Directory(video));
+                        break;
+                }
+                break;
+        }
     }
 
 }

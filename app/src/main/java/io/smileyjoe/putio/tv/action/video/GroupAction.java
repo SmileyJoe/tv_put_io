@@ -21,7 +21,7 @@ public interface GroupAction extends Action {
     void addActionGroup(Group group, String verb, String title);
 
     default void addGroupActions(Get.Listener listener) {
-        new Get(getBaseContext(), getVideo(), listener).run();
+        new Get(getContext(), getVideo(), listener).run();
     }
 
     @Override
@@ -35,7 +35,7 @@ public interface GroupAction extends Action {
     }
 
     default void onGroupActionClicked(long groupId) {
-        new OnClicked(groupId, getBaseContext(), getVideo(), this).run();
+        new OnClicked(groupId, getContext(), getVideo(), this).run();
     }
 
     default long getGroupActionId(long groupId) {

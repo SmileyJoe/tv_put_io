@@ -87,6 +87,13 @@ public class TmdbUtil {
             task.setListener(mListener);
             task.run();
         }
+
+        @Override
+        public void onFail(Exception e) {
+            if(mListener != null){
+                mListener.update(mVideo);
+            }
+        }
     }
 
     public static class ProcessTmdbResponse extends Async.Runner<Video> {

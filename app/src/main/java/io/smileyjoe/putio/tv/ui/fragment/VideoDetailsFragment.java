@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,7 @@ import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.activity.MainActivity;
 import io.smileyjoe.putio.tv.ui.activity.VideoDetailsActivity;
+import io.smileyjoe.putio.tv.ui.activity.VideoDetailsBackdropActivity;
 import io.smileyjoe.putio.tv.ui.viewholder.RelatedVideoCardPresenter;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsDescriptionPresenter;
 import io.smileyjoe.putio.tv.util.VideoUtil;
@@ -198,6 +200,12 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void update(Video video) {
+        if (video.isTmdbFound()) {
+            startActivity(VideoDetailsBackdropActivity.getIntent(getBaseContext(), video));
+            getActivity().finish();
+            return;
+        }
+
         if (mRow.getItem() == null) {
             mRow.setItem(video);
         } else {
