@@ -66,6 +66,7 @@ android {
     buildTypes {
         debug{
             applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
             ext.enableCrashlytics = getEnableCrashlyticsDebug()
             resValue 'string', 'host_name', 'debug.' + project.ext.get('host')
 
