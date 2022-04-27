@@ -90,7 +90,7 @@ public class TmdbUtil {
 
         @Override
         public void onFail(Exception e) {
-            if(mListener != null){
+            if (mListener != null) {
                 mListener.update(mVideo);
             }
         }

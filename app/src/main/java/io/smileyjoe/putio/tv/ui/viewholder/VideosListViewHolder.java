@@ -1,26 +1,11 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
-import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.ContextMenu;
-import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.leanback.widget.Action;
-import androidx.leanback.widget.ArrayObjectAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.action.video.ActionOption;
-import io.smileyjoe.putio.tv.action.video.GroupAction;
-import io.smileyjoe.putio.tv.action.video.PlayAction;
-import io.smileyjoe.putio.tv.action.video.RefreshAction;
-import io.smileyjoe.putio.tv.action.video.ResumeAction;
 import io.smileyjoe.putio.tv.databinding.ListItemVideoBinding;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;

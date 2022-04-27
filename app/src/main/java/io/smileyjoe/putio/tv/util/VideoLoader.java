@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 
@@ -82,7 +81,7 @@ public class VideoLoader {
         return null;
     }
 
-    public static void update(Context context, Video updateVideo){
+    public static void update(Context context, Video updateVideo) {
         // this is so we don't have to expose the class without a listener attached //
         getInstance(context).update(updateVideo);
     }

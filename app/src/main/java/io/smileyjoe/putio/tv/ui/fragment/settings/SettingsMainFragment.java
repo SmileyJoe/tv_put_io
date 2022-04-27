@@ -9,7 +9,6 @@ import androidx.leanback.widget.GuidedAction;
 
 import java.util.List;
 
-import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.R;
 
 public class SettingsMainFragment extends SettingsBaseFragment {
@@ -73,7 +72,7 @@ public class SettingsMainFragment extends SettingsBaseFragment {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsVideoLayoutFragment());
         } else if (action.getId() == ID_VIDEO_NUM_COLS) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsVideoColumnFragment());
-        } else if(action.getId() == ID_STATUS) {
+        } else if (action.getId() == ID_STATUS) {
             GuidedStepSupportFragment.add(getParentFragmentManager(), new SettingsStatusFragment());
         } else {
             getActivity().finishAfterTransition();

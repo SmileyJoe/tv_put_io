@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.leanback.widget.GuidanceStylist;
 import androidx.leanback.widget.GuidedAction;
 
-import com.prof.rssparser.Article;
 import com.prof.rssparser.Channel;
 import com.prof.rssparser.OnTaskCompleted;
 import com.prof.rssparser.Parser;
@@ -20,10 +19,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.R;
 
-public class SettingsStatusFragment extends SettingsBaseFragment{
+public class SettingsStatusFragment extends SettingsBaseFragment {
 
     private static final String RSS_FEED = "https://hf2g47jkpb2s.statuspage.io/history.rss";
 

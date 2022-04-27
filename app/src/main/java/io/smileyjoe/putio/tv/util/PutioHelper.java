@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -16,7 +15,6 @@ import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.object.VirtualDirectory;
 
 public class PutioHelper {
@@ -86,7 +84,7 @@ public class PutioHelper {
             Video currentDbVideo = VideoUtil.getFromDbByPutId(mContext, mCurrent.getPutId());
 
             if (currentDbVideo != null) {
-                if(currentDbVideo.isTmdbFound()){
+                if (currentDbVideo.isTmdbFound()) {
                     Video updated = VideoUtil.updateFromDb(mCurrent, currentDbVideo);
                     AppDatabase.getInstance(mContext).videoDao().insert(updated);
                     mVideos.add(updated);
@@ -104,7 +102,7 @@ public class PutioHelper {
         Collections.sort(mFolders, new FolderComparator());
     }
 
-    private void updateTmdb(long parentTmdbId, Video video){
+    private void updateTmdb(long parentTmdbId, Video video) {
         switch (video.getVideoType()) {
             case MOVIE:
                 if (!video.isTmdbChecked()) {

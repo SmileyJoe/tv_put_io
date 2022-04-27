@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.action.video;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -29,7 +28,7 @@ public interface Action {
         addAction(option, getContext().getString(option.getTitleResId()), null, shouldShow);
     }
 
-    default void addAction(ActionOption option, String title, String subtitle, boolean shouldShow){
+    default void addAction(ActionOption option, String title, String subtitle, boolean shouldShow) {
         // do nothing //
     }
 
@@ -84,7 +83,7 @@ public interface Action {
         }
     }
 
-    class OnContextItemClicked implements MenuItem.OnMenuItemClickListener{
+    class OnContextItemClicked implements MenuItem.OnMenuItemClickListener {
         private Action mListener;
         private ActionOption mOption;
 
