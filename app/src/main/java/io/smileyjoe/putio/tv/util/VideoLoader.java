@@ -22,31 +22,17 @@ import io.smileyjoe.putio.tv.object.VirtualDirectory;
 
 public class VideoLoader {
 
-    public interface Listener extends PutioHelper.Listener {
-    }
-
     private Context mContext;
     private HashMap<Long, ArrayList<Video>> mVideos;
     private HashMap<Long, ArrayList<Folder>> mFolders;
     private HashMap<Long, Video> mParents;
     private ArrayList<HistoryItem> mHistory;
-    private Optional<Listener> mListener = Optional.empty();
     private static VideoLoader sInstance;
 
-    private static VideoLoader getInstance(Context context) {
+    public static VideoLoader getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new VideoLoader(context);
         }
-
-        return sInstance;
-    }
-
-    public static VideoLoader getInstance(Context context, Listener listener) {
-        if (sInstance == null) {
-            sInstance = new VideoLoader(context);
-        }
-
-        sInstance.setListener(listener);
 
         return sInstance;
     }
@@ -57,10 +43,6 @@ public class VideoLoader {
         mFolders = new HashMap<>();
         mParents = new HashMap<>();
         mHistory = new ArrayList<>();
-    }
-
-    public void setListener(Listener listener) {
-        mListener = Optional.ofNullable(listener);
     }
 
     public Video getVideo(HistoryItem historyItem) {
@@ -247,7 +229,7 @@ public class VideoLoader {
 
                 if (videos == null) {
                     PutioHelper helper = new PutioHelper(mContext);
-                    mListener.ifPresent(helper::setListener);
+                    helper.setListener(video -> Broadcast.Videos.update(mContext, video));
 
                     JsonObject result = Putio.Files.get(mContext, id);
 
@@ -274,7 +256,7 @@ public class VideoLoader {
 
                 if (parent == null) {
                     PutioHelper helper = new PutioHelper(mContext);
-                    mListener.ifPresent(helper::setListener);
+                    helper.setListener(video -> Broadcast.Videos.update(mContext, video));
 
                     JsonObject result = Putio.Files.get(mContext, id);
 
@@ -332,7 +314,7 @@ public class VideoLoader {
         @Override
         protected Void onBackground() {
             PutioHelper helper = new PutioHelper(mContext);
-            mListener.ifPresent(helper::setListener);
+            helper.setListener(video -> Broadcast.Videos.update(mContext, video));
             helper.parse(mPutId, mResult);
 
             mCurrentPutId = helper.getCurrent().getPutId();

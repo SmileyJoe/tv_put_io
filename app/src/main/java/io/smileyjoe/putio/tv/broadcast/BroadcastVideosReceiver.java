@@ -14,6 +14,7 @@ import io.smileyjoe.putio.tv.object.Video;
 
 public interface BroadcastVideosReceiver extends Base{
 
+    void update(Video video);
     void onVideosLoadStarted();
     void onVideosLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
 
@@ -25,6 +26,10 @@ public interface BroadcastVideosReceiver extends Base{
                 intent.getParcelableArrayListExtra(Broadcast.Videos.EXTRA_VIDEOS),
                 intent.getParcelableArrayListExtra(Broadcast.Videos.EXTRA_FOLDERS),
                 intent.getBooleanExtra(Broadcast.Videos.EXTRA_SHOULD_ADD_HISTORY, false)));
+
+        registerReceiver(Broadcast.Videos.UPDATE, (context, intent) -> update(
+                intent.getParcelableExtra(Broadcast.Videos.EXTRA_VIDEO)
+        ));
     }
 
 }

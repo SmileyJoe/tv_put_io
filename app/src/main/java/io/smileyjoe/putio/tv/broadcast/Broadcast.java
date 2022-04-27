@@ -31,10 +31,12 @@ public class Broadcast {
 
         public static final String STARTED = action("started");
         public static final String LOADED = action("loaded");
+        public static final String UPDATE = action("update");
         public static final String EXTRA_HISTORY = "history_item";
         public static final String EXTRA_VIDEOS = "videos";
         public static final String EXTRA_FOLDERS = "folders";
         public static final String EXTRA_SHOULD_ADD_HISTORY = "should_add_history";
+        public static final String EXTRA_VIDEO = "video";
 
         private Videos(){}
 
@@ -51,6 +53,13 @@ public class Broadcast {
             intent.putExtra(EXTRA_VIDEOS, videos);
             intent.putExtra(EXTRA_FOLDERS, folders);
             intent.putExtra(EXTRA_SHOULD_ADD_HISTORY, shouldAddToHistory);
+            context.sendBroadcast(intent);
+        }
+
+        public static void update(Context context, Video video){
+            Intent intent = new Intent();
+            intent.setAction(UPDATE);
+            intent.putExtra(EXTRA_VIDEO, video);
             context.sendBroadcast(intent);
         }
     }

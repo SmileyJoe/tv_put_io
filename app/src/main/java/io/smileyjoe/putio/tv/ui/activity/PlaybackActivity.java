@@ -295,7 +295,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     private void play(Video video) {
         mPlaybackVideoFragment.play(video);
         video.setWatched(true);
-        VideoLoader.getInstance(getBaseContext(), null).update(video);
+        VideoLoader.getInstance(getBaseContext()).update(video);
     }
 
     private boolean play(Video current, PlayAction action) {

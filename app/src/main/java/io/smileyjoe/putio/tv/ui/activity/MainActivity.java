@@ -50,7 +50,7 @@ import io.smileyjoe.putio.tv.util.VideoLoader;
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends BaseActivity<ActivityMainBinding> implements BroadcastVideosReceiver, VideoLoader.Listener, BaseFragment.OnFocusSearchListener {
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements BroadcastVideosReceiver, BaseFragment.OnFocusSearchListener {
 
     private static final String EXTRA_URI_HANDLER = "uri_handler";
 
@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements B
 
         mFragmentFolderList.setForceFocus(true);
 
-        mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
+        mVideoLoader = VideoLoader.getInstance(getApplicationContext());
         mVideoLoader.loadDirectory();
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
@@ -176,7 +176,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements B
         BroadcastVideosReceiver.super.onResume();
 
         if (mVideoLoader != null) {
-            mVideoLoader.setListener(this);
             mVideoLoader.reload();
         }
     }
