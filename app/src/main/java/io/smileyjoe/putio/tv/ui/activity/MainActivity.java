@@ -45,7 +45,7 @@ import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.Settings;
-import io.smileyjoe.putio.tv.util.VideoLoader;
+import io.smileyjoe.putio.tv.video.VideoLoader;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements B
 
         mFragmentFolderList.setForceFocus(true);
 
-        mVideoLoader = VideoLoader.getInstance(getApplicationContext());
+        mVideoLoader = new VideoLoader(getBaseContext());
         mVideoLoader.loadDirectory();
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());

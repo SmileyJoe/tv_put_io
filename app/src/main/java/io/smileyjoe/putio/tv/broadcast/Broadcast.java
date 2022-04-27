@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.broadcast;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
@@ -13,21 +12,23 @@ import io.smileyjoe.putio.tv.object.Video;
 
 public class Broadcast {
 
-    interface Listener{
+    interface Listener {
         void onReceive(Context context, Intent intent);
     }
 
-    private Broadcast(){}
+    private Broadcast() {
+    }
 
-    private static abstract class Base{
-        private Base(){}
+    private static abstract class Base {
+        private Base() {
+        }
 
-        protected static String action(String type){
+        protected static String action(String type) {
             return BuildConfig.APPLICATION_ID + "." + type;
         }
     }
 
-    public static class Videos extends Base{
+    public static class Videos extends Base {
 
         public static final String STARTED = action("started");
         public static final String LOADED = action("loaded");
@@ -38,15 +39,16 @@ public class Broadcast {
         public static final String EXTRA_SHOULD_ADD_HISTORY = "should_add_history";
         public static final String EXTRA_VIDEO = "video";
 
-        private Videos(){}
+        private Videos() {
+        }
 
-        public static void loadStarted(Context context){
+        public static void loadStarted(Context context) {
             Intent intent = new Intent();
             intent.setAction(STARTED);
             context.sendBroadcast(intent);
         }
 
-        public static void loaded(Context context, HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory){
+        public static void loaded(Context context, HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
             Intent intent = new Intent();
             intent.setAction(LOADED);
             intent.putExtra(EXTRA_HISTORY, item);
@@ -56,7 +58,7 @@ public class Broadcast {
             context.sendBroadcast(intent);
         }
 
-        public static void update(Context context, Video video){
+        public static void update(Context context, Video video) {
             Intent intent = new Intent();
             intent.setAction(UPDATE);
             intent.putExtra(EXTRA_VIDEO, video);

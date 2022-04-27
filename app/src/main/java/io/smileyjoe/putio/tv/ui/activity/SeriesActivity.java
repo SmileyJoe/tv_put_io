@@ -25,7 +25,7 @@ import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.SeasonDetailsFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
-import io.smileyjoe.putio.tv.util.VideoLoader;
+import io.smileyjoe.putio.tv.video.VideoLoader;
 
 public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implements BroadcastVideosReceiver {
 
@@ -55,7 +55,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
 
         mFragmentVideoList.setListener(new VideoListListener());
 
-        mVideoLoader = VideoLoader.getInstance(getApplicationContext());
+        mVideoLoader = new VideoLoader(getApplicationContext());
 
         handleExtras();
     }
@@ -66,7 +66,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
         BroadcastVideosReceiver.super.onResume();
 
         if (mVideoLoader == null) {
-            mVideoLoader = VideoLoader.getInstance(getBaseContext());
+            mVideoLoader = new VideoLoader(getBaseContext());
         }
 
         mVideoLoader.loadDirectory(mSeries.getPutId(), mSeries.getTitle());

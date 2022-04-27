@@ -17,7 +17,7 @@ import io.smileyjoe.putio.tv.object.Conversion;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.PutioHelper;
-import io.smileyjoe.putio.tv.util.VideoLoader;
+import io.smileyjoe.putio.tv.video.VideoCache;
 
 public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
 
@@ -97,7 +97,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
                             helper.parse(mVideo.getPutId(), Putio.Files.get(getContext(), mVideo.getPutId()));
                             return helper.getCurrent();
                         }, video -> {
-                            VideoLoader.getInstance(getContext()).update(video);
+                            VideoCache.getInstance().update(video);
                             mListener.ifPresent(listener -> listener.conversionFinished(video));
                         });
                         break;
@@ -106,7 +106,7 @@ public class ConvertFragment extends BaseFragment<FragmentConvertBinding> {
                             @Override
                             public void onSuccess(JsonObject result) {
                                 mVideo.setConverting(true);
-                                VideoLoader.getInstance(getContext()).update(mVideo);
+                                VideoCache.getInstance().update(mVideo);
                                 getConversionStatus();
                             }
                         });

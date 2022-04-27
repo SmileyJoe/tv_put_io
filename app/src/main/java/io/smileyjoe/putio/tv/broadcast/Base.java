@@ -13,7 +13,7 @@ public interface Base {
 
     ArrayList<BroadcastReceiver> registeredReceivers = new ArrayList<>();
 
-    default void registerReceiver(String type, Broadcast.Listener listener){
+    default void registerReceiver(String type, Broadcast.Listener listener) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -21,12 +21,12 @@ public interface Base {
             }
         };
 
-        getBaseContext().registerReceiver(receiver,new IntentFilter(type));
+        getBaseContext().registerReceiver(receiver, new IntentFilter(type));
 
         registeredReceivers.add(receiver);
     }
 
-    default void onPause(){
+    default void onPause() {
         registeredReceivers.forEach(receiver -> getBaseContext().unregisterReceiver(receiver));
         registeredReceivers.removeAll(registeredReceivers);
     }
