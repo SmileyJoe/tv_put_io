@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.smileyjoe.putio.tv.broadcast.Broadcast;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.network.Putio;
@@ -22,8 +23,6 @@ import io.smileyjoe.putio.tv.object.VirtualDirectory;
 public class VideoLoader {
 
     public interface Listener extends PutioHelper.Listener {
-        void onVideosLoadStarted();
-        void onVideosLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
     }
 
     private Context mContext;
@@ -141,7 +140,7 @@ public class VideoLoader {
     }
 
     public void loadGroup(Long id, boolean shouldAddToHistory) {
-        mListener.ifPresent(listener -> listener.onVideosLoadStarted());
+        Broadcast.Videos.loadStarted(mContext);
         new GetGroup(id, shouldAddToHistory).run();
     }
 
@@ -195,15 +194,15 @@ public class VideoLoader {
                 if (groups != null && !groups.isEmpty()) {
                     groups.forEach(group -> tempFolders.add(0, group));
                 }
-                mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, tempFolders, shouldAddToHistory));
+                Broadcast.Videos.loaded(mContext, item, videos, tempFolders, shouldAddToHistory);
             });
         } else {
-            mListener.ifPresent(listener -> listener.onVideosLoadFinished(item, videos, tempFolders, shouldAddToHistory));
+            Broadcast.Videos.loaded(mContext, item, videos, tempFolders, shouldAddToHistory);
         }
     }
 
     private void getFromPut(long putId) {
-        mListener.ifPresent(listener -> listener.onVideosLoadStarted());
+        Broadcast.Videos.loadStarted(mContext);
         Putio.Files.get(mContext, putId, new OnPutResponse(putId));
     }
 
@@ -360,6 +359,4 @@ public class VideoLoader {
             onVideosLoaded(historyItem, mVideos.get(mCurrentPutId), mFolders.get(mCurrentPutId), true);
         }
     }
-
-
 }

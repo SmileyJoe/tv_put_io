@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.broadcast.BroadcastVideosReceiver;
 import io.smileyjoe.putio.tv.channel.UriHandler;
 import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -49,7 +50,7 @@ import io.smileyjoe.putio.tv.util.VideoLoader;
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends BaseActivity<ActivityMainBinding> implements VideoLoader.Listener, BaseFragment.OnFocusSearchListener {
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements BroadcastVideosReceiver, VideoLoader.Listener, BaseFragment.OnFocusSearchListener {
 
     private static final String EXTRA_URI_HANDLER = "uri_handler";
 
@@ -170,13 +171,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
+        BroadcastVideosReceiver.super.onResume();
 
         if (mVideoLoader != null) {
             mVideoLoader.setListener(this);
             mVideoLoader.reload();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BroadcastVideosReceiver.super.onPause();
     }
 
     @Override

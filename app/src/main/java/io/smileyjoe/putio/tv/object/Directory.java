@@ -8,7 +8,7 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.util.Format;
 
-public class Directory implements Folder, Parcelable {
+public class Directory implements Folder {
 
     private long mPutId;
     private String mTitle;

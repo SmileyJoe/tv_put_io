@@ -13,6 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.broadcast.BroadcastVideosReceiver;
 import io.smileyjoe.putio.tv.channel.ChannelType;
 import io.smileyjoe.putio.tv.channel.Channels;
 import io.smileyjoe.putio.tv.databinding.ActivitySeriesBinding;
@@ -26,7 +27,7 @@ import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
 import io.smileyjoe.putio.tv.util.VideoLoader;
 
-public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implements VideoLoader.Listener {
+public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implements BroadcastVideosReceiver, VideoLoader.Listener {
 
     private static final String EXTRA_SERIES = "series";
 
@@ -60,8 +61,10 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
+        BroadcastVideosReceiver.super.onResume();
+
         if (mVideoLoader != null) {
             mVideoLoader.setListener(this);
         } else {
@@ -69,6 +72,12 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
         }
 
         mVideoLoader.loadDirectory(mSeries.getPutId(), mSeries.getTitle());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BroadcastVideosReceiver.super.onPause();
     }
 
     @Override

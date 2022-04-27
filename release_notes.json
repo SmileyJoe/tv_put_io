@@ -39,7 +39,9 @@
           "Added a put.io service status feed"
         ],
         "1": [
-          "Update dependencies"
+          "Update dependencies",
+          "Add -debug suffix to version name",
+          "Moving to broadcasts for videos loading"
         ]
       }
     }

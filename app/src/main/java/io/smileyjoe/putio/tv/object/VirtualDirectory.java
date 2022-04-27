@@ -1,6 +1,8 @@
 package io.smileyjoe.putio.tv.object;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
@@ -120,4 +122,47 @@ public class VirtualDirectory implements Folder {
     public Filter getDefaultFilter() {
         return mDefaultFilter;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.mPutId);
+        dest.writeString(this.mTitle);
+        dest.writeInt(this.mSubtextOne);
+        dest.writeInt(this.mSubtextTwo);
+        dest.writeInt(this.mFileType == null ? -1 : this.mFileType.ordinal());
+        dest.writeInt(this.mIconResId);
+        dest.writeInt(this.mDefaultFilter == null ? -1 : this.mDefaultFilter.ordinal());
+    }
+
+    public VirtualDirectory() {
+    }
+
+    protected VirtualDirectory(Parcel in) {
+        this.mPutId = in.readLong();
+        this.mTitle = in.readString();
+        this.mSubtextOne = in.readInt();
+        this.mSubtextTwo = in.readInt();
+        int tmpMFileType = in.readInt();
+        this.mFileType = tmpMFileType == -1 ? null : FileType.values()[tmpMFileType];
+        this.mIconResId = in.readInt();
+        int tmpMDefaultFilter = in.readInt();
+        this.mDefaultFilter = tmpMDefaultFilter == -1 ? null : Filter.values()[tmpMDefaultFilter];
+    }
+
+    public static final Parcelable.Creator<VirtualDirectory> CREATOR = new Parcelable.Creator<VirtualDirectory>() {
+        @Override
+        public VirtualDirectory createFromParcel(Parcel source) {
+            return new VirtualDirectory(source);
+        }
+
+        @Override
+        public VirtualDirectory[] newArray(int size) {
+            return new VirtualDirectory[size];
+        }
+    };
 }
