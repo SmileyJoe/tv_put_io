@@ -164,7 +164,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
 
     @Override
     public Context getContext() {
-        return getBaseContext();
+        return this;
     }
 
     @Override

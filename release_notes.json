@@ -41,7 +41,8 @@
         "1": [
           "Update dependencies",
           "Add -debug suffix to version name",
-          "Moving to broadcasts for videos loading"
+          "Moving to broadcasts for videos loading",
+          "Fixes watch and resume not working from details page"
         ]
       }
     }
