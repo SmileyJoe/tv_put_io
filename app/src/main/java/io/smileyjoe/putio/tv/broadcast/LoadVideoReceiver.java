@@ -11,14 +11,16 @@ import io.smileyjoe.putio.tv.object.VirtualDirectory;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.Settings;
 
-public interface BroadcastVideosReceiver extends Base {
+public interface LoadVideoReceiver extends UpdateVideoReceiver {
 
-    void update(Video video);
-    void onVideosLoadStarted();
-    void onVideosLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
+    void videoLoadStarted();
+    void videoLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory);
 
-    default void onResume() {
-        registerReceiver(Broadcast.Videos.STARTED, (context, intent) -> onVideosLoadStarted());
+    @Override
+    default void registerReceiver() {
+        UpdateVideoReceiver.super.registerReceiver();
+
+        registerReceiver(Broadcast.Videos.STARTED, (context, intent) -> videoLoadStarted());
 
         registerReceiver(Broadcast.Videos.LOADED, (context, intent) -> {
 
@@ -36,24 +38,20 @@ public interface BroadcastVideosReceiver extends Base {
                         groups.forEach(group -> folders.add(0, group));
                     }
 
-                    onVideosLoadFinished(
+                    videoLoadFinished(
                             historyItem,
                             videos,
                             folders,
                             shouldAddToHistory);
                 });
             } else {
-                onVideosLoadFinished(
+                videoLoadFinished(
                         historyItem,
                         videos,
                         folders,
                         shouldAddToHistory);
             }
         });
-
-        registerReceiver(Broadcast.Videos.UPDATE, (context, intent) -> update(
-                intent.getParcelableExtra(Broadcast.Videos.EXTRA_VIDEO)
-        ));
     }
 
 }

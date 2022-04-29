@@ -1,20 +1,19 @@
 package io.smileyjoe.putio.tv.broadcast;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
 import java.util.ArrayList;
 
-public interface Base {
+public interface BroadcastReceiver {
     Context getBaseContext();
-    void onResume();
+    void registerReceiver();
 
-    ArrayList<BroadcastReceiver> registeredReceivers = new ArrayList<>();
+    ArrayList<android.content.BroadcastReceiver> registeredReceivers = new ArrayList<>();
 
     default void registerReceiver(String type, Broadcast.Listener listener) {
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        android.content.BroadcastReceiver receiver = new android.content.BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 listener.onReceive(context, intent);
@@ -26,7 +25,7 @@ public interface Base {
         registeredReceivers.add(receiver);
     }
 
-    default void onPause() {
+    default void deregisterReceiver() {
         registeredReceivers.forEach(receiver -> getBaseContext().unregisterReceiver(receiver));
         registeredReceivers.removeAll(registeredReceivers);
     }

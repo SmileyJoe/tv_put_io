@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.broadcast.BroadcastVideosReceiver;
+import io.smileyjoe.putio.tv.broadcast.LoadVideoReceiver;
 import io.smileyjoe.putio.tv.channel.UriHandler;
 import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -50,7 +50,7 @@ import io.smileyjoe.putio.tv.video.VideoLoader;
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends BaseActivity<ActivityMainBinding> implements BroadcastVideosReceiver, BaseFragment.OnFocusSearchListener {
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements LoadVideoReceiver, BaseFragment.OnFocusSearchListener {
 
     private static final String EXTRA_URI_HANDLER = "uri_handler";
 
@@ -173,7 +173,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements B
     @Override
     public void onResume() {
         super.onResume();
-        BroadcastVideosReceiver.super.onResume();
+        LoadVideoReceiver.super.registerReceiver();
 
         if (mVideoLoader != null) {
             mVideoLoader.reload();
@@ -183,16 +183,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements B
     @Override
     public void onPause() {
         super.onPause();
-        BroadcastVideosReceiver.super.onPause();
+        LoadVideoReceiver.super.deregisterReceiver();
     }
 
     @Override
-    public void onVideosLoadStarted() {
+    public void videoLoadStarted() {
         mView.frameLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onVideosLoadFinished(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
+    public void videoLoadFinished(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
         if (mUriHandler != null && mUriHandler.isValid()) {
             mUriHandler.execute(getBaseContext(), (type, video) -> {
                 switch (type) {
