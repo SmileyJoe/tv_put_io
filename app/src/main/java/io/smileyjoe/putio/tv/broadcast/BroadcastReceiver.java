@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import java.util.ArrayList;
 
 public interface BroadcastReceiver {
-    Context getBaseContext();
+    Context getContext();
     void registerReceiver();
 
     ArrayList<android.content.BroadcastReceiver> registeredReceivers = new ArrayList<>();
@@ -20,13 +20,19 @@ public interface BroadcastReceiver {
             }
         };
 
-        getBaseContext().registerReceiver(receiver, new IntentFilter(type));
+        getContext().registerReceiver(receiver, new IntentFilter(type));
 
         registeredReceivers.add(receiver);
     }
 
     default void deregisterReceiver() {
-        registeredReceivers.forEach(receiver -> getBaseContext().unregisterReceiver(receiver));
+        registeredReceivers.forEach(receiver -> {
+            try {
+                getContext().unregisterReceiver(receiver);
+            } catch (IllegalArgumentException e){
+                // do nothing, receiver has been deregistered already //
+            }
+        });
         registeredReceivers.removeAll(registeredReceivers);
     }
 

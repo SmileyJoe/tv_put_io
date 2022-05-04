@@ -60,7 +60,6 @@ public class GetGroup extends Async.Runner<Void> {
 
             if (videos == null) {
                 PutioHelper helper = new PutioHelper(mContext);
-                helper.setListener(video -> Broadcast.Videos.update(mContext, video));
 
                 JsonObject result = Putio.Files.get(mContext, id);
 
@@ -85,7 +84,6 @@ public class GetGroup extends Async.Runner<Void> {
 
             if (parent == null) {
                 PutioHelper helper = new PutioHelper(mContext);
-                helper.setListener(video -> Broadcast.Videos.update(mContext, video));
 
                 JsonObject result = Putio.Files.get(mContext, id);
 

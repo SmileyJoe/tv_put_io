@@ -18,6 +18,7 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
 import io.smileyjoe.putio.tv.action.video.PlayAction;
 import io.smileyjoe.putio.tv.action.video.RefreshAction;
+import io.smileyjoe.putio.tv.broadcast.UpdateVideoReceiver;
 import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Video;
@@ -128,6 +129,7 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
         @Override
         public void update(Video video) {
             getListener().ifPresent(l -> l.update(video, getInternalPosition()));
+            RefreshAction.super.update(video);
         }
     }
 }

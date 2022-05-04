@@ -82,6 +82,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
 
     @Override
     public void update(Video video) {
+        RefreshAction.super.update(video);
         populate();
     }
 

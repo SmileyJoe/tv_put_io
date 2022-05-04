@@ -79,6 +79,11 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     }
 
     @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
     protected ActivitySeriesBinding inflate() {
         return ActivitySeriesBinding.inflate(getLayoutInflater());
     }

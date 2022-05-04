@@ -30,10 +30,10 @@ public interface LoadVideoReceiver extends UpdateVideoReceiver {
             boolean shouldAddToHistory = intent.getBooleanExtra(Broadcast.Videos.EXTRA_SHOULD_ADD_HISTORY, false);
 
             if (historyItem.getId() == Putio.Files.NO_PARENT) {
-                if (Settings.getInstance(getBaseContext()).shouldShowRecentlyAdded()) {
-                    folders.add(0, VirtualDirectory.getRecentAdded(getBaseContext()));
+                if (Settings.getInstance(getContext()).shouldShowRecentlyAdded()) {
+                    folders.add(0, VirtualDirectory.getRecentAdded(getContext()));
                 }
-                Async.run(() -> AppDatabase.getInstance(getBaseContext()).groupDao().getEnabled(), groups -> {
+                Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().getEnabled(), groups -> {
                     if (groups != null && !groups.isEmpty()) {
                         groups.forEach(group -> folders.add(0, group));
                     }
@@ -53,5 +53,4 @@ public interface LoadVideoReceiver extends UpdateVideoReceiver {
             }
         });
     }
-
 }

@@ -29,7 +29,6 @@ public class ProcessPutResponse extends Async.Runner<Void> {
     @Override
     protected Void onBackground() {
         PutioHelper helper = new PutioHelper(mContext);
-        helper.setListener(video -> Broadcast.Videos.update(mContext, video));
         helper.parse(mPutId, mResult);
 
         mCurrentPutId = helper.getCurrent().getPutId();

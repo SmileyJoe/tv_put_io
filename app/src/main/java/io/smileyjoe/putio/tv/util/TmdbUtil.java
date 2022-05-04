@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import io.smileyjoe.putio.tv.broadcast.Broadcast;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
@@ -21,10 +22,6 @@ import io.smileyjoe.putio.tv.object.VideoType;
 
 public class TmdbUtil {
 
-    public interface Listener {
-        void update(Video video);
-    }
-
     private TmdbUtil() {
     }
 
@@ -32,15 +29,10 @@ public class TmdbUtil {
 
         private Context mContext;
         private Video mVideo;
-        private Listener mListener;
 
         public OnTmdbSeriesSearchResponse(Context context, Video video) {
             mContext = context;
             mVideo = video;
-        }
-
-        public void setListener(Listener listener) {
-            mListener = listener;
         }
 
         @Override
@@ -60,7 +52,6 @@ public class TmdbUtil {
                 JsonUtil json = new JsonUtil(jsonObject);
 
                 TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, mVideo);
-                response.setListener(mListener);
                 Tmdb.Series.get(mContext, json.getLong("id"), response);
             }
         }
@@ -70,29 +61,21 @@ public class TmdbUtil {
 
         private Context mContext;
         private Video mVideo;
-        private Listener mListener;
 
         public OnTmdbResponse(Context context, Video video) {
             mContext = context;
             mVideo = video;
         }
 
-        public void setListener(Listener listener) {
-            mListener = listener;
-        }
-
         @Override
         public void onSuccess(JsonObject result) {
             ProcessTmdbResponse task = new ProcessTmdbResponse(mContext, mVideo, result);
-            task.setListener(mListener);
             task.run();
         }
 
         @Override
         public void onFail(Exception e) {
-            if (mListener != null) {
-                mListener.update(mVideo);
-            }
+            Broadcast.Videos.update(mContext, mVideo);
         }
     }
 
@@ -101,16 +84,11 @@ public class TmdbUtil {
         private Context mContext;
         private JsonObject mResult;
         private Video mVideo;
-        private Optional<Listener> mListener = Optional.empty();
 
         public ProcessTmdbResponse(Context context, Video video, JsonObject result) {
             mContext = context;
             mVideo = video;
             mResult = result;
-        }
-
-        public void setListener(Listener listener) {
-            mListener = Optional.ofNullable(listener);
         }
 
         @Override
@@ -127,7 +105,7 @@ public class TmdbUtil {
 
         @Override
         protected void onMain(Video video) {
-            mListener.ifPresent(listener -> listener.update(video));
+            Broadcast.Videos.update(mContext, video);
         }
 
         private void handleCast(Video video, JsonObject jsonObject) {
