@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.action.video.RefreshAction;
 import io.smileyjoe.putio.tv.broadcast.LoadVideoReceiver;
 import io.smileyjoe.putio.tv.channel.UriHandler;
 import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;

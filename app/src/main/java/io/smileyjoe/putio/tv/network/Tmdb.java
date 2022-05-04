@@ -8,12 +8,9 @@ import com.koushikdutta.ion.Ion;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.torrent.Parse;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
 

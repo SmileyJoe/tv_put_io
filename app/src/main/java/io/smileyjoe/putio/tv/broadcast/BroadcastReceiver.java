@@ -29,7 +29,7 @@ public interface BroadcastReceiver {
         registeredReceivers.forEach(receiver -> {
             try {
                 getContext().unregisterReceiver(receiver);
-            } catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 // do nothing, receiver has been deregistered already //
             }
         });

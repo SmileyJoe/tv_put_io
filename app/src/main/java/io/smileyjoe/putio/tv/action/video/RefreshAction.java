@@ -6,12 +6,11 @@ import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.PutioHelper;
-import io.smileyjoe.putio.tv.video.VideoCache;
 
 public interface RefreshAction extends Action, UpdateVideoReceiver {
 
     @Override
-    default void update(Video video){
+    default void update(Video video) {
         UpdateVideoReceiver.super.deregisterReceiver();
     }
 
