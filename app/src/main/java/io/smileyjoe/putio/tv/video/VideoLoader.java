@@ -5,9 +5,11 @@ import android.content.Context;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.broadcast.Broadcast;
+import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.HistoryItem;
 import io.smileyjoe.putio.tv.object.Video;
+import io.smileyjoe.putio.tv.util.PutioHelper;
 
 public class VideoLoader {
 
@@ -47,6 +49,12 @@ public class VideoLoader {
     private void loadGroup(Long id, boolean shouldAddToHistory) {
         Broadcast.Videos.loadStarted(mContext);
         new GetGroup(mContext, id, shouldAddToHistory).run();
+    }
+
+    public void refresh(Video video){
+        AppDatabase.getInstance(mContext).videoDao().delete(video.getPutId());
+        PutioHelper helper = new PutioHelper(mContext);
+        helper.parse(video.getPutId(), video.getParentTmdbId(), Putio.Files.get(mContext, video.getPutId()));
     }
 
     public boolean back() {

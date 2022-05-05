@@ -1,11 +1,9 @@
 package io.smileyjoe.putio.tv.action.video;
 
 import io.smileyjoe.putio.tv.broadcast.UpdateVideoReceiver;
-import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.util.Async;
-import io.smileyjoe.putio.tv.util.PutioHelper;
+import io.smileyjoe.putio.tv.video.VideoLoader;
 
 public interface RefreshAction extends Action, UpdateVideoReceiver {
 
@@ -15,11 +13,7 @@ public interface RefreshAction extends Action, UpdateVideoReceiver {
     }
 
     default void refreshData() {
-        Async.run(() -> {
-            AppDatabase.getInstance(getContext()).videoDao().delete(getVideo().getPutId());
-            PutioHelper helper = new PutioHelper(getContext());
-            helper.parse(getVideo().getPutId(), getVideo().getParentTmdbId(), Putio.Files.get(getContext(), getVideo().getPutId()));
-        });
+        Async.run(() -> new VideoLoader(getContext()).refresh(getVideo()));
     }
 
     @Override
