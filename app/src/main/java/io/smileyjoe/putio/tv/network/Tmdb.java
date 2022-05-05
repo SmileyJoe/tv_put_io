@@ -2,19 +2,15 @@ package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.torrent.Parse;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.TmdbUtil;
 
@@ -32,33 +28,6 @@ public class Tmdb {
     private static String PARAM_API_KEY = "api_key";
     private static String PARAM_SEARCH = "query";
     private static String PARAM_YEAR = "primary_release_year";
-
-    public static void update(Context context, Video video, TmdbUtil.Listener listener) {
-        TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(context, video);
-        response.setListener(listener);
-
-        switch (video.getVideoType()) {
-            case SEASON:
-                Tmdb.Series.get(context, video.getTmdbId(), response);
-                break;
-            case EPISODE:
-                Tmdb.Series.getEpisode(context, video.getTmdbId(), video.getSeason(), video.getEpisode(), response);
-                break;
-            case MOVIE:
-                HashMap<String, String> details = Parse.parse(video.getPutTitle());
-
-                response = new TmdbUtil.OnTmdbResponse(context, video);
-                response.setListener(searchedVideo -> {
-                    if (searchedVideo.isTmdbFound()) {
-                        TmdbUtil.OnTmdbResponse responseGet = new TmdbUtil.OnTmdbResponse(context, video);
-                        responseGet.setListener(listener);
-                        Tmdb.Movie.get(context, video.getTmdbId(), responseGet);
-                    }
-                });
-                Tmdb.Movie.search(context, details.get("title"), Integer.parseInt(details.get("year")), response);
-                break;
-        }
-    }
 
     private static class Base {
         protected static String getUrl(String... paths) {

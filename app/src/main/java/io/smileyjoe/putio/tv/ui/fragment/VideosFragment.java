@@ -127,7 +127,7 @@ public class VideosFragment extends BaseFragment<FragmentVideoListBinding> {
     }
 
     public void setVideos(Video parent, ArrayList<Video> videos) {
-        if(parent != null && parent.isTmdbFound()){
+        if (parent != null && parent.isTmdbFound()) {
             videos.stream().forEach(video -> video.setParentTmdbId(parent.getTmdbId()));
         }
         mAppliedGenreId = -1;

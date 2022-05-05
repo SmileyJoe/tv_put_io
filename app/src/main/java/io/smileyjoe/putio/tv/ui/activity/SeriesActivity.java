@@ -13,6 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.broadcast.LoadVideoReceiver;
 import io.smileyjoe.putio.tv.channel.ChannelType;
 import io.smileyjoe.putio.tv.channel.Channels;
 import io.smileyjoe.putio.tv.databinding.ActivitySeriesBinding;
@@ -24,9 +25,9 @@ import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 import io.smileyjoe.putio.tv.ui.fragment.SeasonDetailsFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.FragmentUtil;
-import io.smileyjoe.putio.tv.util.VideoLoader;
+import io.smileyjoe.putio.tv.video.VideoLoader;
 
-public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implements VideoLoader.Listener {
+public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implements LoadVideoReceiver {
 
     private static final String EXTRA_SERIES = "series";
 
@@ -54,21 +55,32 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
 
         mFragmentVideoList.setListener(new VideoListListener());
 
-        mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
+        mVideoLoader = new VideoLoader(getApplicationContext());
 
         handleExtras();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        if (mVideoLoader != null) {
-            mVideoLoader.setListener(this);
-        } else {
-            mVideoLoader = VideoLoader.getInstance(getBaseContext(), this);
+        LoadVideoReceiver.super.registerReceiver();
+
+        if (mVideoLoader == null) {
+            mVideoLoader = new VideoLoader(getBaseContext());
         }
 
         mVideoLoader.loadDirectory(mSeries.getPutId(), mSeries.getTitle());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LoadVideoReceiver.super.deregisterReceiver();
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 
     @Override
@@ -103,13 +115,13 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     }
 
     @Override
-    public void onVideosLoadStarted() {
+    public void videoLoadStarted() {
         mView.frameLoading.setVisibility(View.VISIBLE);
         FragmentUtil.hideFragment(getSupportFragmentManager(), mFragmentVideoList);
     }
 
     @Override
-    public void onVideosLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
+    public void videoLoadFinished(HistoryItem item, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
         mView.frameLoading.setVisibility(View.GONE);
         FragmentUtil.showFragment(getSupportFragmentManager(), mFragmentVideoList);
         mFragmentVideoList.setVideos(mSeries, videos);

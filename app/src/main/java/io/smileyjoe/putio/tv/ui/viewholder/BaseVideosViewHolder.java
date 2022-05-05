@@ -1,9 +1,6 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +13,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
@@ -85,7 +81,7 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
 
         @Override
         public void handleClick(ActionOption option) {
-            switch (option){
+            switch (option) {
                 case REFRESH_DATA:
                     RefreshAction.super.handleClick(option);
                     break;
@@ -110,9 +106,9 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
 
         @Override
         public void addAction(ActionOption option, boolean shouldShow) {
-            switch (option){
+            switch (option) {
                 case WATCH:
-                    if(getVideo().getFileType() == FileType.VIDEO){
+                    if (getVideo().getFileType() == FileType.VIDEO) {
                         mItems.add(option);
                     }
                     break;
@@ -132,6 +128,7 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
         @Override
         public void update(Video video) {
             getListener().ifPresent(l -> l.update(video, getInternalPosition()));
+            RefreshAction.super.update(video);
         }
     }
 }

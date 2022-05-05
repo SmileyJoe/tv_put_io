@@ -1,6 +1,5 @@
 package io.smileyjoe.putio.tv.ui.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -83,6 +82,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
 
     @Override
     public void update(Video video) {
+        RefreshAction.super.update(video);
         populate();
     }
 
@@ -165,7 +165,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
 
     @Override
     public Context getContext() {
-        return getBaseContext();
+        return this;
     }
 
     @Override

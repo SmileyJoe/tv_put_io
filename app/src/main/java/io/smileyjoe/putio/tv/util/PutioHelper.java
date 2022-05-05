@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -16,28 +15,19 @@ import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.FileType;
 import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.object.VideoType;
 import io.smileyjoe.putio.tv.object.VirtualDirectory;
 
 public class PutioHelper {
-
-    public interface Listener extends TmdbUtil.Listener {
-    }
 
     private ArrayList<Folder> mFolders;
     private ArrayList<Video> mVideos;
     private Video mCurrent;
     private Context mContext;
-    private Listener mListener;
 
     public PutioHelper(Context context) {
         mContext = context;
         mFolders = new ArrayList<>();
         mVideos = new ArrayList<>();
-    }
-
-    public void setListener(Listener listener) {
-        mListener = listener;
     }
 
     public ArrayList<Video> getVideos() {
@@ -86,7 +76,7 @@ public class PutioHelper {
             Video currentDbVideo = VideoUtil.getFromDbByPutId(mContext, mCurrent.getPutId());
 
             if (currentDbVideo != null) {
-                if(currentDbVideo.isTmdbFound()){
+                if (currentDbVideo.isTmdbFound()) {
                     Video updated = VideoUtil.updateFromDb(mCurrent, currentDbVideo);
                     AppDatabase.getInstance(mContext).videoDao().insert(updated);
                     mVideos.add(updated);
@@ -104,19 +94,17 @@ public class PutioHelper {
         Collections.sort(mFolders, new FolderComparator());
     }
 
-    private void updateTmdb(long parentTmdbId, Video video){
+    private void updateTmdb(long parentTmdbId, Video video) {
         switch (video.getVideoType()) {
             case MOVIE:
                 if (!video.isTmdbChecked()) {
                     TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
-                    response.setListener(mListener);
                     Tmdb.Movie.search(mContext, video.getTitle(), video.getYear(), response);
                 }
             case EPISODE:
                 if (!video.isTmdbChecked() && parentTmdbId > 0) {
                     video.setParentTmdbId(parentTmdbId);
                     TmdbUtil.OnTmdbResponse response = new TmdbUtil.OnTmdbResponse(mContext, video);
-                    response.setListener(mListener);
                     Tmdb.Series.getEpisode(mContext, parentTmdbId, video.getSeason(), video.getEpisode(), response);
                 }
                 mVideos.add(video);
@@ -124,7 +112,6 @@ public class PutioHelper {
             case SEASON:
                 if (!video.isTmdbChecked()) {
                     TmdbUtil.OnTmdbSeriesSearchResponse response = new TmdbUtil.OnTmdbSeriesSearchResponse(mContext, video);
-                    response.setListener(mListener);
                     Tmdb.Series.search(mContext, video.getTitle(), response);
                 }
                 mVideos.add(video);

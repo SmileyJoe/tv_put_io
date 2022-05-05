@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
+import io.smileyjoe.putio.tv.broadcast.LoadVideoReceiver;
 import io.smileyjoe.putio.tv.channel.UriHandler;
 import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
@@ -44,12 +45,12 @@ import io.smileyjoe.putio.tv.ui.fragment.ToggleFragment;
 import io.smileyjoe.putio.tv.ui.fragment.VideosFragment;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.Settings;
-import io.smileyjoe.putio.tv.util.VideoLoader;
+import io.smileyjoe.putio.tv.video.VideoLoader;
 
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class MainActivity extends BaseActivity<ActivityMainBinding> implements VideoLoader.Listener, BaseFragment.OnFocusSearchListener {
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements LoadVideoReceiver, BaseFragment.OnFocusSearchListener {
 
     private static final String EXTRA_URI_HANDLER = "uri_handler";
 
@@ -115,7 +116,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
 
         mFragmentFolderList.setForceFocus(true);
 
-        mVideoLoader = VideoLoader.getInstance(getApplicationContext(), this);
+        mVideoLoader = new VideoLoader(getBaseContext());
         mVideoLoader.loadDirectory();
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
@@ -170,22 +171,33 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements V
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
+        LoadVideoReceiver.super.registerReceiver();
 
         if (mVideoLoader != null) {
-            mVideoLoader.setListener(this);
             mVideoLoader.reload();
         }
     }
 
     @Override
-    public void onVideosLoadStarted() {
+    public void onPause() {
+        super.onPause();
+        LoadVideoReceiver.super.deregisterReceiver();
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void videoLoadStarted() {
         mView.frameLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onVideosLoadFinished(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
+    public void videoLoadFinished(HistoryItem historyItem, ArrayList<Video> videos, ArrayList<Folder> folders, boolean shouldAddToHistory) {
         if (mUriHandler != null && mUriHandler.isValid()) {
             mUriHandler.execute(getBaseContext(), (type, video) -> {
                 switch (type) {

@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -148,8 +147,8 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     }
 
     @Override
-    public Context getBaseContext() {
-        return getContext();
+    public Context getContext() {
+        return getActivity();
     }
 
     private void populate() {
@@ -200,8 +199,9 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void update(Video video) {
+        RefreshAction.super.update(video);
         if (video.isTmdbFound()) {
-            startActivity(VideoDetailsBackdropActivity.getIntent(getBaseContext(), video));
+            startActivity(VideoDetailsBackdropActivity.getIntent(this.getContext(), video));
             getActivity().finish();
             return;
         }

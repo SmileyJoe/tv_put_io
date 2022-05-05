@@ -1,6 +1,6 @@
 {
-  "previous_release": "3.5.0",
-  "current_debug": "3.6.0",
+  "previous_release": "3.6.0",
+  "current_debug": "3.6.1",
   "notes": {
     "3": {
       "3": {
@@ -37,6 +37,13 @@
           "Updating cache when refreshing data",
           "Long press context menu",
           "Added a put.io service status feed"
+        ],
+        "1": [
+          "Update dependencies",
+          "Add -debug suffix to version name",
+          "Moving to broadcasts for videos loading",
+          "Fixes watch and resume not working from details page",
+          "Refactoring VideoLoader"
         ]
       }
     }
