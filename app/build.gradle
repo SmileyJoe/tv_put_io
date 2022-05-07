@@ -2,10 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.appdistribution'
+apply plugin: 'com.github.triplet.play'
 apply from: '../release_notes.groovy'
 
 def getFirebaseDistributionKeyPath = { ->
     project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
+}
+
+def getPlayCredentials = { ->
+    project.hasProperty('play_store_credentials') ? play_store_credentials : file("play-store-credentials.json").path
 }
 
 def getKeystorePath = { ->
@@ -95,6 +100,10 @@ android {
     buildFeatures {
         viewBinding true
     }
+}
+
+play {
+    serviceAccountCredentials.set(file(getPlayCredentials()))
 }
 
 dependencies {

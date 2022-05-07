@@ -25,6 +25,13 @@ jobs:
             encodedString: ${{ secrets.FIREBASE_DISTRIBUTION }}
             fileName: 'firebase_distribution.json'
 
+      - name: Fetch play store credentials from secrets
+        id: fetch_play_credentials
+        uses: timheuer/base64-to-file@v1
+        with:
+          encodedString: ${{ secrets.PLAY_CREDENTIALS }}
+          fileName: 'play_store_credentials.json'
+
       - name: Decode Keystore
         id: fetch_keystore
         uses: timheuer/base64-to-file@v1
@@ -37,6 +44,7 @@ jobs:
         run: >-
           bash ./gradlew :app:bundleRelease :app:appDistributionUploadRelease --warning-mode all
           -Pfirebase_distribution=${{ steps.fetch_credential_file.outputs.filePath }}
+          -Pplay_store_credentials=${{ steps.fetch_play_credentials.outputs.filePath }}
           -Pputio_client_id=${{ secrets.PUTIO_CLIENT_ID }}
           -Pputio_client_secret=${{ secrets.PUTIO_CLIENT_SECRET }}
           -Ptmdb_auth_token=${{ secrets.TMDB_AUTH_TOKEN }}
