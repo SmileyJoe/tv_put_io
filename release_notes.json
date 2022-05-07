@@ -1,6 +1,6 @@
 {
   "previous_release": "3.6.0",
-  "current_debug": "3.6.1",
+  "current_debug": "3.7.0",
   "notes": {
     "3": {
       "3": {
@@ -44,6 +44,12 @@
           "Moving to broadcasts for videos loading",
           "Fixes watch and resume not working from details page",
           "Refactoring VideoLoader"
+        ]
+      },
+      "7": {
+        "0": [
+          "Adding release notes tasks",
+          "Adding gpp"
         ]
       }
     }

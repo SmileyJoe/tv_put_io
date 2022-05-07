@@ -1,7 +1,8 @@
 import groovy.json.JsonSlurper
 
 ext.generateReleaseNotes = {flavour ->
-    def json = new JsonSlurper().parseText(new File('release_notes.json').text)
+    def notesFile = new File(projectDir.getParentFile(), 'release_notes.json')
+    def json = new JsonSlurper().parseText(notesFile.text)
     def version, feature, bug
 
     if(flavour.equalsIgnoreCase("debug")){
@@ -30,4 +31,15 @@ ext.generateReleaseNotes = {flavour ->
     }
 
     return release_notes
+}
+
+task generateReleaseNotesRelease { task ->
+    doLast {
+        def fileReleaseNotes = new File(projectDir,'src/main/play/release-notes/en-GB/default.txt')
+        fileReleaseNotes.getParentFile().mkdirs()
+        if(!fileReleaseNotes.exists()){
+            fileReleaseNotes.createNewFile()
+        }
+        fileReleaseNotes.write generateReleaseNotes("release")
+    }
 }

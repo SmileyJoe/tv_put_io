@@ -51,7 +51,7 @@ public class VideoLoader {
         new GetGroup(mContext, id, shouldAddToHistory).run();
     }
 
-    public void refresh(Video video){
+    public void refresh(Video video) {
         AppDatabase.getInstance(mContext).videoDao().delete(video.getPutId());
         PutioHelper helper = new PutioHelper(mContext);
         helper.parse(video.getPutId(), video.getParentTmdbId(), Putio.Files.get(mContext, video.getPutId()));
