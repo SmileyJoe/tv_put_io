@@ -42,7 +42,7 @@ jobs:
       - name: Distribute to firebase
         id: distribure_firebase
         run: >-
-          bash ./gradlew :app:bundleRelease :app:appDistributionUploadRelease --warning-mode all
+          bash ./gradlew :app:generateReleaseNotesRelease :app:bundleRelease :app:appDistributionUploadRelease publishReleaseBundle publishListing --warning-mode all
           -Pfirebase_distribution=${{ steps.fetch_credential_file.outputs.filePath }}
           -Pplay_store_credentials=${{ steps.fetch_play_credentials.outputs.filePath }}
           -Pputio_client_id=${{ secrets.PUTIO_CLIENT_ID }}

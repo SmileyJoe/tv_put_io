@@ -5,6 +5,8 @@ apply plugin: 'com.google.firebase.appdistribution'
 apply plugin: 'com.github.triplet.play'
 apply from: '../release_notes.groovy'
 
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+
 def getFirebaseDistributionKeyPath = { ->
     project.hasProperty('firebase_distribution') ? firebase_distribution : file("firebase-distribution.json").path
 }
@@ -103,7 +105,11 @@ android {
 }
 
 play {
+    track.set("internal")
+    releaseStatus.set(ReleaseStatus.COMPLETED)
+    artifactDir.set(file("build/outputs/bundle/release"))
     serviceAccountCredentials.set(file(getPlayCredentials()))
+    defaultToAppBundles.set(true)
 }
 
 dependencies {
