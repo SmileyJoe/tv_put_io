@@ -35,7 +35,7 @@ ext.generateReleaseNotes = {flavour ->
 
 task generateReleaseNotesRelease { task ->
     doLast {
-        def fileReleaseNotes = new File(projectDir,'src/main/play/release-notes/en-US/default.txt')
+        def fileReleaseNotes = new File(projectDir,'src/main/play/release-notes/en-GB/default.txt')
         fileReleaseNotes.getParentFile().mkdirs()
         if(!fileReleaseNotes.exists()){
             fileReleaseNotes.createNewFile()
