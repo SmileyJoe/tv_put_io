@@ -46,7 +46,6 @@ jobs:
 
       - name: Generate params
         id: params
-        if: steps.changes.outputs.HAS_CHANGES == 'true'
         run: >-
           echo ::set-output name=PARAMS::"
           -Poutput_directory='/home/runner/work/tv_put_io/tv_put_io/app/build/outputs/bundle/release'

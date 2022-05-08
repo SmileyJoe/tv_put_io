@@ -27,7 +27,6 @@ jobs:
 
       - name: Generate params
         id: params
-        if: steps.changes.outputs.HAS_CHANGES == 'true'
         run: >-
           echo ::set-output name=PARAMS::"
           -Pfirebase_distribution=${{ steps.fetch_credential_file.outputs.filePath }}
