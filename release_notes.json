@@ -60,7 +60,8 @@
         "3": [
           "Handling incorrect audio track being played due to exoplayer update",
           "Limit the number of lines in the summary text for video list",
-          "Limit the height of the poster in video list"
+          "Limit the height of the poster in video list",
+          "Update sorting to ignore case"
         ]
       }
     }
