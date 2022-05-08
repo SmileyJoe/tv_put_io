@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -35,10 +36,12 @@ import androidx.leanback.media.PlaybackGlue;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.TracksInfo;
+import com.google.android.exoplayer2.audio.AudioSink;
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides;
@@ -49,8 +52,11 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.channel.ChannelType;
@@ -415,13 +421,77 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
 
         @Override
         public void onPlayerError(PlaybackException error) {
-            if (mPlayMp4) {
-                mListener.ifPresent(listener -> listener.showError());
-            } else if (mVideo.getStreamMp4Uri() == null) {
-                mListener.ifPresent(listener -> listener.showConversion());
-            } else {
-                mPlayMp4 = true;
-                play(mVideo);
+            boolean tryingAgain = false;
+            /**
+             * Between exoplayer 2.16.1 and 2.17.0 they decided to change the way track selection
+             * works:
+             * <br/>
+             * https://github.com/google/ExoPlayer/releases/tag/r2.17.0
+             * Prefer audio content preferences (for example, the "default" audio track or a track
+             * matching the system locale language) over technical track selection constraints
+             * (for example, preferred MIME type, or maximum channel count).
+             * <br/>
+             * This meant that when we set
+             * mPlayer.getTrackSelectionParameters().setMaxAudioChannelCount(6) it was just ignored,
+             * even though it's still a valid function on the player. In testing, the player
+             * was now trying to load "TrueHD Atmos 7.1" which has 8 channels, which it picked up
+             * as being supported, however it would always throw a AudioSink.InitializationException.
+             * <br/>
+             * This would then cause the app the load the mp4 version, as that's the fail safe
+             * for a video not working.
+             * <br/>
+             * What happens now is, if this exception is thrown, all the tracks are
+             * checked, and then next lowest channel count track is attempted to be played.
+             * If there are no lower tracks, the mp4 version is loaded.
+             * <br/>
+             * Seems like a very unnecessary change for the library to make, hopefully it is a bug
+             * and will be reverted and all this can be removed.
+             */
+            if(error.getCause() instanceof AudioSink.InitializationException) {
+                TracksInfo tracksInfo = mPlayer.getCurrentTracksInfo();
+
+                // get all valid tracks //
+                ArrayList<TracksInfo.TrackGroupInfo> validGroups = tracksInfo.getTrackGroupInfos().stream()
+                        .filter(groupInfo -> groupInfo.getTrackType() == 1 && groupInfo.isSupported())
+                        .filter(groupInfo -> {
+                            TrackGroup group = groupInfo.getTrackGroup();
+                            return group != null && group.length > 0;
+                        })
+                        .collect(Collectors.toCollection(ArrayList::new));
+
+                // get the selected tracks channel count, or -1 //
+                int selectedChannelCount = validGroups.stream()
+                        .filter(TracksInfo.TrackGroupInfo::isSelected)
+                        .findFirst()
+                        .map(trackGroupInfo -> trackGroupInfo.getTrackGroup().getFormat(0).channelCount)
+                        .orElse(-1);
+
+                // if there is a selected track channel count //
+                if(selectedChannelCount > 0){
+                    // get the next track down, filter for all tracks below the current, then get the max //
+                    TracksInfo.TrackGroupInfo nextGroup = validGroups.stream()
+                            .filter(trackGroupInfo -> trackGroupInfo.getTrackGroup().getFormat(0).channelCount < selectedChannelCount)
+                            .max((l, r) -> l.getTrackGroup().getFormat(0).channelCount > r.getTrackGroup().getFormat(0).channelCount ? 1 : -1)
+                            .orElse(null);
+
+                    // load the track and play the video //
+                    if(nextGroup != null){
+                        loadTrack(nextGroup.getTrackGroup());
+                        mPlayerGlue.play();
+                        tryingAgain = true;
+                    }
+                }
+            }
+
+            if(!tryingAgain) {
+                if (mPlayMp4) {
+                    mListener.ifPresent(listener -> listener.showError());
+                } else if (mVideo.getStreamMp4Uri() == null) {
+                    mListener.ifPresent(listener -> listener.showConversion());
+                } else {
+                    mPlayMp4 = true;
+                    play(mVideo);
+                }
             }
         }
     }
