@@ -49,6 +49,7 @@ jobs:
         if: steps.changes.outputs.HAS_CHANGES == 'true'
         run: >-
           echo ::set-output name=PARAMS::"
+          -Poutput_directory='/home/runner/work/tv_put_io/tv_put_io/app/build/outputs/bundle/release'
           -Pfirebase_distribution=${{ steps.fetch_credential_file.outputs.filePath }}
           -Pplay_store_credentials=${{ steps.fetch_play_credentials.outputs.filePath }}
           -Pputio_client_id=${{ secrets.PUTIO_CLIENT_ID }}

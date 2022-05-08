@@ -39,6 +39,10 @@ def getEnableCrashlyticsDebug = { ->
     project.hasProperty('enable_crashlytics_debug') ? enable_crashlytics_debug : false
 }
 
+def getOutputDirectory = { ->
+    project.hasProperty('output_directory') ? output_directory : "build/outputs/bundle/release"
+}
+
 android {
     compileSdkVersion 31
     buildToolsVersion "31.0.0"
@@ -47,8 +51,8 @@ android {
         applicationId "io.smileyjoe.putio.tv"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 34
-        versionName "3.7.0." + getBuildNumber()
+        versionCode 35
+        versionName "3.7.1." + getBuildNumber()
         buildConfigField "String", "PUTIO_CLIENT_ID", "\"${putio_client_id}\""
         buildConfigField "String", "PUTIO_CLIENT_SECRET", "\"${putio_client_secret}\""
         buildConfigField "String", "TMDB_AUTH_TOKEN", "\"${tmdb_auth_token}\""
@@ -107,7 +111,7 @@ android {
 play {
     track.set("internal")
     releaseStatus.set(ReleaseStatus.COMPLETED)
-    artifactDir.set(file("build/outputs/bundle/release"))
+    artifactDir.set(file(getOutputDirectory()))
     serviceAccountCredentials.set(file(getPlayCredentials()))
     defaultToAppBundles.set(true)
 }
