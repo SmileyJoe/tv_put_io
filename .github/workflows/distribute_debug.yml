@@ -25,13 +25,25 @@ jobs:
             encodedString: ${{ secrets.FIREBASE_DISTRIBUTION }}
             fileName: 'firebase_distribution.json'
 
-      - name: Distribute to firebase
-        id: distribure_firebase
+      - name: Generate params
+        id: params
         run: >-
-          bash ./gradlew :app:assembleDebug :app:appDistributionUploadDebug --warning-mode all
+          echo ::set-output name=PARAMS::"
           -Pfirebase_distribution=${{ steps.fetch_credential_file.outputs.filePath }}
           -Pputio_client_id=${{ secrets.PUTIO_CLIENT_ID }}
           -Pputio_client_secret=${{ secrets.PUTIO_CLIENT_SECRET }}
           -Ptmdb_auth_token=${{ secrets.TMDB_AUTH_TOKEN }}
           -Pbuild_number=${{ github.run_number }}
-          -Penable_crashlytics_debug=true
+          -Penable_crashlytics_debug=true"
+
+      - name: Build
+        id: build
+        run: >-
+          bash ./gradlew :app:assembleDebug --warning-mode all
+          ${{ steps.params.outputs.PARAMS }}
+
+      - name: Distribute to firebase
+        id: distribure_firebase
+        run: >-
+          bash ./gradlew :app:appDistributionUploadDebug --warning-mode all
+          ${{ steps.params.outputs.PARAMS }}

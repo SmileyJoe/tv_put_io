@@ -7,7 +7,7 @@ on:
 
 jobs:
   distribute:
-    name: Distribute to firebase
+    name: Distribute to firebase and play store
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,8 +22,8 @@ jobs:
         id: fetch_credential_file
         uses: timheuer/base64-to-file@v1
         with:
-            encodedString: ${{ secrets.FIREBASE_DISTRIBUTION }}
-            fileName: 'firebase_distribution.json'
+          encodedString: ${{ secrets.FIREBASE_DISTRIBUTION }}
+          fileName: 'firebase_distribution.json'
 
       - name: Fetch play store credentials from secrets
         id: fetch_play_credentials
@@ -39,10 +39,16 @@ jobs:
           fileName: 'keystore/putio_tv_keystore.jks'
           encodedString: ${{ secrets.KEYSTORE }}
 
-      - name: Distribute to firebase
-        id: distribure_firebase
+      - name: Generate release notes
+        id: generate_release_notes
         run: >-
-          bash ./gradlew :app:generateReleaseNotesRelease :app:bundleRelease :app:appDistributionUploadRelease publishReleaseBundle publishListing --warning-mode all
+          bash ./gradlew :app:generateReleaseNotesRelease --warning-mode all
+
+      - name: Generate params
+        id: params
+        run: >-
+          echo ::set-output name=PARAMS::"
+          -Poutput_directory='/home/runner/work/tv_put_io/tv_put_io/app/build/outputs/bundle/release'
           -Pfirebase_distribution=${{ steps.fetch_credential_file.outputs.filePath }}
           -Pplay_store_credentials=${{ steps.fetch_play_credentials.outputs.filePath }}
           -Pputio_client_id=${{ secrets.PUTIO_CLIENT_ID }}
@@ -52,4 +58,28 @@ jobs:
           -Pkeystore_password=${{ secrets.KEYSTORE_PASSWORD }}
           -Pkeystore_key_alias=${{ secrets.KEYSTORE_KEY_ALIAS }}
           -Pkeystore_key_password=${{ secrets.KEYSTORE_KEY_PASSWORD }}
-          -Pkeystore=${{ steps.fetch_keystore.outputs.filePath }}
+          -Pkeystore=${{ steps.fetch_keystore.outputs.filePath }}"
+
+      - name: Build
+        id: build
+        run: >-
+          bash ./gradlew :app:bundleRelease --warning-mode all
+          ${{ steps.params.outputs.PARAMS }}
+
+      - name: Distribute to firebase
+        id: distribure_firebase
+        run: >-
+          bash ./gradlew :app:appDistributionUploadRelease --warning-mode all
+          ${{ steps.params.outputs.PARAMS }}
+
+      - name: Distribute to play store
+        id: distribure_play_store
+        run: >-
+          bash ./gradlew publishReleaseBundle --warning-mode all
+          ${{ steps.params.outputs.PARAMS }}
+
+      - name: Update play store listing
+        id: update_listing
+        run: >-
+          bash ./gradlew publishListing --warning-mode all
+          ${{ steps.params.outputs.PARAMS }}
