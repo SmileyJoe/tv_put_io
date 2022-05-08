@@ -1,6 +1,6 @@
 {
   "previous_release": "3.7.0",
-  "current_debug": "3.7.1",
+  "current_debug": "3.7.2",
   "notes": {
     "3": {
       "3": {
@@ -53,6 +53,9 @@
         ],
         "1": [
           "Cleaning up workflows"
+        ],
+        "2": [
+          "Adding params to release notes generation"
         ]
       }
     }
