@@ -54,7 +54,7 @@ public class VideoComparator implements Comparator<Video> {
                 break;
             case ALPHABETICAL:
             default:
-                result = videoOne.getPutTitle().compareTo(videoTwo.getPutTitle());
+                result = videoOne.getPutTitle().compareToIgnoreCase(videoTwo.getPutTitle());
                 break;
         }
 

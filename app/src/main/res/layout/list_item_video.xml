@@ -17,6 +17,7 @@
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image_poster"
         android:layout_width="@dimen/list_poster_width"
+        android:maxHeight="@dimen/list_poster_width"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
@@ -60,6 +61,8 @@
         <TextView
             android:id="@+id/text_summary"
             style="@style/Text"
+            android:maxLines="8"
+            android:ellipsize="end"
             android:textColor="@color/text"/>
     </LinearLayout>
 
