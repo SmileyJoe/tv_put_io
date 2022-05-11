@@ -160,6 +160,13 @@ public class Putio {
             execute(context, URL, response);
         }
 
+        public static void save(Context context, String key, String value){
+            JsonObject body = new JsonObject();
+            body.addProperty(JSON_KEY, value);
+
+            save(context, key, body);
+        }
+
         public static void save(Context context, String key, boolean value){
             JsonObject body = new JsonObject();
             body.addProperty(JSON_KEY, value);

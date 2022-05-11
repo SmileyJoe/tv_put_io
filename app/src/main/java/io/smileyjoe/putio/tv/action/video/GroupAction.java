@@ -10,10 +10,12 @@ import java.util.Optional;
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.db.GroupDao;
+import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.util.Async;
+import io.smileyjoe.putio.tv.util.Settings;
 
 public interface GroupAction extends Action {
 
@@ -118,7 +120,8 @@ public interface GroupAction extends Action {
                     verb = R.string.text_remove_from;
                 }
 
-                groupDao.insert(group);
+                Settings.getInstance(mContext).saveGroupPutIds(mContext, group);
+                groupDao.updatePutIds(group.getId(), group.getPutIdsJson());
             }
 
             return verb;

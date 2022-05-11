@@ -409,7 +409,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
                     group.removePutId(mVideoLoader.getCurrentHistory().getId());
                 }
 
-                AppDatabase.getInstance(getBaseContext()).groupDao().insert(group);
+                Settings.getInstance(getContext()).saveGroupPutIds(getContext(), group);
+                AppDatabase.getInstance(getBaseContext()).groupDao().updatePutIds(group.getId(), group.getPutIdsJson());
             });
         }
     }

@@ -29,4 +29,7 @@ public interface GroupDao {
 
     @Query("UPDATE `group` SET `enabled` = :enabled WHERE id IS :id")
     void enabled(Long id, boolean enabled);
+
+    @Query("UPDATE `group` SET `put_ids_json` = :putIdsJson WHERE id IS :id")
+    void updatePutIds(int id, String putIdsJson);
 }

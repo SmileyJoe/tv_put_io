@@ -14,6 +14,7 @@ import io.smileyjoe.putio.tv.BuildConfig;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
+import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 
 public class Settings {
@@ -27,9 +28,11 @@ public class Settings {
     private static final String KEY_VIDEO_LAYOUT = "video_layout";
     private static final String KEY_VIDEO_NUM_COLS = "video_num_cols";
     private static final String KEY_GROUP_ENABLED = "group_enabled_";
+    private static final String KEY_GROUP_PUT_IDS = "group_put_ids_";
 
     private SharedPreferences mPrefs;
     private static Settings sInstance;
+    private boolean mFromRestore = false;
 
     private Settings(Context context) {
         mPrefs = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
@@ -43,9 +46,16 @@ public class Settings {
         return sInstance;
     }
 
+    public void setFromRestore(boolean fromRestore) {
+        mFromRestore = fromRestore;
+    }
+
     public void shouldShowRecentlyAdded(Context context, boolean shouldShow) {
         mPrefs.edit().putBoolean(KEY_SHOW_RECENTLY_ADDED, shouldShow).apply();
-        Putio.Config.save(context, KEY_SHOW_RECENTLY_ADDED, shouldShow);
+
+        if(!mFromRestore) {
+            Putio.Config.save(context, KEY_SHOW_RECENTLY_ADDED, shouldShow);
+        }
     }
 
     public boolean shouldShowRecentlyAdded() {
@@ -54,7 +64,10 @@ public class Settings {
 
     public void setVideoLayout(Context context, int styleId) {
         mPrefs.edit().putInt(KEY_VIDEO_LAYOUT, styleId).apply();
-        Putio.Config.save(context, KEY_VIDEO_LAYOUT, styleId);
+
+        if(!mFromRestore) {
+            Putio.Config.save(context, KEY_VIDEO_LAYOUT, styleId);
+        }
     }
 
     public VideosAdapter.Style getVideoLayout() {
@@ -63,7 +76,10 @@ public class Settings {
 
     public void setVideoNumCols(Context context, int cols) {
         mPrefs.edit().putInt(KEY_VIDEO_NUM_COLS, cols).apply();
-        Putio.Config.save(context, KEY_VIDEO_NUM_COLS, cols);
+
+        if(!mFromRestore) {
+            Putio.Config.save(context, KEY_VIDEO_NUM_COLS, cols);
+        }
     }
 
     public int getVideoNumCols() {
@@ -74,12 +90,17 @@ public class Settings {
         Putio.Config.save(context, KEY_GROUP_ENABLED + Long.toString(id), isEnabled);
     }
 
+    public void saveGroupPutIds(Context context, Group group){
+        Putio.Config.save(context, KEY_GROUP_PUT_IDS + Long.toString(group.getId()), group.getPutIdsJson());
+    }
+
     public static void restore(Context context, RestoreListener restoreListener){
         Putio.Config.get(context, new Response() {
             @Override
             public void onSuccess(JsonObject result) {
                 Async.run(() -> {
                     Settings settings = new Settings(context);
+                    settings.setFromRestore(true);
 
                     JsonObject config = result.getAsJsonObject("config");
                     Set<Map.Entry<String, JsonElement>> entrySet = config.entrySet();
@@ -102,11 +123,19 @@ public class Settings {
                                     } catch (NumberFormatException e){
                                         // do nothing, the setting just won't be restored //
                                     }
+                                } else if(entry.getKey().contains(KEY_GROUP_PUT_IDS)){
+                                    try{
+                                        int id = Integer.parseInt(entry.getKey().replace(KEY_GROUP_PUT_IDS, "").trim());
+                                        AppDatabase.getInstance(context).groupDao().updatePutIds(id, entry.getValue().getAsString());
+                                    } catch (NumberFormatException e){
+                                        // do nothing, the setting just won't be restored //
+                                    }
                                 }
                                 break;
                         }
                     }
 
+                    settings.setFromRestore(false);
                     restoreListener.proceed();
                 });
             }
