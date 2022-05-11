@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.smileyjoe.putio.tv.BuildConfig;
+import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
@@ -25,6 +26,7 @@ public class Settings {
     private static final String KEY_SHOW_RECENTLY_ADDED = "show_recently_added";
     private static final String KEY_VIDEO_LAYOUT = "video_layout";
     private static final String KEY_VIDEO_NUM_COLS = "video_num_cols";
+    private static final String KEY_GROUP_ENABLED = "group_enabled_";
 
     private SharedPreferences mPrefs;
     private static Settings sInstance;
@@ -68,29 +70,45 @@ public class Settings {
         return mPrefs.getInt(KEY_VIDEO_NUM_COLS, 7);
     }
 
+    public void saveGroupEnabled(Context context, long id, boolean isEnabled){
+        Putio.Config.save(context, KEY_GROUP_ENABLED + Long.toString(id), isEnabled);
+    }
+
     public static void restore(Context context, RestoreListener restoreListener){
         Putio.Config.get(context, new Response() {
             @Override
             public void onSuccess(JsonObject result) {
-                Settings settings = new Settings(context);
+                Async.run(() -> {
+                    Settings settings = new Settings(context);
 
-                JsonObject config = result.getAsJsonObject("config");
-                Set<Map.Entry<String, JsonElement>> entrySet = config.entrySet();
-                for(Map.Entry<String,JsonElement> entry : entrySet){
-                    switch (entry.getKey()){
-                        case KEY_SHOW_RECENTLY_ADDED:
-                            settings.shouldShowRecentlyAdded(context, entry.getValue().getAsBoolean());
-                            break;
-                        case KEY_VIDEO_LAYOUT:
-                            settings.setVideoLayout(context, entry.getValue().getAsInt());
-                            break;
-                        case KEY_VIDEO_NUM_COLS:
-                            settings.setVideoNumCols(context, entry.getValue().getAsInt());
-                            break;
+                    JsonObject config = result.getAsJsonObject("config");
+                    Set<Map.Entry<String, JsonElement>> entrySet = config.entrySet();
+                    for(Map.Entry<String,JsonElement> entry : entrySet){
+                        switch (entry.getKey()){
+                            case KEY_SHOW_RECENTLY_ADDED:
+                                settings.shouldShowRecentlyAdded(context, entry.getValue().getAsBoolean());
+                                break;
+                            case KEY_VIDEO_LAYOUT:
+                                settings.setVideoLayout(context, entry.getValue().getAsInt());
+                                break;
+                            case KEY_VIDEO_NUM_COLS:
+                                settings.setVideoNumCols(context, entry.getValue().getAsInt());
+                                break;
+                            default:
+                                if(entry.getKey().contains(KEY_GROUP_ENABLED)){
+                                    try {
+                                        long id = Long.parseLong(entry.getKey().replace(KEY_GROUP_ENABLED, "").trim());
+                                        AppDatabase.getInstance(context).groupDao().enabled(id, entry.getValue().getAsBoolean());
+                                    } catch (NumberFormatException e){
+                                        // do nothing, the setting just won't be restored //
+                                    }
+                                }
+                                break;
+                        }
                     }
-                }
 
-                restoreListener.proceed();
+                    restoreListener.proceed();
+                });
             }
 
             @Override
