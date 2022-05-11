@@ -28,6 +28,7 @@ public class Settings {
     private static final String KEY_VIDEO_NUM_COLS = "video_num_cols";
     private static final String KEY_GROUP_ENABLED = "group_enabled_";
     private static final String KEY_GROUP_PUT_IDS = "group_put_ids_";
+    public static final String KEY_LAST_PUT_UPDATE = "last_config_update";
 
     private SharedPreferences mPrefs;
     private static Settings sInstance;
@@ -85,6 +86,17 @@ public class Settings {
         return mPrefs.getInt(KEY_VIDEO_NUM_COLS, 7);
     }
 
+    public long updateLastPutUpdate() {
+        long millies = System.currentTimeMillis();
+        mPrefs.edit().putLong(KEY_LAST_PUT_UPDATE, millies).apply();
+
+        return millies;
+    }
+
+    public long getLastPutUpdate() {
+        return mPrefs.getLong(KEY_LAST_PUT_UPDATE, -1);
+    }
+
     public void saveGroupEnabled(Context context, long id, boolean isEnabled) {
         Putio.Config.save(context, KEY_GROUP_ENABLED + Long.toString(id), isEnabled);
     }
@@ -99,42 +111,45 @@ public class Settings {
             public void onSuccess(JsonObject result) {
                 Async.run(() -> {
                     Settings settings = new Settings(context);
-                    settings.setFromRestore(true);
-
                     JsonObject config = result.getAsJsonObject("config");
-                    Set<Map.Entry<String, JsonElement>> entrySet = config.entrySet();
-                    for (Map.Entry<String, JsonElement> entry : entrySet) {
-                        switch (entry.getKey()) {
-                            case KEY_SHOW_RECENTLY_ADDED:
-                                settings.shouldShowRecentlyAdded(context, entry.getValue().getAsBoolean());
-                                break;
-                            case KEY_VIDEO_LAYOUT:
-                                settings.setVideoLayout(context, entry.getValue().getAsInt());
-                                break;
-                            case KEY_VIDEO_NUM_COLS:
-                                settings.setVideoNumCols(context, entry.getValue().getAsInt());
-                                break;
-                            default:
-                                if (entry.getKey().contains(KEY_GROUP_ENABLED)) {
-                                    try {
-                                        long id = Long.parseLong(entry.getKey().replace(KEY_GROUP_ENABLED, "").trim());
-                                        AppDatabase.getInstance(context).groupDao().enabled(id, entry.getValue().getAsBoolean());
-                                    } catch (NumberFormatException e) {
-                                        // do nothing, the setting just won't be restored //
-                                    }
-                                } else if (entry.getKey().contains(KEY_GROUP_PUT_IDS)) {
-                                    try {
-                                        int id = Integer.parseInt(entry.getKey().replace(KEY_GROUP_PUT_IDS, "").trim());
-                                        AppDatabase.getInstance(context).groupDao().updatePutIds(id, entry.getValue().getAsString());
-                                    } catch (NumberFormatException e) {
-                                        // do nothing, the setting just won't be restored //
-                                    }
-                                }
-                                break;
-                        }
-                    }
 
-                    settings.setFromRestore(false);
+                    if (config.has(KEY_LAST_PUT_UPDATE) && (config.get(KEY_LAST_PUT_UPDATE).getAsLong()) > settings.getLastPutUpdate()) {
+                        settings.setFromRestore(true);
+                        Set<Map.Entry<String, JsonElement>> entrySet = config.entrySet();
+                        for (Map.Entry<String, JsonElement> entry : entrySet) {
+                            switch (entry.getKey()) {
+                                case KEY_SHOW_RECENTLY_ADDED:
+                                    settings.shouldShowRecentlyAdded(context, entry.getValue().getAsBoolean());
+                                    break;
+                                case KEY_VIDEO_LAYOUT:
+                                    settings.setVideoLayout(context, entry.getValue().getAsInt());
+                                    break;
+                                case KEY_VIDEO_NUM_COLS:
+                                    settings.setVideoNumCols(context, entry.getValue().getAsInt());
+                                    break;
+                                default:
+                                    if (entry.getKey().contains(KEY_GROUP_ENABLED)) {
+                                        try {
+                                            long id = Long.parseLong(entry.getKey().replace(KEY_GROUP_ENABLED, "").trim());
+                                            AppDatabase.getInstance(context).groupDao().enabled(id, entry.getValue().getAsBoolean());
+                                        } catch (NumberFormatException e) {
+                                            // do nothing, the setting just won't be restored //
+                                        }
+                                    } else if (entry.getKey().contains(KEY_GROUP_PUT_IDS)) {
+                                        try {
+                                            int id = Integer.parseInt(entry.getKey().replace(KEY_GROUP_PUT_IDS, "").trim());
+                                            AppDatabase.getInstance(context).groupDao().updatePutIds(id, entry.getValue().getAsString());
+                                        } catch (NumberFormatException e) {
+                                            // do nothing, the setting just won't be restored //
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+
+                        settings.updateLastPutUpdate();
+                        settings.setFromRestore(false);
+                    }
                     restoreListener.proceed();
                 });
             }

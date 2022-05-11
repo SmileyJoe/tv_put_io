@@ -180,8 +180,23 @@ public class Putio {
             save(context, key, body);
         }
 
+        public static void save(Context context, String key, long value) {
+            JsonObject body = new JsonObject();
+            body.addProperty(JSON_KEY, value);
+
+            save(context, key, body);
+        }
+
         private static void save(Context context, String key, JsonObject body) {
             execute(context, Verb.PUT, getUrl(key), body, null);
+            long millies = Settings.getInstance(context).updateLastPutUpdate();
+            saveLastUpdate(context, millies);
+        }
+
+        private static void saveLastUpdate(Context context, long millies) {
+            JsonObject body = new JsonObject();
+            body.addProperty(JSON_KEY, millies);
+            execute(context, Verb.PUT, getUrl(Settings.KEY_LAST_PUT_UPDATE), body, null);
         }
     }
 
