@@ -2,7 +2,6 @@ package io.smileyjoe.putio.tv.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,7 +18,7 @@ import io.smileyjoe.putio.tv.ui.adapter.VideosAdapter;
 
 public class Settings {
 
-    public interface RestoreListener{
+    public interface RestoreListener {
         void proceed();
     }
 
@@ -53,7 +52,7 @@ public class Settings {
     public void shouldShowRecentlyAdded(Context context, boolean shouldShow) {
         mPrefs.edit().putBoolean(KEY_SHOW_RECENTLY_ADDED, shouldShow).apply();
 
-        if(!mFromRestore) {
+        if (!mFromRestore) {
             Putio.Config.save(context, KEY_SHOW_RECENTLY_ADDED, shouldShow);
         }
     }
@@ -65,7 +64,7 @@ public class Settings {
     public void setVideoLayout(Context context, int styleId) {
         mPrefs.edit().putInt(KEY_VIDEO_LAYOUT, styleId).apply();
 
-        if(!mFromRestore) {
+        if (!mFromRestore) {
             Putio.Config.save(context, KEY_VIDEO_LAYOUT, styleId);
         }
     }
@@ -77,7 +76,7 @@ public class Settings {
     public void setVideoNumCols(Context context, int cols) {
         mPrefs.edit().putInt(KEY_VIDEO_NUM_COLS, cols).apply();
 
-        if(!mFromRestore) {
+        if (!mFromRestore) {
             Putio.Config.save(context, KEY_VIDEO_NUM_COLS, cols);
         }
     }
@@ -86,15 +85,15 @@ public class Settings {
         return mPrefs.getInt(KEY_VIDEO_NUM_COLS, 7);
     }
 
-    public void saveGroupEnabled(Context context, long id, boolean isEnabled){
+    public void saveGroupEnabled(Context context, long id, boolean isEnabled) {
         Putio.Config.save(context, KEY_GROUP_ENABLED + Long.toString(id), isEnabled);
     }
 
-    public void saveGroupPutIds(Context context, Group group){
+    public void saveGroupPutIds(Context context, Group group) {
         Putio.Config.save(context, KEY_GROUP_PUT_IDS + Long.toString(group.getId()), group.getPutIdsJson());
     }
 
-    public static void restore(Context context, RestoreListener restoreListener){
+    public static void restore(Context context, RestoreListener restoreListener) {
         Putio.Config.get(context, new Response() {
             @Override
             public void onSuccess(JsonObject result) {
@@ -104,8 +103,8 @@ public class Settings {
 
                     JsonObject config = result.getAsJsonObject("config");
                     Set<Map.Entry<String, JsonElement>> entrySet = config.entrySet();
-                    for(Map.Entry<String,JsonElement> entry : entrySet){
-                        switch (entry.getKey()){
+                    for (Map.Entry<String, JsonElement> entry : entrySet) {
+                        switch (entry.getKey()) {
                             case KEY_SHOW_RECENTLY_ADDED:
                                 settings.shouldShowRecentlyAdded(context, entry.getValue().getAsBoolean());
                                 break;
@@ -116,18 +115,18 @@ public class Settings {
                                 settings.setVideoNumCols(context, entry.getValue().getAsInt());
                                 break;
                             default:
-                                if(entry.getKey().contains(KEY_GROUP_ENABLED)){
+                                if (entry.getKey().contains(KEY_GROUP_ENABLED)) {
                                     try {
                                         long id = Long.parseLong(entry.getKey().replace(KEY_GROUP_ENABLED, "").trim());
                                         AppDatabase.getInstance(context).groupDao().enabled(id, entry.getValue().getAsBoolean());
-                                    } catch (NumberFormatException e){
+                                    } catch (NumberFormatException e) {
                                         // do nothing, the setting just won't be restored //
                                     }
-                                } else if(entry.getKey().contains(KEY_GROUP_PUT_IDS)){
-                                    try{
+                                } else if (entry.getKey().contains(KEY_GROUP_PUT_IDS)) {
+                                    try {
                                         int id = Integer.parseInt(entry.getKey().replace(KEY_GROUP_PUT_IDS, "").trim());
                                         AppDatabase.getInstance(context).groupDao().updatePutIds(id, entry.getValue().getAsString());
-                                    } catch (NumberFormatException e){
+                                    } catch (NumberFormatException e) {
                                         // do nothing, the setting just won't be restored //
                                     }
                                 }

@@ -107,10 +107,13 @@
       "8": {
         "0": {
           "store": [
+            "Your settings and group setup will now persist across devices",
             "Optimizations"
           ],
           "developer": [
-            "Separating store and developer release notes"
+            "Separating store and developer release notes",
+            "Backing up settings to putio",
+            "Backing up group putids to putio"
           ]
         }
       }

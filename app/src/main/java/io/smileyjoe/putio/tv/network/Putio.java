@@ -1,7 +1,6 @@
 package io.smileyjoe.putio.tv.network;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
@@ -147,7 +146,7 @@ public class Putio {
         }
     }
 
-    public static class Config extends Base{
+    public static class Config extends Base {
         private static final String URL = BASE + "/config";
         private static final String URL_INDIVIDUAL = URL + "/{key}";
         private static final String JSON_KEY = "value";
@@ -156,40 +155,41 @@ public class Putio {
             return URL_INDIVIDUAL.replace("{key}", key);
         }
 
-        public static void get(Context context, Response response){
+        public static void get(Context context, Response response) {
             execute(context, URL, response);
         }
 
-        public static void save(Context context, String key, String value){
+        public static void save(Context context, String key, String value) {
             JsonObject body = new JsonObject();
             body.addProperty(JSON_KEY, value);
 
             save(context, key, body);
         }
 
-        public static void save(Context context, String key, boolean value){
+        public static void save(Context context, String key, boolean value) {
             JsonObject body = new JsonObject();
             body.addProperty(JSON_KEY, value);
 
             save(context, key, body);
         }
 
-        public static void save(Context context, String key, int value){
+        public static void save(Context context, String key, int value) {
             JsonObject body = new JsonObject();
             body.addProperty(JSON_KEY, value);
 
             save(context, key, body);
         }
 
-        private static void save(Context context, String key, JsonObject body){
+        private static void save(Context context, String key, JsonObject body) {
             execute(context, Verb.PUT, getUrl(key), body, null);
         }
     }
 
     private abstract static class Base {
-        protected enum Verb{
+        protected enum Verb {
             PUT
         }
+
         protected static final String BASE = "https://api.put.io/v2";
 
         protected static Builders.Any.B getBaseCall(Context context, String url) {
@@ -200,7 +200,7 @@ public class Putio {
             LoadBuilder<Builders.Any.B> builder = Ion.with(context);
             Builders.Any.B returnBuilder;
 
-            if(verb == null){
+            if (verb == null) {
                 returnBuilder = builder.load(url);
             } else {
                 returnBuilder = builder.load(verb.toString(), url);

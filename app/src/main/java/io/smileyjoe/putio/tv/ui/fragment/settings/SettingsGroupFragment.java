@@ -12,7 +12,6 @@ import java.util.List;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
-import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.util.Settings;
