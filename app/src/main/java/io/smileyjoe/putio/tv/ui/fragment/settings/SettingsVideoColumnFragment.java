@@ -51,7 +51,7 @@ public class SettingsVideoColumnFragment extends SettingsBaseFragment {
 
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
-        getSettings().setVideoNumCols(Math.toIntExact(action.getId()));
+        getSettings().setVideoNumCols(getContext(), Math.toIntExact(action.getId()));
         getParentFragmentManager().popBackStack();
     }
 

@@ -50,7 +50,7 @@ public class SettingsGroupFragment extends SettingsBaseFragment {
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
         if (action.getId() == ID_RECENTLY_ADDED) {
-            getSettings().shouldShowRecentlyAdded(action.isChecked());
+            getSettings().shouldShowRecentlyAdded(getContext(), action.isChecked());
         } else {
             Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().enabled(action.getId(), action.isChecked()));
         }

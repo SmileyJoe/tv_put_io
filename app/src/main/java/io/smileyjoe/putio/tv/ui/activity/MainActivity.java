@@ -8,10 +8,13 @@ import static android.view.View.FOCUS_UP;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +27,8 @@ import io.smileyjoe.putio.tv.databinding.ActivityMainBinding;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.interfaces.Folder;
 import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
+import io.smileyjoe.putio.tv.network.Putio;
+import io.smileyjoe.putio.tv.network.Response;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
@@ -117,7 +122,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         mFragmentFolderList.setForceFocus(true);
 
         mVideoLoader = new VideoLoader(getBaseContext());
-        mVideoLoader.loadDirectory();
+        Settings.restore(getContext(), () -> mVideoLoader.loadDirectory());
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
         mFragmentAccount.setOnClickListener(v -> mSettingsLauncher.launch(SettingsActivity.getIntent(getBaseContext())));
