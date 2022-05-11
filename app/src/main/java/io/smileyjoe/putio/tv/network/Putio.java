@@ -5,8 +5,11 @@ import android.content.Context;
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
+import com.koushikdutta.ion.builder.LoadBuilder;
 
 import java.util.concurrent.ExecutionException;
+
+import javax.annotation.Nullable;
 
 import io.smileyjoe.putio.tv.Application;
 import io.smileyjoe.putio.tv.BuildConfig;
@@ -133,7 +136,6 @@ public class Putio {
         }
 
         public static JsonObject get(Context context, long parentId) {
-
             try {
                 return getBaseCall(context, getUrl(context, parentId))
                         .asJsonObject()
@@ -144,26 +146,104 @@ public class Putio {
         }
     }
 
+    public static class Config extends Base {
+        private static final String URL = BASE + "/config";
+        private static final String URL_INDIVIDUAL = URL + "/{key}";
+        private static final String JSON_KEY = "value";
+
+        private static String getUrl(String key) {
+            return URL_INDIVIDUAL.replace("{key}", key);
+        }
+
+        public static void get(Context context, Response response) {
+            execute(context, URL, response);
+        }
+
+        public static void save(Context context, String key, String value) {
+            JsonObject body = new JsonObject();
+            body.addProperty(JSON_KEY, value);
+
+            save(context, key, body);
+        }
+
+        public static void save(Context context, String key, boolean value) {
+            JsonObject body = new JsonObject();
+            body.addProperty(JSON_KEY, value);
+
+            save(context, key, body);
+        }
+
+        public static void save(Context context, String key, int value) {
+            JsonObject body = new JsonObject();
+            body.addProperty(JSON_KEY, value);
+
+            save(context, key, body);
+        }
+
+        public static void save(Context context, String key, long value) {
+            JsonObject body = new JsonObject();
+            body.addProperty(JSON_KEY, value);
+
+            save(context, key, body);
+        }
+
+        private static void save(Context context, String key, JsonObject body) {
+            execute(context, Verb.PUT, getUrl(key), body, null);
+            long millies = Settings.getInstance(context).updateLastPutUpdate();
+            saveLastUpdate(context, millies);
+        }
+
+        private static void saveLastUpdate(Context context, long millies) {
+            JsonObject body = new JsonObject();
+            body.addProperty(JSON_KEY, millies);
+            execute(context, Verb.PUT, getUrl(Settings.KEY_LAST_PUT_UPDATE), body, null);
+        }
+    }
+
     private abstract static class Base {
+        protected enum Verb {
+            PUT
+        }
+
         protected static final String BASE = "https://api.put.io/v2";
 
         protected static Builders.Any.B getBaseCall(Context context, String url) {
-            return Ion.with(context)
-                    .load(url)
+            return getBaseCall(context, null, url);
+        }
+
+        protected static Builders.Any.B getBaseCall(Context context, @Nullable Verb verb, String url) {
+            LoadBuilder<Builders.Any.B> builder = Ion.with(context);
+            Builders.Any.B returnBuilder;
+
+            if (verb == null) {
+                returnBuilder = builder.load(url);
+            } else {
+                returnBuilder = builder.load(verb.toString(), url);
+            }
+
+            return returnBuilder
                     .setHeader("client_id", BuildConfig.PUTIO_CLIENT_ID)
                     .setHeader("client_secret", BuildConfig.PUTIO_CLIENT_SECRET)
                     .setHeader("Authorization", "Bearer " + Application.getPutToken());
         }
 
         protected static void execute(Context context, String url, Response response) {
-            getBaseCall(context, url)
+            execute(context, null, url, response);
+        }
+
+        protected static void execute(Context context, @Nullable Verb verb, String url, Response response) {
+            getBaseCall(context, verb, url)
                     .asJsonObject()
                     .withResponse()
                     .setCallback(response);
         }
 
         protected static void execute(Context context, String url, JsonObject jsonObject, Response response) {
-            getBaseCall(context, url)
+            execute(context, null, url, jsonObject, response);
+        }
+
+        protected static void execute(Context context, @Nullable Verb verb, String url, JsonObject jsonObject, Response response) {
+            getBaseCall(context, verb, url)
                     .setJsonObjectBody(jsonObject)
                     .asJsonObject()
                     .withResponse()

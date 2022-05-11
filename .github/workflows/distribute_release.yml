@@ -58,7 +58,7 @@ jobs:
       - name: Generate release notes
         id: generate_release_notes
         run: >-
-          bash ./gradlew :app:generateReleaseNotesRelease --warning-mode all
+          bash ./gradlew :app:generateReleaseNotesStore --warning-mode all
           ${{ steps.params.outputs.PARAMS }}
 
       - name: Build

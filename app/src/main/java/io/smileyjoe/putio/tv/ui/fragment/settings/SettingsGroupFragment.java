@@ -14,6 +14,7 @@ import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.db.AppDatabase;
 import io.smileyjoe.putio.tv.object.GroupType;
 import io.smileyjoe.putio.tv.util.Async;
+import io.smileyjoe.putio.tv.util.Settings;
 
 public class SettingsGroupFragment extends SettingsBaseFragment {
 
@@ -50,9 +51,12 @@ public class SettingsGroupFragment extends SettingsBaseFragment {
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
         if (action.getId() == ID_RECENTLY_ADDED) {
-            getSettings().shouldShowRecentlyAdded(action.isChecked());
+            getSettings().shouldShowRecentlyAdded(getContext(), action.isChecked());
         } else {
-            Async.run(() -> AppDatabase.getInstance(getContext()).groupDao().enabled(action.getId(), action.isChecked()));
+            Async.run(() -> {
+                AppDatabase.getInstance(getContext()).groupDao().enabled(action.getId(), action.isChecked());
+                Settings.getInstance(getContext()).saveGroupEnabled(getContext(), action.getId(), action.isChecked());
+            });
         }
     }
 }

@@ -1,68 +1,121 @@
 {
-  "previous_release": "3.7.2",
-  "current_debug": "3.7.3",
+  "previous_release": "3.7.3",
+  "current_debug": "3.8.0",
   "notes": {
     "3": {
       "3": {
-        "1": [
-          "General bug fixes"
-        ],
-        "2": [
-          "`Fatal Exception: java.lang.IndexOutOfBoundsException` could happen when filtering the grid view",
-          "`Fatal Exception: java.lang.NullPointerException` was happening when a movie that was previosuly watched elsewhere was watched in the app"
-        ]
+        "1": {
+          "store": [
+          ],
+          "developer": [
+            "General bug fixes"
+          ]
+        },
+        "2": {
+          "store": [
+          ],
+          "developer": [
+            "`Fatal Exception: java.lang.IndexOutOfBoundsException` could happen when filtering the grid view",
+            "`Fatal Exception: java.lang.NullPointerException` was happening when a movie that was previosuly watched elsewhere was watched in the app"
+          ]
+        }
       },
       "4": {
-        "0": [
-          "Adding release notes to build process",
-          "Displaying account info",
-          "Adding different host name for debug app"
-        ]
+        "0": {
+          "store": [
+          ],
+          "developer": [
+            "Adding release notes to build process",
+            "Displaying account info",
+            "Adding different host name for debug app"
+          ]
+        }
       },
       "5": {
-        "0": [
-          "Added settings page",
-          "Enable and disable groups",
-          "Enable and disable recently added menu item",
-          "Added account summary in side menu",
-          "Added account details to settings",
-          "Added about page to settings",
-          "Moved away from AsyncTask",
-          "Added option to have grid or list view for videos",
-          "Added option to change number of columns in grid"
-        ]
+        "0": {
+          "store": [
+          ],
+          "developer": [
+            "Added settings page",
+            "Enable and disable groups",
+            "Enable and disable recently added menu item",
+            "Added account summary in side menu",
+            "Added account details to settings",
+            "Added about page to settings",
+            "Moved away from AsyncTask",
+            "Added option to have grid or list view for videos",
+            "Added option to change number of columns in grid"
+          ]
+        }
       },
       "6": {
-        "0": [
-          "Updating cache when refreshing data",
-          "Long press context menu",
-          "Added a put.io service status feed"
-        ],
-        "1": [
-          "Update dependencies",
-          "Add -debug suffix to version name",
-          "Moving to broadcasts for videos loading",
-          "Fixes watch and resume not working from details page",
-          "Refactoring VideoLoader"
-        ]
+        "0": {
+          "store": [
+          ],
+          "developer": [
+            "Updating cache when refreshing data",
+            "Long press context menu",
+            "Added a put.io service status feed"
+          ]
+        },
+        "1": {
+          "store": [
+          ],
+          "developer": [
+            "Update dependencies",
+            "Add -debug suffix to version name",
+            "Moving to broadcasts for videos loading",
+            "Fixes watch and resume not working from details page",
+            "Refactoring VideoLoader"
+          ]
+        }
       },
       "7": {
-        "0": [
-          "Adding release notes tasks",
-          "Adding gpp"
-        ],
-        "1": [
-          "Cleaning up workflows"
-        ],
-        "2": [
-          "Adding params to release notes generation"
-        ],
-        "3": [
-          "Handling incorrect audio track being played due to exoplayer update",
-          "Limit the number of lines in the summary text for video list",
-          "Limit the height of the poster in video list",
-          "Update sorting to ignore case"
-        ]
+        "0": {
+          "store": [
+          ],
+          "developer": [
+            "Adding release notes tasks",
+            "Adding gpp"
+          ]
+        },
+        "1": {
+          "store": [
+          ],
+          "developer": [
+            "Cleaning up workflows"
+          ]
+        },
+        "2": {
+          "store": [
+          ],
+          "developer": [
+            "Adding params to release notes generation"
+          ]
+        },
+        "3": {
+          "store": [
+          ],
+          "developer": [
+            "Handling incorrect audio track being played due to exoplayer update",
+            "Limit the number of lines in the summary text for video list",
+            "Limit the height of the poster in video list",
+            "Update sorting to ignore case"
+          ]
+        }
+      },
+      "8": {
+        "0": {
+          "store": [
+            "Your settings and group setup will now persist across devices",
+            "Optimizations"
+          ],
+          "developer": [
+            "Separating store and developer release notes",
+            "Backing up settings to putio",
+            "Backing up group putids to putio"
+          ]
+        }
       }
     }
   }

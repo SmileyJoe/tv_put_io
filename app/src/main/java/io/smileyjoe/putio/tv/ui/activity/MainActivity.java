@@ -117,7 +117,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         mFragmentFolderList.setForceFocus(true);
 
         mVideoLoader = new VideoLoader(getBaseContext());
-        mVideoLoader.loadDirectory();
+        Settings.restore(getContext(), () -> mVideoLoader.loadDirectory());
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
         mFragmentAccount.setOnClickListener(v -> mSettingsLauncher.launch(SettingsActivity.getIntent(getBaseContext())));
@@ -404,7 +404,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
                     group.removePutId(mVideoLoader.getCurrentHistory().getId());
                 }
 
-                AppDatabase.getInstance(getBaseContext()).groupDao().insert(group);
+                Settings.getInstance(getContext()).saveGroupPutIds(getContext(), group);
+                AppDatabase.getInstance(getBaseContext()).groupDao().updatePutIds(group.getId(), group.getPutIdsJson());
             });
         }
     }

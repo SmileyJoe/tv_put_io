@@ -54,7 +54,7 @@ public class SettingsVideoLayoutFragment extends SettingsBaseFragment {
         VideosAdapter.Style style = VideosAdapter.Style.fromId(Math.toIntExact(action.getId()));
 
         if (style != null) {
-            getSettings().setVideoLayout(style.getId());
+            getSettings().setVideoLayout(getContext(), style.getId());
         }
 
         getParentFragmentManager().popBackStack();
