@@ -88,20 +88,10 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
 
     @Override
     public void handleClick(ActionOption option) {
-        switch (option) {
-            case RESUME:
-                ResumeAction.super.handleClick(option);
-                break;
-            case WATCH:
-                PlayAction.super.handleClick(option);
-                break;
-            case REFRESH_DATA:
-                RefreshAction.super.handleClick(option);
-                break;
-            case TRAILER:
-                TrailerAction.super.handleClick(option);
-                break;
-        }
+        ResumeAction.super.handleClick(option);
+        PlayAction.super.handleClick(option);
+        RefreshAction.super.handleClick(option);
+        TrailerAction.super.handleClick(option);
     }
 
     private void populate() {

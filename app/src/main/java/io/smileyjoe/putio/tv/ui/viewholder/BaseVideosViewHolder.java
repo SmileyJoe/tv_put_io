@@ -81,14 +81,8 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
 
         @Override
         public void handleClick(ActionOption option) {
-            switch (option) {
-                case REFRESH_DATA:
-                    RefreshAction.super.handleClick(option);
-                    break;
-                case WATCH:
-                    PlayAction.super.handleClick(option);
-                    break;
-            }
+            RefreshAction.super.handleClick(option);
+            PlayAction.super.handleClick(option);
         }
 
         @Override
