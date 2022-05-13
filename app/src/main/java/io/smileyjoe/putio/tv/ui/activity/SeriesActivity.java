@@ -130,7 +130,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     private class VideoListListener implements VideosFragment.Listener {
         @Override
         public void onItemClicked(View view, Video item) {
-            startActivity(PlaybackActivity.getIntent(getBaseContext(), mFragmentVideoList.getVideos(), item, true));
+            startActivity(PlaybackActivity.getIntent(getBaseContext(), mFragmentVideoList.getVideos(), item, false, true));
         }
 
         @Override

@@ -250,7 +250,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
-    public void play(Video video) {
+    private void play(Video video) {
+        play(video, mPlayMp4);
+    }
+
+    public void play(Video video, boolean playMp4) {
+        mPlayMp4 = playMp4;
         if (mPlayer != null) {
             play(video, null);
         } else {
@@ -262,7 +267,8 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mVideo = video;
 
         if (mInitialized) {
-            mPlayerGlue.setTitle(video.getTitleFormatted(getContext(), true));
+            String title = video.getTitleFormatted(getContext(), true) + (mPlayMp4 ? " (MP4)" : "");
+            mPlayerGlue.setTitle(title);
             mPlayerGlue.setMediaType(MediaType.VIDEO);
 
             prepareMediaForPlaying(video.getStreamUri(mPlayMp4), subtitleUri);
