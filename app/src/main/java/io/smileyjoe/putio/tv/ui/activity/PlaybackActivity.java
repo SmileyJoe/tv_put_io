@@ -346,6 +346,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void showConversion() {
+        mPlayMp4 = true;
         mPlaybackVideoFragment.onPause();
         hide(mPlaybackVideoFragment);
         show(mConvertFragment);

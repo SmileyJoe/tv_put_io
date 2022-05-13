@@ -492,8 +492,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 } else if (mVideo.getStreamMp4Uri() == null) {
                     mListener.ifPresent(listener -> listener.showConversion());
                 } else {
-                    mPlayMp4 = true;
-                    play(mVideo);
+                    play(mVideo, true);
                 }
             }
         }
