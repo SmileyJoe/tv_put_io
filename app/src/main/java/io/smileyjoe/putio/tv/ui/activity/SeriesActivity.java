@@ -102,8 +102,6 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mView.imagePoster);
 
-                mVideoLoader.loadDirectory(mSeries.getPutId(), mSeries.getTitle());
-
                 Channels.addProgramme(getBaseContext(), ChannelType.DEFAULT, mSeries);
             }
         }
