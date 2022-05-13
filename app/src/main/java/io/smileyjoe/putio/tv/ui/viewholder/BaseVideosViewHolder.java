@@ -1,6 +1,7 @@
 package io.smileyjoe.putio.tv.ui.viewholder;
 
 import android.content.Context;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,11 +12,12 @@ import androidx.viewbinding.ViewBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
+import io.smileyjoe.putio.tv.action.video.ConvertAction;
 import io.smileyjoe.putio.tv.action.video.PlayAction;
 import io.smileyjoe.putio.tv.action.video.RefreshAction;
 import io.smileyjoe.putio.tv.object.FileType;
@@ -62,11 +64,12 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
         }
     }
 
-    private class ContextMenu implements View.OnCreateContextMenuListener, RefreshAction, PlayAction {
+    private class ContextMenu implements View.OnCreateContextMenuListener, ConvertAction, RefreshAction, PlayAction {
 
         private Video mVideo;
-        private List<ActionOption> mItems = new ArrayList<>();
+        private HashMap<ActionOption, String> mItems = new HashMap<>();
         private Context mContext;
+        private android.view.ContextMenu mMenu;
 
         public ContextMenu(Context context, Video video) {
             mContext = context;
@@ -81,21 +84,20 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
 
         @Override
         public void handleClick(ActionOption option) {
-            switch (option) {
-                case REFRESH_DATA:
-                    RefreshAction.super.handleClick(option);
-                    break;
-                case WATCH:
-                    PlayAction.super.handleClick(option);
-                    break;
-            }
+            RefreshAction.super.handleClick(option);
+            PlayAction.super.handleClick(option);
+            ConvertAction.super.handleClick(option);
         }
 
         @Override
         public void onCreateContextMenu(android.view.ContextMenu menu, View v, android.view.ContextMenu.ContextMenuInfo menuInfo) {
-            menu.setHeaderTitle(getVideo().getTitleFormatted(getContext(), false));
-            mItems.forEach(option -> {
-                menu.add(option.getTitleResId()).setOnMenuItemClickListener(new OnContextItemClicked(option, this));
+            mMenu = menu;
+            mMenu.setHeaderTitle(getVideo().getTitleFormatted(getContext(), false));
+
+            AtomicInteger position = new AtomicInteger(0);
+            mItems.forEach((option, title) -> {
+                mMenu.add(Menu.NONE, Math.toIntExact(option.getId()), position.getAndIncrement(), title)
+                        .setOnMenuItemClickListener(new OnContextItemClicked(option, this));
             });
         }
 
@@ -105,24 +107,30 @@ public abstract class BaseVideosViewHolder<V extends ViewBinding> extends BaseVi
         }
 
         @Override
-        public void addAction(ActionOption option, boolean shouldShow) {
+        public void addAction(ActionOption option, String title, String subtitle, boolean shouldShow) {
             switch (option) {
+                case CONVERT:
                 case WATCH:
                     if (getVideo().getFileType() == FileType.VIDEO) {
-                        mItems.add(option);
+                        mItems.put(option, title);
                     }
                     break;
                 default:
-                    mItems.add(option);
+                    mItems.put(option, title);
                     break;
             }
-
         }
 
         @Override
         public void setupActions() {
             RefreshAction.super.setupActions();
             PlayAction.super.setupActions();
+            ConvertAction.super.setupActions();
+        }
+
+        @Override
+        public void updateActionConvert(String title) {
+            mMenu.findItem(Math.toIntExact(ActionOption.CONVERT.getId())).setTitle(title);
         }
 
         @Override

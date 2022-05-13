@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.StringRes;
 import androidx.leanback.widget.OnActionClickedListener;
 
 import java.util.ArrayList;
@@ -41,18 +42,26 @@ public interface Action {
     }
 
     default void play(Video video, boolean shouldResume) {
-        play(video, null, shouldResume);
+        play(video, null, false, shouldResume);
     }
 
-    default void play(Video video, ArrayList<Video> videos, boolean shouldResume) {
+    default void play(Video video, boolean playMp4, boolean shouldResume) {
+        play(video, null, playMp4, shouldResume);
+    }
+
+    default void play(Video video, ArrayList<Video> videos, boolean playMp4, boolean shouldResume) {
         if (video.getVideoType() == VideoType.EPISODE) {
             if (videos != null && !videos.isEmpty()) {
-                getContext().startActivity(PlaybackActivity.getIntent(getContext(), videos, video, shouldResume));
+                getContext().startActivity(PlaybackActivity.getIntent(getContext(), videos, video, playMp4, shouldResume));
                 return;
             }
         }
 
-        getContext().startActivity(PlaybackActivity.getIntent(getContext(), video, shouldResume));
+        getContext().startActivity(PlaybackActivity.getIntent(getContext(), video, playMp4, shouldResume));
+    }
+
+    default String getString(@StringRes int resId) {
+        return getContext().getString(resId);
     }
 
     class OnButtonClicked implements View.OnClickListener {

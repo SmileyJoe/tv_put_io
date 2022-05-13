@@ -29,7 +29,9 @@ public interface ResumeAction extends Action {
 
     @Override
     default void handleClick(ActionOption option) {
-        resumeVideo();
+        if (option == ActionOption.RESUME) {
+            resumeVideo();
+        }
     }
 
     default void getResumeTime() {

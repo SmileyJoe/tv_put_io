@@ -81,7 +81,7 @@ public class VideoUtil {
         }
 
         video.setPutTitle(json.getString("name"));
-        video.setConverted(!json.getBoolean("need_convert", false));
+        video.setConverted(json.getBoolean("is_mp4_available", false));
         video.setFileType(json.getString("file_type"));
         video.setStreamUri(json.getString("stream_url"));
         video.setStreamMp4Uri(json.getString("mp4_stream_url"));

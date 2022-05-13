@@ -116,6 +116,20 @@
             "Backing up group putids to putio"
           ]
         }
+      },
+      "9": {
+        "0": {
+          "store": [
+            "You can now optionally choose to play the mp4 version of a video"
+          ],
+          "developer": [
+            "Moving action handle click checks into the action",
+            "Adding convert action",
+            "Adding option to play mp4 if available",
+            "Fixing a bug where episodes would be loaded twice",
+            "Added action to playback to switch to mp4"
+          ]
+        }
       }
     }
   }

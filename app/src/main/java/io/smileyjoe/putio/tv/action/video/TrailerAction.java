@@ -12,7 +12,9 @@ public interface TrailerAction extends Action {
 
     @Override
     default void handleClick(ActionOption option) {
-        playTrailer();
+        if (option == ActionOption.TRAILER) {
+            playTrailer();
+        }
     }
 
     @Override

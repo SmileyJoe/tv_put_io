@@ -102,8 +102,6 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mView.imagePoster);
 
-                mVideoLoader.loadDirectory(mSeries.getPutId(), mSeries.getTitle());
-
                 Channels.addProgramme(getBaseContext(), ChannelType.DEFAULT, mSeries);
             }
         }
@@ -130,7 +128,7 @@ public class SeriesActivity extends BaseActivity<ActivitySeriesBinding> implemen
     private class VideoListListener implements VideosFragment.Listener {
         @Override
         public void onItemClicked(View view, Video item) {
-            startActivity(PlaybackActivity.getIntent(getBaseContext(), mFragmentVideoList.getVideos(), item, true));
+            startActivity(PlaybackActivity.getIntent(getBaseContext(), mFragmentVideoList.getVideos(), item, false, true));
         }
 
         @Override

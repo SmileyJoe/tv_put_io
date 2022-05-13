@@ -36,6 +36,7 @@ import java.util.stream.IntStream;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
+import io.smileyjoe.putio.tv.action.video.ConvertAction;
 import io.smileyjoe.putio.tv.action.video.GroupAction;
 import io.smileyjoe.putio.tv.action.video.PlayAction;
 import io.smileyjoe.putio.tv.action.video.RefreshAction;
@@ -54,7 +55,7 @@ import io.smileyjoe.putio.tv.util.VideoUtil;
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
  * It shows a detailed view of video and its meta plus related videos.
  */
-public class VideoDetailsFragment extends DetailsFragment implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction {
+public class VideoDetailsFragment extends DetailsFragment implements VideoDetails, ConvertAction, PlayAction, ResumeAction, RefreshAction, GroupAction {
 
     public interface Listener {
         void onRelatedClicked(Video video, ArrayList<Video> relatedVideos);
@@ -100,17 +101,10 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void handleClick(ActionOption option) {
-        switch (option) {
-            case RESUME:
-                ResumeAction.super.handleClick(option);
-                break;
-            case WATCH:
-                PlayAction.super.handleClick(option);
-                break;
-            case REFRESH_DATA:
-                RefreshAction.super.handleClick(option);
-                break;
-        }
+        ResumeAction.super.handleClick(option);
+        PlayAction.super.handleClick(option);
+        RefreshAction.super.handleClick(option);
+        ConvertAction.super.handleClick(option);
     }
 
     @Override
@@ -128,6 +122,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
         mActionAdapter = new ArrayObjectAdapter();
         PlayAction.super.setupActions();
         ResumeAction.super.setupActions();
+        ConvertAction.super.setupActions();
         RefreshAction.super.setupActions();
         GroupAction.super.setupActions();
         mRow.setActionsAdapter(mActionAdapter);
@@ -294,6 +289,12 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
             action.setLabel2(mVideo.getResumeTimeFormatted());
             updateActions(action);
         }
+    }
+
+    @Override
+    public void updateActionConvert(String title) {
+        Action action = getAction(ActionOption.CONVERT.getId());
+        action.setLabel1(title);
     }
 
     private class OnRelatedItemClick implements OnItemViewClickedListener {

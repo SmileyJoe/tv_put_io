@@ -48,6 +48,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     public static final String EXTRA_SHOULD_RESUME = "should_resume";
     public static final String EXTRA_YOUTUBE_URL = "youtube_url";
     public static final String EXTRA_MEDIA_TYPE = "media_type";
+    public static final String EXTRA_FORCE_MP4 = "force_mp4";
 
     private PlaybackVideoFragment mPlaybackVideoFragment;
     private ConvertFragment mConvertFragment;
@@ -59,27 +60,26 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     private Video mVideo;
     private String mYoutubeUrl;
     private MediaType mMediaType;
+    private boolean mPlayMp4 = false;
     @IdRes
     private final int[] mRightPanelIds = new int[]{R.id.fragment_subtitle, R.id.fragment_track_group_selection};
 
-    public static Intent getIntent(Context context, Video video) {
-        return getIntent(context, video, false);
-    }
-
-    public static Intent getIntent(Context context, Video video, boolean shouldResume) {
+    public static Intent getIntent(Context context, Video video, boolean forceMp4, boolean shouldResume) {
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
         intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.VIDEO);
+        intent.putExtra(EXTRA_FORCE_MP4, forceMp4);
         return intent;
     }
 
-    public static Intent getIntent(Context context, ArrayList<Video> videos, Video video, boolean shouldResume) {
+    public static Intent getIntent(Context context, ArrayList<Video> videos, Video video, boolean forceMp4, boolean shouldResume) {
         Intent intent = new Intent(context, PlaybackActivity.class);
         intent.putExtra(EXTRA_VIDEOS, videos);
         intent.putExtra(EXTRA_VIDEO, video);
         intent.putExtra(EXTRA_SHOULD_RESUME, shouldResume);
         intent.putExtra(EXTRA_MEDIA_TYPE, MediaType.VIDEO);
+        intent.putExtra(EXTRA_FORCE_MP4, forceMp4);
         return intent;
     }
 
@@ -274,6 +274,10 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
             if (extras.containsKey(EXTRA_YOUTUBE_URL)) {
                 mYoutubeUrl = getIntent().getStringExtra(EXTRA_YOUTUBE_URL);
             }
+
+            if (extras.containsKey(EXTRA_FORCE_MP4)) {
+                mPlayMp4 = getIntent().getBooleanExtra(EXTRA_FORCE_MP4, mPlayMp4);
+            }
         }
     }
 
@@ -293,7 +297,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
     }
 
     private void play(Video video) {
-        mPlaybackVideoFragment.play(video);
+        mPlaybackVideoFragment.play(video, mPlayMp4);
         video.setWatched(true);
         VideoCache.getInstance().update(video);
     }
@@ -342,6 +346,7 @@ public class PlaybackActivity extends BaseActivity<ActivityPlaybackBinding> impl
 
     @Override
     public void showConversion() {
+        mPlayMp4 = true;
         mPlaybackVideoFragment.onPause();
         hide(mPlaybackVideoFragment);
         show(mConvertFragment);

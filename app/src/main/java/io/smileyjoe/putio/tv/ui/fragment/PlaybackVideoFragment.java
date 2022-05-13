@@ -250,7 +250,12 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         }
     }
 
-    public void play(Video video) {
+    private void play(Video video) {
+        play(video, mPlayMp4);
+    }
+
+    public void play(Video video, boolean playMp4) {
+        mPlayMp4 = playMp4;
         if (mPlayer != null) {
             play(video, null);
         } else {
@@ -262,8 +267,17 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
         mVideo = video;
 
         if (mInitialized) {
-            mPlayerGlue.setTitle(video.getTitleFormatted(getContext(), true));
+            String title = video.getTitleFormatted(getContext(), true) + (mPlayMp4 ? " (MP4)" : "");
+            mPlayerGlue.setTitle(title);
             mPlayerGlue.setMediaType(MediaType.VIDEO);
+
+            if (mPlayMp4) {
+                mPlayerGlue.removePlayMp4Action();
+            } else {
+                if (mVideo.getStreamMp4Uri() != null) {
+                    mPlayerGlue.showPlayMp4Action();
+                }
+            }
 
             prepareMediaForPlaying(video.getStreamUri(mPlayMp4), subtitleUri);
 
@@ -325,6 +339,11 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     @Override
     public void onAudioTrack() {
         mListener.ifPresent(listener -> listener.onAudioTracksClicked(mPlayer.getCurrentTracksInfo()));
+    }
+
+    @Override
+    public void onPlayMp4() {
+        play(mVideo, true);
     }
 
     public void showSubtitles(Uri uri) {
@@ -486,8 +505,7 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
                 } else if (mVideo.getStreamMp4Uri() == null) {
                     mListener.ifPresent(listener -> listener.showConversion());
                 } else {
-                    mPlayMp4 = true;
-                    play(mVideo);
+                    play(mVideo, true);
                 }
             }
         }

@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import io.smileyjoe.putio.tv.R;
 import io.smileyjoe.putio.tv.action.video.ActionOption;
+import io.smileyjoe.putio.tv.action.video.ConvertAction;
 import io.smileyjoe.putio.tv.action.video.GroupAction;
 import io.smileyjoe.putio.tv.action.video.PlayAction;
 import io.smileyjoe.putio.tv.action.video.RefreshAction;
@@ -30,7 +31,7 @@ import io.smileyjoe.putio.tv.object.Group;
 import io.smileyjoe.putio.tv.object.Video;
 import io.smileyjoe.putio.tv.ui.viewholder.VideoDetailsViewHolder;
 
-public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBackdropBinding> implements VideoDetails, PlayAction, ResumeAction, RefreshAction, GroupAction, TrailerAction {
+public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBackdropBinding> implements VideoDetails, ConvertAction, PlayAction, ResumeAction, RefreshAction, GroupAction, TrailerAction {
 
     private static final String EXTRA_VIDEO = "video";
 
@@ -69,6 +70,7 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
         mView.layoutButtons.removeAllViews();
         PlayAction.super.setupActions();
         ResumeAction.super.setupActions();
+        ConvertAction.super.setupActions();
         GroupAction.super.setupActions();
         RefreshAction.super.setupActions();
         TrailerAction.super.setupActions();
@@ -88,20 +90,11 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
 
     @Override
     public void handleClick(ActionOption option) {
-        switch (option) {
-            case RESUME:
-                ResumeAction.super.handleClick(option);
-                break;
-            case WATCH:
-                PlayAction.super.handleClick(option);
-                break;
-            case REFRESH_DATA:
-                RefreshAction.super.handleClick(option);
-                break;
-            case TRAILER:
-                TrailerAction.super.handleClick(option);
-                break;
-        }
+        ResumeAction.super.handleClick(option);
+        PlayAction.super.handleClick(option);
+        RefreshAction.super.handleClick(option);
+        TrailerAction.super.handleClick(option);
+        ConvertAction.super.handleClick(option);
     }
 
     private void populate() {
@@ -189,6 +182,13 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
             button.setVisibility(View.VISIBLE);
         }
 
+        button.setText(title);
+    }
+
+    @Override
+    public void updateActionConvert(String title) {
+        ActionOption option = ActionOption.CONVERT;
+        MaterialButton button = mView.layoutButtons.findViewWithTag(option.getId());
         button.setText(title);
     }
 }

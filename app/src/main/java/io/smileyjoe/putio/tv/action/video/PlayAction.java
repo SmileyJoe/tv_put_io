@@ -8,7 +8,9 @@ public interface PlayAction extends Action {
 
     @Override
     default void handleClick(ActionOption option) {
-        playVideo();
+        if (option == ActionOption.WATCH) {
+            playVideo();
+        }
     }
 
     @Override

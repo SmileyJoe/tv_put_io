@@ -71,6 +71,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         void onNext();
         void onSubtitles();
         void onAudioTrack();
+        void onPlayMp4();
     }
 
     private final Optional<OnActionClickedListener> mActionListener;
@@ -80,6 +81,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
     private SubtitlesAction mSubtitlesAction;
     private ReplayAction mReplayAction;
     private AudioTrackAction mAudioTrackAction;
+    private PlayMp4Action mPlayMp4Action;
     private ArrayObjectAdapter mPrimaryActionsAdapter;
     private ArrayObjectAdapter mSecondaryActionsAdapter;
 
@@ -96,6 +98,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mSubtitlesAction = new SubtitlesAction();
         mReplayAction = new ReplayAction();
         mAudioTrackAction = new AudioTrackAction();
+        mPlayMp4Action = new PlayMp4Action();
 
         setSeekEnabled(true);
         setControlsOverlayAutoHideEnabled(true);
@@ -133,14 +136,20 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
     }
 
     public void showAudioTrackSelection() {
-        if (!mAudioTrackAction.isAdded()) {
-            mAudioTrackAction.setAdded(true);
-            mSecondaryActionsAdapter.add(mAudioTrackAction);
-        }
+        mAudioTrackAction.show();
+    }
+
+    public void showPlayMp4Action() {
+        mPlayMp4Action.show();
+    }
+
+    public void removePlayMp4Action() {
+        mPlayMp4Action.hide();
     }
 
     public void resetActions() {
-        mAudioTrackAction.setAdded(false);
+        mAudioTrackAction.reset();
+        mPlayMp4Action.reset();
     }
 
     public void setMediaType(MediaType mediaType) {
@@ -161,7 +170,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
                 || action == mSkipPreviousAction
                 || action == mSubtitlesAction
                 || action == mReplayAction
-                || action == mAudioTrackAction;
+                || action == mAudioTrackAction
+                || action == mPlayMp4Action;
     }
 
     private void dispatchAction(Action action) {
@@ -176,6 +186,8 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             replay();
         } else if (action == mAudioTrackAction) {
             mActionListener.ifPresent(listener -> listener.onAudioTrack());
+        } else if (action == mPlayMp4Action) {
+            mActionListener.ifPresent(listener -> listener.onPlayMp4());
         } else if (action instanceof PlaybackControlsRow.MultiAction) {
             PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
             multiAction.nextIndex();
@@ -226,22 +238,54 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
     }
 
-    private class AudioTrackAction extends Action {
+    private abstract class OptionalAction extends Action {
+        public OptionalAction(long id) {
+            super(id);
+        }
 
         private boolean mIsAdded = false;
 
-        public void setAdded(boolean added) {
+        private void setAdded(boolean added) {
             mIsAdded = added;
         }
 
-        public boolean isAdded() {
+        private boolean isAdded() {
             return mIsAdded;
         }
+
+        public void reset() {
+            setAdded(false);
+        }
+
+        public void show() {
+            if (!isAdded()) {
+                setAdded(true);
+                mSecondaryActionsAdapter.add(this);
+            }
+        }
+
+        public void hide() {
+            if (isAdded()) {
+                setAdded(false);
+                mSecondaryActionsAdapter.remove(this);
+            }
+        }
+    }
+
+    private class AudioTrackAction extends OptionalAction {
 
         public AudioTrackAction() {
             super(102);
             setLabel1(getContext().getString(R.string.action_audio_tracks));
             setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_audiotrack_24));
+        }
+    }
+
+    private class PlayMp4Action extends OptionalAction {
+        public PlayMp4Action() {
+            super(103);
+            setLabel1(getContext().getString(R.string.action_play_mp4));
+            setIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_mp4_24));
         }
     }
 }
