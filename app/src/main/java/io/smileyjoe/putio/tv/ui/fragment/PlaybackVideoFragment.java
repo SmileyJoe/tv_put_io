@@ -271,6 +271,14 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
             mPlayerGlue.setTitle(title);
             mPlayerGlue.setMediaType(MediaType.VIDEO);
 
+            if(mPlayMp4){
+                mPlayerGlue.removePlayMp4Action();
+            } else {
+                if(mVideo.getStreamMp4Uri() != null) {
+                    mPlayerGlue.showPlayMp4Action();
+                }
+            }
+
             prepareMediaForPlaying(video.getStreamUri(mPlayMp4), subtitleUri);
 
             mPlayerGlue.addPlayerCallback(new PlayerCallback());
@@ -331,6 +339,11 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
     @Override
     public void onAudioTrack() {
         mListener.ifPresent(listener -> listener.onAudioTracksClicked(mPlayer.getCurrentTracksInfo()));
+    }
+
+    @Override
+    public void onPlayMp4() {
+        play(mVideo, true);
     }
 
     public void showSubtitles(Uri uri) {

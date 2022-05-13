@@ -125,7 +125,8 @@
           "developer": [
             "Moving action handle click checks into the action",
             "Adding convert action",
-            "Adding option to play mp4 if available"
+            "Adding option to play mp4 if available",
+            "Fixing a bug where episodes would be loaded twice"
           ]
         }
       }
