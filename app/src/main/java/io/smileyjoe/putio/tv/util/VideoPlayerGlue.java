@@ -143,7 +143,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         mPlayMp4Action.show();
     }
 
-    public void removePlayMp4Action(){
+    public void removePlayMp4Action() {
         mPlayMp4Action.hide();
     }
 
@@ -186,7 +186,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             replay();
         } else if (action == mAudioTrackAction) {
             mActionListener.ifPresent(listener -> listener.onAudioTrack());
-        } else if (action == mPlayMp4Action){
+        } else if (action == mPlayMp4Action) {
             mActionListener.ifPresent(listener -> listener.onPlayMp4());
         } else if (action instanceof PlaybackControlsRow.MultiAction) {
             PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
@@ -238,7 +238,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
     }
 
-    private abstract class OptionalAction extends Action{
+    private abstract class OptionalAction extends Action {
         public OptionalAction(long id) {
             super(id);
         }
@@ -253,7 +253,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             return mIsAdded;
         }
 
-        public void reset(){
+        public void reset() {
             setAdded(false);
         }
 
@@ -264,7 +264,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
             }
         }
 
-        public void hide(){
+        public void hide() {
             if (isAdded()) {
                 setAdded(false);
                 mSecondaryActionsAdapter.remove(this);
@@ -281,7 +281,7 @@ public class VideoPlayerGlue extends PlaybackTransportControlGlue<LeanbackPlayer
         }
     }
 
-    private class PlayMp4Action extends OptionalAction{
+    private class PlayMp4Action extends OptionalAction {
         public PlayMp4Action() {
             super(103);
             setLabel1(getContext().getString(R.string.action_play_mp4));

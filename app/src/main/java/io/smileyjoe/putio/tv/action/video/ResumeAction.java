@@ -29,7 +29,7 @@ public interface ResumeAction extends Action {
 
     @Override
     default void handleClick(ActionOption option) {
-        if(option == ActionOption.RESUME) {
+        if (option == ActionOption.RESUME) {
             resumeVideo();
         }
     }

@@ -271,10 +271,10 @@ public class PlaybackVideoFragment extends VideoSupportFragment implements Video
             mPlayerGlue.setTitle(title);
             mPlayerGlue.setMediaType(MediaType.VIDEO);
 
-            if(mPlayMp4){
+            if (mPlayMp4) {
                 mPlayerGlue.removePlayMp4Action();
             } else {
-                if(mVideo.getStreamMp4Uri() != null) {
+                if (mVideo.getStreamMp4Uri() != null) {
                     mPlayerGlue.showPlayMp4Action();
                 }
             }

@@ -3,23 +3,19 @@ package io.smileyjoe.putio.tv.action.video;
 import com.google.gson.JsonObject;
 
 import io.smileyjoe.putio.tv.R;
-import io.smileyjoe.putio.tv.broadcast.UpdateVideoReceiver;
 import io.smileyjoe.putio.tv.network.Putio;
 import io.smileyjoe.putio.tv.network.Response;
-import io.smileyjoe.putio.tv.object.Video;
-import io.smileyjoe.putio.tv.util.Async;
 import io.smileyjoe.putio.tv.video.VideoCache;
-import io.smileyjoe.putio.tv.video.VideoLoader;
 
-public interface ConvertAction extends Action{
+public interface ConvertAction extends Action {
 
     void updateActionConvert(String title);
 
     @Override
     default void setupActions() {
-        if(getVideo().isConverting()){
+        if (getVideo().isConverting()) {
             addAction(ActionOption.CONVERT, getString(R.string.action_converting), null, true);
-        } else if(getVideo().isConverted()){
+        } else if (getVideo().isConverted()) {
             addAction(ActionOption.CONVERT, getString(R.string.action_play_mp4), null, true);
         } else {
             addAction(ActionOption.CONVERT, true);
@@ -28,10 +24,10 @@ public interface ConvertAction extends Action{
 
     @Override
     default void handleClick(ActionOption option) {
-        if(option == ActionOption.CONVERT) {
-            if(getVideo().isConverting()){
+        if (option == ActionOption.CONVERT) {
+            if (getVideo().isConverting()) {
                 play(getVideo(), true);
-            } else if(getVideo().isConverted()){
+            } else if (getVideo().isConverted()) {
                 play(getVideo(), true, true);
             } else {
                 Putio.Convert.start(getContext(), getVideo().getPutId(), new Response() {

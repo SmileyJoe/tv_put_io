@@ -23,7 +23,7 @@ public interface RefreshAction extends Action, UpdateVideoReceiver {
 
     @Override
     default void handleClick(ActionOption option) {
-        if(option == ActionOption.REFRESH_DATA) {
+        if (option == ActionOption.REFRESH_DATA) {
             UpdateVideoReceiver.super.registerReceiver();
             refreshData();
         }

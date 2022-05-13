@@ -60,7 +60,7 @@ public interface Action {
         getContext().startActivity(PlaybackActivity.getIntent(getContext(), video, playMp4, shouldResume));
     }
 
-    default String getString(@StringRes int resId){
+    default String getString(@StringRes int resId) {
         return getContext().getString(resId);
     }
 
