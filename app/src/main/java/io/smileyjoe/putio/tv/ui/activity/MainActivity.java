@@ -120,6 +120,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         Settings.restore(getContext(), () -> mVideoLoader.loadDirectory());
 
         mView.layoutShowFolders.setOnClickListener(v -> toggleFolders());
+        mView.layoutRefresh.setOnClickListener(v -> reload());
         mFragmentAccount.setOnClickListener(v -> mSettingsLauncher.launch(SettingsActivity.getIntent(getBaseContext())));
 
         mFragmentGenreList.hide();
@@ -174,10 +175,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
     public void onResume() {
         super.onResume();
         LoadVideoReceiver.super.registerReceiver();
-
-        if (mVideoLoader != null) {
-            mVideoLoader.reload();
-        }
     }
 
     @Override
@@ -295,6 +292,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         }
     }
 
+    private void reload(){
+        if(mVideoLoader != null){
+            mVideoLoader.reload();
+        }
+    }
+
     private void toggleFolders() {
         if (!mView.animLayoutFolders.isShowing()) {
             showFolders();
@@ -378,7 +381,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
                         if (mFragmentFilter.canFocus(focused, direction)) {
                             return null;
                         } else {
-                            return mView.layoutShowFolders;
+                            return mView.layoutRefresh;
                         }
                     case FOCUS_RIGHT:
                         if (mFragmentFilter.canFocus(focused, direction)) {

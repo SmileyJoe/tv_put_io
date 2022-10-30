@@ -154,6 +154,11 @@
         <item name="android:indeterminateTint">@color/ic_tint</item>
     </style>
 
+    <style name="Icon.ToggleItem">
+        <item name="android:tint">@color/selector_icon_inverse</item>
+        <item name="tint">@color/selector_icon_inverse</item>
+    </style>
+
     <style name="ListItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -207,6 +212,17 @@
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_marginLeft">@dimen/padding_general</item>
         <item name="android:layout_marginRight">@dimen/padding_general</item>
+    </style>
+
+    <style name="ToggleItem" parent="">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:padding">@dimen/padding_general</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:background">@color/color_background</item>
+        <item name="android:backgroundTint">@color/selector_bg_inverse</item>
+        <item name="android:clickable">true</item>
     </style>
 
 </resources>

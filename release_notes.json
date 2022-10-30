@@ -1,6 +1,6 @@
 {
-  "previous_release": "3.7.3",
-  "current_debug": "3.8.0",
+  "previous_release": "3.9.0",
+  "current_debug": "3.9.1",
   "notes": {
     "3": {
       "3": {
@@ -133,11 +133,15 @@
         "1": {
           "store": [
             "Fixed a bug where a single video in a directory wasn't loading as a video",
-            "Fixed a bug where all video details wouldn't show until the app was restarted"
+            "Fixed a bug where all video details wouldn't show until the app was restarted",
+            "Fixed a bug where filters where not remembered when returning to the video list",
+            "Added an option to reload the video list"
           ],
           "developer": [
             "Ignoring any 'subs' directories",
-            "Listening for video update in backdrop details activity"
+            "Listening for video update in backdrop details activity",
+            "Stopped reloading the videos when returning to the video list",
+            "Added manual refresh option"
           ]
         }
       }
