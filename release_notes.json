@@ -129,6 +129,14 @@
             "Fixing a bug where episodes would be loaded twice",
             "Added action to playback to switch to mp4"
           ]
+        },
+        "1": {
+          "store": [
+            "Fixed a bug where a single video in a directory wasn't loading as a video"
+          ],
+          "developer": [
+            "Ignoring any 'subs' directories"
+          ]
         }
       }
     }

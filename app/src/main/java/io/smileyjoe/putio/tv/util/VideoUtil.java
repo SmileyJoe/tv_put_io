@@ -3,6 +3,7 @@ package io.smileyjoe.putio.tv.util;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.google.android.gms.common.util.ArrayUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -27,6 +28,8 @@ import io.smileyjoe.putio.tv.torrent.Parse;
 
 public class VideoUtil {
 
+    private static final String[] IGNORE_DIRS = new String[]{"subs"};
+
     private VideoUtil() {
 
     }
@@ -45,6 +48,7 @@ public class VideoUtil {
     public static ArrayList<Video> filter(ArrayList<Video> videos) {
         return videos.stream()
                 .filter(video -> video.getFileType() != FileType.UNKNOWN && video.getSize() > 0)
+                .filter(video -> !ArrayUtils.contains(IGNORE_DIRS, video.getTitle().toLowerCase()))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
