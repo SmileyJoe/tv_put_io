@@ -79,11 +79,19 @@ public class VideoDetailsBackdropActivity extends BaseActivity<ActivityDetailsBa
     @Override
     public void onResume() {
         super.onResume();
+        VideoDetails.super.registerReceiver();
         getResumeTime();
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        VideoDetails.super.deregisterReceiver();
+    }
+
+    @Override
     public void update(Video video) {
+        mVideo = video;
         RefreshAction.super.update(video);
         populate();
     }

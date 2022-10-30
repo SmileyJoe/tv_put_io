@@ -132,10 +132,12 @@
         },
         "1": {
           "store": [
-            "Fixed a bug where a single video in a directory wasn't loading as a video"
+            "Fixed a bug where a single video in a directory wasn't loading as a video",
+            "Fixed a bug where all video details wouldn't show until the app was restarted"
           ],
           "developer": [
-            "Ignoring any 'subs' directories"
+            "Ignoring any 'subs' directories",
+            "Listening for video update in backdrop details activity"
           ]
         }
       }
