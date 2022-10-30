@@ -169,7 +169,14 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
     @Override
     public void onResume() {
         super.onResume();
+        VideoDetails.super.registerReceiver();
         updateActionResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        VideoDetails.super.deregisterReceiver();
     }
 
     private void initializeBackground(Video video) {
@@ -194,6 +201,7 @@ public class VideoDetailsFragment extends DetailsFragment implements VideoDetail
 
     @Override
     public void update(Video video) {
+        mVideo = video;
         RefreshAction.super.update(video);
         if (video.isTmdbFound()) {
             startActivity(VideoDetailsBackdropActivity.getIntent(this.getContext(), video));
