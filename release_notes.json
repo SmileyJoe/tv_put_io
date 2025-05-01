@@ -1,6 +1,6 @@
 {
   "previous_release": "3.9.0",
-  "current_debug": "3.10.0",
+  "current_debug": "3.10.1",
   "notes": {
     "3": {
       "3": {
@@ -138,6 +138,14 @@
           ],
           "developer": [
             "Adding folder refresh option to allow reloading the cache for the current directory"
+          ]
+        },
+        "1": {
+          "store": [
+            "Minor Updates"
+          ],
+          "developer": [
+            "Updating target sdk to 33"
           ]
         }
       }
