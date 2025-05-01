@@ -9,14 +9,16 @@ import io.smileyjoe.putio.tv.network.Response;
 public class OnPutResponse extends Response {
     private long mPutId;
     private Context mContext;
+    private boolean mShouldAddToHistory;
 
-    public OnPutResponse(Context context, long putId) {
+    public OnPutResponse(Context context, long putId, boolean shouldAddToHistory) {
         mContext = context;
         mPutId = putId;
+        mShouldAddToHistory = shouldAddToHistory;
     }
 
     @Override
     public void onSuccess(JsonObject result) {
-        new ProcessPutResponse(mContext, mPutId, result).run();
+        new ProcessPutResponse(mContext, mPutId, mShouldAddToHistory, result).run();
     }
 }

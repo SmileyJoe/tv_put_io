@@ -18,10 +18,12 @@ public class ProcessPutResponse extends Async.Runner<Void> {
     private String mCurrentTitle;
     private Context mContext;
     private VideoCache mCache;
+    private boolean mShouldAddToHistory;
 
-    public ProcessPutResponse(Context context, long putId, JsonObject result) {
+    public ProcessPutResponse(Context context, long putId, boolean shouldAddToHistory, JsonObject result) {
         mContext = context;
         mPutId = putId;
+        mShouldAddToHistory = shouldAddToHistory;
         mResult = result;
         mCache = VideoCache.getInstance();
     }
@@ -55,7 +57,7 @@ public class ProcessPutResponse extends Async.Runner<Void> {
             historyItem = HistoryItem.virtualDirectory(mCurrentPutId, mCurrentTitle);
         }
 
-        Broadcast.Videos.loaded(mContext, historyItem, mCache.getVideos(mCurrentPutId), mCache.getFolders(mCurrentPutId), true);
+        Broadcast.Videos.loaded(mContext, historyItem, mCache.getVideos(mCurrentPutId), mCache.getFolders(mCurrentPutId), mShouldAddToHistory);
     }
 
 }

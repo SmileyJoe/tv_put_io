@@ -85,17 +85,25 @@
                     android:layout_alignParentTop="true"/>
 
                 <fragment
+                    android:id="@+id/fragment_folder_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/text_title_folders"
+                    android:name="io.smileyjoe.putio.tv.ui.fragment.FolderActionFragment"/>
+
+                <fragment
                     android:id="@+id/fragment_groups"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/text_title_folders"
+                    android:layout_toEndOf="@id/fragment_folder_action"
                     android:name="io.smileyjoe.putio.tv.ui.fragment.GroupFragment"/>
 
                 <fragment
                     android:id="@+id/fragment_folder_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@id/fragment_groups"
+                    android:layout_below="@id/fragment_folder_action"
                     android:layout_above="@+id/fragment_account"
                     android:name="io.smileyjoe.putio.tv.ui.fragment.FolderListFragment"/>
 

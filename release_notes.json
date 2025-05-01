@@ -1,6 +1,6 @@
 {
-  "previous_release": "3.7.3",
-  "current_debug": "3.8.0",
+  "previous_release": "3.9.0",
+  "current_debug": "3.10.0",
   "notes": {
     "3": {
       "3": {
@@ -128,6 +128,16 @@
             "Adding option to play mp4 if available",
             "Fixing a bug where episodes would be loaded twice",
             "Added action to playback to switch to mp4"
+          ]
+        }
+      },
+      "10": {
+        "0" : {
+          "store": [
+            "You can now force a reload of the current directories content"
+          ],
+          "developer": [
+            "Adding folder refresh option to allow reloading the cache for the current directory"
           ]
         }
       }
