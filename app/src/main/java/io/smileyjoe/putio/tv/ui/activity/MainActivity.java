@@ -27,6 +27,7 @@ import io.smileyjoe.putio.tv.interfaces.HomeFragmentListener;
 import io.smileyjoe.putio.tv.network.Tmdb;
 import io.smileyjoe.putio.tv.object.Directory;
 import io.smileyjoe.putio.tv.object.Filter;
+import io.smileyjoe.putio.tv.object.FolderAction;
 import io.smileyjoe.putio.tv.object.FolderType;
 import io.smileyjoe.putio.tv.object.FragmentType;
 import io.smileyjoe.putio.tv.object.Genre;
@@ -38,6 +39,7 @@ import io.smileyjoe.putio.tv.object.VirtualDirectory;
 import io.smileyjoe.putio.tv.ui.fragment.AccountFragment;
 import io.smileyjoe.putio.tv.ui.fragment.BaseFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FilterFragment;
+import io.smileyjoe.putio.tv.ui.fragment.FolderActionFragment;
 import io.smileyjoe.putio.tv.ui.fragment.FolderListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GenreListFragment;
 import io.smileyjoe.putio.tv.ui.fragment.GroupFragment;
@@ -60,6 +62,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
     private FilterFragment mFragmentFilter;
     private GroupFragment mFragmentGroup;
     private AccountFragment mFragmentAccount;
+    private FolderActionFragment mFragmentFolderAction;
 
     private FragmentType mVideoTypeFocus = FragmentType.UNKNOWN;
     private VideoLoader mVideoLoader;
@@ -99,6 +102,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         mFragmentFilter = (FilterFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_filter);
         mFragmentGroup = (GroupFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_groups);
         mFragmentAccount = (AccountFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_account);
+        mFragmentFolderAction = (FolderActionFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_folder_action);
 
         mFragmentVideoList.setStyle(mSettings.getVideoLayout());
         mFragmentVideoList.setListener(new VideoListListener());
@@ -106,6 +110,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         mFragmentGenreList.setListener(new GenreListListener());
         mFragmentFilter.setListener(new FilterListener());
         mFragmentGroup.setListener(new GroupListener());
+        mFragmentFolderAction.setListener(new FolderActionListener());
 
         mFragmentFolderList.setFocusSearchListener(this);
         mFragmentVideoList.setFocusSearchListener(this);
@@ -113,6 +118,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         mFragmentFilter.setFocusSearchListener(this);
         mFragmentGroup.setFocusSearchListener(this);
         mFragmentAccount.setFocusSearchListener(this);
+        mFragmentFolderAction.setFocusSearchListener(this);
 
         mFragmentFolderList.setForceFocus(true);
 
@@ -243,6 +249,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
             mFragmentVideoList.hideDetails();
             mFragmentVideoList.setVideos(videos);
             mFragmentFilter.reset();
+            mFragmentFolderAction.reset();
 
             if (videos != null && !videos.isEmpty()) {
                 mFragmentFilter.show();
@@ -260,8 +267,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
                     if (mVideoLoader.hasHistory()) {
                         mFragmentGroup.show();
                         mFragmentGroup.setCurrentPutId(historyItem.getId());
+                        mFragmentFolderAction.show();
                     } else {
                         mFragmentGroup.hide();
+                        mFragmentFolderAction.hide();
                     }
                     break;
             }
@@ -308,6 +317,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
         mFragmentVideoList.hideDetails();
         if (mFragmentFolderList.hasItems()) {
             mFragmentFolderList.requestFocus();
+        } else if (mFragmentFolderAction.isVisible()) {
+            mFragmentFolderAction.requestFocus();
         } else if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
             mFragmentGroup.requestFocus();
         } else {
@@ -335,6 +346,31 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
                 } else {
                     return focused;
                 }
+            case FOLDER_ACTION:
+                switch (direction){
+                    case FOCUS_UP:
+                        return focused;
+                    case FOCUS_DOWN:
+                        if (mFragmentFolderList.hasItems()) {
+                            return mFragmentFolderList.getFocusableView();
+                        } else {
+                            return mFragmentAccount.getFocusableView();
+                        }
+                    case FOCUS_RIGHT:
+                        if(mFragmentFolderAction.canFocus(focused, direction)){
+                            return null;
+                        } else if(mFragmentGroup.isVisible()) {
+                            return mFragmentGroup.getFocusableView();
+                        } else {
+                            return focused;
+                        }
+                    case FOCUS_LEFT:
+                        if (mFragmentFolderAction.canFocus(focused, direction)) {
+                            return null;
+                        } else {
+                            return focused;
+                        }
+                }
             case GROUP:
                 switch (direction) {
                     case FOCUS_UP:
@@ -346,18 +382,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
                             return mFragmentAccount.getFocusableView();
                         }
                     case FOCUS_RIGHT:
-                    case FOCUS_LEFT:
                         if (mFragmentGroup.canFocus(focused, direction)) {
                             return null;
                         } else {
                             return focused;
                         }
+                    case FOCUS_LEFT:
+                        if (mFragmentGroup.canFocus(focused, direction)) {
+                            return null;
+                        } else {
+                            return mFragmentFolderAction.getFocusableView();
+                        }
                 }
             case FOLDER:
                 switch (direction) {
                     case FOCUS_UP:
-                        if (mFragmentGroup.isVisible() && mFragmentGroup.hasItems()) {
-                            return mFragmentGroup.getFocusableView();
+                        if (mFragmentFolderAction.isVisible()) {
+                            return mFragmentFolderAction.getFocusableView();
                         } else {
                             return focused;
                         }
@@ -465,6 +506,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements L
                     } else {
                         mVideoLoader.loadDirectory(video.getPutId(), video.getTitle());
                     }
+                    break;
+            }
+        }
+    }
+
+    private class FolderActionListener extends HomeListener<FolderAction> implements ToggleFragment.Listener<FolderAction>{
+
+        @Override
+        public void onItemClicked(View view, FolderAction action, boolean isSelected) {
+            switch (action) {
+                case ACTION_REFRESH:
+                    mVideoLoader.reload(true);
                     break;
             }
         }

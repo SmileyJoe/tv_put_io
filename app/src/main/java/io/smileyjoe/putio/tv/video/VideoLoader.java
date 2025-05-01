@@ -25,7 +25,7 @@ public class VideoLoader {
 
     public void loadDirectory() {
         mHistory = new ArrayList<>();
-        getFromPut(Putio.Files.NO_PARENT);
+        getFromPut(Putio.Files.NO_PARENT, true);
     }
 
     public void loadDirectory(Long putId, String title) {
@@ -36,7 +36,7 @@ public class VideoLoader {
         ArrayList<Video> videos = mCache.getVideos(putId);
 
         if (videos == null) {
-            getFromPut(putId);
+            getFromPut(putId, shouldAddToHistory);
         } else {
             Broadcast.Videos.loaded(mContext, HistoryItem.directory(putId, title), videos, mCache.getFolders(putId), shouldAddToHistory);
         }
@@ -78,8 +78,15 @@ public class VideoLoader {
     }
 
     public void reload() {
+        reload(false);
+    }
+
+    public void reload(boolean clearCache) {
         if (mHistory != null && !mHistory.isEmpty()) {
             HistoryItem current = getCurrentHistory();
+            if(clearCache){
+                mCache.clear(current.getId());
+            }
             switch (current.getFolderType()) {
                 case DIRECTORY:
                     loadDirectory(current.getId(), current.getTitle(), false);
@@ -91,9 +98,9 @@ public class VideoLoader {
         }
     }
 
-    private void getFromPut(long putId) {
+    private void getFromPut(long putId, boolean shouldAddToHistory) {
         Broadcast.Videos.loadStarted(mContext);
-        Putio.Files.get(mContext, putId, new OnPutResponse(mContext, putId));
+        Putio.Files.get(mContext, putId, new OnPutResponse(mContext, putId, shouldAddToHistory));
     }
 
     /**

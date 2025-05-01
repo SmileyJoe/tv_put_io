@@ -63,4 +63,8 @@ public class VideoCache {
         return mParents.get(putId);
     }
 
+    public void clear(long putId){
+        mVideos.remove(putId);
+    }
+
 }
